@@ -1,0 +1,5 @@
+direnv 2.33.0
+nodejs 24.14.1
+pnpm 10.33.0
+earthly 0.8.15
+terraform 1.5.5

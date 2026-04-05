@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "display": "Backend",
+  "compilerOptions": {
+    "types": ["node", "vite/client"]
+  },
+  "include": ["./**/*.ts", "../../vite.config.ts"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}

@@ -1,0 +1,13 @@
+import './index.css';
+import App from './app.tsx';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+const container = globalThis.document.querySelector('#root');
+if (container) {
+  createRoot(container).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+}

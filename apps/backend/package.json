@@ -1,0 +1,28 @@
+{
+  "name": "@lightproject/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vp test",
+    "build:dev": "tsc && ENV=local vp pack",
+    "build:ci": "tsc && vp pack",
+    "dev": "ENV=local vp dev",
+    "start": "node dist/index.mjs"
+  },
+  "dependencies": {
+    "@lightproject/common": "workspace:*",
+    "cors": "catalog:",
+    "express": "catalog:",
+    "helmet": "catalog:"
+  },
+  "devDependencies": {
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-node": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

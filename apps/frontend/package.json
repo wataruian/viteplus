@@ -1,0 +1,27 @@
+{
+  "name": "@lightproject/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vp test",
+    "build:dev": "tsc && ENV=local vp build",
+    "build:ci": "tsc && vp build",
+    "dev": "ENV=local vp dev",
+    "start": "vp preview"
+  },
+  "dependencies": {
+    "@lightproject/common": "workspace:*",
+    "@lightproject/design-system": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

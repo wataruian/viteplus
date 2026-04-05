@@ -1,0 +1,203 @@
+import type { LogLevel, LoggerOptions } from '../src/logger/types';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
+import { defaultRedactValue, redact } from '../src/logger/redactor';
+import { Logger } from '../src/logger/log';
+
+const customRedactValue = '[SENSITIVE]';
+
+const getLastConsoleLog = (): string => {
+  const { calls } = vi.mocked(globalThis.console.log).mock;
+  return typeof calls[0]?.[0] === 'string' ? calls[0][0] : '';
+};
+
+const testLoggerCall = async ({
+  level,
+  message,
+  metadata,
+  options = {},
+}: {
+  level: LogLevel;
+  message: string;
+  metadata?: Record<string, unknown>;
+  options?: Partial<LoggerOptions>;
+}) => {
+  const logger = await Logger.create(options);
+  logger[level](message, metadata);
+  return getLastConsoleLog();
+};
+
+describe('Logger Redaction', () => {
+  test.each([
+    {
+      expected: { password: defaultRedactValue, safe: 'somesafedata', secret: defaultRedactValue },
+      fields: undefined,
+      metadata: { password: 'somepassword', safe: 'somesafedata', secret: 'somesecret' },
+      redactValue: undefined,
+      title: 'should mask default fields using default redact value correctly',
+    },
+    {
+      expected: { password: customRedactValue, safe: 'somesafedata', secret: customRedactValue },
+      fields: undefined,
+      metadata: { password: 'somepassword', safe: 'somesafedata', secret: 'somesecret' },
+      redactValue: customRedactValue,
+      title: 'should mask default fields using custom redact value correctly',
+    },
+    {
+      expected: { safe: 'somesafedata', secret: defaultRedactValue, somekey: defaultRedactValue },
+      fields: ['somekey'],
+      metadata: { safe: 'somesafedata', secret: 'somesecret', somekey: 'somesensitivedata' },
+      redactValue: undefined,
+      title: 'should mask custom fields using default redact value correctly',
+    },
+    {
+      expected: { safe: 'somesafedata', secret: customRedactValue, somekey: customRedactValue },
+      fields: ['somekey'],
+      metadata: { safe: 'somesafedata', secret: 'somesecret', somekey: 'somesensitivedata' },
+      redactValue: customRedactValue,
+      title: 'should mask custom fields using custom redact value correctly',
+    },
+  ])('$title', ({ expected, fields, metadata, redactValue }) => {
+    expect(redact(metadata, fields, redactValue)).toMatchObject(expected);
+  });
+
+  test('should not mutate original object', () => {
+    const original = { apiKey: 'someapikey', user: { name: 'John', password: 'somepassword' } };
+    const originalCopy = globalThis.structuredClone(original);
+    const redacted = redact(original);
+
+    expect(redacted).toMatchObject({
+      apiKey: defaultRedactValue,
+      user: { name: 'John', password: defaultRedactValue },
+    });
+    expect(original).toEqual(originalCopy);
+  });
+
+  test('should redact deeply nested fields', () => {
+    const metadata = { level1: { level2: { password: 'somepassword', safe: 'somesafedata' } } };
+    expect(redact(metadata)).toMatchObject({
+      level1: { level2: { password: defaultRedactValue, safe: 'somesafedata' } },
+    });
+  });
+});
+
+describe('Logger Format', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  test.each([
+    { env: 'local', expected: 'pretty', title: 'should default to pretty in local' },
+    {
+      env: 'local',
+      expected: 'json',
+      logFormat: 'json',
+      title: 'should respect LOG_FORMAT=json in local',
+    },
+    {
+      env: 'local',
+      expected: 'pretty',
+      logFormat: 'json',
+      optionsMode: 'pretty',
+      title: 'should prioritize options.mode in local',
+    },
+    { env: 'test', expected: 'json', title: 'should force json in non-local' },
+    {
+      env: 'test',
+      expected: 'json',
+      optionsMode: 'pretty',
+      title: 'should force json in non-local even if pretty requested',
+    },
+    {
+      env: 'test',
+      expected: 'json',
+      logFormat: 'pretty',
+      title: 'should force json in non-local regardless of LOG_FORMAT',
+    },
+  ] as const)('$title', async ({ env, expected, logFormat, optionsMode }) => {
+    vi.stubEnv('ENV', env);
+    if (logFormat) {
+      vi.stubEnv('LOG_FORMAT', logFormat);
+    }
+    const logger = await Logger.create(optionsMode ? { mode: optionsMode } : {});
+    expect(logger.mode).toBe(expected);
+  });
+});
+
+describe('Logger Integration - Redaction Output', () => {
+  beforeEach(() => {
+    vi.stubEnv('ENV', 'local');
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  const testCases = [
+    {
+      expected: { password: defaultRedactValue, safe: 'somesafedata', secret: defaultRedactValue },
+      metadata: { password: 'somepassword', safe: 'somesafedata', secret: 'somesecret' },
+      title: 'should mask default fields',
+    },
+    {
+      expected: { safe: 'somesafedata', secret: defaultRedactValue, somekey: defaultRedactValue },
+      metadata: { safe: 'somesafedata', secret: 'somesecret', somekey: 'somesensitivedata' },
+      options: { redact: ['somekey'] },
+      title: 'should mask custom fields',
+    },
+    {
+      expected: {
+        apiKey: defaultRedactValue,
+        user: { name: 'John', password: defaultRedactValue },
+      },
+      metadata: { apiKey: 'someapikey', user: { name: 'John', password: 'somepassword' } },
+      title: 'should redact deeply nested user info',
+    },
+  ];
+
+  test.each(testCases)('$title (JSON mode)', async ({ expected, metadata, options }) => {
+    const output = await testLoggerCall({
+      level: 'info',
+      message: 'test',
+      metadata,
+      options: { ...options, mode: 'json' },
+    });
+
+    expect(JSON.parse(output)).toMatchObject({ metadata: expected });
+  });
+
+  test.each(testCases)(
+    '$title (Pretty mode)',
+    async ({ expected: _expected, metadata, options }) => {
+      const output = await testLoggerCall({
+        level: 'info',
+        message: 'test',
+        metadata,
+        options: { ...options, mode: 'pretty' },
+      });
+
+      expect(output).toContain(defaultRedactValue);
+      if (metadata.user) {
+        expect(output).toContain('John');
+      }
+      expect(output).toContain(defaultRedactValue);
+    },
+  );
+
+  test('should not mutate original object during logging', async () => {
+    const metadata = { apiKey: 'someapikey', user: { name: 'John', password: 'somepassword' } };
+    const original = globalThis.structuredClone(metadata);
+
+    await testLoggerCall({ level: 'info', message: 'test', metadata });
+
+    expect(metadata).toEqual(original);
+  });
+});

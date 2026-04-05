@@ -1,0 +1,25 @@
+{
+  "name": "@lightproject/monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "vp cache clean && rimraf -g **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "ready": "vp run build:dev && vp run format && vp run lint && vp run test",
+    "init": "vp install && vp run ready",
+    "debug": "vp cache clean && vp run ready",
+    "prepare": "vp config",
+    "serve": "vp run -r --parallel dev"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "catalog:",
+    "bumpp": "catalog:",
+    "rimraf": "catalog:",
+    "tsx": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": "24.14.1"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

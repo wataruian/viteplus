@@ -1,0 +1,9 @@
+{
+  // VoidZero.vite-plus-extension-pack - vscode
+  // void-zero.vite-plus-extension-pack - antigravity
+  "recommendations": [
+    "oxc.oxc-vscode",
+    "VoidZero.vite-plus-extension-pack",
+    "void-zero.vite-plus-extension-pack"
+  ]
+}
