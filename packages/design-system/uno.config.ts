@@ -26,6 +26,30 @@ export default defineConfig({
       },
     }),
   ],
+  rules: [
+    [
+      /^mask-linear-gradient-(.+)$/,
+      ([_ignored, maskDirection]) => ({
+        '-webkit-mask-image': `linear-gradient(${maskDirection})`,
+        'mask-image': `linear-gradient(${maskDirection})`,
+      }),
+    ],
+    [
+      'mask-noise',
+      {
+        '-webkit-mask-image': `url('https://grainy-gradients.vercel.app/noise.svg')`,
+        'mask-image': `url('https://grainy-gradients.vercel.app/noise.svg')`,
+      },
+    ],
+    [
+      'border-premium',
+      {
+        background:
+          'linear-gradient(var(--un-bg-opacity, 1), var(--un-bg-opacity, 1)) padding-box, linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05), rgba(255,255,255,0.15)) border-box',
+        'border-color': 'transparent',
+      },
+    ],
+  ],
   shortcuts: [
     [
       'btn-base',
@@ -37,7 +61,7 @@ export default defineConfig({
     ],
     [
       'btn-premium',
-      'btn-base bg-gradient-to-br from-primary-500 to-indigo-600 text-white hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:scale-105 active:scale-100',
+      'btn-base bg-gradient-to-br from-primary-500 to-indigo-600 text-white hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:scale-105 active:scale-100 relative overflow-hidden',
     ],
     [
       'btn-secondary',
@@ -46,16 +70,12 @@ export default defineConfig({
     ['btn-ghost', 'btn-base text-slate-400 hover:text-white hover:bg-white/5'],
     [
       'glass-card',
-      'bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-500 group',
+      'bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-500',
     ],
     ['glass-nav', 'bg-surface-dark/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50'],
     [
       'glass-border',
       'border border-white/10 flex items-center justify-center rounded-2xl bg-white/[0.02]',
-    ],
-    [
-      'border-premium',
-      'relative before:content-[""] before:absolute before:inset-0 before:rounded-[inherit] before:p-[1px] before:bg-gradient-to-br before:from-white/20 before:via-white/5 before:to-white/15 before:mask-[linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] before:mask-composite-exclude',
     ],
     [
       'text-gradient',
@@ -82,19 +102,24 @@ export default defineConfig({
   theme: {
     animation: {
       counts: {
+        beam: 'infinite',
         float: 'infinite',
         'pulse-slow': 'infinite',
+        shimmer: 'infinite',
       },
       durations: {
+        beam: '8s',
         'fade-in': '0.8s',
         float: '6s',
         'pulse-slow': '4s',
         reveal: '1s',
         'scroll-left': '20s',
         'scroll-right': '20s',
+        shimmer: '2s',
         'slide-up': '0.8s',
       },
       keyframes: {
+        beam: '{0%,100%{transform:translateX(-100%);opacity:0}50%{opacity:1}100%{transform:translateX(100%);opacity:0}}',
         'fade-in': '{from{opacity:0}to{opacity:1}}',
         float: '{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}',
         'pulse-slow':
@@ -103,10 +128,12 @@ export default defineConfig({
           '{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}',
         'scroll-left': '{from{transform:translateX(0)}to{transform:translateX(-100%)}}',
         'scroll-right': '{from{transform:translateX(-100%)}to{transform:translateX(0)}}',
+        shimmer: '{from{transform:translateX(-100%)}to{transform:translateX(100%)}}',
         'slide-up':
           '{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}',
       },
       timingFns: {
+        beam: 'linear',
         reveal: 'cubic-bezier(0.16, 1, 0.3, 1)',
         'slide-up': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
@@ -120,6 +147,7 @@ export default defineConfig({
       },
       primary: {
         '300': '#c4b5fd',
+        '400': '#a78bfa',
         '500': '#8b5cf6',
         '600': '#7c3aed',
         '700': '#6d28d9',
@@ -127,6 +155,7 @@ export default defineConfig({
       },
       surface: {
         dark: '#010409',
+        lighter: '#161b22',
         muted: '#0d1117',
         overlay: 'rgba(255, 255, 255, 0.04)',
       },

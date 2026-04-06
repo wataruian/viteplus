@@ -158,9 +158,12 @@ When first entering the repository or a new package:
   - Prefer proper TypeScript interfaces and types.
   - Use `vite-plus` provided types for configuration and tests.
 - **Refactoring**: When moving code between packages, ensure `exports`, `imports`, and `tsconfig` references are updated atomically.
-- **Troubleshooting**: Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
+- **Troubleshooting**:
+  - Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
+  - **UnoCSS Keyframe Syntax**: When defining raw keyframe strings in `uno.config.ts`, ensure every property is followed by a semicolon (e.g., `{transform:translateX(0);opacity:1}`). Missing semicolons will cause `CssSyntaxError [postcss]` during production builds.
 - **Staged Checks**: Use `vp staged` for pre-commit checks to ensure only valid code is committed.
 - **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.
+- **Design System Sovereignty**: All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`. `apps/frontend` should be a "thin" consumer that only handles page layout and data fetching.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
 
 <!--LIGHTPROJECT END-->

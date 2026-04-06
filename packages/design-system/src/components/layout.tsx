@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import { Noise } from './noise';
 
 export const Container = ({
   children,
@@ -23,17 +24,17 @@ export const Navbar = ({ children, className = '', ...props }: HTMLAttributes<HT
 );
 
 export const MeshBackground = () => (
-  <div className='fixed inset-0 -z-10 bg-surface-dark overflow-hidden'>
-    <div className='absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary-600/15 blur-[150px] rounded-full animate-pulse-slow'></div>
+  <div className='fixed inset-0 -z-20 bg-surface-dark overflow-hidden pointer-events-none'>
+    <Noise className='opacity-[0.05]' />
+    <div className='absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary-600/10 blur-[150px] rounded-full animate-pulse-slow' />
     <div
       className='absolute bottom-[0%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[130px] rounded-full animate-pulse-slow'
       style={{ animationDelay: '2s' }}
-    ></div>
+    />
     <div
       className='absolute top-[30%] left-[40%] w-[30%] h-[30%] bg-accent-500/5 blur-[100px] rounded-full animate-float'
       style={{ animationDelay: '1s' }}
-    ></div>
-    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-25 mix-blend-overlay pointer-events-none"></div>
-    <div className='absolute inset-0 bg-gradient-to-b from-transparent via-surface-dark/50 to-surface-dark pointer-events-none'></div>
+    />
+    <div className='absolute inset-0 bg-gradient-to-b from-transparent via-surface-dark/50 to-surface-dark' />
   </div>
 );

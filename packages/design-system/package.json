@@ -71,6 +71,8 @@
     "unocss": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/logos": "catalog:",
+    "@iconify-json/ph": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "typescript": "catalog:",

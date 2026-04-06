@@ -17,7 +17,7 @@ export const Badge = ({
     accent:
       'bg-accent-500/10 text-accent-400 border-accent-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]',
     danger: 'bg-red-500/10 text-red-400 border-red-500/20',
-    glass: 'bg-white/5 text-white border-white/10 backdrop-blur-md',
+    glass: 'bg-white/5 text-white border-white/10 backdrop-blur-md shadow-inner',
     info: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     outline: 'bg-transparent text-slate-400 border-white/10',
     primary:
@@ -34,9 +34,15 @@ export const Badge = ({
 
   return (
     <span
-      className={`inline-flex items-center font-bold tracking-wide uppercase rounded-full border transition-all duration-300 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center gap-1.5 font-bold tracking-wide uppercase rounded-full border transition-all duration-300 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
+      {variant === 'accent' && (
+        <span className='relative flex h-2 w-2'>
+          <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75'></span>
+          <span className='relative inline-flex rounded-full h-2 w-2 bg-accent-500'></span>
+        </span>
+      )}
       {children}
     </span>
   );
