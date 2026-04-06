@@ -2,37 +2,37 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  size?: 'lg' | 'md' | 'sm';
-  variant?: 'outline' | 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'premium' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const Button = ({
   children,
   className = '',
-  size = 'md',
   variant = 'primary',
+  size = 'md',
   ...props
 }: ButtonProps) => {
-  const baseStyles =
-    'inline-flex items-center justify-center rounded font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
-
   const variants = {
+    ghost: 'text-slate-400 hover:text-white hover:bg-white/5',
     outline:
-      'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
+      'bg-transparent text-white border-2 border-white/10 hover:border-white/20 hover:bg-white/5',
+    premium:
+      'bg-gradient-to-br from-primary-500 to-indigo-600 text-white hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] hover:scale-105 active:scale-100',
+    primary:
+      'bg-primary-600 text-white hover:bg-primary-500 hover:shadow-[0_0_25px_rgba(139,92,246,0.5)]',
+    secondary:
+      'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/20',
   };
 
   const sizes = {
-    lg: 'px-6 py-3 text-lg',
-    md: 'px-4 py-2 text-base',
-    sm: 'px-3 py-1.5 text-sm',
+    lg: 'px-8 py-4 text-lg',
+    md: 'px-6 py-3 text-base',
+    sm: 'px-4 py-2 text-sm',
   };
 
-  const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
-
   return (
-    <button className={combinedClassName} {...props}>
+    <button className={`btn-base ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
       {children}
     </button>
   );

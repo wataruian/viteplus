@@ -1,0 +1,43 @@
+import type { HTMLAttributes, ReactNode } from 'react';
+
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  children: ReactNode;
+  variant?: 'primary' | 'accent' | 'danger' | 'info' | 'success' | 'warning' | 'outline' | 'glass';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export const Badge = ({
+  children,
+  className = '',
+  variant = 'primary',
+  size = 'md',
+  ...props
+}: BadgeProps) => {
+  const variants = {
+    accent:
+      'bg-accent-500/10 text-accent-400 border-accent-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]',
+    danger: 'bg-red-500/10 text-red-400 border-red-500/20',
+    glass: 'bg-white/5 text-white border-white/10 backdrop-blur-md',
+    info: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    outline: 'bg-transparent text-slate-400 border-white/10',
+    primary:
+      'bg-primary-500/10 text-primary-400 border-primary-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]',
+    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  };
+
+  const sizes = {
+    lg: 'px-4 py-1.5 text-sm',
+    md: 'px-3 py-1 text-xs',
+    sm: 'px-2.5 py-0.5 text-[10px]',
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center font-bold tracking-wide uppercase rounded-full border transition-all duration-300 ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+};

@@ -1,4 +1,4 @@
-import './index.css';
+import 'virtual:uno.css';
 import App from './app.tsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

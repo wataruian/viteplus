@@ -170,12 +170,24 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
+      '@unocss/preset-wind3':
+        specifier: 'catalog:'
+        version: 66.6.7
+      '@unocss/transformer-directives':
+        specifier: 'catalog:'
+        version: 66.6.7
+      '@unocss/transformer-variant-group':
+        specifier: 'catalog:'
+        version: 66.6.7
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.0.1(@voidzero-dev/vite-plus-core@0.1.15(@types/node@25.5.2)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.3))
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
+      unocss:
+        specifier: 'catalog:'
+        version: 66.6.7(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@voidzero-dev/vite-plus-core@0.1.15(@types/node@25.5.2)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.3))
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@0.1.15
         version: '@voidzero-dev/vite-plus-core@0.1.15(@types/node@25.5.2)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.3)'

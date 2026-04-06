@@ -1,0 +1,5 @@
+Analyze the repository.
+
+Update packages/design-system and apps/frontend to make a modern UI for Light Project website. Make use of unocss. The config and UI elements should only exists on the design system to avoid duplication and have a single source of truth.
+
+Further enhance the UI.
