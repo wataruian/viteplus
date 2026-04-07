@@ -87,17 +87,13 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - [ ] Run `vp check` and `vp test` to validate changes.
 <!--VITE PLUS END-->
 
----
-
-<!--LIGHTPROJECT START-->
-
-## LightProject
+<!--AI AGENT START-->
 
 # AI Agent Guidelines
 
 This document outlines the goals, guidelines, and best practices for AI agents working on this project.
 
-## Goals
+### Goals
 
 - **Maintain Monoculture**: Strictly adhere to the Vite+ toolchain and conventions.
 - **Code Quality**: Ensure all code is type-safe, linted, and formatted according to project standards.
@@ -158,6 +154,7 @@ When first entering the repository or a new package:
   - Prefer proper TypeScript interfaces and types.
   - Use `vite-plus` provided types for configuration and tests.
 - **Refactoring**: When moving code between packages, ensure `exports`, `imports`, and `tsconfig` references are updated atomically.
+- **File Naming**: Use kebab-case for file names.
 - **Troubleshooting**:
   - Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
   - **UnoCSS Keyframe Syntax**: When defining raw keyframe strings in `uno.config.ts`, ensure every property is followed by a semicolon (e.g., `{transform:translateX(0);opacity:1}`). Missing semicolons will cause `CssSyntaxError [postcss]` during production builds.
@@ -165,5 +162,6 @@ When first entering the repository or a new package:
 - **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.
 - **Design System Sovereignty**: All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`. `apps/frontend` should be a "thin" consumer that only handles page layout and data fetching.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
+- **AI Data**: Keep AI data files in ./ai-data
 
-<!--LIGHTPROJECT END-->
+<!--AI AGENT END-->
