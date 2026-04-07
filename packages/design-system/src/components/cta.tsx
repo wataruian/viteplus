@@ -14,7 +14,7 @@ export const CTA = ({ title, subtitle, primaryAction, secondaryAction }: CTAProp
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-primary-600/20 via-indigo-600/15 to-transparent blur-[120px] rounded-full animate-pulse-slow opacity-60'></div>
     </div>
 
-    <Container className='relative z-10 text-center py-20 bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[4rem] px-8 md:px-24 overflow-hidden border-premium'>
+    <Container className='relative z-10 text-center py-20 bg-white/[0.02] border border-white/5 backdrop-blur-3xl rounded-[4rem] px-8 md:px-24 overflow-hidden'>
       <div className='absolute inset-0 opacity-10 bg-[url("https://grainy-gradients.vercel.app/noise.svg")] pointer-events-none mix-blend-overlay'></div>
 
       <div className='max-w-4xl mx-auto'>

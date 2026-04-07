@@ -15,13 +15,13 @@ interface HeroProps {
 
 export const Hero = ({ title, subtitle, badge, primaryAction, secondaryAction }: HeroProps) => (
   <Section className='pt-40 pb-24 overflow-hidden relative min-h-[90vh] flex items-center bg-surface-dark'>
-    <Noise />
-    <div className='absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.15),transparent_50%)]' />
+    <Noise className='opacity-[0.02]' />
+    <div className='absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary),0.1),transparent_70%)]' />
 
     <div className='absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-full -z-10 pointer-events-none'>
-      <div className='absolute top-[-10%] left-[-15%] w-[70%] h-[70%] bg-primary-600/10 blur-[150px] rounded-full animate-pulse-slow' />
+      <div className='absolute top-[-5%] left-[-10%] w-[60%] h-[60%] bg-primary/5 blur-[100px] rounded-full animate-pulse-slow' />
       <div
-        className='absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[130px] rounded-full animate-pulse-slow'
+        className='absolute bottom-[5%] right-[-5%] w-[50%] h-[50%] bg-accent/5 blur-[100px] rounded-full animate-pulse-slow'
         style={{ animationDelay: '2s' }}
       />
       <Beam top='15%' delay='0s' duration='10s' size='lg' />
@@ -35,7 +35,7 @@ export const Hero = ({ title, subtitle, badge, primaryAction, secondaryAction }:
           <Badge
             variant='accent'
             size='lg'
-            className='mb-10 bg-white/5 border-white/10 px-6 py-2 tracking-wide'
+            className='mb-10 bg-white/5 border-white/10 px-6 py-2 tracking-wide font-bold'
           >
             {badge}
           </Badge>
@@ -64,7 +64,7 @@ export const Hero = ({ title, subtitle, badge, primaryAction, secondaryAction }:
           <Button
             variant='premium'
             size='lg'
-            className='min-w-[200px] h-14 text-lg shadow-glow'
+            className='min-w-[220px] h-16 text-xl shadow-glow'
             rightIcon='i-ph-arrow-right-bold'
             onClick={primaryAction.onClick}
           >
@@ -75,7 +75,7 @@ export const Hero = ({ title, subtitle, badge, primaryAction, secondaryAction }:
           <Button
             variant='ghost'
             size='lg'
-            className='min-w-[200px] h-14 text-lg border border-white/10'
+            className='min-w-[220px] h-16 text-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05]'
             onClick={secondaryAction.onClick}
           >
             {secondaryAction.text}

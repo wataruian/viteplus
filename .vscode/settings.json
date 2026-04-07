@@ -5,5 +5,11 @@
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
-  }
+  },
+  "unocss.colorPreview": true,
+  "unocss.colorPreviewRadius": "50%",
+  "unocss.remToPxPreview": true,
+  "unocss.remToPxRatio": 16,
+  "unocss.selectionStyle": true,
+  "unocss.underline": true
 }

@@ -14,14 +14,13 @@ export const Badge = ({
   ...props
 }: BadgeProps) => {
   const variants = {
-    accent:
-      'bg-accent-500/10 text-accent-400 border-accent-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]',
+    accent: 'bg-accent/10 text-accent border-accent/20 shadow-[0_0_15px_rgba(var(--accent),0.1)]',
     danger: 'bg-red-500/10 text-red-400 border-red-500/20',
     glass: 'bg-white/5 text-white border-white/10 backdrop-blur-md shadow-inner',
     info: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     outline: 'bg-transparent text-slate-400 border-white/10',
     primary:
-      'bg-primary-500/10 text-primary-400 border-primary-500/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]',
+      'bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]',
     success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   };

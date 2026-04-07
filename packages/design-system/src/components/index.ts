@@ -14,3 +14,4 @@ export * from './logo';
 export * from './marquee';
 export * from './noise';
 export * from './terminal';
+export * from './theme-switcher';

@@ -34,7 +34,7 @@ export const BentoItem = ({
         </div>
       )}
 
-      <h3 className='text-3xl font-black text-white mb-4 tracking-tight font-header transition-all duration-300 group-hover:text-primary-300'>
+      <h3 className='text-3xl font-extrabold text-white mb-4 tracking-tight font-header transition-all duration-300 group-hover:text-primary-300'>
         {title}
       </h3>
       <p className='text-lg text-slate-400 leading-relaxed font-medium'>{description}</p>

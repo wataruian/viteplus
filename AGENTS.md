@@ -158,10 +158,15 @@ When first entering the repository or a new package:
 - **Troubleshooting**:
   - Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
   - **UnoCSS Keyframe Syntax**: When defining raw keyframe strings in `uno.config.ts`, ensure every property is followed by a semicolon (e.g., `{transform:translateX(0);opacity:1}`). Missing semicolons will cause `CssSyntaxError [postcss]` during production builds.
+  - **Theme Awareness**: If UI elements are invisible or low-contrast, check if the `bg-adaptive`, `text-adaptive`, or `border-adaptive` tokens are being used correctly. Favor high-contrast pairings like `bg-inverse` for grid backgrounds.
 - **Staged Checks**: Use `vp staged` for pre-commit checks to ensure only valid code is committed.
 - **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.
-- **Design System Sovereignty**: All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`. `apps/frontend` should be a "thin" consumer that only handles page layout and data fetching.
+- **Design System Sovereignty**:
+  - All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`.
+  - **Tokens First**: Favor semantic tokens (`adaptive`, `inverse`, `primary`) over hard-coded hex or Tailwind colors.
+  - **Shortcuts**: Use standardized UnoCSS shortcuts for common elements (e.g., `btn-primary`, `btn-ghost`, `glass-nav`).
+  - **Header Safety**: When using the sticky `Header`, always add a `pt-20` (80px) buffer to the main content area in the app to prevent overlapping.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
-- **AI Data**: Keep AI data files in ./ai-data
+- **AI Data**: AI agents should store data in `./.ai-data` directory and use it for reference and knowledge sharing.
 
 <!--AI AGENT END-->

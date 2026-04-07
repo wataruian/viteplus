@@ -71,6 +71,7 @@ const viteConfig: UserConfig = {
       'typescript/explicit-function-return-type': 'off',
       'typescript/explicit-module-boundary-types': 'off',
       'typescript/prefer-readonly-parameter-types': 'off',
+      'unicorn/no-array-reduce': 'off',
       'unicorn/no-null': 'off',
       'unicorn/no-useless-undefined': 'off',
     },

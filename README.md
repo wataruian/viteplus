@@ -8,9 +8,10 @@ We adhere to **The Vite+ Way**, which emphasizes:
 
 - **Unified Tooling**: One CLI (`vp`) to rule them all. No more juggling `npm`, `pnpm`, `eslint`, `prettier`, and `vitest` separately.
 - **Performance First**: Leveraging Rust-based tools like Oxlint, Oxfmt, and Rolldown for lightning-fast development cycles.
-- **Aesthetic Excellence**: A premium, engineering-focused UI design system built with UnoCSS, featuring high-impact interactions, glassmorphism, and smooth animations.
+- **Aesthetic Excellence**: A premium, engineering-focused UI design system built with UnoCSS. Features a sophisticated **Theme-Aware Architecture** using adaptive tokens (`adaptive`, `inverse`) that intelligently respond to Light and Dark modes.
 - **Predictable Builds**: Strict dependency management and localized task caching ensure "if it works on my machine, it works on CI."
-- **Monoculture**: Consistency across the entire monorepo. Every package and app follows the same patterns and uses the same configuration hub.
+- **Design System Sovereignty**: A single source of truth in `packages/design-system` for all components, styles, and decorative elements, ensuring 100% visual consistency across the monorepo.
+- **Monoculture**: Consistency across every package and app through unified patterns and a central configuration hub.
 
 ## 🚀 Getting Started
 

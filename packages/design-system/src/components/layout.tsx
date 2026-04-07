@@ -24,17 +24,17 @@ export const Navbar = ({ children, className = '', ...props }: HTMLAttributes<HT
 );
 
 export const MeshBackground = () => (
-  <div className='fixed inset-0 -z-20 bg-surface-dark overflow-hidden pointer-events-none'>
-    <Noise className='opacity-[0.05]' />
-    <div className='absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary-600/10 blur-[150px] rounded-full animate-pulse-slow' />
+  <div className='fixed inset-0 -z-20 bg-adaptive overflow-hidden pointer-events-none'>
+    <Noise className='opacity-[0.03]' />
+    <div className='absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-primary/10 blur-[80px] rounded-full animate-pulse-slow' />
     <div
-      className='absolute bottom-[0%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[130px] rounded-full animate-pulse-slow'
+      className='absolute bottom-[0%] right-[-10%] w-[60%] h-[60%] bg-accent/10 blur-[80px] rounded-full animate-pulse-slow'
       style={{ animationDelay: '2s' }}
     />
     <div
-      className='absolute top-[30%] left-[40%] w-[30%] h-[30%] bg-accent-500/5 blur-[100px] rounded-full animate-float'
+      className='absolute top-[30%] left-[40%] w-[30%] h-[30%] bg-primary/10 blur-[60px] rounded-full animate-float'
       style={{ animationDelay: '1s' }}
     />
-    <div className='absolute inset-0 bg-gradient-to-b from-transparent via-surface-dark/50 to-surface-dark' />
+    <div className='absolute inset-0 bg-gradient-to-b from-transparent via-adaptive/20 to-adaptive' />
   </div>
 );

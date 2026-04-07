@@ -67,16 +67,16 @@ export const Terminal = ({ commands }: TerminalProps) => {
       <div className='p-8 min-h-[360px] bg-black/40 backdrop-blur-sm'>
         {commands.slice(0, currentCommandIndex).map((cmd, idx) => (
           <div key={idx} className='mb-6 opacity-60'>
-            <div className='flex items-center gap-2 text-primary-400'>
+            <div className='flex items-center gap-2 text-primary'>
               <span className='font-bold opacity-50'>➜</span>
               <span className='text-white/40'>~</span>
-              <span className='font-bold text-primary-500'>{cmd.command}</span>
+              <span className='font-bold text-primary'>{cmd.command}</span>
             </div>
             <div className='mt-2 pl-6 text-slate-400 space-y-1 border-l border-white/5'>
               {cmd.output.map((line, lineIdx) => (
                 <div key={lineIdx} className='flex items-center gap-2'>
-                  {line.startsWith('✔') && (
-                    <span className='i-ph-check-circle-fill text-accent-500 text-xs' />
+                  {line.includes('✔') && (
+                    <span className='i-ph-check-circle-fill text-accent text-xs' />
                   )}
                   <span>{line}</span>
                 </div>
@@ -87,20 +87,20 @@ export const Terminal = ({ commands }: TerminalProps) => {
 
         <div className='mb-6'>
           <div className='flex items-center gap-2'>
-            <span className='font-bold text-primary-400'>➜</span>
+            <span className='font-bold text-primary'>➜</span>
             <span className='text-white/40'>~</span>
             <span className='font-bold text-white'>{displayedCommand}</span>
             <span
-              className={`w-2 h-4 bg-primary-500 shadow-[0_0_8px_rgba(139,92,246,0.8)] ${isTyping ? 'opacity-100' : 'animate-pulse'}`}
+              className={`w-2 h-4 bg-primary shadow-[0_0_8px_rgba(var(--primary),0.8)] ${isTyping ? 'opacity-100' : 'animate-pulse'}`}
             />
           </div>
 
           {showOutput && (
-            <div className='mt-3 pl-6 text-slate-300 animate-slide-up space-y-1 border-l border-primary-500/30'>
+            <div className='mt-3 pl-6 text-slate-300 animate-slide-up space-y-1 border-l border-primary/30'>
               {commands[currentCommandIndex].output.map((line, lineIdx) => (
                 <div key={lineIdx} className='flex items-center gap-2'>
-                  {line.startsWith('✔') && (
-                    <span className='i-ph-check-circle-fill text-accent-500 text-xs' />
+                  {line.includes('✔') && (
+                    <span className='i-ph-check-circle-fill text-accent text-xs' />
                   )}
                   <span>{line}</span>
                 </div>
