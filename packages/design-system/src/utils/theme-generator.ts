@@ -25,9 +25,6 @@ export const themes: Record<string, ThemeColors> = {
   },
 };
 
-/**
- * Converts a hex color string to an RGB tuple.
- */
 export const hexToRgb = (hex: string): [number, number, number] => {
   const cleanHex = hex.replace('#', '');
   if (cleanHex.length === 3) {
@@ -44,17 +41,11 @@ export const hexToRgb = (hex: string): [number, number, number] => {
 
 export const adjust = (val: number, amt: number) => {
   if (amt >= 0) {
-    // Tint: Interpolate towards white (255)
     return Math.floor(val + (255 - val) * amt);
   }
-  // Shade base is always black (0), so interpolate towards 0
-  // amount is negative here, e.g. -0.2
   return Math.floor(val + val * amt);
 };
 
-/**
- * Simplistic HSL to RGB conversion for basic color variance.
- */
 export const adjustColor = (hex: string, amount: number): string => {
   const [red, green, blue] = hexToRgb(hex);
   const newRed = adjust(red, amount);
@@ -108,19 +99,11 @@ export const getThemeColors = (prefix: string) => {
 export const getThemes = () => ({
   colors: {
     accent: getThemeColors('accent'),
-    adaptive: {
-      accent: 'var(--accent-adaptive)',
-      bg: 'var(--primary-adaptive)',
-      surface: 'var(--surface-adaptive)',
-    },
     primary: getThemeColors('primary'),
     surface: getThemeColors('surface'),
   },
 });
 
-/**
- * Generates a full color scale (50-950) from a base hex color.
- */
 export const generateColorScale = (hex: string, prefix: string, isSurface = false): string => {
   const weights = getWeights(isSurface);
 
@@ -130,9 +113,6 @@ export const generateColorScale = (hex: string, prefix: string, isSurface = fals
     .join('\n');
 };
 
-/**
- * Generates CSS variables for a theme class.
- */
 export const generateThemeCss = (className: string, colors: ThemeColors): string => {
   const primaryScale = generateColorScale(colors.primary, 'primary');
 
