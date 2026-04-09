@@ -11,6 +11,8 @@
     "start": "vp preview"
   },
   "dependencies": {
+    "@iconify-json/logos": "catalog:",
+    "@iconify-json/ph": "catalog:",
     "@lightproject/common": "workspace:*",
     "@lightproject/design-system": "workspace:*",
     "react": "catalog:",

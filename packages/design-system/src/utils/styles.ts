@@ -1,5 +1,4 @@
 import type { UserShortcuts } from 'unocss';
-import { colors } from '../tokens/colors';
 
 const cn = (...classes: (boolean | null | string | undefined)[]) =>
   classes.filter(Boolean).join(' ');
@@ -17,17 +16,18 @@ const getSlotClass = (
 
 const shortcuts: UserShortcuts = [
   // ── Background tokens ──────────────────────────────────────────────────────
-  ['bg-adaptive', `bg-[${colors.semantic.bg}]`],
-  ['bg-adaptive-alt', `bg-[${colors.semantic.bgAlt}]`],
-  ['bg-inverse', `bg-[${colors.semantic.inverse}]`],
+  // We use the theme mapping defined in unocss.ts (adaptive-bg, etc.)
+  ['bg-adaptive', 'bg-adaptive-bg'],
+  ['bg-adaptive-alt', 'bg-adaptive-bg-alt'],
+  ['bg-inverse', 'bg-inverse'],
 
   // ── Text tokens ────────────────────────────────────────────────────────────
-  ['text-adaptive', `text-[${colors.semantic.contentPrimary}]`],
-  ['text-muted', `text-[${colors.semantic.contentMuted}]`],
-  ['text-inverse', `text-[${colors.semantic.inverse}]`],
+  ['text-adaptive', 'text-adaptive-text'],
+  ['text-muted', 'text-adaptive-muted'],
+  ['text-inverse', 'text-inverse'],
 
   // ── Border tokens ──────────────────────────────────────────────────────────
-  ['border-adaptive', `border-[${colors.semantic.border}]`],
+  ['border-adaptive', 'border-adaptive-border'],
 
   // ── Utility shortcuts ──────────────────────────────────────────────────────
   ['glass-border', 'border border-white/10 backdrop-blur-md bg-white/[0.03]'],

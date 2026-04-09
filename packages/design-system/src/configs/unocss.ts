@@ -10,12 +10,22 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
+import { lineHeights, webFontsOptions } from '../tokens/typography';
 import { iconsOptions } from '../tokens/icons';
 import { motion } from '../tokens/effects';
 import { shortcuts } from '../utils/styles';
-import { webFontsOptions } from '../tokens/typography';
+import { spacing } from '../tokens/spacing';
 
 const unoCssBaseConfig: UserConfig = {
+  content: {
+    pipeline: {
+      include: [
+        /\.(vue|svelte|[jt]sx|mdx?|html)($|\?)/,
+        'src/**/*.{js,ts,jsx,tsx}',
+        '**/*.{js,ts,jsx,tsx}',
+      ],
+    },
+  },
   preflights: [
     {
       getCSS,
@@ -42,6 +52,24 @@ const unoCssBaseConfig: UserConfig = {
       timingFns: {
         marquee: 'linear',
       },
+    },
+    colors: {
+      ...getThemes().colors,
+      'adaptive-bg': 'var(--color-bg)',
+      'adaptive-bg-alt': 'var(--color-bg-alt)',
+      'adaptive-border': 'var(--color-border)',
+      'adaptive-muted': 'var(--color-text-muted)',
+      'adaptive-text': 'var(--color-text)',
+      inverse: 'var(--color-inverse)',
+    },
+    fontSize: {
+      'liquid-display': 'min(120px,12vw)',
+    },
+    lineHeight: {
+      compressed: lineHeights.compressed,
+    },
+    maxWidth: {
+      layout: spacing.layoutMax,
     },
   },
   transformers: [transformerDirectives(), transformerVariantGroup()],

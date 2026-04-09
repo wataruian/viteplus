@@ -44,15 +44,12 @@ const glows = {
 } as const;
 
 const motion = {
+  // Use raw CSS strings with semicolon termination for production build stability
+  // as per project guidelines in AGENTS.md.
   animations: {
-    marquee: {
-      from: { transform: 'translateX(0)' },
-      to: { transform: 'translateX(calc(-100% - 1rem))' },
-    },
-    'marquee-reverse': {
-      from: { transform: 'translateX(calc(-100% - 1rem))' },
-      to: { transform: 'translateX(0)' },
-    },
+    marquee: 'from{transform:translateX(0);}to{transform:translateX(calc(-100% - 1rem));}',
+    'marquee-reverse':
+      'from{transform:translateX(calc(-100% - 1rem));}to{transform:translateX(0);}',
   },
   durations: {
     fast: '150ms',

@@ -1,6 +1,4 @@
-import { fontSizes, lineHeights } from './typography';
 import { glows } from './effects';
-import { spacing } from './spacing';
 
 /**
  * Master Variant Engine
@@ -8,6 +6,34 @@ import { spacing } from './spacing';
  * Centralizes all component-level variant definitions.
  * Components should import these modules to quickly define their CVAs.
  */
+
+// ─── Constants for Iteration ────────────────────────────────────────────────
+
+const badgeIntents = [
+  'primary',
+  'accent',
+  'success',
+  'warning',
+  'danger',
+  'info',
+  'glass',
+  'outline',
+] as const;
+const badgeSizes = ['sm', 'md', 'lg'] as const;
+
+const buttonIntents = [
+  'primary',
+  'accent',
+  'secondary',
+  'premium',
+  'glass',
+  'outline',
+  'ghost',
+  'danger',
+] as const;
+const buttonSizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+
+const cardIntents = ['premium', 'glass', 'outline', 'default'] as const;
 
 // ─── Badge Styles ────────────────────────────────────────────────────────────
 
@@ -99,7 +125,7 @@ const commonStates = {
 const featureStyles = {
   logo: {
     bottom: 'text-2xl tracking-tighter text-white',
-    inner: `flex flex-col items-start leading-[${lineHeights.compressed}]`,
+    inner: 'flex flex-col items-start leading-compressed',
     root: 'flex items-center gap-2 font-black',
     top: 'text-primary',
   },
@@ -139,7 +165,7 @@ const inputStyles = {
 
 const layoutStyles = {
   appRoot: 'min-h-screen font-sans',
-  container: `max-w-[${spacing.layoutMax}] mx-auto px-6 md:px-10`,
+  container: 'max-w-layout mx-auto px-6 md:px-10',
   header:
     'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
   headerInner: 'h-full flex items-center justify-between',
@@ -151,7 +177,8 @@ const layoutStyles = {
 const typographyStyles = {
   body: 'text-lg text-slate-400 leading-relaxed font-medium',
   caption: 'text-sm text-slate-500 font-mono uppercase tracking-widest',
-  display: `${fontSizes.liquidDisplay} font-black leading-[${lineHeights.compressed}] tracking-tighter text-white font-header`,
+  display:
+    'text-liquid-display font-black leading-compressed tracking-tighter text-white font-header',
   headline: 'text-4xl md:text-5xl font-black text-white font-header tracking-tight',
   subheadline: 'text-2xl font-bold text-white',
 };
@@ -204,7 +231,7 @@ const previewStyles = {
   marqueeItem: 'flex items-center gap-8 mx-4',
   marqueeSpeed: 60,
   marqueeWrapper: 'border-y border-white/5 py-4',
-  root: 'space-y-20 pb-40',
+  root: 'space-y-40 pb-40', // Increased spacing for gallery
   showcaseBadgeDangerIntent: 'danger' as const,
   showcaseBadgeSuccessIntent: 'success' as const,
   showcaseBadgeWarningIntent: 'warning' as const,
@@ -222,8 +249,13 @@ const previewStyles = {
 // ─── Exports ───────────────────────────────────────────────────────
 
 export {
+  badgeIntents,
+  badgeSizes,
   badgeStyles,
+  buttonIntents,
+  buttonSizes,
   buttonStyles,
+  cardIntents,
   cardStyles,
   commonStates,
   featureStyles,
