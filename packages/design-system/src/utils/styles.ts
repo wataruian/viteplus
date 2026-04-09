@@ -1,11 +1,10 @@
-import type { IconsOptions } from 'unocss/preset-icons';
 import type { UserShortcuts } from 'unocss';
-import type { WebFontsOptions } from 'unocss/preset-web-fonts';
+import { colors } from '../tokens/colors';
 
-export const cn = (...classes: (string | undefined | null | boolean)[]) =>
+const cn = (...classes: (boolean | null | string | undefined)[]) =>
   classes.filter(Boolean).join(' ');
 
-export const getSlotClass = (
+const getSlotClass = (
   useDefault: boolean,
   defaultClass: string,
   slotProps?: { className?: string | undefined },
@@ -16,26 +15,26 @@ export const getSlotClass = (
   return cn(defaultClass, slotProps?.className);
 };
 
-export const webFontsOptions: WebFontsOptions = {
-  fonts: {
-    header: 'Outfit:400,600,700,800',
-    mono: 'Fira Code',
-    sans: 'Inter:300,400,500,600,700',
-  },
-};
+const shortcuts: UserShortcuts = [
+  // ── Background tokens ──────────────────────────────────────────────────────
+  ['bg-adaptive', `bg-[${colors.semantic.bg}]`],
+  ['bg-adaptive-alt', `bg-[${colors.semantic.bgAlt}]`],
+  ['bg-inverse', `bg-[${colors.semantic.inverse}]`],
 
-export const iconsOptions: IconsOptions = {
-  scale: 1.2,
-  warn: true,
-};
+  // ── Text tokens ────────────────────────────────────────────────────────────
+  ['text-adaptive', `text-[${colors.semantic.contentPrimary}]`],
+  ['text-muted', `text-[${colors.semantic.contentMuted}]`],
+  ['text-inverse', `text-[${colors.semantic.inverse}]`],
 
-export const shortcuts: UserShortcuts = [
-  // ['bg-adaptive', 'bg-[var(--primary-adaptive)]'],
-  // ['border-adaptive', 'border-[var(--surface-adaptive)]/10'],
-  // ['bg-inverse', 'bg-[var(--primary-inverse)]'],
-  // ['border-inverse', 'border-[var(--surface-inverse)]'],
-  // ['text-adaptive', 'text-[var(--surface-adaptive)]'],
-  // ['text-inverse', 'text-[var(--surface-inverse)]'],
-  // ['text-muted-adaptive', 'text-[var(--surface-adaptive)]/60'],
-  // ['text-muted-inverse', 'text-[var(--surface-inverse)]/60'],
+  // ── Border tokens ──────────────────────────────────────────────────────────
+  ['border-adaptive', `border-[${colors.semantic.border}]`],
+
+  // ── Utility shortcuts ──────────────────────────────────────────────────────
+  ['glass-border', 'border border-white/10 backdrop-blur-md bg-white/[0.03]'],
+  [
+    'glass-nav',
+    'sticky top-0 z-50 backdrop-blur-lg bg-white/70 dark:bg-black/70 border-b border-adaptive',
+  ],
 ];
+
+export { cn, getSlotClass, shortcuts };

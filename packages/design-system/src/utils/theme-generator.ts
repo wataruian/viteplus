@@ -1,94 +1,162 @@
-export interface ThemeColors {
+import { type Oklch, clampChroma, converter, parse } from 'culori';
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface ThemeColors {
   accent: string;
+  danger: string;
+  info: string;
   primary: string;
-  surface?: string;
+  success: string;
+  surface?: string | undefined;
+  warning: string;
 }
 
-export type ColorScale = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+type ColorScale = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
-export const themes: Record<string, ThemeColors> = {
+// ─── Themes ──────────────────────────────────────────────────────────────────
+
+const themes: Record<string, ThemeColors> = {
   default: {
     accent: '#10b981',
+    danger: '#ef4444',
+    info: '#3b82f6',
     primary: '#8b5cf6',
+    success: '#10b981',
+    warning: '#f59e0b',
   },
   emerald: {
     accent: '#3b82f6',
+    danger: '#ef4444',
+    info: '#3b82f6',
     primary: '#10b981',
+    success: '#10b981',
+    warning: '#f59e0b',
   },
   ocean: {
     accent: '#8b5cf6',
+    danger: '#ef4444',
+    info: '#3b82f6',
     primary: '#0ea5e9',
+    success: '#10b981',
+    warning: '#f59e0b',
   },
   sunset: {
     accent: '#f59e0b',
+    danger: '#ef4444',
+    info: '#3b82f6',
     primary: '#f43f5e',
+    success: '#10b981',
+    warning: '#f59e0b',
   },
 };
 
-export const hexToRgb = (hex: string): [number, number, number] => {
-  const cleanHex = hex.replace('#', '');
-  if (cleanHex.length === 3) {
-    const red = Number.parseInt(cleanHex.slice(0, 1).repeat(2), 16);
-    const green = Number.parseInt(cleanHex.slice(1, 2).repeat(2), 16);
-    const blue = Number.parseInt(cleanHex.slice(2, 3).repeat(2), 16);
-    return [red, green, blue];
+// ─── OKLCH scale lightness stops ─────────────────────────────────────────────
+//
+// Best practice: interpolate only the Lightness channel in OKLCH space.
+// Chroma and Hue are held constant from the base color to preserve its identity.
+//
+//   50  → near-white  (L≈0.97)
+//   500 → overridden to the base color's actual L at generation time
+//   950 → near-black  (L≈0.11)
+//
+// Surface uses the same stops but with ~15% chroma for a subtle neutral tint.
+
+const lightnessStops: Record<ColorScale, number> = {
+  // Keep numeric ascending order
+  /* eslint-disable sort-keys */
+  50: 0.97,
+  100: 0.94,
+  200: 0.88,
+  300: 0.8,
+  400: 0.7,
+  500: 0.55, // identity stop — overridden per-color in generateColorScale
+  600: 0.44,
+  700: 0.36,
+  800: 0.27,
+  900: 0.18,
+  950: 0.11,
+  /* eslint-enable sort-keys */
+};
+
+// ─── OKLCH converters ─────────────────────────────────────────────────────────
+
+const toOklch = converter('oklch');
+const toRgb = converter('rgb');
+
+/**
+ * Parse any CSS color string and return it as an Oklch object.
+ * Throws if the color string is unrecognisable.
+ */
+const parseToOklch = (color: string): Oklch => {
+  const parsed = parse(color);
+  if (parsed === undefined) {
+    throw new Error(`Cannot parse color: "${color}"`);
   }
-  const red = Number.parseInt(cleanHex.slice(0, 2), 16);
-  const green = Number.parseInt(cleanHex.slice(2, 4), 16);
-  const blue = Number.parseInt(cleanHex.slice(4, 6), 16);
-  return [red, green, blue];
+  return toOklch(parsed);
 };
 
-export const adjust = (val: number, amt: number) => {
-  if (amt >= 0) {
-    return Math.floor(val + (255 - val) * amt);
-  }
-  return Math.floor(val + val * amt);
+/**
+ * Convert an Oklch color to a clamped "r, g, b" CSS variable tuple string.
+ * Clamps chroma to ensure the color is in the sRGB gamut.
+ */
+const oklchToRgbTuple = (oklchColor: Oklch): string => {
+  const clamped = clampChroma(oklchColor, 'oklch');
+  const rgb = toRgb(clamped);
+  const red = Math.round(rgb.r * 255);
+  const green = Math.round(rgb.g * 255);
+  const blue = Math.round(rgb.b * 255);
+  return `${red}, ${green}, ${blue}`;
 };
 
-export const adjustColor = (hex: string, amount: number): string => {
-  const [red, green, blue] = hexToRgb(hex);
-  const newRed = adjust(red, amount);
-  const newGreen = adjust(green, amount);
-  const newBlue = adjust(blue, amount);
-  return `${newRed}, ${newGreen}, ${newBlue}`;
+/**
+ * Build an Oklch color object with explicit fields.
+ */
+// eslint-disable-next-line id-length
+const makeOklch = (lightness: number, chroma: number, hue: number): Oklch => ({
+  // OKLCH spec uses single-char field names: c (chroma), h (hue), l (lightness)
+  /* eslint-disable id-length */
+  c: chroma,
+  h: hue,
+  l: lightness,
+  /* eslint-enable id-length */
+  mode: 'oklch',
+});
+
+// ─── Public API ───────────────────────────────────────────────────────────────
+
+/** Returns the lightness stops record. The `isSurface` param is kept for back-compat. */
+const getWeights = (_isSurface = false): Record<ColorScale, number> => lightnessStops;
+
+/**
+ * Generate a perceptually uniform OKLCH color scale for a given CSS color.
+ *
+ * Only Lightness is interpolated across the scale; Chroma and Hue are constant,
+ * so the hue identity of the base color is preserved at every stop.
+ *
+ * For surface colors, chroma is reduced to ~15% to produce a subtle neutral tint.
+ */
+const generateColorScale = (hex: string, prefix: string, isSurface = false): string => {
+  const base = parseToOklch(hex);
+  const baseL = base.l;
+  const baseC = base.c;
+  const baseH = base.h ?? 0;
+  const scaleChroma = isSurface ? baseC * 0.15 : baseC;
+
+  return Object.entries(lightnessStops)
+    .toSorted(([stopA], [stopB]) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
+    .map(([stop, targetL]) => {
+      const lightness = stop === '500' ? baseL : targetL;
+      return `  --${prefix}-${stop}: ${oklchToRgbTuple(makeOklch(lightness, scaleChroma, baseH))};`;
+    })
+    .join('\n');
 };
 
-export const getWeights = (isSurface = false) => {
-  const weights: Record<ColorScale, number> = isSurface
-    ? {
-        100: 0.9,
-        200: 0.8,
-        300: 0.7,
-        400: 0.6,
-        50: 0.95,
-        500: 0.5,
-        600: 0.4,
-        700: 0.3,
-        800: 0.2,
-        900: 0.1,
-        950: 0,
-      }
-    : {
-        100: 0.9,
-        200: 0.8,
-        300: 0.6,
-        400: 0.4,
-        50: 0.95,
-        500: 0,
-        600: -0.2,
-        700: -0.4,
-        800: -0.6,
-        900: -0.8,
-        950: -0.9,
-      };
-
-  return weights;
-};
-
-export const getThemeColors = (prefix: string) => {
-  const weights = getWeights();
-  const colors = Object.entries(weights).reduce<Record<string, string>>((acc, [stop]) => {
+/**
+ * Build a UnoCSS-compatible theme colors object that references CSS variables.
+ */
+const getThemeColors = (prefix: string): Record<string, string> => {
+  const colors = Object.keys(lightnessStops).reduce<Record<string, string>>((acc, stop) => {
     acc[stop] = `rgb(var(--${prefix}-${stop}))`;
     return acc;
   }, {});
@@ -96,86 +164,123 @@ export const getThemeColors = (prefix: string) => {
   return colors;
 };
 
-export const getThemes = () => ({
+const getThemes = () => ({
   colors: {
     accent: getThemeColors('accent'),
+    danger: getThemeColors('danger'),
+    info: getThemeColors('info'),
     primary: getThemeColors('primary'),
+    success: getThemeColors('success'),
     surface: getThemeColors('surface'),
+    warning: getThemeColors('warning'),
   },
 });
 
-export const generateColorScale = (hex: string, prefix: string, isSurface = false): string => {
-  const weights = getWeights(isSurface);
+const generateThemeCss = (className: string, colors: ThemeColors): string => {
+  const primaryBase = parseToOklch(colors.primary);
+  const accentBase = parseToOklch(colors.accent);
+  const dangerBase = parseToOklch(colors.danger);
+  const successBase = parseToOklch(colors.success);
+  const warningBase = parseToOklch(colors.warning);
+  const infoBase = parseToOklch(colors.info);
 
-  return Object.entries(weights)
-    .toSorted(([shadeA], [shadeB]) => Number.parseInt(shadeA, 10) - Number.parseInt(shadeB, 10))
-    .map(([stop, amount]) => `  --${prefix}-${stop}: ${adjustColor(hex, amount)};`)
-    .join('\n');
-};
-
-export const generateThemeCss = (className: string, colors: ThemeColors): string => {
-  const primaryScale = generateColorScale(colors.primary, 'primary');
-
-  const accentScale = generateColorScale(colors.accent, 'accent');
-
-  const surfaceBase =
+  const surfaceHex =
     colors.surface !== undefined && colors.surface !== '' ? colors.surface : '#000000';
-  const surfaceScale = generateColorScale(surfaceBase, 'surface', true);
+  const surfaceBase = parseToOklch(surfaceHex);
+
+  const primaryRgb = oklchToRgbTuple(primaryBase);
+  const accentRgb = oklchToRgbTuple(accentBase);
+  const dangerRgb = oklchToRgbTuple(dangerBase);
+  const successRgb = oklchToRgbTuple(successBase);
+  const warningRgb = oklchToRgbTuple(warningBase);
+  const infoRgb = oklchToRgbTuple(infoBase);
+  const surfaceRgb = oklchToRgbTuple(surfaceBase);
+
+  const primaryScale = generateColorScale(colors.primary, 'primary');
+  const accentScale = generateColorScale(colors.accent, 'accent');
+  const dangerScale = generateColorScale(colors.danger, 'danger');
+  const successScale = generateColorScale(colors.success, 'success');
+  const warningScale = generateColorScale(colors.warning, 'warning');
+  const infoScale = generateColorScale(colors.info, 'info');
+  const surfaceScale = generateColorScale(surfaceHex, 'surface', true);
 
   const selector = className === 'default' ? ':root' : `.${className}`;
 
-  const css = `
+  return `
 ${selector} {
-  --primary-base: ${hexToRgb(colors.primary).join(', ')};
+  --primary-base: ${primaryRgb};
 ${primaryScale}
-  --accent-base: ${hexToRgb(colors.accent).join(', ')};
+  --accent-base: ${accentRgb};
 ${accentScale}
-  --surface-base: ${hexToRgb(surfaceBase).join(', ')};
+  --danger-base: ${dangerRgb};
+${dangerScale}
+  --success-base: ${successRgb};
+${successScale}
+  --warning-base: ${warningRgb};
+${warningScale}
+  --info-base: ${infoRgb};
+${infoScale}
+  --surface-base: ${surfaceRgb};
 ${surfaceScale}
 }`;
-
-  return css;
 };
 
-export const getCSS = () => {
-  const css = `
-${Object.entries(themes)
-  .map(([className, colors]) => generateThemeCss(className, colors))
-  .join('\n')}
+const getCSS = (): string => {
+  const themeBlocks = Object.entries(themes)
+    .map(([name, colors]) => generateThemeCss(name, colors))
+    .join('\n');
+
+  return `
+${themeBlocks}
 
 :root {
   color-scheme: light dark;
 }
 
+/* ── Adaptive & Inverse semantic tokens ── */
+
+/* Light mode: light backgrounds, dark text */
 .light {
   color-scheme: light;
 
-  --primary-adaptive: rgb(var(--primary-50));
-  --primary-inverse: rgb(var(--primary-950));
-
-  --accent-adaptive: rgb(var(--accent-50));
-  --accent-inverse: rgb(var(--accent-950));
-
-  --surface-adaptive: rgb(var(--surface-950));
-  --surface-inverse: rgb(var(--surface-50));
+  --color-bg:         rgb(var(--surface-50));
+  --color-bg-alt:     rgb(var(--surface-100));
+  --color-text:       rgb(var(--surface-900));
+  --color-text-muted: rgba(var(--surface-900), 0.6);
+  --color-border:     rgba(var(--surface-900), 0.1);
+  --color-inverse:    rgb(var(--surface-950));
 }
 
+/* Dark mode: dark backgrounds, light text */
 .dark {
   color-scheme: dark;
 
-  --primary-adaptive: rgb(var(--primary-950));
-  --primary-inverse: rgb(var(--primary-50));
-
-  --accent-adaptive: rgb(var(--accent-950));
-  --accent-inverse: rgb(var(--accent-50));
-
-  --surface-adaptive: rgb(var(--surface-50));
-  --surface-inverse: rgb(var(--surface-950));
+  --color-bg:         rgb(var(--surface-950));
+  --color-bg-alt:     rgb(var(--surface-900));
+  --color-text:       rgb(var(--surface-50));
+  --color-text-muted: rgba(var(--surface-50), 0.6);
+  --color-border:     rgba(var(--surface-50), 0.1);
+  --color-inverse:    rgb(var(--surface-50));
 }
 
 :root, body {
   -webkit-font-smoothing: antialiased;
 }`;
+};
 
-  return css;
+export type { ThemeColors, ColorScale };
+export {
+  themes,
+  lightnessStops,
+  toOklch,
+  toRgb,
+  parseToOklch,
+  oklchToRgbTuple,
+  makeOklch,
+  getWeights,
+  generateColorScale,
+  getThemeColors,
+  getThemes,
+  generateThemeCss,
+  getCSS,
 };

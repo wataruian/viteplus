@@ -1,9 +1,9 @@
 import type { RedactFn } from './types';
 import redactObj from 'redact-object';
 
-export const defaultRedactValue = '[REDACTED]';
+const defaultRedactValue = '[REDACTED]';
 
-export const defaultMaskFields: string[] = [
+const defaultMaskFields: string[] = [
   'password',
   'password_confirmation',
   'secret',
@@ -23,7 +23,7 @@ export const defaultMaskFields: string[] = [
   'refresh_token',
 ];
 
-export const isRecord = (value: unknown): value is Record<string, unknown> =>
+const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const isFunc = (val: unknown): val is RedactFn => typeof val === 'function';
@@ -41,7 +41,7 @@ const getRedactFn = (mod: unknown): RedactFn | null => {
   return null;
 };
 
-export const redact = (
+const redact = (
   data: unknown,
   customFields: string[] = [],
   redactValue: string = defaultRedactValue,
@@ -70,3 +70,5 @@ export const redact = (
     return data;
   }
 };
+
+export { defaultRedactValue, defaultMaskFields, isRecord, isFunc, getRedactFn, redact };

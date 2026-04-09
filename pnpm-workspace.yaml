@@ -5,7 +5,10 @@ packages:
 catalog:
   '@emnapi/core': npm:@emnapi/core@1.9.2
   '@emnapi/runtime': npm:@emnapi/runtime@1.9.2
+  '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
+  '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
   '@types/cors': npm:@types/cors@2.8.19
+  '@types/culori': npm:@types/culori@4.0.1
   '@types/express': npm:@types/express@5.0.6
   '@types/node': npm:@types/node@25.5.2
   '@types/react': npm:@types/react@19.2.14
@@ -17,13 +20,13 @@ catalog:
   '@vitejs/plugin-react': npm:@vitejs/plugin-react@6.0.1
   '@vitest/coverage-v8': npm:@vitest/coverage-v8@4.1.2
   bumpp: npm:bumpp@11.0.1
+  class-variance-authority: npm:class-variance-authority@0.7.1
   cors: npm:cors@2.8.6
+  culori: npm:culori@4.0.2
   express: npm:express@5.2.1
   helmet: npm:helmet@8.1.0
   lodash.isplainobject: npm:lodash.isplainobject@4.0.6
   picocolors: npm:picocolors@1.1.1
-  '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
-  '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
   react: npm:react@19.2.4
   react-dom: npm:react-dom@19.2.4
   redact-object: npm:redact-object@4.0.4

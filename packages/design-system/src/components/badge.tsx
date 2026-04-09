@@ -1,82 +1,34 @@
-import type { HTMLAttributes, ReactNode } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
+import type { BaseComponentProps } from '../types/component';
+import type { HTMLAttributes } from 'react';
+import { badgeStyles } from '../tokens/variants';
 import { getSlotClass } from '../utils/styles';
 
-export interface BadgeProps {
-  children?: ReactNode;
-  className?: string;
-  variant?: 'primary' | 'accent' | 'danger' | 'info' | 'success' | 'warning' | 'outline' | 'glass';
-  size?: 'sm' | 'md' | 'lg';
-  useDefault?: boolean;
-  props?: HTMLAttributes<HTMLSpanElement>;
-  dotContainerProps?: HTMLAttributes<HTMLSpanElement>;
-  dotPingProps?: HTMLAttributes<HTMLSpanElement>;
-  dotInnerProps?: HTMLAttributes<HTMLSpanElement>;
-}
+const badgeVariants = cva(badgeStyles.base, {
+  defaultVariants: badgeStyles.defaultVariants,
+  variants: badgeStyles.variants,
+});
 
-export const defaultInternalClasses = {
-  dotContainer: 'relative flex h-2 w-2',
-  dotInner: 'relative inline-flex rounded-full h-2 w-2 bg-accent-500',
-  dotPing: 'animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75',
-};
+type BadgeVariants = VariantProps<typeof badgeVariants>;
 
-export const variants = {
-  accent: 'bg-accent/10 text-accent border-accent/20 shadow-[0_0_15px_rgba(var(--accent),0.1)]',
-  danger: 'bg-red-500/10 text-red-400 border-red-500/20',
-  glass: 'bg-white/5 text-white border-white/10 backdrop-blur-md shadow-inner',
-  info: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  outline: 'bg-transparent text-slate-400 border-white/10',
-  primary:
-    'bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]',
-  success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-} as const;
+interface BadgeProps extends BaseComponentProps<HTMLAttributes<HTMLSpanElement>>, BadgeVariants {}
 
-export const sizes = {
-  lg: 'px-4 py-1.5 text-sm',
-  md: 'px-3 py-1 text-xs',
-  sm: 'px-2.5 py-0.5 text-[10px]',
-} as const;
-
-export const defaultClasses =
-  'inline-flex items-center gap-1.5 font-bold tracking-wide uppercase rounded-full border transition-all duration-300';
-
-export const Badge = ({
+const Badge = ({
   children,
   className = '',
-  variant = 'primary',
-  size = 'md',
+  intent,
+  props,
+  size,
   useDefault = true,
-  dotContainerProps,
-  dotPingProps,
-  dotInnerProps,
-  props: rootProps,
 }: BadgeProps) => {
-  const finalClassName = useDefault
-    ? `${defaultClasses} ${variants[variant]} ${sizes[size]} ${className}`
-    : className;
+  const finalClass = useDefault ? badgeVariants({ className, intent, size }) : className;
 
   return (
-    <span {...rootProps} className={getSlotClass(useDefault, finalClassName, rootProps)}>
-      {variant === 'accent' && useDefault && (
-        <span
-          {...dotContainerProps}
-          className={getSlotClass(
-            useDefault,
-            defaultInternalClasses.dotContainer,
-            dotContainerProps,
-          )}
-        >
-          <span
-            {...dotPingProps}
-            className={getSlotClass(useDefault, defaultInternalClasses.dotPing, dotPingProps)}
-          ></span>
-          <span
-            {...dotInnerProps}
-            className={getSlotClass(useDefault, defaultInternalClasses.dotInner, dotInnerProps)}
-          ></span>
-        </span>
-      )}
+    <span {...props} className={getSlotClass(useDefault, finalClass, props)}>
       {children}
     </span>
   );
 };
+
+export type { BadgeProps, BadgeVariants };
+export { Badge, badgeVariants };

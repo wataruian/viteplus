@@ -14,19 +14,14 @@
     "@lightproject/common": "workspace:*",
     "@lightproject/design-system": "workspace:*",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "unocss": "catalog:"
   },
   "devDependencies": {
-    "@iconify-json/logos": "catalog:",
-    "@iconify-json/ph": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@unocss/preset-wind3": "catalog:",
-    "@unocss/transformer-directives": "catalog:",
-    "@unocss/transformer-variant-group": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "typescript": "catalog:",
-    "unocss": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   }

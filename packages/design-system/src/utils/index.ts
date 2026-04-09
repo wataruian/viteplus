@@ -1,2 +1,2 @@
-export * from './theme-generator';
 export * from './styles';
+export * from './theme-generator';

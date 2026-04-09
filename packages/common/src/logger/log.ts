@@ -10,7 +10,7 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
   warn: 2,
 };
 
-export class Logger {
+class Logger {
   private readonly options: LoggerOptions;
   private stream: LogStream | undefined;
 
@@ -104,4 +104,6 @@ export class Logger {
   }
 }
 
-export const logger = new Logger();
+const logger = new Logger();
+
+export { LOG_LEVEL_PRIORITY, Logger, logger };

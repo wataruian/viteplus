@@ -11,7 +11,7 @@ const COLORS = {
 const INDENT_METADATA = 2;
 const PADDING_LEVEL = 5;
 
-export const formatPretty = (entry: LogEntry, useColor = true): string => {
+const formatPretty = (entry: LogEntry, useColor = true): string => {
   const timestamp = useColor ? pc.gray(entry.timestamp) : entry.timestamp;
   const levelStr = entry.level.toUpperCase().padEnd(PADDING_LEVEL);
   const coloredLevel = useColor ? COLORS[entry.level](levelStr) : levelStr;
@@ -26,4 +26,6 @@ export const formatPretty = (entry: LogEntry, useColor = true): string => {
   return output;
 };
 
-export const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
+const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
+
+export { COLORS, INDENT_METADATA, PADDING_LEVEL, formatPretty, formatJSON };

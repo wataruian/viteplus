@@ -1,4 +1,4 @@
-import { logger } from '@lightproject/common';
+import { logger } from '@lightproject/common/logger';
 
 const INITIAL_COUNT = 0;
 const INCREMENT_STEP = 1;

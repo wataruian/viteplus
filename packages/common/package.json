@@ -38,20 +38,6 @@
         "default": "./dist/*/index.mjs"
       }
     },
-    "./*/**": {
-      "typescript": {
-        "types": "./src/*/index.ts",
-        "default": "./src/*/index.ts"
-      },
-      "require": {
-        "types": "./dist/*/**/*.d.cts",
-        "default": "./dist/*/**/*.cjs"
-      },
-      "import": {
-        "types": "./dist/*/**/*.d.mts",
-        "default": "./dist/*/**/*.mjs"
-      }
-    },
     "./package.json": "./package.json"
   },
   "scripts": {

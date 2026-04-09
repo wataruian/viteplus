@@ -6,6 +6,10 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
   },
+  "unocss.root": ["./packages/design-system"],
+  "unocss.disable": false,
+  "unocss.autocomplete.strict": true,
+  "unocss.strictAnnotationMatch": true,
   "unocss.colorPreview": true,
   "unocss.colorPreviewRadius": "50%",
   "unocss.remToPxPreview": true,

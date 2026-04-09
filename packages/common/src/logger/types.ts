@@ -1,13 +1,13 @@
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-export type LogMode = 'pretty' | 'json';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogMode = 'pretty' | 'json';
 
-export interface RotationOptions {
+interface RotationOptions {
   compress?: string | boolean;
   interval?: string;
   size?: string;
 }
 
-export interface LoggerOptions {
+interface LoggerOptions {
   color: boolean;
   level: LogLevel;
   mode: LogMode;
@@ -17,18 +17,18 @@ export interface LoggerOptions {
   timestamp: boolean;
 }
 
-export interface InternalStream {
+interface InternalStream {
   write: (
     data: string | Uint8Array,
     callback?: (error: Error | null | undefined) => void,
   ) => boolean;
 }
 
-export interface LogStream {
+interface LogStream {
   write: (data: string) => void;
 }
 
-export interface LogEntry {
+interface LogEntry {
   level: LogLevel;
   message: string;
   timestamp: string;
@@ -36,4 +36,15 @@ export interface LogEntry {
   [key: string]: unknown;
 }
 
-export type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;
+type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;
+
+export type {
+  LogLevel,
+  LogMode,
+  RotationOptions,
+  LoggerOptions,
+  InternalStream,
+  LogStream,
+  LogEntry,
+  RedactFn,
+};

@@ -4,7 +4,7 @@ import { isRecord } from './redactor';
 const isInternalStream = (value: unknown): value is InternalStream =>
   isRecord(value) && typeof value['write'] === 'function';
 
-export const createRotationStream = async (
+const createRotationStream = async (
   outputPath: string,
   options: RotationOptions = {},
 ): Promise<LogStream> => {
@@ -32,3 +32,5 @@ export const createRotationStream = async (
 
   throw new Error('Failed to create a valid rotation stream');
 };
+
+export { isInternalStream, createRotationStream };
