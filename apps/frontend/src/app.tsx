@@ -1,4 +1,5 @@
 import { Preview } from '@lightproject/design-system/components';
+import { layoutStyles } from '@lightproject/design-system/tokens';
 import { logger } from '@lightproject/common/logger';
 import { useEffect } from 'react';
 
@@ -10,7 +11,11 @@ const App = () => {
     });
   }, []);
 
-  return <Preview />;
+  return (
+    <div className={layoutStyles.variants.type.appRoot}>
+      <Preview />
+    </div>
+  );
 };
 
 export default App;
