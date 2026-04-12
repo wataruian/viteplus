@@ -1,19 +1,5 @@
 import type { UserShortcuts } from 'unocss';
 
-const cn = (...classes: (boolean | null | string | undefined)[]) =>
-  classes.filter(Boolean).join(' ');
-
-const getSlotClass = (
-  useDefault: boolean,
-  defaultClass: string,
-  slotProps?: { className?: string | undefined },
-) => {
-  if (!useDefault) {
-    return slotProps?.className ?? '';
-  }
-  return cn(defaultClass, slotProps?.className);
-};
-
 const shortcuts: UserShortcuts = [
   // ── Background tokens ──────────────────────────────────────────────────────
   // We use the theme mapping defined in unocss.ts (adaptive-bg, etc.)
@@ -37,4 +23,4 @@ const shortcuts: UserShortcuts = [
   ],
 ];
 
-export { cn, getSlotClass, shortcuts };
+export { shortcuts };

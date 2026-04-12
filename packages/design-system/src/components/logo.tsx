@@ -1,35 +1,42 @@
-import { featureStyles, typographyStyles } from '../tokens/variants';
+import { type HTMLAttributes, forwardRef } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
+import { logoStyles, typographyStyles } from '../tokens/styles';
 import type { BaseComponentProps } from '../types/component';
-import type { HTMLAttributes } from 'react';
-import { getSlotClass } from '../utils/styles';
 
-interface LogoProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>> {
+const logoVariants = cva(logoStyles.base, {
+  defaultVariants: logoStyles.default,
+  variants: logoStyles.variants,
+});
+
+type LogoVariants = VariantProps<typeof logoVariants>;
+
+interface LogoProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, LogoVariants {
   textBottom?: string;
   textTop?: string;
 }
 
-const Logo = ({
-  children,
-  className = '',
-  props,
-  textBottom = 'plus',
-  textTop = 'vite',
-  useDefault = true,
-}: LogoProps) => {
-  const finalClass = useDefault ? `${featureStyles.logo.root} ${className}` : className;
+const Logo = forwardRef<HTMLDivElement, LogoProps>(
+  ({ children, className = '', props, textBottom = '', textTop = '', useDefault = false }, ref) => {
+    const finalClass = useDefault ? logoVariants({ className }) : className;
 
-  return (
-    <div {...props} className={getSlotClass(useDefault, finalClass, props)}>
-      {useDefault ? (
-        <div className={featureStyles.logo.inner}>
-          <span className={`${typographyStyles.caption} ${featureStyles.logo.top}`}>{textTop}</span>
-          <span className={featureStyles.logo.bottom}>{textBottom}</span>
-        </div>
-      ) : null}
-      {children}
-    </div>
-  );
-};
+    return (
+      <div {...props} ref={ref} className={finalClass}>
+        {useDefault ? (
+          <div className={logoStyles.slots.inner}>
+            <span className={`${typographyStyles.variants.type.caption} ${logoStyles.slots.top}`}>
+              {textTop}
+            </span>
+            <span className={logoStyles.slots.bottom}>{textBottom}</span>
+          </div>
+        ) : null}
 
-export type { LogoProps };
-export { Logo };
+        {children}
+      </div>
+    );
+  },
+);
+
+Logo.displayName = 'Logo';
+
+export type { LogoProps, LogoVariants };
+export { Logo, logoVariants };

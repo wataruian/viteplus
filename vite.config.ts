@@ -57,6 +57,7 @@ const viteConfig: UserConfig = {
     options: { typeAware: true, typeCheck: true },
     rules: {
       'capitalized-comments': 'off',
+      'id-length': 'off',
       'max-lines': 'off',
       'max-lines-per-function': 'off',
       'max-statements': 'off',

@@ -1,35 +1,64 @@
+import { type HTMLAttributes, forwardRef } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
-import type { HTMLAttributes } from 'react';
-import { getSlotClass } from '../utils/styles';
-import { layoutStyles } from '../tokens/variants';
+import { layoutStyles } from '../tokens/styles';
 
 // ─── Container ───────────────────────────────────────────────────────────────
 
-type ContainerProps = BaseComponentProps<HTMLAttributes<HTMLDivElement>>;
+const containerVariants = cva(layoutStyles.base, {
+  defaultVariants: {
+    type: 'container',
+  },
+  variants: layoutStyles.variants,
+});
 
-const Container = ({ children, className = '', props, useDefault = true }: ContainerProps) => {
-  const finalClassName = useDefault ? `${layoutStyles.container} ${className}` : className;
+type ContainerVariants = VariantProps<typeof containerVariants>;
 
-  return (
-    <div {...props} className={getSlotClass(useDefault, finalClassName, props)}>
-      {children}
-    </div>
-  );
-};
+interface ContainerProps
+  extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, ContainerVariants {}
+
+const Container = forwardRef<HTMLDivElement, ContainerProps>(
+  ({ children, className = '', props, useDefault = false }, ref) => {
+    const finalClass = useDefault ? containerVariants({ className, type: 'container' }) : className;
+
+    return (
+      <div {...props} ref={ref} className={finalClass}>
+        {children}
+      </div>
+    );
+  },
+);
+
+Container.displayName = 'Container';
 
 // ─── Section ─────────────────────────────────────────────────────────────────
 
-type SectionProps = BaseComponentProps<HTMLAttributes<HTMLElement>>;
+const sectionVariants = cva(layoutStyles.base, {
+  defaultVariants: {
+    type: 'section',
+  },
+  variants: layoutStyles.variants,
+});
 
-const Section = ({ children, className = '', props, useDefault = true }: SectionProps) => {
-  const finalClassName = useDefault ? `${layoutStyles.section} ${className}` : className;
+type SectionVariants = VariantProps<typeof sectionVariants>;
 
-  return (
-    <section {...props} className={getSlotClass(useDefault, finalClassName, props)}>
-      {children}
-    </section>
-  );
-};
+interface SectionProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, SectionVariants {}
 
-export type { ContainerProps, SectionProps };
-export { Container, Section };
+const Section = forwardRef<HTMLElement, SectionProps>(
+  ({ children, className = '', props, useDefault = false }, ref) => {
+    const finalClass = useDefault ? sectionVariants({ className, type: 'section' }) : className;
+
+    return (
+      <section {...props} ref={ref} className={finalClass}>
+        {children}
+      </section>
+    );
+  },
+);
+
+Section.displayName = 'Section';
+
+// ─── Exports ─────────────────────────────────────────────────────────────────
+
+export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };
+export { Container, Section, containerVariants, sectionVariants };

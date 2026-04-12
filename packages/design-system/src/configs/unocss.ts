@@ -13,7 +13,7 @@ import { getCSS, getThemes } from '../utils/theme-generator';
 import { lineHeights, webFontsOptions } from '../tokens/typography';
 import { iconsOptions } from '../tokens/icons';
 import { motion } from '../tokens/effects';
-import { shortcuts } from '../utils/styles';
+import { shortcuts } from '../utils/shortcuts';
 import { spacing } from '../tokens/spacing';
 
 const unoCssBaseConfig: UserConfig = {

@@ -1,44 +1,58 @@
-import type { CSSProperties, HTMLAttributes } from 'react';
-import { cn, getSlotClass } from '../utils/styles';
+import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
-import { featureStyles } from '../tokens/variants';
+import { combineClasses } from '../utils/helpers';
+import { marqueeStyles } from '../tokens/styles';
 
-interface MarqueeProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>> {
-  direction?: 'left' | 'right';
-  pauseOnHover?: boolean;
-  speed?: number;
+const marqueeVariants = cva(marqueeStyles.base, {
+  defaultVariants: marqueeStyles.default,
+  variants: marqueeStyles.variants,
+});
+
+type MarqueeVariants = VariantProps<typeof marqueeVariants>;
+
+interface MarqueeProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, MarqueeVariants {
+  speedValue?: number;
 }
 
-const Marquee = ({
-  children,
-  className = '',
-  direction = 'left',
-  pauseOnHover = true,
-  props,
-  speed = 40,
-  useDefault = true,
-}: MarqueeProps) => {
-  const finalClass = useDefault ? `${featureStyles.marquee.root} ${className}` : className;
+const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
+  (
+    {
+      children,
+      className = '',
+      direction,
+      pauseOnHover,
+      props,
+      speed,
+      speedValue,
+      useDefault = false,
+    },
+    ref,
+  ) => {
+    const finalClass = useDefault
+      ? marqueeVariants({ className, direction, pauseOnHover, speed })
+      : className;
 
-  const animationClass =
-    direction === 'left' ? featureStyles.marquee.animLeft : featureStyles.marquee.animRight;
+    const duration =
+      speedValue ?? Number(marqueeStyles.variants.speed[speed ?? marqueeStyles.default.speed]);
 
-  return (
-    <div {...props} className={getSlotClass(useDefault, finalClass, props)}>
-      <div
-        className={cn(
-          useDefault ? featureStyles.marquee.track : '',
-          animationClass,
-          pauseOnHover && featureStyles.marquee.trackPause,
-        )}
-        style={{ '--duration': `${speed}s` } as CSSProperties & Record<string, string | number>}
-      >
-        {children}
-        {children}
+    return (
+      <div {...props} ref={ref} className={finalClass}>
+        <div
+          className={combineClasses(useDefault ? marqueeStyles.slots.track : '')}
+          style={
+            { '--duration': `${duration}s` } as CSSProperties & Record<string, string | number>
+          }
+        >
+          {children}
+          {children}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 
-export type { MarqueeProps };
-export { Marquee };
+Marquee.displayName = 'Marquee';
+
+export type { MarqueeProps, MarqueeVariants };
+export { Marquee, marqueeVariants };

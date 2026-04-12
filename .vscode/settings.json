@@ -7,6 +7,8 @@
     "source.fixAll.oxc": "explicit"
   },
   "unocss.root": ["./packages/design-system"],
+  "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
+  "unocss.exclude": ["**/node_modules/**", "**/dist/**"],
   "unocss.disable": false,
   "unocss.autocomplete.strict": true,
   "unocss.strictAnnotationMatch": true,

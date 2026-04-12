@@ -63,20 +63,17 @@ const themes: Record<string, ThemeColors> = {
 // Surface uses the same stops but with ~15% chroma for a subtle neutral tint.
 
 const lightnessStops: Record<ColorScale, number> = {
-  // Keep numeric ascending order
-  /* eslint-disable sort-keys */
-  50: 0.97,
   100: 0.94,
   200: 0.88,
   300: 0.8,
   400: 0.7,
-  500: 0.55, // identity stop — overridden per-color in generateColorScale
+  50: 0.97,
+  500: 0.55,
   600: 0.44,
   700: 0.36,
   800: 0.27,
   900: 0.18,
   950: 0.11,
-  /* eslint-enable sort-keys */
 };
 
 // ─── OKLCH converters ─────────────────────────────────────────────────────────
@@ -112,14 +109,10 @@ const oklchToRgbTuple = (oklchColor: Oklch): string => {
 /**
  * Build an Oklch color object with explicit fields.
  */
-// eslint-disable-next-line id-length
-const makeOklch = (lightness: number, chroma: number, hue: number): Oklch => ({
-  // OKLCH spec uses single-char field names: c (chroma), h (hue), l (lightness)
-  /* eslint-disable id-length */
-  c: chroma,
-  h: hue,
-  l: lightness,
-  /* eslint-enable id-length */
+const makeOklch = (l: number, c: number, h: number): Oklch => ({
+  c,
+  h,
+  l,
   mode: 'oklch',
 });
 
@@ -155,14 +148,13 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
 /**
  * Build a UnoCSS-compatible theme colors object that references CSS variables.
  */
-const getThemeColors = (prefix: string): Record<string, string> => {
-  const colors = Object.keys(lightnessStops).reduce<Record<string, string>>((acc, stop) => {
-    acc[stop] = `rgb(var(--${prefix}-${stop}))`;
-    return acc;
-  }, {});
-  colors['DEFAULT'] = `rgb(var(--${prefix}-base))`;
-  return colors;
-};
+const getThemeColors = (prefix: string): Record<string, string> =>
+  Object.keys(lightnessStops)
+    .toSorted((stopA, stopB) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
+    .reduce<Record<string, string>>((acc, stop) => {
+      acc[stop] = `rgb(var(--${prefix}-${stop}))`;
+      return acc;
+    }, {});
 
 const getThemes = () => ({
   colors: {

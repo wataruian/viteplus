@@ -50,7 +50,8 @@ const redact = (
     return data;
   }
 
-  const redactFn = getRedactFn(redactObj as unknown);
+  const redactFn = getRedactFn(redactObj);
+
   if (!redactFn) {
     return data;
   }

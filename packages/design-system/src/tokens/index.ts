@@ -4,4 +4,4 @@ export * from './effects';
 export * from './icons';
 export * from './spacing';
 export * from './typography';
-export * from './variants';
+export * from './styles';

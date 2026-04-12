@@ -12,11 +12,9 @@ const App = () => {
   }, []);
 
   return (
-    <div className={layoutStyles.appRoot}>
+    <div className={layoutStyles.variants.type.appRoot}>
       <Header />
-      <main className='pt-20'>
-        <Preview />
-      </main>
+      <Preview />
     </div>
   );
 };

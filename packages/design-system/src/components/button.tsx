@@ -1,11 +1,10 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
+import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
-import { buttonStyles } from '../tokens/variants';
-import { getSlotClass } from '../utils/styles';
+import { buttonStyles } from '../tokens/styles';
 
 const buttonVariants = cva(buttonStyles.base, {
-  defaultVariants: buttonStyles.defaultVariants,
+  defaultVariants: buttonStyles.default,
   variants: buttonStyles.variants,
 });
 
@@ -18,31 +17,49 @@ interface ButtonProps extends BaseComponentProps<ButtonBaseProps>, ButtonVariant
   href?: string | undefined;
 }
 
-const Button = ({
-  children,
-  className = '',
-  href,
-  intent,
-  props,
-  size,
-  useDefault = true,
-}: ButtonProps) => {
-  const finalClass = useDefault ? buttonVariants({ className, intent, size }) : className;
+const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+  ({ children, className = '', href, intent, props, size, useDefault = false }, ref) => {
+    const finalClass = useDefault ? buttonVariants({ className, intent, size }) : className;
 
-  if (href !== undefined && href !== '') {
+    if (href !== undefined && href !== '') {
+      return (
+        <a
+          {...props}
+          ref={(node) => {
+            if (typeof ref === 'function') {
+              ref(node);
+            } else if (ref) {
+              ref.current = node;
+            }
+          }}
+          className={finalClass}
+          href={href}
+        >
+          {children}
+        </a>
+      );
+    }
+
     return (
-      <a {...props} className={getSlotClass(useDefault, finalClass, props)} href={href}>
+      <button
+        {...props}
+        ref={(node) => {
+          if (typeof ref === 'function') {
+            ref(node);
+          } else if (ref) {
+            ref.current = node;
+          }
+        }}
+        className={finalClass}
+        type='button'
+      >
         {children}
-      </a>
+      </button>
     );
-  }
+  },
+);
 
-  return (
-    <button {...props} className={getSlotClass(useDefault, finalClass, props)} type='button'>
-      {children}
-    </button>
-  );
-};
+Button.displayName = 'Button';
 
 export type { ButtonBaseProps, ButtonProps, ButtonVariants };
 export { Button, buttonVariants };
