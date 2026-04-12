@@ -16,7 +16,7 @@ interface TypographyProps
 }
 
 const Typography = forwardRef<HTMLElement, TypographyProps>(
-  ({ as: Component = 'p', children, className = '', props, type, useDefault = false }, ref) => {
+  ({ as: Component = 'p', children, className = '', props, type, useDefault = true }, ref) => {
     const finalClass = useDefault ? typographyVariants({ className, type }) : className;
 
     return createElement(

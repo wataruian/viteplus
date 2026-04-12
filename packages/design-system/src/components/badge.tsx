@@ -13,7 +13,7 @@ type BadgeVariants = VariantProps<typeof badgeVariants>;
 interface BadgeProps extends BaseComponentProps<HTMLAttributes<HTMLSpanElement>>, BadgeVariants {}
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ children, className = '', intent, props, size, useDefault = false }, ref) => {
+  ({ children, className = '', intent, props, size, useDefault = true }, ref) => {
     const finalClass = useDefault ? badgeVariants({ className, intent, size }) : className;
 
     return (

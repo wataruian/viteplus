@@ -16,7 +16,7 @@ interface LogoProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, 
 }
 
 const Logo = forwardRef<HTMLDivElement, LogoProps>(
-  ({ children, className = '', props, textBottom = '', textTop = '', useDefault = false }, ref) => {
+  ({ children, className = '', props, textBottom = '', textTop = '', useDefault = true }, ref) => {
     const finalClass = useDefault ? logoVariants({ className }) : className;
 
     return (

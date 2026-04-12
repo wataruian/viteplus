@@ -18,7 +18,7 @@ interface ButtonProps extends BaseComponentProps<ButtonBaseProps>, ButtonVariant
 }
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
-  ({ children, className = '', href, intent, props, size, useDefault = false }, ref) => {
+  ({ children, className = '', href, intent, props, size, useDefault = true }, ref) => {
     const finalClass = useDefault ? buttonVariants({ className, intent, size }) : className;
 
     if (href !== undefined && href !== '') {

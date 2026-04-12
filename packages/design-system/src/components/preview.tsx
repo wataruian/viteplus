@@ -82,7 +82,7 @@ const ScaleRow = ({ palette }: { palette: ColorKey }) => (
  */
 const SemanticShowcase = () => (
   <div className={previewStyles.slots.semanticGrid}>
-    <Card useDefault intent='premium' className={previewStyles.slots.showcaseCard}>
+    <Card intent='premium' className={previewStyles.slots.showcaseCard}>
       <Typography type='caption' className={previewStyles.slots.showcaseCardTitle}>
         Adaptive Interaction
       </Typography>
@@ -90,17 +90,17 @@ const SemanticShowcase = () => (
         <div className={previewStyles.slots.adaptiveDemo}>Background Inverse / Text Adaptive</div>
         <div className={previewStyles.slots.primaryDemo}>Primary Border & Text</div>
         <div className={previewStyles.slots.buttonRow}>
-          <Button useDefault intent='primary' size='sm'>
+          <Button intent='primary' size='sm'>
             Action
           </Button>
-          <Button useDefault intent='ghost' size='sm'>
+          <Button intent='ghost' size='sm'>
             Ghost
           </Button>
         </div>
       </div>
     </Card>
 
-    <Card useDefault intent='glass' className={previewStyles.slots.showcaseCard}>
+    <Card intent='glass' className={previewStyles.slots.showcaseCard}>
       <Typography type='caption' className={previewStyles.slots.showcaseCardTitle}>
         Neutral Surfaces
       </Typography>
@@ -128,7 +128,7 @@ const ThemePreview = ({ theme, mode }: { theme: string; mode: Mode }) => {
 
   return (
     <div className={wrapperClass}>
-      <Card useDefault intent='premium' className={previewStyles.slots.themeCard}>
+      <Card intent='premium' className={previewStyles.slots.themeCard}>
         <div className={previewStyles.slots.themeGlowTop} />
         <div className={previewStyles.slots.themeGlowBottom} />
 
@@ -142,7 +142,7 @@ const ThemePreview = ({ theme, mode }: { theme: string; mode: Mode }) => {
               <span className={previewStyles.slots.themeModeAccent}>{mode} mode</span>
             </Typography>
           </div>
-          <Badge useDefault intent='primary' size='md'>
+          <Badge intent='primary' size='md'>
             Active Theme
           </Badge>
         </div>
@@ -164,7 +164,7 @@ const ThemePreview = ({ theme, mode }: { theme: string; mode: Mode }) => {
 interface PreviewProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, PreviewVariants {}
 
 const Preview = forwardRef<HTMLElement, PreviewProps>(
-  ({ children, className = '', props, useDefault = false }, ref) => {
+  ({ children, className = '', props, useDefault = true }, ref) => {
     const themeList = Object.keys(themes);
     const [activeTheme, setActiveTheme] = useState(themeList[0]);
     const [activeMode, setActiveMode] = useState<Mode>('light');
@@ -189,7 +189,6 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                 <div className={previewStyles.slots.controlGroup}>
                   {themeList.map((t) => (
                     <Button
-                      useDefault
                       key={t}
                       intent={activeTheme === t ? 'premium' : 'ghost'}
                       size='sm'
@@ -208,7 +207,6 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                 <div className={previewStyles.slots.controlGroup}>
                   {(['light', 'dark'] as const).map((m) => (
                     <Button
-                      useDefault
                       key={m}
                       intent={activeMode === m ? 'premium' : 'ghost'}
                       size='sm'

@@ -18,7 +18,7 @@ interface ThemeSwitcherProps extends BaseComponentProps, ThemeSwitcherVariants {
 }
 
 const ThemeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ThemeSwitcherProps>(
-  ({ className = '', darkIcon, intent, lightIcon, props, size, useDefault = false }, ref) => {
+  ({ className = '', darkIcon, intent, lightIcon, props, size, useDefault = true }, ref) => {
     const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
     useEffect(() => {
@@ -49,7 +49,6 @@ const ThemeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ThemeSwi
         }}
         ref={ref}
         size={finalSize}
-        useDefault={useDefault}
       >
         <Icon
           name={
@@ -57,7 +56,6 @@ const ThemeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ThemeSwi
               ? (lightIcon ?? themeSwitcherStyles.slots.sunIcon)
               : (darkIcon ?? themeSwitcherStyles.slots.moonIcon)
           }
-          useDefault={useDefault}
         />
       </Button>
     );

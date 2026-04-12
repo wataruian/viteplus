@@ -17,7 +17,7 @@ type HeaderVariants = VariantProps<typeof headerVariants>;
 interface HeaderProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, HeaderVariants {}
 
 const Header = forwardRef<HTMLElement, HeaderProps>(
-  ({ className = '', props, useDefault = false }, ref) => {
+  ({ className = '', props, useDefault = true }, ref) => {
     const finalClass = useDefault ? headerVariants({ className, type: 'header' }) : className;
 
     return (

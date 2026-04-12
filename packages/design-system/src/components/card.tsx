@@ -13,7 +13,7 @@ type CardVariants = VariantProps<typeof cardVariants>;
 interface CardProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, CardVariants {}
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ children, className = '', intent, props, useDefault = false }, ref) => {
+  ({ children, className = '', intent, props, useDefault = true }, ref) => {
     const finalClass = useDefault ? cardVariants({ className, intent }) : className;
 
     return (

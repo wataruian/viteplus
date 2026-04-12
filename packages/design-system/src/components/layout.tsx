@@ -18,7 +18,7 @@ interface ContainerProps
   extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, ContainerVariants {}
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  ({ children, className = '', props, useDefault = false }, ref) => {
+  ({ children, className = '', props, useDefault = true }, ref) => {
     const finalClass = useDefault ? containerVariants({ className, type: 'container' }) : className;
 
     return (
@@ -45,7 +45,7 @@ type SectionVariants = VariantProps<typeof sectionVariants>;
 interface SectionProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, SectionVariants {}
 
 const Section = forwardRef<HTMLElement, SectionProps>(
-  ({ children, className = '', props, useDefault = false }, ref) => {
+  ({ children, className = '', props, useDefault = true }, ref) => {
     const finalClass = useDefault ? sectionVariants({ className, type: 'section' }) : className;
 
     return (

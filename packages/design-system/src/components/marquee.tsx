@@ -25,7 +25,7 @@ const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
       props,
       speed,
       speedValue,
-      useDefault = false,
+      useDefault = true,
     },
     ref,
   ) => {

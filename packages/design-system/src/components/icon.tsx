@@ -15,7 +15,7 @@ interface IconProps extends BaseComponentProps<HTMLAttributes<HTMLSpanElement>>,
 }
 
 const Icon = forwardRef<HTMLSpanElement, IconProps>(
-  ({ className = '', name, props, size, useDefault = false }, ref) => {
+  ({ className = '', name, props, size, useDefault = true }, ref) => {
     const finalClass = useDefault ? iconVariants({ className, size }) : className;
 
     return <span {...props} ref={ref} className={`${finalClass} ${name}`} />;
