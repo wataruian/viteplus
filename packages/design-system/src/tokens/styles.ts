@@ -182,6 +182,58 @@ const typographyStyles = {
   },
 } as const;
 
+const previewStyles = {
+  base: 'flex flex-col gap-8 p-8 lg:p-16 max-w-7xl mx-auto font-sans selection:bg-primary/30',
+  default: {},
+  slots: {
+    adaptiveDemo: 'p-4 rounded-xl bg-inverse text-adaptive font-medium shadow-inner',
+    adaptiveDemoStack: 'flex flex-col gap-2',
+    buttonRow: 'flex gap-2',
+    colorSwatch: 'flex flex-col gap-1 items-center min-w-12 group',
+    colorSwatchChip:
+      'w-full h-12 rounded-lg border border-adaptive shadow-sm transition-transform group-hover:scale-105',
+    colorSwatchLabel: 'text-[10px] opacity-60',
+    controlBar:
+      'flex flex-wrap gap-4 p-2 bg-adaptive-alt rounded-2xl border border-adaptive shadow-lg backdrop-blur-md',
+    controlGroup: 'flex gap-1 bg-adaptive p-1 rounded-xl border border-adaptive',
+    footer:
+      'mt-16 pt-8 border-t border-adaptive flex justify-between items-center opacity-30 text-[10px] font-mono uppercase tracking-[0.2em] font-bold',
+    header: 'flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8',
+    headerTitleGroup: 'flex flex-col gap-2',
+    iconMoon: 'i-ph-moon-bold',
+    iconSun: 'i-ph-sun-bold',
+    main: 'transition-all duration-300 transform-gpu',
+    modeButton: 'capitalize flex items-center gap-2',
+    primaryDemo: 'p-4 rounded-xl border-2 border-primary text-primary font-bold',
+    scaleDivider: 'w-px h-12 bg-adaptive mx-2 opacity-20',
+    scaleRow: 'flex flex-col gap-3',
+    scaleRowGrid: 'flex flex-wrap gap-2',
+    scaleRowLabel: 'tracking-widest opacity-40 ml-1',
+    semanticGrid: 'grid grid-cols-1 md:grid-cols-2 gap-4 mt-8',
+    showcaseCard: 'p-6 flex flex-col gap-4',
+    showcaseCardTitle: 'opacity-50',
+    subtitle: 'text-lg text-adaptive opacity-60 font-medium',
+    surfaceGrid: 'grid grid-cols-2 gap-3',
+    surfaceItem:
+      'h-16 rounded-xl border border-adaptive flex items-end p-2 text-[10px] font-mono opacity-50',
+    themeCard:
+      'p-8 rounded-[2rem] bg-adaptive text-adaptive border border-adaptive shadow-2xl flex flex-col gap-8 transition-all duration-500 overflow-hidden relative min-h-[600px]',
+    themeGlowBottom:
+      'absolute bottom-0 left-0 w-96 h-96 bg-accent/10 blur-[120px] pointer-events-none animate-pulse',
+    themeGlowTop:
+      'absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] pointer-events-none animate-pulse',
+    themeHeader: 'flex justify-between items-end border-b border-adaptive pb-6',
+    themeMain: 'space-y-10',
+    themeModeAccent: 'uppercase text-primary font-bold',
+    themeModeText: 'text-sm mt-2 font-medium',
+    themeSelectorButton: 'capitalize',
+    themeTitle: 'capitalize leading-none',
+    themeWrapper: 'contents',
+    title: 'text-6xl font-black tracking-tighter text-adaptive',
+  },
+  variants: {},
+} as const;
+
 export {
   badgeStyles,
   buttonStyles,
@@ -193,4 +245,5 @@ export {
   marqueeStyles,
   themeSwitcherStyles,
   typographyStyles,
+  previewStyles,
 };
