@@ -39,4 +39,4 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
 Logo.displayName = 'Logo';
 
 export type { LogoProps, LogoVariants };
-export { Logo, logoVariants };
+export { Logo };

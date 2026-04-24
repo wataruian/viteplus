@@ -2,7 +2,7 @@ import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
 import { Logo } from './logo';
-import { ThemeSwitcher } from './theme-switcher';
+import { ModeSwitcher } from './mode-switcher';
 import { layoutStyles } from '../tokens/styles';
 
 const headerVariants = cva(layoutStyles.base, {
@@ -14,18 +14,20 @@ const headerVariants = cva(layoutStyles.base, {
 
 type HeaderVariants = VariantProps<typeof headerVariants>;
 
-interface HeaderProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, HeaderVariants {}
+interface HeaderProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, HeaderVariants {
+  showThemeSwitcher?: boolean;
+}
 
 const Header = forwardRef<HTMLElement, HeaderProps>(
-  ({ className = '', props, useDefault = true }, ref) => {
+  ({ className = '', props, showThemeSwitcher = true, useDefault = true }, ref) => {
     const finalClass = useDefault ? headerVariants({ className, type: 'header' }) : className;
 
     return (
       <header {...props} ref={ref} className={finalClass}>
         <div className={layoutStyles.variants.type.container}>
-          <div className={layoutStyles.variants.type.headerInner}>
+          <div className={layoutStyles.variants.type['header-inner']}>
             <Logo />
-            <ThemeSwitcher />
+            {showThemeSwitcher && <ModeSwitcher />}
           </div>
         </div>
       </header>
@@ -36,4 +38,4 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 Header.displayName = 'Header';
 
 export type { HeaderProps, HeaderVariants };
-export { Header, headerVariants };
+export { Header };

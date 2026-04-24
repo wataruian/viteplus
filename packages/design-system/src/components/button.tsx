@@ -62,4 +62,4 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
 Button.displayName = 'Button';
 
 export type { ButtonBaseProps, ButtonProps, ButtonVariants };
-export { Button, buttonVariants };
+export { Button };

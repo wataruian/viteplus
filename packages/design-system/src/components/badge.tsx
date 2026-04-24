@@ -27,4 +27,4 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 Badge.displayName = 'Badge';
 
 export type { BadgeProps, BadgeVariants };
-export { Badge, badgeVariants };
+export { Badge };

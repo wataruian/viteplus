@@ -1,4 +1,5 @@
 import { type Oklch, clampChroma, converter, parse } from 'culori';
+import { classPrefix } from './helpers';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -119,7 +120,9 @@ const makeOklch = (l: number, c: number, h: number): Oklch => ({
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /** Returns the lightness stops record. The `isSurface` param is kept for back-compat. */
-const getWeights = (_isSurface = false): Record<ColorScale, number> => lightnessStops;
+
+const getLightnessStops = () =>
+  Object.keys(lightnessStops).toSorted((a, b) => Number.parseInt(a, 10) - Number.parseInt(b, 10));
 
 /**
  * Generate a perceptually uniform OKLCH color scale for a given CSS color.
@@ -140,7 +143,7 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
     .toSorted(([stopA], [stopB]) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
     .map(([stop, targetL]) => {
       const lightness = stop === '500' ? baseL : targetL;
-      return `  --${prefix}-${stop}: ${oklchToRgbTuple(makeOklch(lightness, scaleChroma, baseH))};`;
+      return `  --${classPrefix}-${prefix}-${stop}: ${oklchToRgbTuple(makeOklch(lightness, scaleChroma, baseH))};`;
     })
     .join('\n');
 };
@@ -152,13 +155,24 @@ const getThemeColors = (prefix: string): Record<string, string> =>
   Object.keys(lightnessStops)
     .toSorted((stopA, stopB) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
     .reduce<Record<string, string>>((acc, stop) => {
-      acc[stop] = `rgb(var(--${prefix}-${stop}))`;
+      acc[stop] = `rgb(var(--${classPrefix}-${prefix}-${stop}))`;
       return acc;
     }, {});
 
 const getThemes = () => ({
   colors: {
     accent: getThemeColors('accent'),
+    adaptive: {
+      bg: `rgb(var(--${classPrefix}-color-bg))`,
+      'bg-alt': `rgb(var(--${classPrefix}-color-bg-alt))`,
+      border: `var(--${classPrefix}-color-border)`,
+      'border-alt': `var(--${classPrefix}-color-border-alt)`,
+      inverse: `var(--${classPrefix}-color-inverse)`,
+      text: `rgb(var(--${classPrefix}-color-text))`,
+      'text-alt': `rgb(var(--${classPrefix}-color-text-alt))`,
+      'text-muted': `var(--${classPrefix}-color-text-muted)`,
+      'text-muted-alt': `var(--${classPrefix}-color-text-muted-alt)`,
+    },
     danger: getThemeColors('danger'),
     info: getThemeColors('info'),
     primary: getThemeColors('primary'),
@@ -198,23 +212,25 @@ const generateThemeCss = (className: string, colors: ThemeColors): string => {
 
   const selector = className === 'default' ? ':root' : `.${className}`;
 
-  return `
+  const css = `
 ${selector} {
-  --primary-base: ${primaryRgb};
+  --${classPrefix}-primary-base: ${primaryRgb};
 ${primaryScale}
-  --accent-base: ${accentRgb};
+  --${classPrefix}-accent-base: ${accentRgb};
 ${accentScale}
-  --danger-base: ${dangerRgb};
+  --${classPrefix}-danger-base: ${dangerRgb};
 ${dangerScale}
-  --success-base: ${successRgb};
+  --${classPrefix}-success-base: ${successRgb};
 ${successScale}
-  --warning-base: ${warningRgb};
+  --${classPrefix}-warning-base: ${warningRgb};
 ${warningScale}
-  --info-base: ${infoRgb};
+  --${classPrefix}-info-base: ${infoRgb};
 ${infoScale}
-  --surface-base: ${surfaceRgb};
+  --${classPrefix}-surface-base: ${surfaceRgb};
 ${surfaceScale}
 }`;
+
+  return css;
 };
 
 const getCSS = (): string => {
@@ -222,7 +238,7 @@ const getCSS = (): string => {
     .map(([name, colors]) => generateThemeCss(name, colors))
     .join('\n');
 
-  return `
+  const css = `
 ${themeBlocks}
 
 :root {
@@ -234,42 +250,55 @@ ${themeBlocks}
 /* Light mode: light backgrounds, dark text */
 .light {
   color-scheme: light;
-
-  --color-bg:         rgb(var(--surface-50));
-  --color-bg-alt:     rgb(var(--surface-100));
-  --color-text:       rgb(var(--surface-900));
-  --color-text-muted: rgba(var(--surface-900), 0.6);
-  --color-border:     rgba(var(--surface-900), 0.1);
-  --color-inverse:    rgb(var(--surface-950));
+  --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-100));
+  --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-200));
+  --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-900));
+  --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-800));
+  --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-900), 0.6);
+  --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-800), 0.6);
+  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-900), 0.1);
+  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-800), 0.1);
+  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-950));
 }
 
 /* Dark mode: dark backgrounds, light text */
 .dark {
   color-scheme: dark;
-
-  --color-bg:         rgb(var(--surface-950));
-  --color-bg-alt:     rgb(var(--surface-900));
-  --color-text:       rgb(var(--surface-50));
-  --color-text-muted: rgba(var(--surface-50), 0.6);
-  --color-border:     rgba(var(--surface-50), 0.1);
-  --color-inverse:    rgb(var(--surface-50));
+  --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-900));
+  --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-800));
+  --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-50));
+  --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-100));
+  --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-50), 0.6);
+  --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-100), 0.6);
+  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-50), 0.1);
+  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-100), 0.1);
+  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-50));
 }
 
 :root, body {
   -webkit-font-smoothing: antialiased;
+}
+
+:root {
+  color-scheme: light dark;
+  background-color: var(--${classPrefix}-color-bg);
+  color: var(--${classPrefix}-color-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
 }`;
+
+  return css;
 };
 
 export type { ThemeColors, ColorScale };
 export {
   themes,
   lightnessStops,
+  getLightnessStops,
   toOklch,
   toRgb,
   parseToOklch,
   oklchToRgbTuple,
   makeOklch,
-  getWeights,
   generateColorScale,
   getThemeColors,
   getThemes,

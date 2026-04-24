@@ -1,9 +1,10 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { forwardRef, useEffect, useState } from 'react';
 import type { BaseComponentProps } from '../types/component';
 import { Button } from './button';
-import { Icon } from './icon';
+import { forwardRef } from 'react';
 import { themeSwitcherStyles } from '../tokens/styles';
+import { themes } from '../utils/theme-generator';
+import { useTheme } from '../context/theme-context';
 
 const themeSwitcherVariants = cva(themeSwitcherStyles.base, {
   defaultVariants: themeSwitcherStyles.default,
@@ -12,52 +13,43 @@ const themeSwitcherVariants = cva(themeSwitcherStyles.base, {
 
 type ThemeSwitcherVariants = VariantProps<typeof themeSwitcherVariants>;
 
-interface ThemeSwitcherProps extends BaseComponentProps, ThemeSwitcherVariants {
-  darkIcon?: string;
-  lightIcon?: string;
-}
+interface ThemeSwitcherProps extends BaseComponentProps, ThemeSwitcherVariants {}
 
-const ThemeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ThemeSwitcherProps>(
-  ({ className = '', darkIcon, intent, lightIcon, props, size, useDefault = true }, ref) => {
-    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
+  ({ className = '', plain, props, size, useDefault = true }, ref) => {
+    const themeList = Object.keys(themes);
+    const { setTheme, theme } = useTheme();
 
-    useEffect(() => {
-      const root =
-        typeof globalThis === 'undefined' ? undefined : globalThis.document.documentElement;
-      if (root) {
-        root.classList.remove('light', 'dark');
-        root.classList.add(theme);
-      }
-    }, [theme]);
-
-    const toggleTheme = () => {
-      setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-    };
-
-    const finalClass = useDefault ? themeSwitcherVariants({ className, intent, size }) : className;
-    const finalIntent = useDefault ? (intent ?? themeSwitcherStyles.default.intent) : intent;
-    const finalSize = useDefault ? (size ?? themeSwitcherStyles.default.size) : size;
+    const finalClass = useDefault
+      ? themeSwitcherVariants({
+          className,
+          plain: plain ?? themeSwitcherStyles.default.plain,
+          size,
+        })
+      : className;
 
     return (
-      <Button
-        className={finalClass}
-        intent={finalIntent}
-        props={{
-          'aria-label': `Switch to ${theme === 'light' ? 'dark' : 'light'} mode`,
-          onClick: toggleTheme,
-          ...props,
-        }}
-        ref={ref}
-        size={finalSize}
-      >
-        <Icon
-          name={
-            theme === 'light'
-              ? (lightIcon ?? themeSwitcherStyles.slots.sunIcon)
-              : (darkIcon ?? themeSwitcherStyles.slots.moonIcon)
-          }
-        />
-      </Button>
+      <div {...props} ref={ref} className={finalClass}>
+        {themeList.map((t) => (
+          <Button
+            key={t}
+            intent={
+              theme === t
+                ? themeSwitcherStyles.slots['active-intent']
+                : themeSwitcherStyles.slots['inactive-intent']
+            }
+            size={size}
+            props={{
+              onClick: () => {
+                setTheme(t);
+              },
+            }}
+            className={themeSwitcherStyles.slots.button}
+          >
+            {t}
+          </Button>
+        ))}
+      </div>
     );
   },
 );
@@ -65,4 +57,4 @@ const ThemeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ThemeSwi
 ThemeSwitcher.displayName = 'ThemeSwitcher';
 
 export type { ThemeSwitcherProps, ThemeSwitcherVariants };
-export { ThemeSwitcher, themeSwitcherVariants };
+export { ThemeSwitcher };

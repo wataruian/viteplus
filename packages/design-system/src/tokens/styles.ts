@@ -33,10 +33,12 @@ const buttonStyles = {
     intent: {
       accent: 'bg-accent text-black hover:bg-accent/90',
       danger: 'bg-danger text-white hover:bg-danger/90',
-      ghost: 'bg-transparent text-slate-400 hover:bg-white/5 hover:text-white',
+      ghost:
+        'bg-transparent text-adaptive-text-muted hover:bg-adaptive-border hover:text-adaptive-text',
       glass: 'bg-white/5 text-white border border-white/10 backdrop-blur-md hover:bg-white/10',
+      inverse: 'bg-adaptive-inverse !text-[var(--ds-color-bg)] hover:opacity-90',
       outline:
-        'bg-transparent text-white border border-white/10 hover:border-primary/50 hover:bg-primary/5',
+        'bg-transparent text-adaptive-text border border-adaptive-border hover:bg-adaptive-border',
       premium: 'bg-primary text-black hover:bg-primary/90',
       primary: 'bg-white text-black hover:bg-white/90',
       secondary: 'bg-slate-800 text-white hover:bg-slate-700',
@@ -112,12 +114,12 @@ const layoutStyles = {
   },
   variants: {
     type: {
-      appRoot: 'min-h-screen font-sans',
+      'app-root': 'min-h-screen font-sans',
       container: 'max-w-layout mx-auto px-6 md:px-10',
       header:
         'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
-      headerInner: 'h-full flex items-center justify-between',
-      section: 'py-24 md:py-40 relative overflow-hidden',
+      'header-inner': 'h-full flex items-center justify-between',
+      section: 'py-12 md:py-20 relative overflow-hidden',
     },
   },
 } as const;
@@ -126,7 +128,7 @@ const marqueeStyles = {
   base: 'flex select-none overflow-hidden gap-4',
   default: {
     direction: 'left' as const,
-    pauseOnHover: true,
+    'pause-on-hover': true,
     speed: 'medium' as const,
   },
   slots: {
@@ -137,7 +139,7 @@ const marqueeStyles = {
       left: 'animate-marquee',
       right: 'animate-marquee-reverse',
     },
-    pauseOnHover: {
+    'pause-on-hover': {
       false: '',
       true: 'hover:[animation-play-state:paused]',
     },
@@ -149,19 +151,43 @@ const marqueeStyles = {
   },
 } as const;
 
-const themeSwitcherStyles = {
-  base: '',
+const modeSwitcherStyles = {
+  base: 'aspect-square flex items-center justify-center !p-0',
   default: {
-    intent: 'secondary' as const,
-    size: 'sm' as const,
+    intent: 'ghost' as const,
+    size: 'md' as const,
   },
   slots: {
-    moonIcon: 'i-ph-moon-bold',
-    sunIcon: 'i-ph-sun-bold',
+    'moon-icon': 'i-ph-moon-bold',
+    'sun-icon': 'i-ph-sun-bold',
   },
   variants: {
     intent: buttonStyles.variants.intent,
     size: buttonStyles.variants.size,
+  },
+} as const;
+
+const themeSwitcherStyles = {
+  base: 'flex flex-wrap gap-1 bg-[var(--ds-color-bg)] p-1 rounded-xl border border-[var(--ds-color-border-alt)] shadow-sm w-fit',
+  default: {
+    plain: false,
+    size: 'sm' as const,
+  },
+  slots: {
+    'active-intent': 'inverse',
+    button: 'capitalize font-medium shadow-none transition-colors',
+    'inactive-intent': 'ghost',
+  },
+  variants: {
+    plain: {
+      false: '',
+      true: '!bg-transparent !border-none !shadow-none !p-0',
+    },
+    size: {
+      lg: 'gap-2 p-2',
+      md: 'gap-1.5 p-1.5',
+      sm: 'gap-1 p-1',
+    },
   },
 } as const;
 
@@ -172,64 +198,44 @@ const typographyStyles = {
   },
   variants: {
     type: {
-      body: 'text-lg text-slate-400 leading-relaxed font-medium',
-      caption: 'text-sm text-slate-500 font-mono uppercase tracking-widest',
+      body: 'text-lg text-adaptive-text-muted leading-relaxed font-medium',
+      caption: 'text-sm text-adaptive-text-muted-alt font-mono uppercase tracking-widest',
       display:
-        'text-liquid-display font-black leading-compressed tracking-tighter text-white font-header',
-      headline: 'text-4xl md:text-5xl font-black text-white font-header tracking-tight',
-      subheadline: 'text-2xl font-bold text-white',
+        'text-liquid-display font-black leading-compressed tracking-tighter text-adaptive-text font-header',
+      headline: 'text-4xl md:text-5xl font-black text-adaptive-text font-header tracking-tight',
+      'sub-headline': 'text-2xl font-bold text-adaptive-text',
     },
   },
 } as const;
 
 const previewStyles = {
-  base: 'flex flex-col gap-8 p-8 lg:p-16 max-w-7xl mx-auto font-sans selection:bg-primary/30',
+  base: 'pt-6 md:pt-10',
   default: {},
   slots: {
-    adaptiveDemo: 'p-4 rounded-xl bg-inverse text-adaptive font-medium shadow-inner',
-    adaptiveDemoStack: 'flex flex-col gap-2',
-    buttonRow: 'flex gap-2',
-    colorSwatch: 'flex flex-col gap-1 items-center min-w-12 group',
-    colorSwatchChip:
-      'w-full h-12 rounded-lg border border-adaptive shadow-sm transition-transform group-hover:scale-105',
-    colorSwatchLabel: 'text-[10px] opacity-60',
-    controlBar:
-      'flex flex-wrap gap-4 p-2 bg-adaptive-alt rounded-2xl border border-adaptive shadow-lg backdrop-blur-md',
-    controlGroup: 'flex gap-1 bg-adaptive p-1 rounded-xl border border-adaptive',
-    footer:
-      'mt-16 pt-8 border-t border-adaptive flex justify-between items-center opacity-30 text-[10px] font-mono uppercase tracking-[0.2em] font-bold',
-    header: 'flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8',
-    headerTitleGroup: 'flex flex-col gap-2',
-    iconMoon: 'i-ph-moon-bold',
-    iconSun: 'i-ph-sun-bold',
-    main: 'transition-all duration-300 transform-gpu',
-    modeButton: 'capitalize flex items-center gap-2',
-    primaryDemo: 'p-4 rounded-xl border-2 border-primary text-primary font-bold',
-    scaleDivider: 'w-px h-12 bg-adaptive mx-2 opacity-20',
-    scaleRow: 'flex flex-col gap-3',
-    scaleRowGrid: 'flex flex-wrap gap-2',
-    scaleRowLabel: 'tracking-widest opacity-40 ml-1',
-    semanticGrid: 'grid grid-cols-1 md:grid-cols-2 gap-4 mt-8',
-    showcaseCard: 'p-6 flex flex-col gap-4',
-    showcaseCardTitle: 'opacity-50',
-    subtitle: 'text-lg text-adaptive opacity-60 font-medium',
-    surfaceGrid: 'grid grid-cols-2 gap-3',
-    surfaceItem:
-      'h-16 rounded-xl border border-adaptive flex items-end p-2 text-[10px] font-mono opacity-50',
-    themeCard:
-      'p-8 rounded-[2rem] bg-adaptive text-adaptive border border-adaptive shadow-2xl flex flex-col gap-8 transition-all duration-500 overflow-hidden relative min-h-[600px]',
-    themeGlowBottom:
-      'absolute bottom-0 left-0 w-96 h-96 bg-accent/10 blur-[120px] pointer-events-none animate-pulse',
-    themeGlowTop:
-      'absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] pointer-events-none animate-pulse',
-    themeHeader: 'flex justify-between items-end border-b border-adaptive pb-6',
-    themeMain: 'space-y-10',
-    themeModeAccent: 'uppercase text-primary font-bold',
-    themeModeText: 'text-sm mt-2 font-medium',
-    themeSelectorButton: 'capitalize',
-    themeTitle: 'capitalize leading-none',
-    themeWrapper: 'contents',
-    title: 'text-6xl font-black tracking-tighter text-adaptive',
+    actions: 'flex shrink-0 items-center gap-4 self-start',
+    content: 'flex flex-col gap-12 md:gap-16',
+    controls:
+      'flex flex-wrap items-center gap-2 bg-adaptive-bg-alt p-1.5 rounded-xl border border-adaptive-border shadow-sm w-fit',
+    description: 'max-w-2xl opacity-90',
+    divider: 'w-[1px] h-11 bg-adaptive-inverse opacity-15 mx-1 hidden sm:block',
+    header: 'flex flex-col md:flex-row md:items-start justify-between gap-8',
+    'header-info': 'flex-1 space-y-6 md:space-y-8 pt-12 md:pt-24',
+    section: 'space-y-6',
+    'section-divider': 'w-8 h-[2px] bg-primary/40',
+    'section-header': 'flex items-center gap-3',
+  },
+  variants: {},
+} as const;
+
+const errorBoundaryStyles = {
+  base: 'p-12 border border-danger/20 bg-danger/5 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
+  default: {},
+  slots: {
+    container: 'flex flex-col items-center gap-6',
+    content: 'space-y-2',
+    description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
+    icon: 'i-ph-warning-octagon-duotone text-6xl text-danger/80',
+    title: 'text-danger font-black text-3xl tracking-tight',
   },
   variants: {},
 } as const;
@@ -238,11 +244,13 @@ export {
   badgeStyles,
   buttonStyles,
   cardStyles,
+  errorBoundaryStyles,
   iconStyles,
   inputStyles,
   layoutStyles,
   logoStyles,
   marqueeStyles,
+  modeSwitcherStyles,
   themeSwitcherStyles,
   typographyStyles,
   previewStyles,

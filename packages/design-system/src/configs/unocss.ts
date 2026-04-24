@@ -10,20 +10,15 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
-import { lineHeights, webFontsOptions } from '../tokens/typography';
 import { iconsOptions } from '../tokens/icons';
-import { motion } from '../tokens/effects';
 import { shortcuts } from '../utils/shortcuts';
-import { spacing } from '../tokens/spacing';
+import { webFontsOptions } from '../tokens/typography';
 
 const unoCssBaseConfig: UserConfig = {
   content: {
     pipeline: {
-      include: [
-        /\.(vue|svelte|[jt]sx|mdx?|html)($|\?)/,
-        'src/**/*.{js,ts,jsx,tsx}',
-        '**/*.{js,ts,jsx,tsx}',
-      ],
+      exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]dist[\\/]/],
+      include: [/\.(vue|svelte|[jt]sx|mdx?|html)($|\?)/, '**/*.{js,ts,jsx,tsx}'],
     },
   },
   preflights: [
@@ -41,36 +36,6 @@ const unoCssBaseConfig: UserConfig = {
   shortcuts,
   theme: {
     ...getThemes(),
-    animation: {
-      counts: {
-        marquee: 'infinite',
-      },
-      durations: {
-        marquee: 'var(--duration, 40s)',
-      },
-      keyframes: motion.animations,
-      timingFns: {
-        marquee: 'linear',
-      },
-    },
-    colors: {
-      ...getThemes().colors,
-      'adaptive-bg': 'var(--color-bg)',
-      'adaptive-bg-alt': 'var(--color-bg-alt)',
-      'adaptive-border': 'var(--color-border)',
-      'adaptive-muted': 'var(--color-text-muted)',
-      'adaptive-text': 'var(--color-text)',
-      inverse: 'var(--color-inverse)',
-    },
-    fontSize: {
-      'liquid-display': 'min(120px,12vw)',
-    },
-    lineHeight: {
-      compressed: lineHeights.compressed,
-    },
-    maxWidth: {
-      layout: spacing.layoutMax,
-    },
   },
   transformers: [transformerDirectives(), transformerVariantGroup()],
 };

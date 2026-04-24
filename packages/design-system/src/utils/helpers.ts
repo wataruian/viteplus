@@ -1,3 +1,5 @@
+const classPrefix = 'ds';
+
 const combineClasses = (...classes: (boolean | null | string | undefined)[]) => {
   const filtered = classes.filter(
     (cls): cls is string => typeof cls === 'string' && cls.trim().length > 0,
@@ -7,4 +9,4 @@ const combineClasses = (...classes: (boolean | null | string | undefined)[]) => 
   return unique.filter(Boolean).join(' ');
 };
 
-export { combineClasses };
+export { classPrefix, combineClasses };

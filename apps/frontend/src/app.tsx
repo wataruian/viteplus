@@ -1,20 +1,19 @@
 import { Preview } from '@lightproject/design-system/components';
-import { layoutStyles } from '@lightproject/design-system/tokens';
 import { logger } from '@lightproject/common/logger';
 import { useEffect } from 'react';
 
 const App = () => {
   useEffect(() => {
-    logger.info('Design System Showcase - Production Mode', {
+    logger.info('Frontend Start', {
       platform: globalThis.navigator.userAgent,
       timestamp: new Date().toISOString(),
     });
-  }, []);
+  }, [logger]);
 
   return (
-    <div className={layoutStyles.variants.type.appRoot}>
+    <>
       <Preview />
-    </div>
+    </>
   );
 };
 

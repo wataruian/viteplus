@@ -34,4 +34,4 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
 Typography.displayName = 'Typography';
 
 export type { TypographyProps, TypographyVariants };
-export { Typography, typographyVariants };
+export { Typography };

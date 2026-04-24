@@ -61,4 +61,4 @@ Section.displayName = 'Section';
 // ─── Exports ─────────────────────────────────────────────────────────────────
 
 export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };
-export { Container, Section, containerVariants, sectionVariants };
+export { Container, Section };
