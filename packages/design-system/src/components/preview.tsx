@@ -3,9 +3,9 @@ import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
 import { ErrorBoundary } from './error-boundary';
-import { ModeProvider } from '../context/mode-context';
+import { ModeProvider } from '../context/mode-provider';
 import { ModeSwitcher } from './mode-switcher';
-import { ThemeProvider } from '../context/theme-context';
+import { ThemeProvider } from '../context/theme-provider';
 import { ThemeSwitcher } from './theme-switcher';
 import { Typography } from './typography';
 import { classPrefix } from '../utils';
@@ -30,27 +30,25 @@ const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
           {title}
         </Typography>
       </div>
-      <div className='flex flex-wrap gap-3 items-start'>
+      <div className={previewStyles.slots.swatchesContainer}>
         {scales.map((s) => (
-          <div key={s} className='flex flex-col gap-2'>
+          <div key={s} className={previewStyles.slots.swatchItem}>
             <div
-              className='w-12 h-12 md:w-16 md:h-16 rounded-xl border border-adaptive-border shadow-sm ring-2 ring-primary/20 hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer'
+              className={previewStyles.slots.swatchColor}
               style={{ backgroundColor: `rgb(var(--${classPrefix}-${name}-${s}))` }}
             />
-            <span className='text-[10px] md:text-xs font-mono text-adaptive-text-muted text-center'>
-              {s}
-            </span>
+            <span className={previewStyles.slots.swatchLabel}>{s}</span>
           </div>
         ))}
 
-        <div className='w-[1px] h-12 md:h-16 bg-adaptive-inverse mx-1 self-start opacity-15' />
+        <div className={previewStyles.slots.swatchDivider} />
 
-        <div className='flex flex-col gap-2'>
+        <div className={previewStyles.slots.swatchItem}>
           <div
-            className='w-12 h-12 md:w-16 md:h-16 rounded-xl border border-adaptive-border shadow-sm ring-2 ring-primary/20 hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer'
+            className={previewStyles.slots.swatchColor}
             style={{ backgroundColor: `rgb(var(--${classPrefix}-${name}-base))` }}
           />
-          <span className='text-[10px] md:text-xs font-black text-primary text-center'>Base</span>
+          <span className={previewStyles.slots.swatchLabelBase}>Base</span>
         </div>
       </div>
     </div>
@@ -91,16 +89,16 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                     </div>
                   </div>
 
-                  <div className='space-y-12 md:space-y-20'>
-                    <div className='space-y-8'>
+                  <div className={previewStyles.slots.themesContainer}>
+                    <div className={previewStyles.slots.themesSection}>
                       <Typography
                         as='h2'
                         type='display'
-                        className='uppercase tracking-widest opacity-70'
+                        className={previewStyles.slots.themesTitle}
                       >
                         Experience Themes
                       </Typography>
-                      <div className='grid gap-12'>
+                      <div className={previewStyles.slots.themesGrid}>
                         <ScaleRow name='primary' title='Primary Scale' />
                         <ScaleRow name='accent' title='Accent Scale' />
                         <ScaleRow name='surface' title='Surface Scale' />
