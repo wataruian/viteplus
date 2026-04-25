@@ -96,7 +96,7 @@ const oklchToRgbTuple = (oklchColor: Oklch): string => {
   const red = Math.round(rgb.r * 255);
   const green = Math.round(rgb.g * 255);
   const blue = Math.round(rgb.b * 255);
-  return `${red}, ${green}, ${blue}`;
+  return `${red} ${green} ${blue}`;
 };
 
 /**
@@ -143,13 +143,19 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
 /**
  * Build a UnoCSS-compatible theme colors object that references CSS variables.
  */
-const getThemeColors = (prefix: string): Record<string, string> =>
-  Object.keys(lightnessStops)
+const getThemeColors = (prefix: string): Record<string, string> => {
+  const colors = Object.keys(lightnessStops)
     .toSorted((stopA, stopB) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
     .reduce<Record<string, string>>((acc, stop) => {
       acc[stop] = `rgb(var(--${classPrefix}-${prefix}-${stop}))`;
       return acc;
     }, {});
+
+  return {
+    ...colors,
+    DEFAULT: `rgb(var(--${classPrefix}-${prefix}-base))`,
+  };
+};
 
 const getThemes = () => ({
   colors: {
