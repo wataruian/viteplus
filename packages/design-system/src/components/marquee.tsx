@@ -11,10 +11,7 @@ const marqueeVariants = cva(marqueeStyles.base, {
 
 type MarqueeVariants = VariantProps<typeof marqueeVariants>;
 
-interface MarqueeProps
-  extends
-    BaseComponentProps<HTMLAttributes<HTMLDivElement>>,
-    Omit<MarqueeVariants, 'pause-on-hover'> {
+interface MarqueeProps extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>, MarqueeVariants {
   pauseOnHover?: boolean;
   speedValue?: number;
 }
@@ -34,7 +31,7 @@ const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
     ref,
   ) => {
     const finalClass = useDefault
-      ? marqueeVariants({ className, direction, 'pause-on-hover': pauseOnHover, speed })
+      ? marqueeVariants({ className, direction, pauseOnHover, speed })
       : className;
 
     const duration =

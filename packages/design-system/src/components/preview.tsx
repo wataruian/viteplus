@@ -8,6 +8,7 @@ import { ModeSwitcher } from './mode-switcher';
 import { ThemeProvider } from '../context/theme-context';
 import { ThemeSwitcher } from './theme-switcher';
 import { Typography } from './typography';
+import { classPrefix } from '../utils';
 import { previewStyles } from '../tokens/styles';
 
 const previewVariants = cva(previewStyles.base, {
@@ -24,8 +25,8 @@ const scales: number[] = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
   ({ name, title }, ref) => (
     <div ref={ref} className={previewStyles.slots.section}>
-      <div className={previewStyles.slots['section-header']}>
-        <Typography as='h2' type='sub-headline'>
+      <div className={previewStyles.slots.sectionHeader}>
+        <Typography as='h2' type='display'>
           {title}
         </Typography>
       </div>
@@ -34,7 +35,7 @@ const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
           <div key={s} className='flex flex-col gap-2'>
             <div
               className='w-12 h-12 md:w-16 md:h-16 rounded-xl border border-adaptive-border shadow-sm ring-2 ring-primary/20 hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer'
-              style={{ backgroundColor: `rgb(var(--ds-${name}-${s}))` }}
+              style={{ backgroundColor: `rgb(var(--${classPrefix}-${name}-${s}))` }}
             />
             <span className='text-[10px] md:text-xs font-mono text-adaptive-text-muted text-center'>
               {s}
@@ -47,7 +48,7 @@ const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
         <div className='flex flex-col gap-2'>
           <div
             className='w-12 h-12 md:w-16 md:h-16 rounded-xl border border-adaptive-border shadow-sm ring-2 ring-primary/20 hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer'
-            style={{ backgroundColor: `rgb(var(--ds-${name}-base))` }}
+            style={{ backgroundColor: `rgb(var(--${classPrefix}-${name}-base))` }}
           />
           <span className='text-[10px] md:text-xs font-black text-primary text-center'>Base</span>
         </div>
@@ -70,7 +71,7 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
               <Container>
                 <div className={previewStyles.slots.content}>
                   <div className={previewStyles.slots.header}>
-                    <div className={previewStyles.slots['header-info']}>
+                    <div className={previewStyles.slots.headerInfo}>
                       <Typography as='h1' type='display'>
                         Design System
                       </Typography>
@@ -94,7 +95,7 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                     <div className='space-y-8'>
                       <Typography
                         as='h2'
-                        type='sub-headline'
+                        type='display'
                         className='uppercase tracking-widest opacity-70'
                       >
                         Experience Themes
@@ -103,7 +104,10 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                         <ScaleRow name='primary' title='Primary Scale' />
                         <ScaleRow name='accent' title='Accent Scale' />
                         <ScaleRow name='surface' title='Surface Scale' />
+                        <ScaleRow name='success' title='Success Scale' />
+                        <ScaleRow name='warning' title='Warning Scale' />
                         <ScaleRow name='danger' title='Danger Scale' />
+                        <ScaleRow name='info' title='Info Scale' />
                       </div>
                     </div>
                   </div>

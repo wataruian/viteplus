@@ -43,8 +43,8 @@ const ModeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ModeSwitc
         <Icon
           name={
             mode === 'light'
-              ? (lightIcon ?? modeSwitcherStyles.slots['sun-icon'])
-              : (darkIcon ?? modeSwitcherStyles.slots['moon-icon'])
+              ? (lightIcon ?? modeSwitcherStyles.slots.sunIcon)
+              : (darkIcon ?? modeSwitcherStyles.slots.moonIcon)
           }
         />
       </Button>

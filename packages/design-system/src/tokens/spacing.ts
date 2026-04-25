@@ -1,23 +1,17 @@
-/**
- * Spacing Tokens
- *
- * Defines a 4px-based (0.25rem) spacing scale and semantic layout aliases.
- */
-
 const borderRadius = {
   '2xl': '1rem', // 16px
   '3xl': '1.5rem', // 24px
   default: '0.25rem', // 4px
-  full: '9999px',
+  full: '9999rem', // 9999px
   lg: '0.5rem', // 8px
   md: '0.375rem', // 6px
-  none: '0',
+  none: '0rem', // 0px
   sm: '0.125rem', // 2px
   xl: '0.75rem', // 12px
 } as const;
 
 const spacing = {
-  '0': '0',
+  '0': '0rem', // 0px
   '0.5': '0.125rem', // 2px
   '1': '0.25rem', // 4px
   '1.5': '0.375rem', // 6px
@@ -43,7 +37,7 @@ const spacing = {
   '52': '13rem', // 208px
   '56': '14rem', // 224px
   '6': '1.5rem', // 24px
-  '60': '15.5rem', // 248px
+  '60': '15rem', // 240px
   '64': '16rem', // 256px
   '7': '1.75rem', // 28px
   '72': '18rem', // 288px
@@ -53,13 +47,13 @@ const spacing = {
   '96': '24rem', // 384px
 
   // Semantic Layout Aliases
-  'layout-2xl': '14rem', // 224px
-  'layout-lg': '6rem', // 96px
-  'layout-max': '1400px',
-  'layout-md': '4rem', // 64px
-  'layout-sm': '2rem', // 32px
-  'layout-xl': '10rem', // 160px
-  'layout-xs': '1rem', // 16px
+  layout2xl: '14rem', // 224px
+  layoutLg: '6rem', // 96px
+  layoutMax: '87.5rem', // 1400px
+  layoutMd: '4rem', // 64px
+  layoutSm: '2rem', // 32px
+  layoutXl: '10rem', // 160px
+  layoutXs: '1rem', // 16px
 } as const;
 
 export { borderRadius, spacing };

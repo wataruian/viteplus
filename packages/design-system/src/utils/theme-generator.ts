@@ -5,50 +5,42 @@ import { classPrefix } from './helpers';
 
 interface ThemeColors {
   accent: string;
-  danger: string;
-  info: string;
+  danger?: string | undefined;
+  info?: string | undefined;
   primary: string;
-  success: string;
+  success?: string | undefined;
   surface?: string | undefined;
-  warning: string;
+  warning?: string | undefined;
 }
 
 type ColorScale = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+
+// ─── Colors ──────────────────────────────────────────────────────────────────
+
+const danger = '#ef4444';
+const info = '#3b82f6';
+const success = '#10b981';
+const surface = '#000000';
+const warning = '#f59e0b';
 
 // ─── Themes ──────────────────────────────────────────────────────────────────
 
 const themes: Record<string, ThemeColors> = {
   default: {
     accent: '#10b981',
-    danger: '#ef4444',
-    info: '#3b82f6',
     primary: '#8b5cf6',
-    success: '#10b981',
-    warning: '#f59e0b',
   },
   emerald: {
     accent: '#3b82f6',
-    danger: '#ef4444',
-    info: '#3b82f6',
     primary: '#10b981',
-    success: '#10b981',
-    warning: '#f59e0b',
   },
   ocean: {
     accent: '#8b5cf6',
-    danger: '#ef4444',
-    info: '#3b82f6',
     primary: '#0ea5e9',
-    success: '#10b981',
-    warning: '#f59e0b',
   },
   sunset: {
     accent: '#f59e0b',
-    danger: '#ef4444',
-    info: '#3b82f6',
     primary: '#f43f5e',
-    success: '#10b981',
-    warning: '#f59e0b',
   },
 };
 
@@ -168,6 +160,7 @@ const getThemes = () => ({
       border: `var(--${classPrefix}-color-border)`,
       'border-alt': `var(--${classPrefix}-color-border-alt)`,
       inverse: `var(--${classPrefix}-color-inverse)`,
+      'inverse-text': `var(--${classPrefix}-color-inverse-text)`,
       text: `rgb(var(--${classPrefix}-color-text))`,
       'text-alt': `rgb(var(--${classPrefix}-color-text-alt))`,
       'text-muted': `var(--${classPrefix}-color-text-muted)`,
@@ -183,15 +176,38 @@ const getThemes = () => ({
 });
 
 const generateThemeCss = (className: string, colors: ThemeColors): string => {
-  const primaryBase = parseToOklch(colors.primary);
-  const accentBase = parseToOklch(colors.accent);
-  const dangerBase = parseToOklch(colors.danger);
-  const successBase = parseToOklch(colors.success);
-  const warningBase = parseToOklch(colors.warning);
-  const infoBase = parseToOklch(colors.info);
+  const primaryHex = colors.primary;
+
+  if (!primaryHex) {
+    throw new Error('Primary color is required');
+  }
+
+  const primaryBase = parseToOklch(primaryHex);
+
+  const accentHex = colors.accent;
+
+  if (!accentHex) {
+    throw new Error('Accent color is required');
+  }
+
+  const accentBase = parseToOklch(accentHex);
+
+  const dangerHex = colors.danger !== undefined && colors.danger !== '' ? colors.danger : danger;
+  const dangerBase = parseToOklch(dangerHex);
+
+  const successHex =
+    colors.success !== undefined && colors.success !== '' ? colors.success : success;
+  const successBase = parseToOklch(successHex);
+
+  const warningHex =
+    colors.warning !== undefined && colors.warning !== '' ? colors.warning : warning;
+  const warningBase = parseToOklch(warningHex);
+
+  const infoHex = colors.info !== undefined && colors.info !== '' ? colors.info : info;
+  const infoBase = parseToOklch(infoHex);
 
   const surfaceHex =
-    colors.surface !== undefined && colors.surface !== '' ? colors.surface : '#000000';
+    colors.surface !== undefined && colors.surface !== '' ? colors.surface : surface;
   const surfaceBase = parseToOklch(surfaceHex);
 
   const primaryRgb = oklchToRgbTuple(primaryBase);
@@ -204,10 +220,10 @@ const generateThemeCss = (className: string, colors: ThemeColors): string => {
 
   const primaryScale = generateColorScale(colors.primary, 'primary');
   const accentScale = generateColorScale(colors.accent, 'accent');
-  const dangerScale = generateColorScale(colors.danger, 'danger');
-  const successScale = generateColorScale(colors.success, 'success');
-  const warningScale = generateColorScale(colors.warning, 'warning');
-  const infoScale = generateColorScale(colors.info, 'info');
+  const dangerScale = generateColorScale(dangerHex, 'danger');
+  const successScale = generateColorScale(successHex, 'success');
+  const warningScale = generateColorScale(warningHex, 'warning');
+  const infoScale = generateColorScale(infoHex, 'info');
   const surfaceScale = generateColorScale(surfaceHex, 'surface', true);
 
   const selector = className === 'default' ? ':root' : `.${className}`;
@@ -252,13 +268,14 @@ ${themeBlocks}
   color-scheme: light;
   --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-100));
   --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-200));
+  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-900), 0.1);
+  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-800), 0.1);
+  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-950));
+  --${classPrefix}-color-inverse-text:    rgb(var(--${classPrefix}-surface-50));
   --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-900));
   --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-800));
   --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-900), 0.6);
   --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-800), 0.6);
-  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-900), 0.1);
-  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-800), 0.1);
-  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-950));
 }
 
 /* Dark mode: dark backgrounds, light text */
@@ -266,13 +283,14 @@ ${themeBlocks}
   color-scheme: dark;
   --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-900));
   --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-800));
+  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-50), 0.1);
+  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-100), 0.1);
+  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-50));
+  --${classPrefix}-color-inverse-text:    rgb(var(--${classPrefix}-surface-950));
   --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-50));
   --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-100));
   --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-50), 0.6);
   --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-100), 0.6);
-  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-50), 0.1);
-  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-100), 0.1);
-  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-50));
 }
 
 :root, body {
@@ -291,6 +309,11 @@ ${themeBlocks}
 
 export type { ThemeColors, ColorScale };
 export {
+  danger,
+  warning,
+  info,
+  success,
+  surface,
   themes,
   lightnessStops,
   getLightnessStops,

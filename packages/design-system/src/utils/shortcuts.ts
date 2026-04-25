@@ -1,8 +1,5 @@
 import type { UserShortcuts } from 'unocss';
-// import { classPrefix } from './helpers';
 
-const shortcuts: UserShortcuts = [
-  // ── User Test Shortucts ──────────────────────────────────────────────────
-];
+const shortcuts: UserShortcuts = [];
 
 export { shortcuts };

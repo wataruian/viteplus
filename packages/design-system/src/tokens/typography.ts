@@ -1,11 +1,5 @@
 import type { WebFontsOptions } from 'unocss/preset-web-fonts';
 
-/**
- * Typography Tokens
- *
- * Defines font families, sizes, and weights for the design system.
- */
-
 const fonts = {
   header: 'Outfit, sans-serif',
   mono: 'Fira Code, monospace',
@@ -22,13 +16,13 @@ const fontSizes = {
   '8xl': '6rem', // 96px
   base: '1rem', // 16px
   lg: '1.125rem', // 18px
-  'liquid-display': 'min(120px,12vw)',
+  liquidDisplay: 'min(7.5rem, 12vw)', // min(120px, 12vw)
   sm: '0.875rem', // 14px
-  'text-body': '1rem', // 16px
-  'text-caption': '0.75rem', // 12px
-  'text-display': '6rem', // 96px
-  'text-headline': '2.25rem', // 36px
-  'text-sub-headline': '1.5rem', // 24px
+  textBody: '1rem', // 16px
+  textCaption: '0.75rem', // 12px
+  textDisplay: '6rem', // 96px
+  textHeadline: '2.25rem', // 36px
+  textSubHeadline: '1.5rem', // 24px
   xl: '1.25rem', // 20px
   xs: '0.75rem', // 12px
 } as const;
@@ -36,11 +30,11 @@ const fontSizes = {
 const fontWeights = {
   black: '900',
   bold: '700',
-  'extra-bold': '800',
+  extraBold: '800',
   light: '300',
   medium: '500',
   normal: '400',
-  'semi-bold': '600',
+  semiBold: '600',
 } as const;
 
 const letterSpacings = {

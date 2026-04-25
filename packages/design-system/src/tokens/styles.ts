@@ -36,7 +36,7 @@ const buttonStyles = {
       ghost:
         'bg-transparent text-adaptive-text-muted hover:bg-adaptive-border hover:text-adaptive-text',
       glass: 'bg-white/5 text-white border border-white/10 backdrop-blur-md hover:bg-white/10',
-      inverse: 'bg-adaptive-inverse !text-[var(--ds-color-bg)] hover:opacity-90',
+      inverse: `bg-adaptive-inverse !text-adaptive-inverse-text hover:opacity-90`,
       outline:
         'bg-transparent text-adaptive-text border border-adaptive-border hover:bg-adaptive-border',
       premium: 'bg-primary text-black hover:bg-primary/90',
@@ -114,11 +114,11 @@ const layoutStyles = {
   },
   variants: {
     type: {
-      'app-root': 'min-h-screen font-sans',
+      appRoot: 'min-h-screen font-sans',
       container: 'max-w-layout mx-auto px-6 md:px-10',
       header:
         'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
-      'header-inner': 'h-full flex items-center justify-between',
+      headerInner: 'h-full flex items-center justify-between',
       section: 'py-12 md:py-20 relative overflow-hidden',
     },
   },
@@ -128,7 +128,7 @@ const marqueeStyles = {
   base: 'flex select-none overflow-hidden gap-4',
   default: {
     direction: 'left' as const,
-    'pause-on-hover': true,
+    pauseOnHover: true,
     speed: 'medium' as const,
   },
   slots: {
@@ -139,7 +139,7 @@ const marqueeStyles = {
       left: 'animate-marquee',
       right: 'animate-marquee-reverse',
     },
-    'pause-on-hover': {
+    pauseOnHover: {
       false: '',
       true: 'hover:[animation-play-state:paused]',
     },
@@ -158,8 +158,8 @@ const modeSwitcherStyles = {
     size: 'md' as const,
   },
   slots: {
-    'moon-icon': 'i-ph-moon-bold',
-    'sun-icon': 'i-ph-sun-bold',
+    moonIcon: 'i-ph-moon-bold',
+    sunIcon: 'i-ph-sun-bold',
   },
   variants: {
     intent: buttonStyles.variants.intent,
@@ -168,15 +168,15 @@ const modeSwitcherStyles = {
 } as const;
 
 const themeSwitcherStyles = {
-  base: 'flex flex-wrap gap-1 bg-[var(--ds-color-bg)] p-1 rounded-xl border border-[var(--ds-color-border-alt)] shadow-sm w-fit',
+  base: 'flex flex-wrap gap-1 bg-adaptive-bg p-1 rounded-xl border border-adaptive-border-alt shadow-sm w-fit',
   default: {
     plain: false,
     size: 'sm' as const,
   },
   slots: {
-    'active-intent': 'inverse',
+    activeIntent: 'inverse',
     button: 'capitalize font-medium shadow-none transition-colors',
-    'inactive-intent': 'ghost',
+    inactiveIntent: 'ghost',
   },
   variants: {
     plain: {
@@ -203,7 +203,7 @@ const typographyStyles = {
       display:
         'text-liquid-display font-black leading-compressed tracking-tighter text-adaptive-text font-header',
       headline: 'text-4xl md:text-5xl font-black text-adaptive-text font-header tracking-tight',
-      'sub-headline': 'text-2xl font-bold text-adaptive-text',
+      subHeadline: 'text-2xl font-bold text-adaptive-text',
     },
   },
 } as const;
@@ -219,10 +219,10 @@ const previewStyles = {
     description: 'max-w-2xl opacity-90',
     divider: 'w-[1px] h-11 bg-adaptive-inverse opacity-15 mx-1 hidden sm:block',
     header: 'flex flex-col md:flex-row md:items-start justify-between gap-8',
-    'header-info': 'flex-1 space-y-6 md:space-y-8 pt-12 md:pt-24',
+    headerInfo: 'flex-1 space-y-6 md:space-y-8 pt-12 md:pt-24',
     section: 'space-y-6',
-    'section-divider': 'w-8 h-[2px] bg-primary/40',
-    'section-header': 'flex items-center gap-3',
+    sectionDivider: 'w-8 h-[2px] bg-primary/40',
+    sectionHeader: 'flex items-center gap-3',
   },
   variants: {},
 } as const;

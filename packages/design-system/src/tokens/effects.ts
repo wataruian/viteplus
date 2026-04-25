@@ -1,9 +1,3 @@
-/**
- * Effects Tokens
- *
- * Defines shadows, blurs, glassmorphism, and motion tokens for a premium UI feel.
- */
-
 const blurs = {
   '2xl': '40px',
   '3xl': '64px',
@@ -44,12 +38,9 @@ const glows = {
 } as const;
 
 const motion = {
-  // Use raw CSS strings with semicolon termination for production build stability
-  // as per project guidelines in AGENTS.md.
   animations: {
     marquee: 'from{transform:translateX(0);}to{transform:translateX(calc(-100% - 1rem));}',
-    'marquee-reverse':
-      'from{transform:translateX(calc(-100% - 1rem));}to{transform:translateX(0);}',
+    marqueeReverse: 'from{transform:translateX(calc(-100% - 1rem));}to{transform:translateX(0);}',
   },
   durations: {
     fast: '150ms',
@@ -58,7 +49,7 @@ const motion = {
   },
   easings: {
     in: 'cubic-bezier(0.4, 0, 1, 1)',
-    'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    inOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
     out: 'cubic-bezier(0, 0, 0.2, 1)',
     premium: 'cubic-bezier(0.23, 1, 0.32, 1)',
   },

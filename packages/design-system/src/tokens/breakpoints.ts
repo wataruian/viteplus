@@ -1,9 +1,3 @@
-/**
- * Breakpoint Tokens
- *
- * Defines standard screen sizes for responsive design.
- */
-
 const breakpoints = {
   '2xl': '1536px',
   lg: '1024px',

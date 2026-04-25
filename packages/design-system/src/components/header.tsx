@@ -25,7 +25,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
     return (
       <header {...props} ref={ref} className={finalClass}>
         <div className={layoutStyles.variants.type.container}>
-          <div className={layoutStyles.variants.type['header-inner']}>
+          <div className={layoutStyles.variants.type.headerInner}>
             <Logo />
             {showThemeSwitcher && <ModeSwitcher />}
           </div>

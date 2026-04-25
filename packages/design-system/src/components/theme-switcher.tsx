@@ -35,8 +35,8 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
             key={t}
             intent={
               theme === t
-                ? themeSwitcherStyles.slots['active-intent']
-                : themeSwitcherStyles.slots['inactive-intent']
+                ? themeSwitcherStyles.slots.activeIntent
+                : themeSwitcherStyles.slots.inactiveIntent
             }
             size={size}
             props={{

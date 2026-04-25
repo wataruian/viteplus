@@ -1,10 +1,3 @@
-/**
- * Color Tokens
- *
- * Defines the semantic color palette and functional color mappings.
- * All colors use OKLCH for perceptual uniformity and better theme adaptation.
- */
-
 import { classPrefix } from '../utils/helpers';
 
 type ColorKey = 'primary' | 'accent' | 'surface' | 'success' | 'warning' | 'danger' | 'info';
@@ -80,18 +73,23 @@ const colors = {
     base: `rgb(var(--${classPrefix}-primary-base))`,
   },
 
-  // ─── Semantic & Adaptive Tokens ───────────────────────────────────────────
-  // These tokens flip automatically between light and dark modes
   semantic: {
-    bg: `var(--${classPrefix}-bg)`,
-    'bg-alt': `var(--${classPrefix}-bg-alt)`,
-    border: `var(--${classPrefix}-border)`,
-    'content-muted': `var(--${classPrefix}-text-muted)`,
-    'content-primary': `var(--${classPrefix}-text)`,
-    error: `rgb(var(--${classPrefix}-danger-500))`,
+    accent: `rgb(var(--${classPrefix}-accent-500))`,
+    bg: `var(--${classPrefix}-color-bg)`,
+    bgAlt: `var(--${classPrefix}-color-bg-alt)`,
+    border: `var(--${classPrefix}-color-border)`,
+    borderAlt: `var(--${classPrefix}-color-border-alt)`,
+    danger: `rgb(var(--${classPrefix}-danger-500))`,
     info: `rgb(var(--${classPrefix}-info-500))`,
-    inverse: `var(--${classPrefix}-inverse)`,
+    inverse: `var(--${classPrefix}-color-inverse)`,
+    inverseText: `var(--${classPrefix}-color-inverse-text)`,
+    primary: `rgb(var(--${classPrefix}-primary-500))`,
     success: `rgb(var(--${classPrefix}-success-500))`,
+    surface: `rgb(var(--${classPrefix}-surface-500))`,
+    text: `var(--${classPrefix}-color-text)`,
+    textAlt: `var(--${classPrefix}-color-text-alt)`,
+    textMuted: `var(--${classPrefix}-color-text-muted)`,
+    textMutedAlt: `var(--${classPrefix}-color-text-muted-alt)`,
     warning: `rgb(var(--${classPrefix}-warning-500))`,
   },
 
@@ -142,4 +140,4 @@ const colors = {
 } as const;
 
 export type { ColorKey };
-export { classPrefix, colorPalettes, colors };
+export { colorPalettes, colors };
