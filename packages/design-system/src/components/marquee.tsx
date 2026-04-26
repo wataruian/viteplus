@@ -37,10 +37,13 @@ const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
     const duration =
       speedValue ?? Number(marqueeStyles.variants.speed[speed ?? marqueeStyles.default.speed]);
 
+    const { look } = marqueeStyles.default;
+    const lookStyles = marqueeStyles.variants.look[look];
+
     return (
       <div {...props} ref={ref} className={finalClass}>
         <div
-          className={combineClasses(useDefault ? marqueeStyles.slots.track : '')}
+          className={combineClasses(useDefault ? lookStyles.track : '')}
           style={
             { '--duration': `${duration}s` } as CSSProperties & Record<string, string | number>
           }

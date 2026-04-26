@@ -70,6 +70,33 @@ const cardStyles = {
   },
 } as const;
 
+const errorBoundaryStyles = {
+  base: 'p-12 border rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
+  default: {
+    intent: 'danger' as const,
+  },
+  variants: {
+    intent: {
+      danger: {
+        base: 'border-danger/20 bg-danger/5',
+        container: 'flex flex-col items-center gap-6',
+        content: 'space-y-2',
+        description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
+        icon: 'i-ph-warning-octagon-duotone text-6xl text-danger/80',
+        title: 'text-danger font-black text-3xl tracking-tight',
+      },
+      warning: {
+        base: 'border-warning/20 bg-warning/5',
+        container: 'flex flex-col items-center gap-6',
+        content: 'space-y-2',
+        description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
+        icon: 'i-ph-warning-duotone text-6xl text-warning/80',
+        title: 'text-warning font-black text-3xl tracking-tight',
+      },
+    },
+  },
+} as const;
+
 const iconStyles = {
   base: 'inline-block shrink-0',
   default: {
@@ -86,7 +113,7 @@ const iconStyles = {
 } as const;
 
 const inputStyles = {
-  base: 'w-full bg-adaptive-bg border border-adaptive-border rounded-xl px-4 py-3 text-adaptive-text placeholder:text-adaptive-text-muted transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm',
+  base: 'w-full max-w-full box-border min-w-0 bg-adaptive-bg border border-adaptive-border rounded-xl px-4 py-3 text-adaptive-text placeholder:text-adaptive-text-muted transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm',
   default: {
     state: 'default' as const,
   },
@@ -99,15 +126,18 @@ const inputStyles = {
   },
 } as const;
 
-const logoStyles = {
-  base: 'flex items-center gap-2 font-black',
-  default: {},
-  slots: {
-    bottom: 'text-2xl tracking-tighter text-white',
-    inner: 'flex flex-col items-start leading-compressed',
-    top: 'text-primary',
+const headerStyles = {
+  base: 'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
+  default: {
+    look: 'default' as const,
   },
-  variants: {},
+  variants: {
+    look: {
+      default: {
+        inner: 'h-full flex items-center justify-between',
+      },
+    },
+  },
 } as const;
 
 const layoutStyles = {
@@ -119,10 +149,23 @@ const layoutStyles = {
     type: {
       appRoot: 'min-h-screen font-sans',
       container: 'max-w-layout mx-auto px-6 md:px-10',
-      header:
-        'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
-      headerInner: 'h-full flex items-center justify-between',
       section: 'py-12 md:py-20 relative overflow-hidden',
+    },
+  },
+} as const;
+
+const logoStyles = {
+  base: 'flex items-center gap-2 font-black',
+  default: {
+    look: 'default' as const,
+  },
+  variants: {
+    look: {
+      default: {
+        bottom: 'text-2xl tracking-tighter text-white',
+        inner: 'flex flex-col items-start leading-compressed',
+        top: 'text-primary',
+      },
     },
   },
 } as const;
@@ -131,16 +174,19 @@ const marqueeStyles = {
   base: 'flex select-none overflow-hidden gap-4',
   default: {
     direction: 'left' as const,
+    look: 'default' as const,
     pauseOnHover: true,
     speed: 'medium' as const,
-  },
-  slots: {
-    track: 'flex shrink-0 items-center justify-around gap-4 min-w-full',
   },
   variants: {
     direction: {
       left: 'animate-marquee',
       right: 'animate-marquee-reverse',
+    },
+    look: {
+      default: {
+        track: 'flex shrink-0 items-center justify-around gap-4 min-w-full',
+      },
     },
     pauseOnHover: {
       false: '',
@@ -158,14 +204,17 @@ const modeSwitcherStyles = {
   base: 'aspect-square flex items-center justify-center !p-0',
   default: {
     intent: 'ghost' as const,
+    look: 'default' as const,
     size: 'md' as const,
-  },
-  slots: {
-    moonIcon: 'i-ph-moon-bold',
-    sunIcon: 'i-ph-sun-bold',
   },
   variants: {
     intent: buttonStyles.variants.intent,
+    look: {
+      default: {
+        moonIcon: 'i-ph-moon-bold',
+        sunIcon: 'i-ph-sun-bold',
+      },
+    },
     size: buttonStyles.variants.size,
   },
 } as const;
@@ -173,15 +222,18 @@ const modeSwitcherStyles = {
 const themeSwitcherStyles = {
   base: 'flex flex-wrap gap-1 bg-adaptive-bg p-1 rounded-xl border border-adaptive-border-alt shadow-sm w-fit',
   default: {
+    look: 'default' as const,
     plain: false,
     size: 'sm' as const,
   },
-  slots: {
-    activeIntent: 'inverse',
-    button: 'capitalize font-medium shadow-none transition-colors',
-    inactiveIntent: 'ghost',
-  },
   variants: {
+    look: {
+      default: {
+        activeIntent: 'inverse',
+        button: 'capitalize font-medium shadow-none transition-colors',
+        inactiveIntent: 'ghost',
+      },
+    },
     plain: {
       false: '',
       true: '!bg-transparent !border-none !shadow-none !p-0',
@@ -216,15 +268,23 @@ const previewStyles = {
   default: {},
   slots: {
     actions: 'flex shrink-0 items-center gap-4 self-start',
+    cardPreview: 'p-6 text-center text-sm font-bold flex items-center justify-center min-w-[120px]',
     componentCard: 'flex flex-col items-center justify-center gap-6 p-8',
-    componentsGrid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+    componentCardInner: 'flex flex-col gap-8 w-full',
+    componentGrid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+    componentTitle: 'break-words min-w-0',
+    componentWrapper: 'flex flex-col gap-4 min-w-0',
     content: 'flex flex-col gap-12 md:gap-16',
     controls:
       'flex flex-wrap items-center gap-2 bg-adaptive-bg-alt p-1.5 rounded-xl border border-adaptive-border shadow-sm w-fit',
     description: 'max-w-2xl opacity-90',
     divider: 'w-[1px] h-11 bg-adaptive-inverse mx-1 hidden sm:block',
+    groupLabel: 'font-bold uppercase tracking-widest opacity-40',
+    groupWrapper: 'flex flex-col gap-2',
     header: 'flex flex-col md:flex-row md:items-start justify-between gap-8',
     headerInfo: 'flex-1 space-y-6 md:space-y-8 pt-12 md:pt-24',
+    iconLabel: 'opacity-40',
+    iconPreview: 'text-primary',
     section: 'space-y-6',
     sectionHeader: 'flex items-center gap-3',
     swatchColor:
@@ -238,20 +298,24 @@ const previewStyles = {
     themesSection: 'space-y-8',
     themesTitle: 'uppercase tracking-widest opacity-70',
   },
-  variants: {},
-} as const;
-
-const errorBoundaryStyles = {
-  base: 'p-12 border border-danger/20 bg-danger/5 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
-  default: {},
-  slots: {
-    container: 'flex flex-col items-center gap-6',
-    content: 'space-y-2',
-    description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
-    icon: 'i-ph-warning-octagon-duotone text-6xl text-danger/80',
-    title: 'text-danger font-black text-3xl tracking-tight',
+  variants: {
+    cardAlignment: {
+      block: '!items-stretch',
+      inline: '',
+    },
+    variantItem: {
+      block: 'flex flex-col items-stretch w-full gap-1 min-w-0',
+      inline: 'flex flex-col items-center gap-1 min-w-0',
+    },
+    variantList: {
+      block: 'flex flex-col items-stretch w-full gap-4 min-w-0',
+      inline: 'flex flex-wrap items-center gap-4 min-w-0',
+    },
+    wrapperWidth: {
+      standard: '',
+      wide: 'lg:col-span-2',
+    },
   },
-  variants: {},
 } as const;
 
 export {
@@ -259,6 +323,7 @@ export {
   buttonStyles,
   cardStyles,
   errorBoundaryStyles,
+  headerStyles,
   iconStyles,
   inputStyles,
   layoutStyles,

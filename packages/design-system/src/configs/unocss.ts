@@ -10,9 +10,12 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
+import { animation } from '../tokens/animation';
 import { iconsOptions } from '../tokens/icons';
 import { shortcuts } from '../utils/shortcuts';
 import { webFontsOptions } from '../tokens/typography';
+
+const themes = getThemes();
 
 const unoCssBaseConfig: UserConfig = {
   content: {
@@ -35,26 +38,12 @@ const unoCssBaseConfig: UserConfig = {
   ],
   shortcuts,
   theme: {
-    ...getThemes(),
-    animation: {
-      counts: {
-        gradient: 'infinite',
-      },
-      durations: {
-        gradient: '3s',
-      },
-      keyframes: {
-        gradient:
-          '{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}',
-      },
-      timingFns: {
-        gradient: 'ease',
-      },
-    },
+    ...themes,
+    animation,
   },
   transformers: [transformerDirectives(), transformerVariantGroup()],
 };
 
 const unoCssConfig = defineConfig(unoCssBaseConfig);
 
-export { unoCssBaseConfig, unoCssConfig };
+export { animation, themes, unoCssBaseConfig, unoCssConfig };

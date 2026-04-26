@@ -26,6 +26,9 @@ const ModeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ModeSwitc
     const finalIntent = useDefault ? (intent ?? modeSwitcherStyles.default.intent) : intent;
     const finalSize = useDefault ? (size ?? modeSwitcherStyles.default.size) : size;
 
+    const { look } = modeSwitcherStyles.default;
+    const lookStyles = modeSwitcherStyles.variants.look[look];
+
     return (
       <Button
         className={finalClass}
@@ -42,9 +45,7 @@ const ModeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ModeSwitc
       >
         <Icon
           name={
-            mode === 'light'
-              ? (lightIcon ?? modeSwitcherStyles.slots.sunIcon)
-              : (darkIcon ?? modeSwitcherStyles.slots.moonIcon)
+            mode === 'light' ? (lightIcon ?? lookStyles.sunIcon) : (darkIcon ?? lookStyles.moonIcon)
           }
         />
       </Button>

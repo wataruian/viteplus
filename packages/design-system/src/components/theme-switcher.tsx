@@ -1,6 +1,6 @@
+import { Button, type ButtonProps } from './button';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
-import { Button } from './button';
 import { forwardRef } from 'react';
 import { themeSwitcherStyles } from '../tokens/styles';
 import { themes } from '../utils/theme-generator';
@@ -28,15 +28,18 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
         })
       : className;
 
+    const { look } = themeSwitcherStyles.default;
+    const lookStyles = themeSwitcherStyles.variants.look[look];
+
     return (
       <div {...props} ref={ref} className={finalClass}>
         {themeList.map((t) => (
           <Button
             key={t}
             intent={
-              theme === t
-                ? themeSwitcherStyles.slots.activeIntent
-                : themeSwitcherStyles.slots.inactiveIntent
+              (theme === t
+                ? lookStyles.activeIntent
+                : lookStyles.inactiveIntent) as ButtonProps['intent']
             }
             size={size}
             props={{
@@ -44,7 +47,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
                 setTheme(t);
               },
             }}
-            className={themeSwitcherStyles.slots.button}
+            className={lookStyles.button}
           >
             {t}
           </Button>

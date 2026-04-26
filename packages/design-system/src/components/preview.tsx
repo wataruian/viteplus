@@ -60,10 +60,17 @@ ScaleRow.displayName = 'ScaleRow';
 
 const PREVIEW_ICON = ['i', 'ph', 'star', 'duotone'].join('-');
 
+const MockError = () => {
+  throw new Error('This is a preview error to demonstrate the ErrorBoundary UI.');
+};
+
 const getExtraProps = (componentName: string, variant?: string, group?: string) => {
   switch (componentName) {
+    case 'ErrorBoundary': {
+      return { children: <MockError /> };
+    }
     case 'Icon': {
-      return { className: 'text-primary', name: PREVIEW_ICON };
+      return { className: styles.previewStyles.slots.iconPreview, name: PREVIEW_ICON };
     }
     case 'Input': {
       return {
@@ -88,14 +95,17 @@ const renderChildren = (componentName: string, variant: string): React.ReactNode
   if (componentName === 'Typography') {
     return `${variant} Typography`;
   }
-  if (['Icon', 'Input', 'Logo', 'Marquee'].includes(componentName)) {
+  if (['Icon', 'Input', 'Logo', 'Marquee', 'ErrorBoundary'].includes(componentName)) {
     return null;
   }
   return variant;
 };
 
 const isWideComponent = (componentName: string) =>
-  ['Typography', 'Marquee', 'Header'].includes(componentName);
+  ['Typography', 'Marquee', 'ErrorBoundary'].includes(componentName);
+
+const isBlockComponent = (componentName: string) =>
+  ['Input', 'Typography', 'Marquee', 'ErrorBoundary'].includes(componentName);
 
 const isRecord = (val: unknown): val is Record<string, unknown> =>
   typeof val === 'object' && val !== null;
@@ -106,12 +116,13 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
 
     const displayableComponents = Object.keys(styles)
       .filter((key): key is keyof typeof styles => key.endsWith('Styles'))
-      .filter((key) => !['previewStyles', 'layoutStyles', 'errorBoundaryStyles'].includes(key))
+      .filter((key) => !['previewStyles', 'layoutStyles', 'headerStyles'].includes(key))
       .map((styleKey) => {
         const baseName = styleKey.replace('Styles', '');
         const capitalized = baseName.charAt(0).toUpperCase() + baseName.slice(1);
         const Component = (ui as Record<string, React.ElementType>)[capitalized];
-        const styleObj = styles[styleKey] as Record<string, unknown>;
+        const styleObj = (styles as Record<string, unknown>)[styleKey];
+
         return { Component, name: capitalized, styleKey, styleObj };
       })
       .filter((item): item is typeof item & { Component: React.ElementType } =>
@@ -175,40 +186,44 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                       >
                         Components
                       </Typography>
-                      <div className={styles.previewStyles.slots.componentsGrid}>
+                      <div className={styles.previewStyles.slots.componentGrid}>
                         {displayableComponents.map(({ Component, styleObj, name }) => {
-                          const { variants } = styleObj;
+                          const variants = isRecord(styleObj) ? styleObj['variants'] : undefined;
+                          const layoutType = isBlockComponent(name) ? 'block' : 'inline';
+                          const widthType = isWideComponent(name) ? 'wide' : 'standard';
 
                           return (
                             <div
                               key={name}
-                              className={`flex flex-col gap-4 ${isWideComponent(name) ? 'lg:col-span-2' : ''}`}
+                              className={`${styles.previewStyles.slots.componentWrapper} ${previewVariants({ wrapperWidth: widthType })}`}
                             >
-                              <Typography as='h2' type='display'>
+                              <Typography
+                                as='h2'
+                                type='display'
+                                className={styles.previewStyles.slots.componentTitle}
+                              >
                                 {name}
                               </Typography>
                               <ui.Card
                                 intent='outline'
-                                className={styles.previewStyles.slots.componentCard}
+                                className={`${styles.previewStyles.slots.componentCard} ${previewVariants({ cardAlignment: layoutType })}`}
                               >
-                                <div className='flex flex-col gap-8 w-full'>
-                                  {/* Default Variant */}
-                                  <div className='flex flex-col gap-2'>
+                                <div className={styles.previewStyles.slots.componentCardInner}>
+                                  <div className={styles.previewStyles.slots.groupWrapper}>
                                     <Typography
                                       as='span'
                                       type='caption'
-                                      className='font-bold uppercase tracking-widest opacity-40'
+                                      className={styles.previewStyles.slots.groupLabel}
                                     >
                                       Default
                                     </Typography>
-                                    <div className='flex flex-wrap gap-4 items-center'>
+                                    <div className={previewVariants({ variantList: layoutType })}>
                                       <Component {...getExtraProps(name)}>
                                         {renderChildren(name, 'Default')}
                                       </Component>
                                     </div>
                                   </div>
 
-                                  {/* Variant Groups */}
                                   {isRecord(variants) &&
                                     Object.keys(variants)
                                       .filter((g): g is string => Object.hasOwn(variants, g))
@@ -216,15 +231,22 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                         const groupVariants = variants[group];
 
                                         return (
-                                          <div key={group} className='flex flex-col gap-2'>
+                                          <div
+                                            key={group}
+                                            className={styles.previewStyles.slots.groupWrapper}
+                                          >
                                             <Typography
                                               as='span'
                                               type='caption'
-                                              className='font-bold uppercase tracking-widest opacity-40'
+                                              className={styles.previewStyles.slots.groupLabel}
                                             >
                                               {group}
                                             </Typography>
-                                            <div className='flex flex-wrap gap-4 items-center'>
+                                            <div
+                                              className={previewVariants({
+                                                variantList: layoutType,
+                                              })}
+                                            >
                                               {isRecord(groupVariants) &&
                                                 Object.keys(groupVariants)
                                                   .filter((v): v is string =>
@@ -233,14 +255,16 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                                   .map((variant) => (
                                                     <div
                                                       key={variant}
-                                                      className='flex flex-col items-center gap-1'
+                                                      className={previewVariants({
+                                                        variantItem: layoutType,
+                                                      })}
                                                     >
                                                       <Component
                                                         {...{ [group]: variant }}
                                                         {...getExtraProps(name, variant, group)}
                                                         className={
                                                           name === 'Card'
-                                                            ? 'p-6 text-center text-sm font-bold flex items-center justify-center min-w-[120px]'
+                                                            ? styles.previewStyles.slots.cardPreview
                                                             : undefined
                                                         }
                                                       >
@@ -249,7 +273,9 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                                       {name === 'Icon' && (
                                                         <Typography
                                                           type='caption'
-                                                          className='opacity-40'
+                                                          className={
+                                                            styles.previewStyles.slots.iconLabel
+                                                          }
                                                         >
                                                           {variant}
                                                         </Typography>

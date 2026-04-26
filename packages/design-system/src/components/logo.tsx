@@ -19,14 +19,17 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ children, className = '', props, textBottom = '', textTop = '', useDefault = true }, ref) => {
     const finalClass = useDefault ? logoVariants({ className }) : className;
 
+    const { look } = logoStyles.default;
+    const lookStyles = logoStyles.variants.look[look];
+
     return (
       <div {...props} ref={ref} className={finalClass}>
         {useDefault ? (
-          <div className={logoStyles.slots.inner}>
-            <span className={`${typographyStyles.variants.type.caption} ${logoStyles.slots.top}`}>
+          <div className={lookStyles.inner}>
+            <span className={`${typographyStyles.variants.type.caption} ${lookStyles.top}`}>
               {textTop}
             </span>
-            <span className={logoStyles.slots.bottom}>{textBottom}</span>
+            <span className={lookStyles.bottom}>{textBottom}</span>
           </div>
         ) : null}
 
