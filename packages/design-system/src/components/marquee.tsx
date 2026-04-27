@@ -43,7 +43,7 @@ const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
     return (
       <div {...props} ref={ref} className={finalClass}>
         <div
-          className={combineClasses(useDefault ? lookStyles.track : '')}
+          className={combineClasses(useDefault ? lookStyles.track : '', 'track')}
           style={
             { '--duration': `${duration}s` } as CSSProperties & Record<string, string | number>
           }

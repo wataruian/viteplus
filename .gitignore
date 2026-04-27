@@ -32,6 +32,7 @@ tsconfig.tsbuildinfo
 vite.config.d.ts
 vite.config.d.ts.map
 .env
+__unconfig_vite.config.ts
 
 # AI
 .ai-data

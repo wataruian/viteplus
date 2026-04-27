@@ -1,19 +1,19 @@
 const badgeStyles = {
-  base: 'inline-flex items-center justify-center font-black uppercase tracking-widest border transition-all duration-300 shadow-sm backdrop-blur-sm',
+  base: 'inline-flex items-center justify-center font-black uppercase tracking-widest transition-all duration-300 shadow-sm backdrop-blur-sm',
   default: {
     intent: 'primary' as const,
     size: 'md' as const,
   },
   variants: {
     intent: {
-      accent: 'bg-accent/15 text-accent border-accent/25',
-      danger: 'bg-danger/15 text-danger border-danger/25',
-      glass: 'bg-white/10 text-white border border-white/20',
-      info: 'bg-info/15 text-info border-info/25',
-      outline: 'bg-transparent text-adaptive-text-muted border-adaptive-border',
-      primary: 'bg-primary/15 text-primary border-primary/25',
-      success: 'bg-success/15 text-success border-success/25',
-      warning: 'bg-warning/15 text-warning border-warning/25',
+      accent: 'bg-accent/15 text-accent',
+      danger: 'bg-danger/15 text-danger',
+      glass: 'bg-adaptive-surface/15 text-inverse-surface ring-1 ring-inverse-surface/10',
+      info: 'bg-info/15 text-info',
+      outline: 'bg-transparent text-inverse-surface ring-1 ring-inverse-surface/10',
+      primary: 'bg-primary/15 text-primary',
+      success: 'bg-success/15 text-success',
+      warning: 'bg-warning/15 text-warning',
     },
     size: {
       lg: 'px-4 py-1.5 text-sm rounded-full',
@@ -34,16 +34,17 @@ const buttonStyles = {
       accent: 'bg-accent text-white shadow-lg shadow-accent/20 hover:bg-accent/90',
       danger: 'bg-danger text-white shadow-lg shadow-danger/20 hover:bg-danger/90',
       ghost:
-        'bg-transparent text-adaptive-text-muted hover:bg-adaptive-bg-alt hover:text-adaptive-text',
-      glass: 'bg-white/5 text-white border border-white/10 backdrop-blur-md hover:bg-white/10',
-      inverse: `bg-adaptive-inverse !text-adaptive-inverse-text hover:opacity-90`,
-      outline:
-        'bg-transparent text-adaptive-text border border-adaptive-border hover:bg-adaptive-bg-alt shadow-sm',
+        'bg-transparent text-inverse-surface hover:bg-adaptive-surface hover:text-inverse-surface',
+      info: 'bg-info text-white shadow-lg shadow-info/20 hover:bg-info/90',
+      inverse: 'bg-inverse-primary text-adaptive-primary hover:opacity-90',
       premium:
         'bg-gradient-to-br from-primary via-accent to-primary bg-[length:200%_200%] animate-gradient text-white shadow-xl shadow-primary/30 hover:scale-[1.02]',
       primary: 'bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90',
       secondary:
-        'bg-adaptive-bg-alt text-adaptive-text border border-adaptive-border hover:bg-adaptive-bg shadow-md',
+        'bg-adaptive-surface text-inverse-surface shadow-lg shadow-adaptive-surface/20 hover:bg-inverse-surface hover:text-adaptive-surface',
+      success: 'bg-success text-white shadow-lg shadow-success/20 hover:bg-success/90',
+
+      warning: 'bg-warning text-white shadow-lg shadow-warning/20 hover:bg-warning/90',
     },
     size: {
       lg: 'h-14 px-8 text-lg rounded-xl',
@@ -55,41 +56,41 @@ const buttonStyles = {
 } as const;
 
 const cardStyles = {
-  base: 'rounded-2xl overflow-hidden transition-all duration-300',
+  base: 'rounded-2xl overflow-hidden transition-all duration-300 p-6',
   default: {
     intent: 'primary' as const,
   },
   variants: {
     intent: {
-      glass: 'bg-adaptive-bg/40 border border-adaptive-border/50 backdrop-blur-xl shadow-2xl',
-      outline: 'bg-transparent border-2 border-adaptive-border shadow-sm hover:border-primary/30',
+      glass: 'bg-adaptive-surface/40 backdrop-blur-xl shadow-2xl',
+      outline: 'bg-transparent shadow-sm ring-1 ring-inverse-surface/10',
       premium:
-        'bg-adaptive-bg-alt border border-primary/20 shadow-xl shadow-primary/5 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent',
-      primary: 'bg-adaptive-bg border border-adaptive-border shadow-xl',
+        'bg-adaptive-surface shadow-2xl shadow-primary/10 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/10 before:via-transparent before:to-accent/5 hover:scale-[1.01] ring-1 ring-primary/30',
+      primary: 'bg-adaptive-primary shadow-lg shadow-adaptive-primary/20',
     },
   },
 } as const;
 
 const errorBoundaryStyles = {
-  base: 'p-12 border rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
+  base: 'p-12 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
   default: {
     intent: 'danger' as const,
   },
   variants: {
     intent: {
       danger: {
-        base: 'border-danger/20 bg-danger/5',
+        base: 'bg-danger/10',
         container: 'flex flex-col items-center gap-6',
         content: 'space-y-2',
-        description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
+        description: 'text-inverse-surface/60 text-lg leading-relaxed max-w-lg',
         icon: 'i-ph-warning-octagon-duotone text-6xl text-danger/80',
         title: 'text-danger font-black text-3xl tracking-tight',
       },
       warning: {
-        base: 'border-warning/20 bg-warning/5',
+        base: 'bg-warning/10',
         container: 'flex flex-col items-center gap-6',
         content: 'space-y-2',
-        description: 'text-adaptive-text-muted text-lg leading-relaxed max-w-lg',
+        description: 'text-inverse-surface/60 text-lg leading-relaxed max-w-lg',
         icon: 'i-ph-warning-duotone text-6xl text-warning/80',
         title: 'text-warning font-black text-3xl tracking-tight',
       },
@@ -113,7 +114,7 @@ const iconStyles = {
 } as const;
 
 const inputStyles = {
-  base: 'w-full max-w-full box-border min-w-0 bg-adaptive-bg border border-adaptive-border rounded-xl px-4 py-3 text-adaptive-text placeholder:text-adaptive-text-muted transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm',
+  base: 'w-full max-w-full box-border min-w-0 bg-adaptive-surface/50 rounded-xl px-4 py-3 text-inverse-surface placeholder:text-inverse-surface/40 transition-all focus:outline-none focus:ring-2 shadow-sm',
   default: {
     state: 'default' as const,
   },
@@ -149,7 +150,7 @@ const layoutStyles = {
     type: {
       appRoot: 'min-h-screen font-sans',
       container: 'max-w-layout mx-auto px-6 md:px-10',
-      section: 'py-12 md:py-20 relative overflow-hidden',
+      section: 'py-4 md:py-8 relative overflow-hidden',
     },
   },
 } as const;
@@ -171,7 +172,7 @@ const logoStyles = {
 } as const;
 
 const marqueeStyles = {
-  base: 'flex select-none overflow-hidden gap-4',
+  base: 'flex w-full select-none overflow-hidden',
   default: {
     direction: 'left' as const,
     look: 'default' as const,
@@ -180,8 +181,8 @@ const marqueeStyles = {
   },
   variants: {
     direction: {
-      left: 'animate-marquee',
-      right: 'animate-marquee-reverse',
+      left: '[&>.track]:animate-marquee',
+      right: '[&>.track]:animate-marquee-reverse',
     },
     look: {
       default: {
@@ -190,7 +191,7 @@ const marqueeStyles = {
     },
     pauseOnHover: {
       false: '',
-      true: 'hover:[animation-play-state:paused]',
+      true: 'hover:[&>.track]:[animation-play-state:paused]',
     },
     speed: {
       fast: '20',
@@ -220,7 +221,7 @@ const modeSwitcherStyles = {
 } as const;
 
 const themeSwitcherStyles = {
-  base: 'flex flex-wrap gap-1 bg-adaptive-bg p-1 rounded-xl border border-adaptive-border-alt shadow-sm w-fit',
+  base: 'flex flex-wrap gap-1 bg-adaptive-surface p-1 rounded-xl border border-inverse-surface/10 shadow-sm w-fit',
   default: {
     look: 'default' as const,
     plain: false,
@@ -253,47 +254,47 @@ const typographyStyles = {
   },
   variants: {
     type: {
-      body: 'text-lg text-adaptive-text-muted leading-relaxed font-medium',
-      caption: 'text-sm text-adaptive-text-muted-alt font-mono uppercase tracking-widest',
+      body: 'text-lg text-inverse-surface/60 leading-relaxed font-medium',
+      caption: 'text-sm text-inverse-primary/60 font-mono uppercase tracking-widest',
       display:
-        'text-liquid-display font-black leading-compressed tracking-tighter text-adaptive-text font-header',
-      headline: 'text-4xl md:text-5xl font-black text-adaptive-text font-header tracking-tight',
-      subHeadline: 'text-2xl font-bold text-adaptive-text',
+        'text-liquid-display font-black leading-compressed tracking-tighter text-inverse-surface font-header',
+      headline: 'text-4xl md:text-5xl font-black text-inverse-surface font-header tracking-tight',
+      subHeadline: 'text-2xl font-bold text-inverse-surface',
     },
   },
 } as const;
 
 const previewStyles = {
-  base: 'pt-6 md:pt-10',
+  base: 'pt-2 md:pt-4',
   default: {},
   slots: {
     actions: 'flex shrink-0 items-center gap-4 self-start',
     cardPreview: 'p-6 text-center text-sm font-bold flex items-center justify-center min-w-[120px]',
-    componentCard: 'flex flex-col items-center justify-center gap-6 p-8',
-    componentCardInner: 'flex flex-col gap-8 w-full',
+    componentCard:
+      'rounded-2xl overflow-hidden transition-all duration-300 bg-transparent border-2 border-inverse-surface/10 shadow-sm hover:border-primary/30 flex flex-col items-center justify-center gap-1 p-2',
+    componentCardInner: 'flex flex-col gap-1 w-full',
     componentGrid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
     componentTitle: 'break-words min-w-0',
-    componentWrapper: 'flex flex-col gap-4 min-w-0',
-    content: 'flex flex-col gap-12 md:gap-16',
-    controls:
-      'flex flex-wrap items-center gap-2 bg-adaptive-bg-alt p-1.5 rounded-xl border border-adaptive-border shadow-sm w-fit',
+    componentWrapper: 'flex flex-col gap-2 min-w-0',
+    content: 'flex flex-col gap-4 md:gap-6',
+    controls: 'flex flex-wrap items-center gap-2 p-1.5 w-fit',
     description: 'max-w-2xl opacity-90',
-    divider: 'w-[1px] h-11 bg-adaptive-inverse mx-1 hidden sm:block',
+    divider: 'w-[1px] h-11 bg-inverse-surface mx-1 hidden sm:block',
     groupLabel: 'font-bold uppercase tracking-widest opacity-40',
-    groupWrapper: 'flex flex-col gap-2',
+    groupWrapper: 'flex flex-col gap-1 bg-inverse-primary/10 p-2 rounded-2xl shadow-sm',
     header: 'flex flex-col md:flex-row md:items-start justify-between gap-8',
-    headerInfo: 'flex-1 space-y-6 md:space-y-8 pt-12 md:pt-24',
+    headerInfo: 'flex-1 space-y-4 md:space-y-6 pt-2 md:pt-4',
     iconLabel: 'opacity-40',
     iconPreview: 'text-primary',
-    section: 'space-y-6',
+    section: 'space-y-4',
     sectionHeader: 'flex items-center gap-3',
     swatchColor:
-      'w-12 h-12 md:w-16 md:h-16 rounded-xl border border-adaptive-inverse shadow-sm ring-2 ring-adaptive-inverse/20 hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer',
-    swatchDivider: 'w-[1px] h-12 md:h-16 bg-adaptive-inverse mx-1 self-start',
+      'w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-sm ring-2 ring-inverse-surface hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer',
+    swatchDivider: 'w-[1px] h-12 md:h-16 bg-inverse-primary mx-1 self-start',
     swatchItem: 'flex flex-col gap-2',
-    swatchLabel: 'text-[10px] md:text-xs font-mono text-adaptive-text-muted text-center',
+    swatchLabel: 'text-[10px] md:text-xs font-mono text-inverse-surface/60 text-center',
     swatchesContainer: 'flex flex-wrap gap-3 items-start',
-    themesContainer: 'space-y-12 md:space-y-20',
+    themesContainer: 'space-y-8 md:space-y-12',
     themesGrid: 'grid gap-12',
     themesSection: 'space-y-8',
     themesTitle: 'uppercase tracking-widest opacity-70',
@@ -308,8 +309,8 @@ const previewStyles = {
       inline: 'flex flex-col items-center gap-1 min-w-0',
     },
     variantList: {
-      block: 'flex flex-col items-stretch w-full gap-4 min-w-0',
-      inline: 'flex flex-wrap items-center gap-4 min-w-0',
+      block: 'flex flex-col items-stretch w-full gap-2 min-w-0',
+      inline: 'flex flex-wrap items-end gap-2 min-w-0',
     },
     wrapperWidth: {
       standard: '',
@@ -330,7 +331,7 @@ export {
   logoStyles,
   marqueeStyles,
   modeSwitcherStyles,
+  previewStyles,
   themeSwitcherStyles,
   typographyStyles,
-  previewStyles,
 };

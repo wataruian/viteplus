@@ -11,6 +11,7 @@ import { ThemeProvider } from '../context/theme-provider';
 import { ThemeSwitcher } from './theme-switcher';
 import { Typography } from './typography';
 import { classPrefix } from '../utils';
+import { showcaseIcon } from '../tokens/icons';
 
 const previewVariants = cva(styles.previewStyles.base, {
   defaultVariants: styles.previewStyles.default,
@@ -19,7 +20,9 @@ const previewVariants = cva(styles.previewStyles.base, {
 
 type PreviewVariants = VariantProps<typeof previewVariants>;
 
-interface PreviewProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, PreviewVariants {}
+interface PreviewProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, PreviewVariants {
+  showDefault?: boolean;
+}
 
 const scales: number[] = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
@@ -58,8 +61,6 @@ const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
 
 ScaleRow.displayName = 'ScaleRow';
 
-const PREVIEW_ICON = ['i', 'ph', 'star', 'duotone'].join('-');
-
 const MockError = () => {
   throw new Error('This is a preview error to demonstrate the ErrorBoundary UI.');
 };
@@ -67,15 +68,21 @@ const MockError = () => {
 const getExtraProps = (componentName: string, variant?: string, group?: string) => {
   switch (componentName) {
     case 'ErrorBoundary': {
-      return { children: <MockError /> };
+      const effectiveIntent = variant ?? styles.errorBoundaryStyles.default.intent;
+      const displayTitle = `${effectiveIntent.charAt(0).toUpperCase() + effectiveIntent.slice(1)} Error`;
+      return { children: <MockError />, title: displayTitle };
     }
     case 'Icon': {
-      return { className: styles.previewStyles.slots.iconPreview, name: PREVIEW_ICON };
+      return { className: styles.previewStyles.slots.iconPreview, name: showcaseIcon };
     }
     case 'Input': {
+      const displayState = variant ?? group ?? 'state';
       return {
         props: {
-          placeholder: variant === undefined ? 'Default placeholder' : `${variant} ${group}`,
+          placeholder:
+            variant === undefined
+              ? 'Default state'
+              : `${displayState.charAt(0).toUpperCase() + displayState.slice(1)} state`,
         },
       };
     }
@@ -83,7 +90,9 @@ const getExtraProps = (componentName: string, variant?: string, group?: string) 
       return { textBottom: 'PROJECT', textTop: 'LIGHT' };
     }
     case 'Marquee': {
-      return { children: <ui.Badge>Item</ui.Badge> };
+      return {
+        className: 'bg-adaptive-surface/30 py-4 border-y border-inverse-surface/5',
+      };
     }
     default: {
       return {};
@@ -95,7 +104,17 @@ const renderChildren = (componentName: string, variant: string): React.ReactNode
   if (componentName === 'Typography') {
     return `${variant} Typography`;
   }
-  if (['Icon', 'Input', 'Logo', 'Marquee', 'ErrorBoundary'].includes(componentName)) {
+  if (componentName === 'ErrorBoundary') {
+    return <MockError />;
+  }
+  if (componentName === 'Marquee') {
+    return Array.from({ length: 6 }).map((_, i) => (
+      <Typography key={i} type='subHeadline' className='mx-4 whitespace-nowrap'>
+        Item {i + 1}
+      </Typography>
+    ));
+  }
+  if (['Icon', 'Input', 'Logo'].includes(componentName)) {
     return null;
   }
   return variant;
@@ -111,12 +130,21 @@ const isRecord = (val: unknown): val is Record<string, unknown> =>
   typeof val === 'object' && val !== null;
 
 const Preview = forwardRef<HTMLElement, PreviewProps>(
-  ({ className = '', props, useDefault = true }, ref) => {
+  ({ className = '', props, useDefault = true, showDefault = false }, ref) => {
     const finalClass = useDefault ? previewVariants({ className }) : className;
 
     const displayableComponents = Object.keys(styles)
       .filter((key): key is keyof typeof styles => key.endsWith('Styles'))
-      .filter((key) => !['previewStyles', 'layoutStyles', 'headerStyles'].includes(key))
+      .filter(
+        (key) =>
+          ![
+            'previewStyles',
+            'layoutStyles',
+            'headerStyles',
+            'themeSwitcherStyles',
+            'modeSwitcherStyles',
+          ].includes(key),
+      )
       .map((styleKey) => {
         const baseName = styleKey.replace('Styles', '');
         const capitalized = baseName.charAt(0).toUpperCase() + baseName.slice(1);
@@ -209,20 +237,32 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                 className={`${styles.previewStyles.slots.componentCard} ${previewVariants({ cardAlignment: layoutType })}`}
                               >
                                 <div className={styles.previewStyles.slots.componentCardInner}>
-                                  <div className={styles.previewStyles.slots.groupWrapper}>
-                                    <Typography
-                                      as='span'
-                                      type='caption'
-                                      className={styles.previewStyles.slots.groupLabel}
-                                    >
-                                      Default
-                                    </Typography>
-                                    <div className={previewVariants({ variantList: layoutType })}>
-                                      <Component {...getExtraProps(name)}>
-                                        {renderChildren(name, 'Default')}
-                                      </Component>
+                                  {showDefault ? (
+                                    <div className={styles.previewStyles.slots.groupWrapper}>
+                                      <Typography
+                                        as='span'
+                                        type='caption'
+                                        className={styles.previewStyles.slots.groupLabel}
+                                      >
+                                        {(() => {
+                                          const defObj = isRecord(styleObj)
+                                            ? styleObj['default']
+                                            : null;
+                                          const defs = isRecord(defObj)
+                                            ? Object.entries(defObj)
+                                                .map(([k, v]) => `${k}: ${String(v)}`)
+                                                .join(', ')
+                                            : '';
+                                          return `Default${defs ? ` (${defs})` : ''}`;
+                                        })()}
+                                      </Typography>
+                                      <div className={previewVariants({ variantList: layoutType })}>
+                                        <Component {...getExtraProps(name)}>
+                                          {renderChildren(name, 'Default')}
+                                        </Component>
+                                      </div>
                                     </div>
-                                  </div>
+                                  ) : null}
 
                                   {isRecord(variants) &&
                                     Object.keys(variants)
@@ -261,12 +301,12 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                                     >
                                                       <Component
                                                         {...{ [group]: variant }}
-                                                        {...getExtraProps(name, variant, group)}
                                                         className={
                                                           name === 'Card'
                                                             ? styles.previewStyles.slots.cardPreview
                                                             : undefined
                                                         }
+                                                        {...getExtraProps(name, variant, group)}
                                                       >
                                                         {renderChildren(name, variant)}
                                                       </Component>

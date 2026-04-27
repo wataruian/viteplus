@@ -147,7 +147,7 @@ const getThemeColors = (prefix: string): Record<string, string> => {
   const colors = Object.keys(lightnessStops)
     .toSorted((stopA, stopB) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
     .reduce<Record<string, string>>((acc, stop) => {
-      acc[stop] = `rgb(var(--${classPrefix}-${prefix}-${stop}))`;
+      acc[stop] = `rgb(var(--${classPrefix}-${prefix}-${stop}) / <alpha-value>)`;
       return acc;
     }, {});
 
@@ -161,19 +161,25 @@ const getThemes = () => ({
   colors: {
     accent: getThemeColors('accent'),
     adaptive: {
-      bg: `rgb(var(--${classPrefix}-color-bg))`,
-      'bg-alt': `rgb(var(--${classPrefix}-color-bg-alt))`,
-      border: `var(--${classPrefix}-color-border)`,
-      'border-alt': `var(--${classPrefix}-color-border-alt)`,
-      inverse: `var(--${classPrefix}-color-inverse)`,
-      'inverse-text': `var(--${classPrefix}-color-inverse-text)`,
-      text: `rgb(var(--${classPrefix}-color-text))`,
-      'text-alt': `rgb(var(--${classPrefix}-color-text-alt))`,
-      'text-muted': `var(--${classPrefix}-color-text-muted)`,
-      'text-muted-alt': `var(--${classPrefix}-color-text-muted-alt)`,
+      accent: `rgb(var(--${classPrefix}-adaptive-accent) / <alpha-value>)`,
+      danger: `rgb(var(--${classPrefix}-adaptive-danger) / <alpha-value>)`,
+      info: `rgb(var(--${classPrefix}-adaptive-info) / <alpha-value>)`,
+      primary: `rgb(var(--${classPrefix}-adaptive-primary) / <alpha-value>)`,
+      success: `rgb(var(--${classPrefix}-adaptive-success) / <alpha-value>)`,
+      surface: `rgb(var(--${classPrefix}-adaptive-surface) / <alpha-value>)`,
+      warning: `rgb(var(--${classPrefix}-adaptive-warning) / <alpha-value>)`,
     },
     danger: getThemeColors('danger'),
     info: getThemeColors('info'),
+    inverse: {
+      accent: `rgb(var(--${classPrefix}-inverse-accent) / <alpha-value>)`,
+      danger: `rgb(var(--${classPrefix}-inverse-danger) / <alpha-value>)`,
+      info: `rgb(var(--${classPrefix}-inverse-info) / <alpha-value>)`,
+      primary: `rgb(var(--${classPrefix}-inverse-primary) / <alpha-value>)`,
+      success: `rgb(var(--${classPrefix}-inverse-success) / <alpha-value>)`,
+      surface: `rgb(var(--${classPrefix}-inverse-surface) / <alpha-value>)`,
+      warning: `rgb(var(--${classPrefix}-inverse-warning) / <alpha-value>)`,
+    },
     primary: getThemeColors('primary'),
     success: getThemeColors('success'),
     surface: getThemeColors('surface'),
@@ -272,31 +278,39 @@ ${themeBlocks}
 /* Light mode: light backgrounds, dark text */
 .light {
   color-scheme: light;
-  --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-100));
-  --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-200));
-  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-900), 0.1);
-  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-800), 0.1);
-  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-950));
-  --${classPrefix}-color-inverse-text:    rgb(var(--${classPrefix}-surface-50));
-  --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-900));
-  --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-800));
-  --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-900), 0.6);
-  --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-800), 0.6);
+  --${classPrefix}-adaptive-primary: var(--${classPrefix}-primary-100); 
+  --${classPrefix}-inverse-primary: var(--${classPrefix}-primary-900); 
+  --${classPrefix}-adaptive-accent: var(--${classPrefix}-accent-100); 
+  --${classPrefix}-inverse-accent: var(--${classPrefix}-accent-900); 
+  --${classPrefix}-adaptive-danger: var(--${classPrefix}-danger-100); 
+  --${classPrefix}-inverse-danger: var(--${classPrefix}-danger-900); 
+  --${classPrefix}-adaptive-success: var(--${classPrefix}-success-100); 
+  --${classPrefix}-inverse-success: var(--${classPrefix}-success-900); 
+  --${classPrefix}-adaptive-warning: var(--${classPrefix}-warning-100); 
+  --${classPrefix}-inverse-warning: var(--${classPrefix}-warning-900); 
+  --${classPrefix}-adaptive-info: var(--${classPrefix}-info-100); 
+  --${classPrefix}-inverse-info: var(--${classPrefix}-info-900); 
+  --${classPrefix}-adaptive-surface: var(--${classPrefix}-surface-100); 
+  --${classPrefix}-inverse-surface: var(--${classPrefix}-surface-900); 
 }
 
 /* Dark mode: dark backgrounds, light text */
 .dark {
   color-scheme: dark;
-  --${classPrefix}-color-bg:              rgb(var(--${classPrefix}-primary-900));
-  --${classPrefix}-color-bg-alt:          rgb(var(--${classPrefix}-primary-800));
-  --${classPrefix}-color-border:          rgba(var(--${classPrefix}-surface-50), 0.1);
-  --${classPrefix}-color-border-alt:      rgba(var(--${classPrefix}-surface-100), 0.1);
-  --${classPrefix}-color-inverse:         rgb(var(--${classPrefix}-surface-50));
-  --${classPrefix}-color-inverse-text:    rgb(var(--${classPrefix}-surface-950));
-  --${classPrefix}-color-text:            rgb(var(--${classPrefix}-surface-50));
-  --${classPrefix}-color-text-alt:        rgb(var(--${classPrefix}-surface-100));
-  --${classPrefix}-color-text-muted:      rgba(var(--${classPrefix}-surface-50), 0.6);
-  --${classPrefix}-color-text-muted-alt:  rgba(var(--${classPrefix}-surface-100), 0.6);
+  --${classPrefix}-adaptive-primary: var(--${classPrefix}-primary-900);
+  --${classPrefix}-inverse-primary: var(--${classPrefix}-primary-100); 
+  --${classPrefix}-adaptive-accent: var(--${classPrefix}-accent-900); 
+  --${classPrefix}-inverse-accent: var(--${classPrefix}-accent-100); 
+  --${classPrefix}-adaptive-danger: var(--${classPrefix}-danger-900); 
+  --${classPrefix}-inverse-danger: var(--${classPrefix}-danger-100); 
+  --${classPrefix}-adaptive-success: var(--${classPrefix}-success-900); 
+  --${classPrefix}-inverse-success: var(--${classPrefix}-success-100); 
+  --${classPrefix}-adaptive-warning: var(--${classPrefix}-warning-900); 
+  --${classPrefix}-inverse-warning: var(--${classPrefix}-warning-100); 
+  --${classPrefix}-adaptive-info: var(--${classPrefix}-info-900); 
+  --${classPrefix}-inverse-info: var(--${classPrefix}-info-100); 
+  --${classPrefix}-adaptive-surface: var(--${classPrefix}-surface-900); 
+  --${classPrefix}-inverse-surface: var(--${classPrefix}-surface-100); 
 }
 
 :root, body {
@@ -305,8 +319,8 @@ ${themeBlocks}
 
 :root {
   color-scheme: light dark;
-  background-color: var(--${classPrefix}-color-bg);
-  color: var(--${classPrefix}-color-text);
+  background-color: rgb(var(--${classPrefix}-adaptive-primary));
+  color: rgb(var(--${classPrefix}-inverse-surface));
   transition: background-color 0.5s ease, color 0.5s ease;
 }`;
 

@@ -29,6 +29,7 @@ interface ErrorBoundaryProps extends BaseComponentProps, ErrorBoundaryVariants {
     title?: string;
   };
   title?: ReactNode;
+  forceError?: boolean;
 }
 
 interface ErrorBoundaryState {
@@ -87,10 +88,10 @@ class ErrorBoundaryBase extends Component<ErrorBoundaryProps, ErrorBoundaryState
   }
 
   public override render(): ReactNode {
-    const { children, fallback } = this.props;
+    const { children, fallback, forceError } = this.props;
 
-    if (this.state.hasError) {
-      if (fallback !== undefined && fallback !== null) {
+    if (this.state.hasError || forceError === true) {
+      if (fallback !== undefined && fallback !== null && forceError !== true) {
         return fallback;
       }
 

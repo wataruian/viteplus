@@ -12,7 +12,7 @@ const App = () => {
 
   return (
     <>
-      <Preview />
+      <Preview showDefault={true} />
     </>
   );
 };
