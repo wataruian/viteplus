@@ -11,10 +11,30 @@ const baseStyles = {
       success: 'bg-success',
       warning: 'bg-warning',
     },
+    ring: {
+      accent: 'ring-accent',
+      danger: 'ring-danger',
+      glass: 'ring-inverse-surface',
+      info: 'ring-info',
+      outline: 'ring-inverse-surface',
+      primary: 'ring-primary',
+      success: 'ring-success',
+      warning: 'ring-warning',
+    },
+    text: {
+      accent: 'text-accent',
+      danger: 'text-danger',
+      glass: 'text-inverse-surface',
+      info: 'text-info',
+      outline: 'text-inverse-surface',
+      primary: 'text-primary',
+      success: 'text-success',
+      warning: 'text-warning',
+    },
   },
 };
 
-const sharedStyles = {
+const customStyles = {
   colors: {
     bg: {
       soft: {
@@ -26,6 +46,18 @@ const sharedStyles = {
         primary: `${baseStyles.colors.bg.primary}/15`,
         success: `${baseStyles.colors.bg.success}/15`,
         warning: `${baseStyles.colors.bg.warning}/15`,
+      },
+    },
+    ring: {
+      soft: {
+        accent: `${baseStyles.colors.ring.accent}/10`,
+        danger: `${baseStyles.colors.ring.danger}/10`,
+        glass: `${baseStyles.colors.ring.glass}/10`,
+        info: `${baseStyles.colors.ring.info}/10`,
+        outline: `${baseStyles.colors.ring.outline}/10`,
+        primary: `${baseStyles.colors.ring.primary}/10`,
+        success: `${baseStyles.colors.ring.success}/10`,
+        warning: `${baseStyles.colors.ring.warning}/10`,
       },
     },
   },
@@ -41,14 +73,14 @@ const badgeStyles = {
   },
   variants: {
     intent: {
-      accent: `${sharedStyles.colors.bg.soft.accent} text-accent`,
-      danger: `${sharedStyles.colors.bg.soft.danger} text-danger`,
-      glass: `${sharedStyles.colors.bg.soft.glass} text-inverse-surface ring-1 ring-inverse-surface/10`,
-      info: `${sharedStyles.colors.bg.soft.info} text-info`,
-      outline: `${sharedStyles.colors.bg.soft.outline} text-inverse-surface ring-1 ring-inverse-surface/10`,
-      primary: `${sharedStyles.colors.bg.soft.primary} text-primary`,
-      success: `${sharedStyles.colors.bg.soft.success} text-success`,
-      warning: `${sharedStyles.colors.bg.soft.warning} text-warning`,
+      accent: `${customStyles.colors.bg.soft.accent} ${baseStyles.colors.text.accent}`,
+      danger: `${customStyles.colors.bg.soft.danger} ${baseStyles.colors.text.danger}`,
+      glass: `${customStyles.colors.bg.soft.glass} ${baseStyles.colors.text.glass} ring-1 ${customStyles.colors.ring.soft.glass}`,
+      info: `${customStyles.colors.bg.soft.info} ${baseStyles.colors.text.info}`,
+      outline: `${customStyles.colors.bg.soft.outline} ${baseStyles.colors.text.outline} ring-1 ${customStyles.colors.ring.soft.outline}`,
+      primary: `${customStyles.colors.bg.soft.primary} ${baseStyles.colors.text.primary}`,
+      success: `${customStyles.colors.bg.soft.success} ${baseStyles.colors.text.success}`,
+      warning: `${customStyles.colors.bg.soft.warning} ${baseStyles.colors.text.warning}`,
     },
     size: {
       lg: 'px-4 py-1.5 text-sm rounded-full',
@@ -359,6 +391,7 @@ export {
   baseStyles,
   buttonStyles,
   cardStyles,
+  customStyles,
   errorBoundaryStyles,
   headerStyles,
   iconStyles,
@@ -368,7 +401,6 @@ export {
   marqueeStyles,
   modeSwitcherStyles,
   previewStyles,
-  sharedStyles,
   themeSwitcherStyles,
   typographyStyles,
 };
