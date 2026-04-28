@@ -1,3 +1,4 @@
+import * as styles from '../tokens/styles';
 import {
   type UserConfig,
   defineConfig,
@@ -10,12 +11,13 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
+import { getStyles, shortcuts } from '../utils';
 import { animation } from '../tokens/animation';
 import { iconsOptions } from '../tokens/icons';
-import { shortcuts } from '../utils/shortcuts';
 import { webFontsOptions } from '../tokens/typography';
 
 const themes = getThemes();
+const safelist = getStyles(styles).split(' ');
 
 const unoCssBaseConfig: UserConfig = {
   content: {
@@ -36,6 +38,7 @@ const unoCssBaseConfig: UserConfig = {
     presetTypography(),
     presetWebFonts(webFontsOptions),
   ],
+  safelist,
   shortcuts,
   theme: {
     ...themes,
