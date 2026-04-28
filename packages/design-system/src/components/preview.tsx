@@ -11,7 +11,6 @@ import { ThemeProvider } from '../context/theme-provider';
 import { ThemeSwitcher } from './theme-switcher';
 import { Typography } from './typography';
 import { classPrefix } from '../utils';
-import { showcaseIcon } from '../tokens/icons';
 
 const previewVariants = cva(styles.previewStyles.base, {
   defaultVariants: styles.previewStyles.default,
@@ -73,7 +72,10 @@ const getExtraProps = (componentName: string, variant?: string, group?: string) 
       return { children: <MockError />, title: displayTitle };
     }
     case 'Icon': {
-      return { className: styles.previewStyles.slots.iconPreview, name: showcaseIcon };
+      return {
+        className: styles.previewStyles.slots.iconPreview,
+        name: styles.previewStyles.slots.showcaseIcon,
+      };
     }
     case 'Input': {
       const displayState = variant ?? group ?? 'state';

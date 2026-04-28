@@ -5,6 +5,4 @@ const iconsOptions: IconsOptions = {
   warn: true,
 };
 
-const showcaseIcon = 'i-ph-star-fill';
-
-export { iconsOptions, showcaseIcon };
+export { iconsOptions };
