@@ -1,3 +1,38 @@
+// ─── Common Styles ───────────────────────────────────────────────────────────────
+const baseStyles = {
+  colors: {
+    bg: {
+      accent: 'bg-accent',
+      danger: 'bg-danger',
+      glass: 'bg-adaptive-surface',
+      info: 'bg-info',
+      outline: 'bg-transparent',
+      primary: 'bg-primary',
+      success: 'bg-success',
+      warning: 'bg-warning',
+    },
+  },
+};
+
+const sharedStyles = {
+  colors: {
+    bg: {
+      soft: {
+        accent: `${baseStyles.colors.bg.accent}/15`,
+        danger: `${baseStyles.colors.bg.danger}/15`,
+        glass: `${baseStyles.colors.bg.glass}/15`,
+        info: `${baseStyles.colors.bg.info}/15`,
+        outline: baseStyles.colors.bg.outline,
+        primary: `${baseStyles.colors.bg.primary}/15`,
+        success: `${baseStyles.colors.bg.success}/15`,
+        warning: `${baseStyles.colors.bg.warning}/15`,
+      },
+    },
+  },
+};
+
+// ─── Component Styles ───────────────────────────────────────────────────────────────
+
 const badgeStyles = {
   base: 'inline-flex items-center justify-center font-black uppercase tracking-widest transition-all duration-300 shadow-sm backdrop-blur-sm',
   default: {
@@ -6,14 +41,14 @@ const badgeStyles = {
   },
   variants: {
     intent: {
-      accent: 'bg-accent/15 text-accent',
-      danger: 'bg-danger/15 text-danger',
-      glass: 'bg-adaptive-surface/15 text-inverse-surface ring-1 ring-inverse-surface/10',
-      info: 'bg-info/15 text-info',
-      outline: 'bg-transparent text-inverse-surface ring-1 ring-inverse-surface/10',
-      primary: 'bg-primary/15 text-primary',
-      success: 'bg-success/15 text-success',
-      warning: 'bg-warning/15 text-warning',
+      accent: `${sharedStyles.colors.bg.soft.accent} text-accent`,
+      danger: `${sharedStyles.colors.bg.soft.danger} text-danger`,
+      glass: `${sharedStyles.colors.bg.soft.glass} text-inverse-surface ring-1 ring-inverse-surface/10`,
+      info: `${sharedStyles.colors.bg.soft.info} text-info`,
+      outline: `${sharedStyles.colors.bg.soft.outline} text-inverse-surface ring-1 ring-inverse-surface/10`,
+      primary: `${sharedStyles.colors.bg.soft.primary} text-primary`,
+      success: `${sharedStyles.colors.bg.soft.success} text-success`,
+      warning: `${sharedStyles.colors.bg.soft.warning} text-warning`,
     },
     size: {
       lg: 'px-4 py-1.5 text-sm rounded-full',
@@ -321,6 +356,7 @@ const previewStyles = {
 
 export {
   badgeStyles,
+  baseStyles,
   buttonStyles,
   cardStyles,
   errorBoundaryStyles,
@@ -332,6 +368,7 @@ export {
   marqueeStyles,
   modeSwitcherStyles,
   previewStyles,
+  sharedStyles,
   themeSwitcherStyles,
   typographyStyles,
 };
