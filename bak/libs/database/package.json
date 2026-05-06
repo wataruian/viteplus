@@ -1,0 +1,76 @@
+{
+  "name": "@lightproject/database",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "typescript": {
+        "types": "./src/index.ts",
+        "default": "./src/index.ts"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./*": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/index.d.cts",
+        "default": "./dist/*/index.cjs"
+      },
+      "import": {
+        "types": "./dist/*/index.d.mts",
+        "default": "./dist/*/index.mjs"
+      }
+    },
+    "./*/**": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/**/*.d.cts",
+        "default": "./dist/*/**/*.cjs"
+      },
+      "import": {
+        "types": "./dist/*/**/*.d.mts",
+        "default": "./dist/*/**/*.mjs"
+      }
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev --create-only",
+    "biome:check": "biome check",
+    "biome:fix": "biome check --fix",
+    "biome:ci": "biome ci",
+    "typecheck": "rimraf dist-type && tsc --outDir dist-type --noEmit && rimraf dist-type",
+    "build": "rimraf .rolldown && tsdown --config-loader unrun",
+    "dev": "tsx watch --conditions=typescript ./src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.9.0"
+  },
+  "devDependencies": {
+    "@lightproject/typescript": "workspace:*",
+    "prisma": "^6.9.0",
+    "prisma-trpc-generator": "^1.4.1"
+  },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  }
+}

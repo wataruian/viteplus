@@ -37,6 +37,7 @@ const viteConfig: UserConfig = {
     bracketSameLine: false,
     bracketSpacing: true,
     endOfLine: 'lf',
+    ignorePatterns: ['bak'],
     jsxSingleQuote: true,
     quoteProps: 'as-needed',
     quotes: 'single',
@@ -54,6 +55,7 @@ const viteConfig: UserConfig = {
       style: 'error',
       suspicious: 'error',
     },
+    ignorePatterns: ['bak'],
     options: { typeAware: true, typeCheck: true },
     rules: {
       'capitalized-comments': 'off',

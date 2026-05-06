@@ -1,0 +1,212 @@
+import {
+  accessSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
+import type { transport, Logger as WinstonLogger } from 'winston';
+import { createLogger, format, transports } from 'winston';
+
+import { isLocal } from '../environment';
+import { serialize } from '../utils';
+
+const { combine, json, metadata, printf, timestamp } = format;
+
+const logToFile = process.env['LOG_TO_FILE'] === 'true' || isLocal;
+const rootDir = process.cwd();
+const logDir = path.join(rootDir, 'tmp', 'logs');
+const logFile = path.join(logDir, 'app.log');
+
+// Setup function to create log directory and file
+const setupLogDirectory = () => {
+  // Use fs directly to avoid circular dependency
+  if (!existsSync(logDir)) {
+    mkdirSync(logDir, { recursive: true });
+  }
+  if (!existsSync(logFile)) {
+    writeFileSync(logFile, '', { encoding: 'utf8' });
+  }
+};
+
+class Logger {
+  protected static instance: Logger;
+  private readonly logFile: string;
+  private readonly logger: WinstonLogger;
+  private readonly logLevel: number;
+  private readonly silent: boolean;
+
+  constructor() {
+    this.logFile = logFile;
+    this.logLevel = process.env['LOG_LEVEL']
+      ? Number.parseInt(process.env['LOG_LEVEL'], 10)
+      : 1;
+
+    if (process.env['DEBUG'] === 'true') {
+      this.logLevel = 0;
+    }
+
+    this.silent = !isLocal;
+
+    const transportsList: transport[] = [new transports.Console()];
+
+    if (logToFile) {
+      transportsList.push(new transports.File({ filename: this.logFile }));
+    }
+
+    this.logger = createLogger({
+      format: combine(
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        metadata({ fillExcept: ['message', 'level', 'timestamp'] }),
+        isLocal() ? customFormat : json()
+      ),
+      level: 'info',
+      transports: transportsList,
+    });
+  }
+
+  static getInstance(): Logger {
+    if (!Logger.instance) {
+      Logger.instance = new Logger();
+    }
+    return Logger.instance;
+  }
+
+  debug(message: string, ...args: unknown[]): void {
+    if (this.silent || this.logLevel > 0) {
+      return;
+    }
+
+    this.logger.debug(chalk.gray(message), ...args);
+  }
+
+  error(message: string, ...args: unknown[]): void {
+    if (this.silent) {
+      return;
+    }
+
+    this.logger.error(chalk.red(message), ...args);
+  }
+
+  info(message: string, ...args: unknown[]): void {
+    if (this.silent) {
+      return;
+    }
+
+    this.logger.info(chalk.blue(message), ...args);
+  }
+
+  success(message: string, ...args: unknown[]): void {
+    if (this.silent && this.logLevel > 1) {
+      return;
+    }
+
+    this.logger.info(chalk.green(message), ...args);
+  }
+
+  warn(message: string, ...args: unknown[]): void {
+    if (this.silent && this.logLevel > 2) {
+      return;
+    }
+
+    this.logger.warn(chalk.yellow(message), ...args);
+  }
+}
+
+class EventTargetLogger extends Logger {
+  protected static override instance: EventTargetLogger;
+  private readonly eventTarget: EventTarget;
+
+  constructor() {
+    super();
+    this.eventTarget = new EventTarget();
+  }
+
+  static override getInstance(): EventTargetLogger {
+    if (!EventTargetLogger.instance) {
+      EventTargetLogger.instance = new EventTargetLogger();
+    }
+    return EventTargetLogger.instance;
+  }
+
+  override debug(message: string, ...args: unknown[]): void {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('log', { detail: { level: 'debug', message } })
+    );
+    super.debug(message, ...args);
+  }
+
+  override error(message: string, ...args: unknown[]): void {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('log', { detail: { level: 'error', message } })
+    );
+    super.error(message, ...args);
+  }
+
+  override info(message: string, ...args: unknown[]): void {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('log', { detail: { level: 'info', message } })
+    );
+    super.info(message, ...args);
+  }
+
+  override success(message: string, ...args: unknown[]): void {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('log', {
+        detail: { level: 'info', message },
+      })
+    );
+    super.success(message, ...args);
+  }
+
+  override warn(message: string, ...args: unknown[]): void {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('log', { detail: { level: 'warn', message } })
+    );
+    super.warn(message, ...args);
+  }
+}
+
+const customFormat = printf(({ level, message, metadata, timestamp }) => {
+  const outputTimestamp = chalk.white(timestamp);
+  const outputLevel = level.toUpperCase();
+  let logMessage = `${outputTimestamp} [${outputLevel}]: ${message}`;
+  if (metadata && Object.keys(metadata).length > 0) {
+    logMessage += ` ${chalk.gray(JSON.stringify(serialize.safeSerialize(metadata)))}`;
+  }
+  return logMessage;
+});
+
+const readLogs = (limit = 100): string => {
+  const logDir = path.join(rootDir, 'tmp', 'logs');
+  const logFile = path.join(logDir, 'app.log');
+
+  try {
+    accessSync(logFile);
+    const content = readFileSync(logFile, 'utf8');
+
+    if (!content.trim()) {
+      return 'No logs available yet';
+    }
+
+    const lines = content.split('\n').filter(Boolean);
+    return lines.slice(-limit).join('\n');
+  } catch {
+    return 'No logs available yet';
+  }
+};
+
+const logger = Logger.getInstance();
+const eventTargetLogger = EventTargetLogger.getInstance();
+
+export {
+  customFormat,
+  EventTargetLogger,
+  eventTargetLogger,
+  Logger,
+  logger,
+  readLogs,
+  setupLogDirectory,
+};

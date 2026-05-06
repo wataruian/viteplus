@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+generator client_ts {
+  provider = "prisma-client"
+  output   = "../src/@generated/prisma-client"
+
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+// generator client_js {
+//   provider = "prisma-client-js"
+//   output   = "../src/@generated/prisma-client-js"
+// }
+
+// generator trpc {
+//   provider        = "prisma-trpc-generator"
+//   output          = "../src/@generated/trpc"
+//   withZod         = true
+//   withMiddleware  = false
+//   withShield      = false
+//   contextPath     = "../src/utils/context"
+//   trpcOptionsPath = "../src/utils/trpc-options"
+// }
+
+model Round {
+  id                  String  @id @default(uuid())
+  bearAmount          Float
+  bullAmount          Float
+  closeOracleId       Int
+  closePrice          Float
+  closeTimestamp      Int
+  epoch               Int
+  lockOracleId        Int
+  lockPrice           Float
+  lockTimestamp       Int
+  oracleCalled        Boolean
+  rewardAmount        Float
+  rewardBaseCalAmount Float
+  startTimestamp      Int
+  totalAmount         Float
+}

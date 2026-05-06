@@ -1,0 +1,79 @@
+{
+  "name": "@lightproject/common",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "typescript": {
+        "types": "./src/index.ts",
+        "default": "./src/index.ts"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./*": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/index.d.cts",
+        "default": "./dist/*/index.cjs"
+      },
+      "import": {
+        "types": "./dist/*/index.d.mts",
+        "default": "./dist/*/index.mjs"
+      }
+    },
+    "./*/**": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/**/*.d.cts",
+        "default": "./dist/*/**/*.cjs"
+      },
+      "import": {
+        "types": "./dist/*/**/*.d.mts",
+        "default": "./dist/*/**/*.mjs"
+      }
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "biome:check": "biome check",
+    "biome:fix": "biome check --fix",
+    "biome:ci": "biome ci",
+    "typecheck": "rimraf dist-type && tsc --outDir dist-type --noEmit && rimraf dist-type",
+    "build": "rimraf .rolldown && tsdown --config-loader unrun",
+    "test": "vitest --run --dir tests",
+    "dev": "tsx watch --conditions=typescript ./src/index.ts"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "uuid": "^11.0.5",
+    "wcwidth": "^1.0.1",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "@lightproject/typescript": "workspace:*",
+    "@lightproject/vitest": "workspace:*",
+    "@types/uuid": "^10.0.0",
+    "@types/wcwidth": "^1.0.2",
+    "ts-morph": "^26.0.0",
+    "vitest": "^3.1.1"
+  }
+}

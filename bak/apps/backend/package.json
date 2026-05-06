@@ -1,0 +1,31 @@
+{
+  "name": "@lightproject/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "biome:check": "biome check",
+    "biome:fix": "biome check --fix",
+    "biome:ci": "biome ci",
+    "typecheck": "rimraf dist-type && tsc --outDir dist-type --noEmit && rimraf dist-type",
+    "build": "rimraf .rolldown && tsdown --config-loader unrun",
+    "test": "vitest --run --dir tests",
+    "dev": "tsx watch --conditions=typescript ./src/index.ts",
+    "start": "node ./dist/index.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "@lightproject/common": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^3.1.1",
+    "@lightproject/typescript": "workspace:*",
+    "@lightproject/vitest": "workspace:*",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.3",
+    "@types/express-serve-static-core": "^5.0.6",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.0"
+  }
+}

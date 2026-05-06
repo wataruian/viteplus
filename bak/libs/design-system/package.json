@@ -1,0 +1,75 @@
+{
+  "name": "@lightproject/design-system",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "typescript": {
+        "types": "./src/index.ts",
+        "default": "./src/index.ts"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./*": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/index.d.cts",
+        "default": "./dist/*/index.cjs"
+      },
+      "import": {
+        "types": "./dist/*/index.d.mts",
+        "default": "./dist/*/index.mjs"
+      }
+    },
+    "./*/**": {
+      "typescript": {
+        "types": "./src/*/index.ts",
+        "default": "./src/*/index.ts"
+      },
+      "require": {
+        "types": "./dist/*/**/*.d.cts",
+        "default": "./dist/*/**/*.cjs"
+      },
+      "import": {
+        "types": "./dist/*/**/*.d.mts",
+        "default": "./dist/*/**/*.mjs"
+      }
+    }
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "biome:check": "biome check",
+    "biome:fix": "biome check --fix",
+    "biome:ci": "biome ci",
+    "typecheck": "rimraf dist-type && tsc --outDir dist-type --noEmit && rimraf dist-type",
+    "build": "rimraf .rolldown && tsdown --config-loader unrun",
+    "dev": "tsx watch --conditions=typescript ./src/index.ts"
+  },
+  "dependencies": {
+    "@iconify/json": "^2.2.302",
+    "culori": "^4.0.1",
+    "react": "^19.0.0",
+    "@vitejs/plugin-react-swc": "^3.7.2"
+  },
+  "devDependencies": {
+    "@lightproject/typescript": "workspace:*",
+    "@lightproject/vitest": "workspace:*",
+    "@types/culori": "^2.1.1",
+    "@types/react": "^19.0.10",
+    "vitest": "^3.1.1"
+  }
+}

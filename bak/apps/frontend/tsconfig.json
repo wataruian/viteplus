@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "exclude": [
+    "tmp",
+    "node_modules",
+    "coverage",
+    ".vite",
+    "out",
+    "dist",
+    "dist-type",
+    ".rolldown",
+    ".turbo"
+  ],
+  "extends": "@lightproject/typescript/tsconfig",
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}
