@@ -44,6 +44,7 @@
     "test": "vp test",
     "build:dev": "tsc && ENV=local vp pack",
     "build:ci": "tsc && vp pack",
+    "dev:watch": "ENV=local tsx watch --conditions=typescript src/index.ts",
     "watch": "ENV=local vp pack --watch",
     "prepublishOnly": "vp run build"
   },

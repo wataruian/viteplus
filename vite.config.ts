@@ -94,6 +94,9 @@ const viteConfig: UserConfig = {
       dev: {
         command: 'vp run -r dev',
       },
+      'dev:watch': {
+        command: 'vp run -r dev:watch',
+      },
       format: {
         command: 'vp fmt',
         input: [{ auto: true }],
