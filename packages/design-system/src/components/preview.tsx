@@ -10,7 +10,7 @@ import { ThemeProvider } from '../context/theme-provider';
 import { ThemeSwitcher } from './theme-switcher';
 import { Typography } from './typography';
 import { baseStyles } from '../tokens/base';
-import { classPrefix } from '../utils';
+import { classPrefix } from '../utils/helpers';
 
 const previewStyles = {
   base: 'pt-2 md:pt-4',

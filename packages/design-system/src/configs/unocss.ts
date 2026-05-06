@@ -16,11 +16,12 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
-import { getStyles, shortcuts } from '../utils';
 import { animation } from '../tokens/animation';
 import fg from 'fast-glob';
+import { getStyles } from '../utils/helpers';
 import { iconsOptions } from '../tokens/icons';
 import path from 'node:path';
+import { shortcuts } from '../utils/shortcuts';
 import { webFontsOptions } from '../tokens/typography';
 
 const themes = getThemes();

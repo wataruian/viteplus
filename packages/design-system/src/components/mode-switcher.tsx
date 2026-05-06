@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { baseStyles, intentSolid } from '../tokens';
+import { baseStyles, intentSolid } from '../tokens/base';
 import type { BaseComponentProps } from '../types/component';
 import { Button } from './button';
 import { Icon } from './icon';
