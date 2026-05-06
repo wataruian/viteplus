@@ -6,16 +6,6 @@ import { Icon } from './icon';
 import { Typography } from './typography';
 import { baseStyles } from '../tokens/base';
 
-const errorBoundaryStyleVariant = (color: 'danger' | 'warning', icon: string) =>
-  ({
-    base: `${baseStyles.colors.bg[color]}/10`,
-    container: 'flex flex-col items-center gap-6',
-    content: 'space-y-2',
-    description: `${baseStyles.colors.text.inverseSurface}/60 text-lg leading-relaxed max-w-lg`,
-    icon: `${icon} text-6xl ${baseStyles.colors.text[color]}/80`,
-    title: `${baseStyles.colors.text[color]} font-black text-3xl tracking-tight`,
-  }) as const;
-
 const errorBoundaryStyles = {
   base: 'p-12 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
   default: {
@@ -23,8 +13,22 @@ const errorBoundaryStyles = {
   },
   variants: {
     intent: {
-      danger: errorBoundaryStyleVariant('danger', 'i-ph-warning-octagon-duotone'),
-      warning: errorBoundaryStyleVariant('warning', 'i-ph-warning-duotone'),
+      danger: {
+        base: `${baseStyles.colors.bg.danger}/10`,
+        container: 'flex flex-col items-center gap-6',
+        content: 'space-y-2',
+        description: `${baseStyles.colors.text.inverseSurface}/60 text-lg leading-relaxed max-w-lg`,
+        icon: `i-ph-warning-octagon-duotone text-6xl ${baseStyles.colors.text.danger}/80`,
+        title: `${baseStyles.colors.text.danger} font-black text-3xl tracking-tight`,
+      },
+      warning: {
+        base: `${baseStyles.colors.bg.warning}/10`,
+        container: 'flex flex-col items-center gap-6',
+        content: 'space-y-2',
+        description: `${baseStyles.colors.text.inverseSurface}/60 text-lg leading-relaxed max-w-lg`,
+        icon: `i-ph-warning-duotone text-6xl ${baseStyles.colors.text.warning}/80`,
+        title: `${baseStyles.colors.text.warning} font-black text-3xl tracking-tight`,
+      },
     },
   },
 } as const;

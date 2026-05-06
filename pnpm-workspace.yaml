@@ -24,6 +24,7 @@ catalog:
   cors: npm:cors@2.8.6
   culori: npm:culori@4.0.2
   express: npm:express@5.2.1
+  fast-glob: ^3.3.3
   helmet: npm:helmet@8.1.0
   lodash.isplainobject: npm:lodash.isplainobject@4.0.6
   picocolors: npm:picocolors@1.1.1

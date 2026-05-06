@@ -1,4 +1,8 @@
-// import * as registry from '../components';
+import {
+  type ASTNode,
+  compileStylesRegistry,
+  extractStylesFromFile,
+} from '../utils/style-compiler';
 import { type ColorKeyMap, baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import {
   type UserConfig,
@@ -14,7 +18,9 @@ import {
 import { getCSS, getThemes } from '../utils/theme-generator';
 import { getStyles, shortcuts } from '../utils';
 import { animation } from '../tokens/animation';
+import fg from 'fast-glob';
 import { iconsOptions } from '../tokens/icons';
+import path from 'node:path';
 import { webFontsOptions } from '../tokens/typography';
 
 const themes = getThemes();
@@ -28,13 +34,26 @@ for (const color of semanticColors) {
 }
 intentClasses.push(...intentInput('danger').split(' '), ...intentInput('success').split(' '));
 
-const safelist = [...getStyles(baseStyles).split(' '), ...intentClasses];
+const componentsGlob = path.resolve(import.meta.dirname, '../components/**/*.tsx');
 
-// const styles = Object.fromEntries(
-//   Object.entries(registry).filter(([key]) => key.endsWith('Styles')),
-// );
+const files = fg.globSync(componentsGlob);
+const raw: Record<string, ASTNode> = {};
 
-// const safelist = [...getStyles(baseStyles).split(' '), ...intentClasses, ...getStyles(styles)];
+for (const file of files) {
+  Object.assign(raw, extractStylesFromFile(file));
+}
+
+const stylesRegistry = compileStylesRegistry(raw);
+
+const safelist = [
+  ...new Set(
+    [
+      ...getStyles(baseStyles).split(' '),
+      ...intentClasses,
+      ...getStyles(stylesRegistry).split(' '),
+    ].filter(Boolean),
+  ),
+];
 
 const unoCssBaseConfig: UserConfig = {
   content: {

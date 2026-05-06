@@ -58,9 +58,11 @@ const viteConfig: UserConfig = {
     rules: {
       'capitalized-comments': 'off',
       'id-length': 'off',
+      'max-depth': 'off',
       'max-lines': 'off',
       'max-lines-per-function': 'off',
       'max-statements': 'off',
+      'no-continue': 'off',
       'no-empty-function': 'off',
       'no-inline-comments': 'off',
       'no-magic-numbers': 'off',
