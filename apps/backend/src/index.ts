@@ -35,3 +35,5 @@ if (!isLocal()) {
   app.listen(port);
   logger.info(`Server started on http://localhost:${port}`);
 }
+
+export { app };
