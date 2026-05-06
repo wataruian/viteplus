@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vp test",
-    "build:dev": "tsc && ENV=local vp pack",
-    "build:ci": "tsc && vp pack",
+    "build": "tsc && vp pack",
     "dev": "vp dev",
     "start": "node dist/index.mjs"
   },

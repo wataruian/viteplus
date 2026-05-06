@@ -6,7 +6,7 @@
   "scripts": {
     "clean:ai": "rimraf -g .ai-data",
     "clean:build": "vp cache clean && rimraf -g **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
-    "ready": "vp run build:dev && vp run format && vp run lint && vp run test",
+    "ready": "vp run build && vp run format && vp run lint && vp run test",
     "init": "vp install && vp run ready",
     "debug": "vp cache clean && vp run ready",
     "prepare": "vp config",

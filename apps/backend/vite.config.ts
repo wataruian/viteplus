@@ -1,25 +1,30 @@
-import { commonViteConfig } from '../../vite.config';
-import { defineConfig } from 'vite-plus';
+import { defineConfig, loadEnv } from 'vite-plus';
+import { getCommonViteConfig } from '../../vite.config';
 import path from 'node:path';
 import { VitePluginNode as vitePluginNode } from 'vite-plugin-node';
 
 const port = Number.parseInt(globalThis.process.env['API_PORT'] ?? '3000', 10);
 
-export default defineConfig({
-  ...commonViteConfig,
-  plugins: [
-    ...vitePluginNode({
-      adapter: 'express',
-      appPath: './src/index.ts',
-      exportName: 'app',
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@lightproject/common': path.resolve(import.meta.dirname, '../../packages/common/src'),
+export default defineConfig(({ mode }) => {
+  const dir = import.meta.dirname;
+  const rootDir = path.resolve(dir, '../..');
+  const env = loadEnv(mode, rootDir);
+  return {
+    ...getCommonViteConfig(mode, env),
+    plugins: [
+      ...vitePluginNode({
+        adapter: 'express',
+        appPath: './src/index.ts',
+        exportName: 'app',
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
+      },
     },
-  },
-  server: {
-    port,
-  },
+    server: {
+      port,
+    },
+  };
 });

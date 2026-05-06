@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vp test",
-    "build:dev": "tsc && ENV=local vp build",
-    "build:ci": "tsc && vp build",
+    "build": "tsc && vp build",
     "dev": "vp dev",
     "start": "vp preview"
   },
