@@ -89,11 +89,11 @@ const viteConfig: UserConfig = {
     tasks: {
       'build:ci': {
         command: 'vp run -r build:ci',
-        input: [{ auto: true }, '!**/*.tsbuildinfo', '!**/dist/**'],
+        input: [{ auto: true }, '!**/*.tsbuildinfo', '!**/dist/**', '!**/coverage/**'],
       },
       'build:dev': {
         command: 'vp run -r build:dev',
-        input: [{ auto: true }, '!**/*.tsbuildinfo', '!**/dist/**'],
+        input: [{ auto: true }, '!**/*.tsbuildinfo', '!**/dist/**', '!**/coverage/**'],
       },
       dev: {
         command: 'vp run -r dev',

@@ -1,9 +1,9 @@
-const getEnv = (key: string): string | undefined => {
+const getEnv = (key: string, defaultValue?: string): string | undefined => {
   const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
-  if (envGlobal.process?.env !== undefined) {
+  if (envGlobal.process?.env !== undefined && envGlobal.process.env[key] !== undefined) {
     return envGlobal.process.env[key];
   }
-  return undefined;
+  return defaultValue;
 };
 
 const isBrowser = () =>

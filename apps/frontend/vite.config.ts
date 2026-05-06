@@ -5,6 +5,8 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 
+const port = Number.parseInt(globalThis.process.env['ADMIN_PORT'] ?? '3001', 10);
+
 export default defineConfig({
   ...commonViteConfig,
   plugins: [
@@ -30,6 +32,6 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3001,
+    port,
   },
 });

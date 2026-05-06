@@ -7,7 +7,7 @@
     "test": "vp test",
     "build:dev": "tsc && ENV=local vp build",
     "build:ci": "tsc && vp build",
-    "dev": "ENV=local vp dev",
+    "dev": "vp dev",
     "start": "vp preview"
   },
   "dependencies": {

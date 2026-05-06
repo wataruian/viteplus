@@ -4,6 +4,6 @@
   "compilerOptions": {
     "types": ["vite/client"]
   },
-  "include": ["./**/*.ts", "./**/*.tsx", "../../vite.config.ts"],
+  "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": ["node_modules", "dist", "coverage"]
 }
