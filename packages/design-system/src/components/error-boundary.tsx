@@ -38,7 +38,7 @@ interface ErrorBoundaryState {
 }
 
 class ErrorBoundaryBase extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+  public constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       error: undefined,

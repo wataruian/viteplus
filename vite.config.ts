@@ -107,7 +107,7 @@ const viteConfig: UserConfig = {
       },
       test: {
         command: 'vp run -r test',
-        input: [{ auto: true }, '!**/coverage/**'],
+        input: [{ auto: true }, '!**/*.tsbuildinfo', '!**/dist/**', '!**/coverage/**'],
       },
       watch: {
         command: 'vp run -r watch',

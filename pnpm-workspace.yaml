@@ -35,10 +35,10 @@ catalog:
   tsx: npm:tsx@4.21.0
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
-  vite: npm:@voidzero-dev/vite-plus-core@0.1.15
+  vite: npm:@voidzero-dev/vite-plus-core@0.1.20
   vite-plugin-node: npm:vite-plugin-node@8.0.0
-  vite-plus: npm:vite-plus@0.1.15
-  vitest: npm:@voidzero-dev/vite-plus-test@0.1.15
+  vite-plus: npm:vite-plus@0.1.20
+  vitest: npm:@voidzero-dev/vite-plus-test@0.1.20
 
 catalogMode: prefer
 

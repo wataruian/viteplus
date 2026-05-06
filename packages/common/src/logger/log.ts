@@ -14,7 +14,7 @@ class Logger {
   private readonly options: LoggerOptions;
   private stream: LogStream | undefined;
 
-  constructor(options: Partial<LoggerOptions> = {}) {
+  public constructor(options: Partial<LoggerOptions> = {}) {
     this.options = {
       color: options.color ?? true,
       level: options.level ?? 'info',
@@ -30,7 +30,7 @@ class Logger {
     return this.options.mode;
   }
 
-  async init(): Promise<this> {
+  public async init(): Promise<this> {
     if (isBrowser()) {
       return this;
     }
@@ -46,19 +46,19 @@ class Logger {
     return this;
   }
 
-  debug(message: string, metadata?: Record<string, unknown>): void {
+  public debug(message: string, metadata?: Record<string, unknown>): void {
     this.log('debug', message, metadata);
   }
 
-  info(message: string, metadata?: Record<string, unknown>): void {
+  public info(message: string, metadata?: Record<string, unknown>): void {
     this.log('info', message, metadata);
   }
 
-  warn(message: string, metadata?: Record<string, unknown>): void {
+  public warn(message: string, metadata?: Record<string, unknown>): void {
     this.log('warn', message, metadata);
   }
 
-  error(message: string, metadata?: Record<string, unknown>): void {
+  public error(message: string, metadata?: Record<string, unknown>): void {
     this.log('error', message, metadata);
   }
 
@@ -97,7 +97,7 @@ class Logger {
     }
   }
 
-  static async create(options: Partial<LoggerOptions> = {}): Promise<Logger> {
+  public static async create(options: Partial<LoggerOptions> = {}): Promise<Logger> {
     const logger = new Logger(options);
     await logger.init();
     return logger;
