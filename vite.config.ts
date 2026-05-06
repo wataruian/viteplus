@@ -10,7 +10,7 @@ const commonViteConfig: UserConfig = {
       sourcemap: isLocalViteEnv,
       tsgo: true,
     },
-    entry: 'src/**/*.ts',
+    entry: ['src/**/*.ts', 'src/**/*.tsx'],
     exports: false,
     format: ['esm', 'cjs'],
     minify: !isLocalViteEnv,

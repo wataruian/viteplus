@@ -4,7 +4,30 @@ import type { BaseComponentProps } from '../types/component';
 import { Card } from './card';
 import { Icon } from './icon';
 import { Typography } from './typography';
-import { errorBoundaryStyles } from '../tokens/styles';
+import { baseStyles } from '../tokens/base';
+
+const errorBoundaryStyleVariant = (color: 'danger' | 'warning', icon: string) =>
+  ({
+    base: `${baseStyles.colors.bg[color]}/10`,
+    container: 'flex flex-col items-center gap-6',
+    content: 'space-y-2',
+    description: `${baseStyles.colors.text.inverseSurface}/60 text-lg leading-relaxed max-w-lg`,
+    icon: `${icon} text-6xl ${baseStyles.colors.text[color]}/80`,
+    title: `${baseStyles.colors.text[color]} font-black text-3xl tracking-tight`,
+  }) as const;
+
+const errorBoundaryStyles = {
+  base: 'p-12 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
+  default: {
+    intent: 'danger' as const,
+  },
+  variants: {
+    intent: {
+      danger: errorBoundaryStyleVariant('danger', 'i-ph-warning-octagon-duotone'),
+      warning: errorBoundaryStyleVariant('warning', 'i-ph-warning-duotone'),
+    },
+  },
+} as const;
 
 const errorBoundaryVariants = cva(errorBoundaryStyles.base, {
   defaultVariants: errorBoundaryStyles.default,
@@ -109,4 +132,4 @@ const ErrorBoundary = forwardRef<ErrorBoundaryBase, ErrorBoundaryProps>((props, 
 ErrorBoundary.displayName = 'ErrorBoundary';
 
 export type { ErrorBoundaryProps, ErrorBoundaryState, ErrorBoundaryVariants };
-export { ErrorBoundary, ErrorBoundaryBase };
+export { ErrorBoundary, ErrorBoundaryBase, errorBoundaryStyles };

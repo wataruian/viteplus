@@ -1,7 +1,20 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
-import { layoutStyles } from '../tokens/styles';
+
+const layoutStyles = {
+  base: '',
+  default: {
+    type: 'container' as const,
+  },
+  variants: {
+    type: {
+      appRoot: 'min-h-screen font-sans',
+      container: 'max-w-layout mx-auto px-6 md:px-10',
+      section: 'py-4 md:py-8 relative overflow-hidden',
+    },
+  },
+} as const;
 
 // ─── Container ───────────────────────────────────────────────────────────────
 
@@ -61,4 +74,4 @@ Section.displayName = 'Section';
 // ─── Exports ─────────────────────────────────────────────────────────────────
 
 export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };
-export { Container, Section };
+export { Container, Section, layoutStyles };

@@ -1,10 +1,37 @@
 import { Button, type ButtonProps } from './button';
 import { type VariantProps, cva } from 'class-variance-authority';
 import type { BaseComponentProps } from '../types/component';
+import { baseStyles } from '../tokens/base';
 import { forwardRef } from 'react';
-import { themeSwitcherStyles } from '../tokens/styles';
 import { themes } from '../utils/theme-generator';
 import { useTheme } from '../context/theme-context';
+
+const themeSwitcherStyles = {
+  base: `flex flex-wrap gap-1 ${baseStyles.colors.bg.adaptiveSurface} p-1 rounded-xl border ${baseStyles.colors.border.inverseSurface}/10 shadow-sm w-fit`,
+  default: {
+    look: 'default' as const,
+    plain: false,
+    size: 'sm' as const,
+  },
+  variants: {
+    look: {
+      default: {
+        activeIntent: 'inverse',
+        button: 'capitalize font-medium shadow-none transition-colors',
+        inactiveIntent: 'ghost',
+      },
+    },
+    plain: {
+      false: '',
+      true: '!bg-transparent !border-none !shadow-none !p-0',
+    },
+    size: {
+      lg: 'gap-2 p-2',
+      md: 'gap-1.5 p-1.5',
+      sm: 'gap-1 p-1',
+    },
+  },
+} as const;
 
 const themeSwitcherVariants = cva(themeSwitcherStyles.base, {
   defaultVariants: themeSwitcherStyles.default,
@@ -60,4 +87,4 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
 ThemeSwitcher.displayName = 'ThemeSwitcher';
 
 export type { ThemeSwitcherProps, ThemeSwitcherVariants };
-export { ThemeSwitcher };
+export { ThemeSwitcher, themeSwitcherStyles };

@@ -1,7 +1,24 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import { logoStyles, typographyStyles } from '../tokens/styles';
 import type { BaseComponentProps } from '../types/component';
+import { baseStyles } from '../tokens/base';
+import { typographyStyles } from './typography';
+
+const logoStyles = {
+  base: 'flex items-center gap-2 font-black',
+  default: {
+    look: 'default' as const,
+  },
+  variants: {
+    look: {
+      default: {
+        bottom: 'text-2xl tracking-tighter text-white',
+        inner: 'flex flex-col items-start leading-compressed',
+        top: baseStyles.colors.text.primary,
+      },
+    },
+  },
+} as const;
 
 const logoVariants = cva(logoStyles.base, {
   defaultVariants: logoStyles.default,
@@ -42,4 +59,4 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
 Logo.displayName = 'Logo';
 
 export type { LogoProps, LogoVariants };
-export { Logo };
+export { Logo, logoStyles };
