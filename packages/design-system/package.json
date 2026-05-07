@@ -40,13 +40,6 @@
     },
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "test": "vp test",
-    "build": "tsc && vp pack",
-    "dev:watch": "tsx watch --conditions=typescript src/index.ts",
-    "watch": "vp pack --watch",
-    "prepublishOnly": "vp run build"
-  },
   "dependencies": {
     "@iconify-json/logos": "catalog:",
     "@iconify-json/ph": "catalog:",

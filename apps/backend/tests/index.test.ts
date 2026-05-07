@@ -1,7 +1,6 @@
 import { expect, test } from 'vite-plus/test';
-
-const expectValue = 1;
+import { getSample } from '../src/sample';
 
 test('fn', () => {
-  expect(expectValue).toBe(expectValue);
+  expect(getSample().message).toBe('Sample');
 });

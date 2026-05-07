@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "test": "vp test",
-    "build": "tsc && vp pack",
-    "dev": "vp dev",
-    "start": "node dist/index.mjs"
-  },
   "dependencies": {
     "@lightproject/common": "workspace:*",
     "@trpc/client": "catalog:",

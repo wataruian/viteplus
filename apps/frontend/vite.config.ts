@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite-plus';
+import { getCommonViteConfig, getPackageViteConfig } from '../../vite.config';
 import fs from 'node:fs';
-import { getCommonViteConfig } from '../../vite.config';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
@@ -10,9 +10,18 @@ const port = Number.parseInt(globalThis.process.env['ADMIN_PORT'] ?? '3001', 10)
 export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');
-  const env = loadEnv(mode, rootDir);
+  const env = loadEnv(mode, rootDir, '');
+  const isLocalViteEnv = env['ENV'] === 'local';
+
   return {
-    ...getCommonViteConfig(mode, env),
+    ...getCommonViteConfig(isLocalViteEnv),
+    ...getPackageViteConfig({
+      buildType: 'build',
+      devCommand: 'vp dev',
+      excludeDevCommand: false,
+      excludeStartCommand: false,
+      startCommand: 'vp preview',
+    }),
     plugins: [
       react(),
       unoCss({
@@ -26,6 +35,9 @@ export default defineConfig(({ mode }) => {
         configFile: path.resolve(dir, '../../packages/design-system/uno.config.ts'),
       }),
     ],
+    preview: {
+      port,
+    },
     resolve: {
       alias: {
         '@lightproject/common': path.resolve(dir, '../../packages/common/src'),

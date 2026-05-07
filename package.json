@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g .ai-data",
-    "clean:build": "vp cache clean && rimraf -g **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
-    "ready": "vp run build && vp run format && vp run lint && vp run test",
+    "clean:build": "vp cache clean && rimraf -g tmp **/__unconfig_vite.config.ts **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "ready": "vp run -r format && vp run -r lint && vp run -r build && vp run -r test",
     "init": "vp install && vp run ready",
     "debug": "vp cache clean && vp run ready",
     "prepare": "vp config",
-    "serve": "vp run -r --parallel dev"
+    "serve": "vp run -r dev"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "catalog:",

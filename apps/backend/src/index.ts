@@ -1,4 +1,4 @@
-import { getEnvironmentMode, isLocal } from '@lightproject/common/environment';
+import { getEnv, getEnvironmentMode, isLocal } from '@lightproject/common/environment';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
 import express from 'express';
@@ -7,7 +7,8 @@ import helmet from 'helmet';
 import { logger } from '@lightproject/common/logger';
 
 const env = getEnvironmentMode();
-const port = Number.parseInt(globalThis.process.env['API_PORT'] ?? '3000', 10);
+const useViteBackend = (getEnv('USE_VITE_BACKEND') ?? 'false').toLowerCase() === 'true';
+const port = Number.parseInt(getEnv('API_PORT') ?? '3000', 10);
 const app: express.Application = express();
 
 app.use(helmet());
@@ -56,7 +57,7 @@ app.get('/health', (_req, res) => {
 
 // app.use(errorHandler as unknown as ExpressRequestHandler);
 
-if (!isLocal()) {
+if (!useViteBackend || !isLocal()) {
   app.listen(port);
   logger.info(`Server started on http://localhost:${port}`);
 }
