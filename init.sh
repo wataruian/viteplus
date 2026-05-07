@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-vp run clean:build
+vp run init
