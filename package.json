@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g .ai-data",
-    "clean:build": "vp cache clean && rimraf -g tmp **/__unconfig_vite.config.ts **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ tmp **/__unconfig_vite.config.ts **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
     "ready": "vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
     "init": "vp install && vp run ready",
     "debug": "vp cache clean && vp run ready",

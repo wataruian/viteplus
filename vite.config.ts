@@ -2,19 +2,70 @@ import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 import path from 'node:path';
 
 const commonIgnorePatterns = [
-  '**/node_modules/**',
-  '**/*.tsbuildinfo/**',
-  '**/vite.config.d.ts/**',
-  '**/vite.config.d.ts.map/**',
-  '**/dist/**',
-  '**/coverage/**',
-  '**/tmp/**',
-  '**/bak/**',
+  ...new Set([
+    '*.tsbuildinfo',
+    '.agents',
+    '.ai-data',
+    '.aiassistant',
+    '.antigravity',
+    '.claude',
+    '.cursor',
+    '.git',
+    '.github',
+    '.gitignore',
+    '.vite-hooks',
+    '.vscode',
+    'AGENTS.md',
+    'CLAUDE.md',
+    'GEMINI.md',
+    'README.md',
+    'bak',
+    'check.sh',
+    'clean.sh',
+    'coverage',
+    'dist',
+    'init.sh',
+    'node_modules',
+    'prompt.txt',
+    'root.txt',
+    'start.sh',
+    'tmp',
+    'tsconfig.reference.json',
+    'vite.config.d.ts',
+    'vite.config.d.ts.map',
+  ]),
 ];
 
 const commonRunInputs = [
-  { auto: true },
-  ...commonIgnorePatterns.map((ignorePattern) => `!${ignorePattern}`),
+  ...new Set([
+    '**',
+    { base: 'workspace' as const, pattern: '.env' },
+    { base: 'workspace' as const, pattern: '.env.example' },
+    { base: 'workspace' as const, pattern: '.envrc' },
+    { base: 'workspace' as const, pattern: '.npmrc' },
+    { base: 'workspace' as const, pattern: '.tool-versions' },
+    { base: 'workspace' as const, pattern: 'package.json' },
+    { base: 'workspace' as const, pattern: 'pnpm-lock.yaml' },
+    { base: 'workspace' as const, pattern: 'pnpm-workspace.yaml' },
+    { base: 'workspace' as const, pattern: 'tsconfig.base.json' },
+    { base: 'workspace' as const, pattern: 'tsconfig.json' },
+    { base: 'workspace' as const, pattern: 'vite.config.ts' },
+    ...commonIgnorePatterns.flatMap((pattern) => {
+      const isGlob = pattern.includes('*');
+      const hasRelativePrefix = pattern.startsWith('**/');
+      const results = [`!${pattern}`];
+      if (!hasRelativePrefix) {
+        results.push(`!**/${pattern}`);
+      }
+      if (!isGlob) {
+        results.push(`!${pattern}/**`);
+        if (!hasRelativePrefix) {
+          results.push(`!**/${pattern}/**`);
+        }
+      }
+      return results;
+    }),
+  ]),
 ];
 
 const getCommonViteConfig = ({
