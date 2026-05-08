@@ -28,7 +28,7 @@ node_modules
 dist
 dist-ssr
 *.local
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 vite.config.d.ts
 vite.config.d.ts.map
 .env

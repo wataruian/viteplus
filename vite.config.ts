@@ -4,6 +4,7 @@ import path from 'node:path';
 const commonIgnorePatterns = [
   ...new Set([
     '*.tsbuildinfo',
+    '__unconfig_vite.config.ts',
     '.agents',
     '.ai-data',
     '.aiassistant',
@@ -24,6 +25,7 @@ const commonIgnorePatterns = [
     'clean.sh',
     'coverage',
     'dist',
+    'dist-ssr',
     'init.sh',
     'node_modules',
     'prompt.txt',
