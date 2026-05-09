@@ -41,13 +41,19 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "chalk": "catalog:",
     "lodash.isplainobject": "catalog:",
     "picocolors": "catalog:",
     "redact-object": "catalog:",
-    "rotating-file-stream": "catalog:"
+    "rotating-file-stream": "catalog:",
+    "ts-morph": "catalog:",
+    "uuid": "catalog:",
+    "wcwidth": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/uuid": "catalog:",
+    "@types/wcwidth": "catalog:",
     "@typescript/native-preview": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:"

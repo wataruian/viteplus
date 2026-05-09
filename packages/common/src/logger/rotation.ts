@@ -1,5 +1,5 @@
 import type { InternalStream, LogStream, RotationOptions } from './types';
-import { isRecord } from './redactor';
+import { isRecord } from '../validators/validate';
 
 const isInternalStream = (value: unknown): value is InternalStream =>
   isRecord(value) && typeof value['write'] === 'function';

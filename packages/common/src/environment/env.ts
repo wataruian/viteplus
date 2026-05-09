@@ -23,11 +23,28 @@ const isDebug = () => getEnv('DEBUG')?.toLowerCase() === 'true' || getEnv('DEBUG
 const getLogFormat = () => getEnv('LOG_FORMAT');
 const getLogLevel = () => getEnv('LOG_LEVEL');
 
+const isNonProduction = () =>
+  (isCi() || isTest() || isLocal() || isDevelop() || isStaging()) && !isProduction();
+
+const isOtherEnvironment = (environment = '') => {
+  let isOtherEnv =
+    !(isCi() || isTest() || isLocal() || isDevelop() || isStaging() || isProduction()) &&
+    getEnvironmentMode() !== '';
+
+  if (isOtherEnv && environment.trim().length > 0) {
+    isOtherEnv = getEnvironmentMode() === environment;
+  }
+
+  return isOtherEnv;
+};
+
 export {
   getEnv,
+  isOtherEnvironment,
   getEnvironmentMode,
   isBrowser,
   isLocal,
+  isNonProduction,
   isDevelop,
   isStaging,
   isProduction,

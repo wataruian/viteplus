@@ -1,4 +1,5 @@
 import type { RedactFn } from './types';
+import { isRecord } from '../validators/validate';
 import redactObj from 'redact-object';
 
 const defaultRedactValue = '[REDACTED]';
@@ -22,9 +23,6 @@ const defaultMaskFields: string[] = [
   'access_token',
   'refresh_token',
 ];
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const isFunc = (val: unknown): val is RedactFn => typeof val === 'function';
 
@@ -72,4 +70,4 @@ const redact = (
   }
 };
 
-export { defaultRedactValue, defaultMaskFields, isRecord, isFunc, getRedactFn, redact };
+export { defaultRedactValue, defaultMaskFields, isFunc, getRedactFn, redact };

@@ -23,6 +23,8 @@ catalog:
   '@types/react-dom': npm:@types/react-dom@19.2.3
   '@types/supertest': npm:@types/supertest@7.2.0
   '@types/swagger-ui-express': npm:@types/swagger-ui-express@4.1.8
+  '@types/uuid': npm:@types/uuid@11.0.0
+  '@types/wcwidth': npm:@types/wcwidth@1.0.1
   '@typescript/native-preview': npm:@typescript/native-preview@7.0.0-dev.20260405.1
   '@unocss/preset-wind3': npm:@unocss/preset-wind3@66.6.7
   '@unocss/transformer-directives': npm:@unocss/transformer-directives@66.6.7
@@ -58,10 +60,12 @@ catalog:
   tsx: npm:tsx@4.21.0
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
+  uuid: npm:uuid@11.0.0
   vite: npm:@voidzero-dev/vite-plus-core@0.1.20
   vite-plugin-node: npm:vite-plugin-node@8.0.0
   vite-plus: npm:vite-plus@0.1.20
   vitest: npm:@voidzero-dev/vite-plus-test@0.1.20
+  wcwidth: npm:wcwidth@1.0.1
   zod: npm:zod@4.4.3
 
 catalogMode: prefer

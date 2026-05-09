@@ -1,9 +1,10 @@
 import type { LogEntry, LogLevel, LogStream, LoggerOptions } from './types';
 import { formatJSON, formatPretty } from './formatters';
 import { getLogFormat, isBrowser, isLocal } from '../environment/env';
-import { isRecord, redact } from './redactor';
+import { isRecord } from '../validators/validate';
+import { redact } from './redactor';
 
-const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
+const logLevelPriority: Record<LogLevel, number> = {
   debug: 0,
   error: 3,
   info: 1,
@@ -63,8 +64,8 @@ class Logger {
   }
 
   private log(level: LogLevel, message: string, metadata?: Record<string, unknown>): void {
-    const levelPriority = LOG_LEVEL_PRIORITY[level];
-    const optionLevelPriority = LOG_LEVEL_PRIORITY[this.options.level];
+    const levelPriority = logLevelPriority[level];
+    const optionLevelPriority = logLevelPriority[this.options.level];
 
     if (levelPriority < optionLevelPriority) {
       return;
@@ -106,4 +107,4 @@ class Logger {
 
 const logger = new Logger();
 
-export { LOG_LEVEL_PRIORITY, Logger, logger };
+export { logLevelPriority, Logger, logger };

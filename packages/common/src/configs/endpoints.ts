@@ -52,6 +52,7 @@ const isTrpcRequest = (requestType: RequestType): boolean => {
   return false;
 };
 
+export type { RequestType };
 export {
   adminUrl,
   apiBaseUrl,
@@ -75,5 +76,3 @@ export {
   trpcPlaygroundUrl,
   trpcUrl,
 };
-
-export type { RequestType };

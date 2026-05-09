@@ -2,7 +2,7 @@ import { adminUrl, apiBaseUrl, siteUrl } from '@lightproject/common/configs';
 import type { CorsOptions } from 'cors';
 import { getEnv } from '@lightproject/common/environment';
 
-const allowedOrigins = [];
+const allowedOrigins: string[] = [];
 
 if (apiBaseUrl !== undefined) {
   allowedOrigins.push(apiBaseUrl);
