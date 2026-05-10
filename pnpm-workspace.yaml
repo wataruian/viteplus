@@ -14,7 +14,7 @@ catalog:
   '@trpc/client': npm:@trpc/client@11.17.0
   '@trpc/server': npm:@trpc/server@11.17.0
   '@types/cors': npm:@types/cors@2.8.19
-  '@types/crypto-js': npm:@types/crypto-js@4.2.2
+  '@types/crypto-js': npm:@types/crypto-js@4.2.0
   '@types/culori': npm:@types/culori@4.0.1
   '@types/express': npm:@types/express@5.0.6
   '@types/express-serve-static-core': npm:@types/express-serve-static-core@5.1.1
@@ -36,6 +36,7 @@ catalog:
   chalk: npm:chalk@5.6.2
   class-variance-authority: npm:class-variance-authority@0.7.1
   cors: npm:cors@2.8.6
+  crypto-js: npm:crypto-js@4.2.0
   culori: npm:culori@4.0.2
   express: npm:express@5.2.1
   express-list-endpoints: npm:express-list-endpoints@7.1.1
@@ -44,6 +45,7 @@ catalog:
   lodash.isplainobject: npm:lodash.isplainobject@4.0.6
   mock-express: npm:mock-express@2.0.0
   openapi-trpc: npm:openapi-trpc@0.2.1
+  openapi-types: npm:openapi-types@12.1.3
   picocolors: npm:picocolors@1.1.1
   react: npm:react@19.2.4
   react-dom: npm:react-dom@19.2.4

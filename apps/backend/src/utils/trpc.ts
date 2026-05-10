@@ -1,92 +1,88 @@
-import { randomUUID } from 'node:crypto';
-
-import { endpoints } from '@lightproject/common/configs';
-// import { isProduction } from '@lightproject/common/environment';
-// import { initTRPC, type TRPCError } from '@trpc/server';
-import { initTRPC } from '@trpc/server';
-// import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
-import superjson from 'superjson';
-import type { OpenApiMeta } from 'trpc-openapi';
-// import { syncLocals } from '../middlewares/gateway-middleware';
 import type {
   // ErrorDetails,
   Request,
   Response,
   ServiceContext,
 } from '../types/middlware';
+// import { type TRPCError, initTRPC } from '@trpc/server';
+// import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
+import type { OpenApiMeta } from 'trpc-openapi';
+import { getRequestType } from '@lightproject/common/configs';
+// import { isProduction } from '@lightproject/common/environment';
+import { initTRPC } from '@trpc/server';
+import { randomUUID } from 'node:crypto';
+import superjson from 'superjson';
+// import { syncLocals } from '../middlewares/gateway-middleware';
 
-// const DEFAULT_ERROR_STATUS_CODE = 500;
 const uuidv4 = () => randomUUID();
 const transformer = superjson;
 
 // const errorFormatter = ({
-// 	ctx,
-// 	error,
-// 	shape,
+//   ctx,
+//   error,
+//   shape,
 // }: {
-// 	ctx: ServiceContext | undefined;
-// 	error: TRPCError;
-// 	shape: DefaultErrorShape;
+//   ctx: ServiceContext | undefined;
+//   error: TRPCError;
+//   shape: DefaultErrorShape;
 // }) => {
-// 	let errorDetails: ErrorDetails = {
-// 		message: shape.message || 'Unknown error occurred',
-// 		name: error.name || 'UnknownError',
-// 		statusCode: Number(shape.data.httpStatus) || DEFAULT_ERROR_STATUS_CODE,
-// 	};
+//   let errorDetails: ErrorDetails = {
+//     message: shape.message || 'Unknown error occurred',
+//     name: error.name || 'UnknownError',
+//     statusCode: Number(shape.data.httpStatus) || 500,
+//   };
 
-// 	if (ctx) {
-// 		ctx.res.locals.originalStatusCode = ctx.res.statusCode;
-// 		ctx.res.statusCode = shape.data.httpStatus || DEFAULT_ERROR_STATUS_CODE;
+//   if (ctx) {
+//     ctx.res.locals.originalStatusCode = ctx.res.statusCode;
+//     ctx.res.statusCode = shape.data.httpStatus || 500;
 
-// 		errorDetails = {
-// 			message: errorDetails.message,
-// 			name: errorDetails.name,
-// 			statusCode: ctx.res.statusCode || errorDetails.statusCode,
-// 		};
+//     errorDetails = {
+//       message: errorDetails.message,
+//       name: errorDetails.name,
+//       statusCode: ctx.res.statusCode || errorDetails.statusCode,
+//     };
 
-// 		// Only include stack if it exists
-// 		if (shape.data.stack) {
-// 			errorDetails.stack = shape.data.stack;
-// 		}
+//     if (shape.data.stack) {
+//       errorDetails.stack = shape.data.stack;
+//     }
 
-// 		if (!ctx.req.locals) {
-// 			ctx.req.locals = {} as ServiceContext['req']['locals'];
-// 		}
+//     if (!ctx.req.locals) {
+//       ctx.req.locals = {} as ServiceContext['req']['locals'];
+//     }
 
-// 		if (!ctx.req.locals.metadata) {
-// 			ctx.req.locals.metadata =
-// 				{} as ServiceContext['req']['locals']['metadata'];
-// 		}
+//     if (!ctx.req.locals.metadata) {
+//       ctx.req.locals.metadata = {} as ServiceContext['req']['locals']['metadata'];
+//     }
 
-// 		ctx.req.locals.metadata.error = errorDetails;
+//     ctx.req.locals.metadata.error = errorDetails;
 
-// 		syncLocals({
-// 			locals: {
-// 				...ctx.req.locals,
-// 				...ctx.res.locals,
-// 			},
-// 			req: ctx.req,
-// 			res: ctx.res,
-// 			target: 'both',
-// 		});
-// 	}
+//     syncLocals({
+//       locals: {
+//         ...ctx.req.locals,
+//         ...ctx.res.locals,
+//       },
+//       req: ctx.req,
+//       res: ctx.res,
+//       target: 'both',
+//     });
+//   }
 
-// 	const formattedError = {
-// 		code: Number(shape.data.code),
-// 		data: {
-// 			code: shape.data.code,
-// 			httpStatus: errorDetails.statusCode,
-// 			path: shape.data.path,
-// 			stack: error.stack || shape.data.stack,
-// 		},
-// 		message: error.message || shape.message,
-// 	};
+//   const formattedError = {
+//     code: Number(shape.data.code),
+//     data: {
+//       code: shape.data.code,
+//       httpStatus: errorDetails.statusCode,
+//       path: shape.data.path,
+//       stack: error.stack || shape.data.stack,
+//     },
+//     message: error.message || shape.message,
+//   };
 
-// 	if (isProduction()) {
-// 		formattedError.data.stack = undefined;
-// 	}
+//   if (isProduction()) {
+//     formattedError.data.stack = undefined;
+//   }
 
-// 	return formattedError;
+//   return formattedError;
 // };
 
 const createContext = (req: Request, res: Response): ServiceContext => {
@@ -96,7 +92,7 @@ const createContext = (req: Request, res: Response): ServiceContext => {
     req.locals = {
       metadata: {
         method: req.method,
-        requestType: endpoints.getRequestType(req.originalUrl),
+        requestType: getRequestType(req.originalUrl),
         startTime: Date.now(),
         url: req.originalUrl,
       },
@@ -152,10 +148,13 @@ const router = tRouter;
 
 const mergeRouters = tMergeRouters;
 
-export { transformer };
-export { createContext };
-export { t };
-export { trpcRouteWrapper };
-export { publicProcedure };
-export { router };
-export { mergeRouters };
+export {
+  // errorFormatter,
+  transformer,
+  createContext,
+  t,
+  trpcRouteWrapper,
+  publicProcedure,
+  router,
+  mergeRouters,
+};

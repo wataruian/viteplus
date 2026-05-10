@@ -1,19 +1,20 @@
-import { endpoints } from '@lightproject/common/configs';
+import { trpcEndpoint, trpcPlaygroundEndpoint } from '@lightproject/common/configs';
 import type { Express } from 'express';
 import { expressHandler } from 'trpc-playground/handlers/express';
-
 import { trpcRouter } from '../routers/trpc';
 
-export const trpcPlayground = async (app: Express) => {
+const trpcPlayground = async (app: Express) => {
   app.use(
-    endpoints.trpcPlaygroundEndpoint,
+    trpcPlaygroundEndpoint,
     await expressHandler({
-      playgroundEndpoint: endpoints.trpcPlaygroundEndpoint,
+      playgroundEndpoint: trpcPlaygroundEndpoint,
       request: {
         superjson: true,
       },
       router: trpcRouter,
-      trpcApiEndpoint: endpoints.trpcEndpoint,
-    })
+      trpcApiEndpoint: trpcEndpoint,
+    }),
   );
 };
+
+export { trpcPlayground };

@@ -1,14 +1,11 @@
-import { paramParser } from '@lightproject/common/utils';
-import type { SourceFile } from 'ts-morph';
 import { getProject, servicesDir } from '../config';
 import type { ServiceMetadata } from '../types';
+import type { SourceFile } from 'ts-morph';
+import { extractParameterMetadata } from '@lightproject/common/utils';
 
-/**
- * Extract service metadata (parameters) from service class and method
- */
-export const extractServiceMetadata = async (
+const extractServiceMetadata = async (
   serviceClass: string | undefined,
-  serviceMethod: string | undefined
+  serviceMethod: string | undefined,
 ): Promise<ServiceMetadata> => {
   if (!(serviceClass && serviceMethod)) {
     return { input: undefined, serviceFilePath: undefined };
@@ -17,7 +14,7 @@ export const extractServiceMetadata = async (
   const project = getProject();
   const serviceFile = project
     .getSourceFiles(`${servicesDir}/**/*.ts`)
-    .find(sf => sf.getClass(serviceClass));
+    .find((sf) => sf.getClass(serviceClass));
 
   if (!serviceFile) {
     return { input: undefined, serviceFilePath: undefined };
@@ -31,75 +28,51 @@ export const extractServiceMetadata = async (
     return { input: undefined, serviceFilePath };
   }
 
-  // Use hybrid approach: invoker + AST
   const input = await Promise.resolve(
-    paramParser.extractParameterMetadata(
-      methodDecl,
-      serviceFilePath,
-      serviceClass,
-      serviceMethod
-    )
+    extractParameterMetadata(methodDecl, serviceFilePath, serviceClass, serviceMethod),
   );
 
   return { input, serviceFilePath };
 };
 
-/**
- * Convert kebab-case filename to PascalCase class name
- */
-export const toPascalCase = (str: string): string =>
+const toPascalCase = (str: string): string =>
   str
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
-/**
- * Extract service class name from handler file path
- * Converts: '/path/to/default.ts' -> 'DefaultService'
- * Converts: '/path/to/user-profile.ts' -> 'UserProfileService'
- */
-export const getServiceNameFromHandlerFile = (
-  handlerFilePath: string
-): string | undefined => {
+const getServiceNameFromHandlerFile = (handlerFilePath: string): string | undefined => {
   try {
-    // Extract filename without extension
     const fileName = handlerFilePath.split('/').pop()?.replace('.ts', '');
 
     if (!fileName) {
       return;
     }
 
-    // Convert to PascalCase and append 'Service'
     const pascalCase = toPascalCase(fileName);
     return `${pascalCase}Service`;
   } catch {
-    return;
+    return undefined;
   }
 };
 
-/**
- * Get imported route names from router file
- */
-export const getImportedRouteNames = (routerFile: SourceFile): string[] => {
-  return routerFile
+const getImportedRouteNames = (routerFile: SourceFile): string[] =>
+  routerFile
     .getImportDeclarations()
-    .map(importDecl => importDecl.getDefaultImport()?.getText())
+    .map((importDecl) => importDecl.getDefaultImport()?.getText())
     .filter((name): name is string => name !== undefined);
-};
 
-/**
- * Get route handler file path from route name
- */
-export const getRouteHandlerFilePath = (
-  routerDirectory: string,
-  routeName: string
-): string => {
-  // Handle different import patterns:
-  // import defaultRoutes from './routes/default'; -> './routes/default.ts'
-  // import testRoutes from './routes/test'; -> './routes/test.ts'
-
+const getRouteHandlerFilePath = (routerDirectory: string, routeName: string): string => {
   const routesDir = `${routerDirectory}/routes`;
   const fileName = routeName.replace('Routes', '').toLowerCase();
 
   return `${routesDir}/${fileName}.ts`;
+};
+
+export {
+  extractServiceMetadata,
+  toPascalCase,
+  getServiceNameFromHandlerFile,
+  getImportedRouteNames,
+  getRouteHandlerFilePath,
 };

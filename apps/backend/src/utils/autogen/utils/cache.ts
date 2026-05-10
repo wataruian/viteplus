@@ -1,35 +1,16 @@
 import { Project } from 'ts-morph';
 
-/**
- * Cache configuration constants
- */
-const CACHE_VALIDITY_MINUTES = 5;
-const SECONDS_PER_MINUTE = 60;
-const MILLISECONDS_PER_SECOND = 1000;
-const MINUTES_TO_MS = SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
-const BYTES_TO_KB = 1024;
-
-/**
- * Cache for ts-morph Project instances to avoid recreating them
- */
 class ProjectCache {
-  private readonly cacheValidityMs: number =
-    CACHE_VALIDITY_MINUTES * MINUTES_TO_MS;
+  private readonly cacheValidityMs: number = 5 * 60 * 1000;
   private lastCacheTime = 0;
   private projectCache: Project | undefined;
 
-  /**
-   * Clear the project cache to free memory
-   */
-  clearCache(): void {
+  public clearCache(): void {
     this.projectCache = undefined;
     this.lastCacheTime = 0;
   }
 
-  /**
-   * Get cache statistics
-   */
-  getCacheStats(): {
+  public getCacheStats(): {
     cacheAge: number;
     cached: boolean;
     validFor: number;
@@ -45,20 +26,14 @@ class ProjectCache {
     };
   }
 
-  /**
-   * Get or create a cached ts-morph Project instance
-   */
-  getProject(): Project {
+  public getProject(): Project {
     const now = Date.now();
 
-    // Check if we have a valid cached project
     if (this.projectCache && now - this.lastCacheTime < this.cacheValidityMs) {
       return this.projectCache;
     }
 
-    // Create new project with optimized settings
     this.projectCache = new Project({
-      // Only load what we need for better performance
       skipAddingFilesFromTsConfig: false,
       skipFileDependencyResolution: true,
       skipLoadingLibFiles: true,
@@ -71,38 +46,22 @@ class ProjectCache {
   }
 }
 
-/**
- * File parsing cache to avoid re-parsing the same files
- */
 class FileParsingCache {
-  private readonly fileCache: Map<string, { content: string; mtime: number }> =
-    new Map();
+  private readonly fileCache = new Map<string, { content: string; mtime: number }>();
 
-  /**
-   * Cache file content with its modification time
-   */
-  cacheFile(filePath: string, content: string, mtime: number): void {
+  public cacheFile(filePath: string, content: string, mtime: number): void {
     this.fileCache.set(filePath, { content, mtime });
   }
 
-  /**
-   * Clear the file cache
-   */
-  clearCache(): void {
+  public clearCache(): void {
     this.fileCache.clear();
   }
 
-  /**
-   * Get cached file content
-   */
-  getCachedContent(filePath: string): string | undefined {
+  public getCachedContent(filePath: string): string | undefined {
     return this.fileCache.get(filePath)?.content;
   }
 
-  /**
-   * Get cache statistics
-   */
-  getCacheStats(): {
+  public getCacheStats(): {
     cachedFiles: number;
     totalSizeKb: number;
   } {
@@ -113,21 +72,17 @@ class FileParsingCache {
 
     return {
       cachedFiles: this.fileCache.size,
-      totalSizeKb: Math.round(totalSize / BYTES_TO_KB),
+      totalSizeKb: Math.round(totalSize / 1024),
     };
   }
 
-  /**
-   * Check if a file needs to be re-parsed based on modification time
-   */
-  needsUpdate(filePath: string, currentMtime: number): boolean {
+  public needsUpdate(filePath: string, currentMtime: number): boolean {
     const cached = this.fileCache.get(filePath);
     return !cached || cached.mtime < currentMtime;
   }
 }
 
-/**
- * Global cache instances
- */
-export const projectCache = new ProjectCache();
-export const fileParsingCache = new FileParsingCache();
+const projectCache = new ProjectCache();
+const fileParsingCache = new FileParsingCache();
+
+export { ProjectCache, FileParsingCache, projectCache, fileParsingCache };

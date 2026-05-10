@@ -1,5 +1,4 @@
 import type { InputArgs, ServiceContext } from '../types/middlware';
-
 import { BaseService } from './base';
 
 class DefaultService extends BaseService {

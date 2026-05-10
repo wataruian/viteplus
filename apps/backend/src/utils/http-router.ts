@@ -7,26 +7,15 @@ import type {
   Response,
   ServiceContext,
 } from '../types/middlware';
-import { endpoints } from '@lightproject/common/configs';
-import { logger } from '@lightproject/common/logger';
 import type { Express } from 'express';
+import { apiEndpoint } from '@lightproject/common/configs';
 import { httpRouter } from '../routers/http';
-
-const DEFAULT_SUCCESS_STATUS_CODE = 200;
-
-const TRAILING_SLASHES = /\/+$/;
-const LEADING_SLASHES = /^\/+/;
+import { logger } from '@lightproject/common/logger';
 
 const joinPaths = (a: string, b: string) =>
-  `${a.replace(TRAILING_SLASHES, '')}/${b.replace(LEADING_SLASHES, '')}`.replace(
-    TRAILING_SLASHES,
-    '',
-  ) || '/';
+  `${a.replace(/\/+$/, '')}/${b.replace(/^\/+/, '')}`.replace(/\/+$/, '') || '/';
 
-export const registerHttpRoutes = (
-  app: Express,
-  rootPath: string = endpoints.apiEndpoint,
-): void => {
+const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void => {
   try {
     for (const route of httpRouter) {
       for (const [path, { handler, method }] of Object.entries(route)) {
@@ -43,7 +32,7 @@ export const registerHttpRoutes = (
             if (typeof handler === 'function') {
               const response = await Promise.resolve(handler({ ctx, input }));
               if (!res.headersSent) {
-                ctx.res.status(response.code || DEFAULT_SUCCESS_STATUS_CODE).json(response);
+                ctx.res.status(response.code || 200).json(response);
               }
             }
           });
@@ -51,7 +40,9 @@ export const registerHttpRoutes = (
       }
     }
   } catch (error) {
-    logger.error('Failed to register HTTP routes:', error);
+    logger.error('Failed to register HTTP routes:', error as Record<string, unknown>);
     throw error;
   }
 };
+
+export { registerHttpRoutes };

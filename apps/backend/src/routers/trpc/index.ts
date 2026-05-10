@@ -1,14 +1,16 @@
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-
-import { router } from '../../utils/trpc';
 import defaultRoutes from './routes/default';
+import { router } from '../../utils/trpc';
 import testRoutes from './routes/test';
 
-export const trpcRouter = router({
+const trpcRouter = router({
   default: defaultRoutes,
   test: testRoutes,
 });
 
-export type TrpcRouter = typeof trpcRouter;
-export type TrpcRouterInput = inferRouterInputs<TrpcRouter>;
-export type TrpcRouterOutput = inferRouterOutputs<TrpcRouter>;
+type TrpcRouter = typeof trpcRouter;
+type TrpcRouterInput = inferRouterInputs<TrpcRouter>;
+type TrpcRouterOutput = inferRouterOutputs<TrpcRouter>;
+
+export type { TrpcRouter, TrpcRouterInput, TrpcRouterOutput };
+export { trpcRouter };

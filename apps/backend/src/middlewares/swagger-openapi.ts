@@ -1,7 +1,7 @@
 import type { Express } from 'express';
-import { directory } from '@lightproject/common/utils';
 import { docsEndpoint } from '@lightproject/common/configs';
 import { openApiSpecFile } from '../utils/autogen';
+import { readFile } from '@lightproject/common/utils';
 // import { swaggerJsonOutputFile } from '../utils/autogen';
 import swaggerUi from 'swagger-ui-express';
 
@@ -11,7 +11,7 @@ const swaggerOpenApiMiddleware = (app: Express) => {
     swaggerUi.serve,
     swaggerUi.setup(
       (() => {
-        const swaggerJson = directory.readFile({
+        const swaggerJson = readFile({
           encoding: 'utf8',
           // path: swaggerJsonOutputFile,
           path: openApiSpecFile,

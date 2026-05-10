@@ -1,5 +1,4 @@
 import type { ExpressNextFunction, ExpressRequest, ExpressResponse } from '../types/middlware';
-
 import { uniqueOrigins } from '../utils/cors';
 
 const allowedCsp = [...uniqueOrigins];

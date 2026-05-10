@@ -1,9 +1,6 @@
-import type { ParameterMetadata } from '@lightproject/common';
+import type { ParameterMetadata } from '@lightproject/common/types';
 
-/**
- * Extracted route handler information
- */
-export interface RouteHandlerInfo {
+interface RouteHandlerInfo {
   handlerFilePath: string;
   path: string;
   procedureType?: 'mutation' | 'query' | undefined;
@@ -11,10 +8,7 @@ export interface RouteHandlerInfo {
   serviceMethod: string | undefined;
 }
 
-/**
- * Represents a discovered API route with its metadata
- */
-export interface RouteInfo {
+interface RouteInfo {
   handlerFilePath?: string | undefined;
   input?: ParameterMetadata[] | undefined;
   method?: string | undefined;
@@ -27,10 +21,9 @@ export interface RouteInfo {
   type?: string | undefined;
 }
 
-/**
- * Service metadata extracted from route handlers
- */
-export interface ServiceMetadata {
+interface ServiceMetadata {
   input: ParameterMetadata[] | undefined;
   serviceFilePath: string | undefined;
 }
+
+export type { RouteHandlerInfo, RouteInfo, ServiceMetadata };

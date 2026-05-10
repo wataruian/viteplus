@@ -1,8 +1,8 @@
 import { TestService } from '../../../services/test';
-import { publicHttp } from '../../../utils/http';
 import { createRouteHandler } from '../../../utils/route-handler';
+import { publicHttp } from '../../../utils/http';
 
-export default {
+const routes = {
   '/test/_check-params': publicHttp.post(() => createRouteHandler(TestService, '_checkParams')),
   '/test/async-fail-reject': publicHttp.get(() =>
     createRouteHandler(TestService, 'asyncFailReject'),
@@ -22,3 +22,5 @@ export default {
   '/test/sync-fail-throw': publicHttp.get(() => createRouteHandler(TestService, 'syncFailThrow')),
   '/test/sync-success': publicHttp.get(() => createRouteHandler(TestService, 'syncSuccess')),
 };
+
+export default routes;

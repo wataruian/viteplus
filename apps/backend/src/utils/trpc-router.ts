@@ -1,9 +1,3 @@
-import { endpoints } from '@lightproject/common/configs';
-import { logger } from '@lightproject/common/logger';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import type { Express } from 'express';
-import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import type {
   ExpressRequest,
   ExpressResponse,
@@ -11,25 +5,26 @@ import type {
   Response,
   ServiceContext,
 } from '../types/middlware';
+import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
+import type { Express } from 'express';
+import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { logger } from '@lightproject/common/logger';
 
-export const createCaller = (ctx: ServiceContext) => {
-  return trpcRouter.createCaller(ctx);
-};
+const createCaller = (ctx: ServiceContext) => trpcRouter.createCaller(ctx);
 
-export const trpcClient = createTRPCClient<TrpcRouter>({
+const trpcClient = createTRPCClient<TrpcRouter>({
   links: [
     httpBatchLink({
       transformer,
-      url: endpoints.trpcUrl,
+      url: trpcUrl,
     }),
   ],
 });
 
-export const registerTrpcRoutes = (
-  app: Express,
-  rootPath: string = endpoints.trpcEndpoint
-) => {
+const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
   try {
     app.use(
       rootPath,
@@ -40,24 +35,21 @@ export const registerTrpcRoutes = (
         }: {
           req: ExpressRequest;
           res: ExpressResponse;
-        }): ServiceContext => {
-          return createContext(req as Request, res as Response);
-        },
+        }): ServiceContext => createContext(req as Request, res as Response),
         router: trpcRouter,
-      })
+      }),
     );
   } catch (error) {
-    logger.error('Failed to register tRPC routes:', error);
+    logger.error('Failed to register tRPC routes:', error as Record<string, unknown>);
     throw error;
   }
 };
 
-export type AppRouterCaller = ReturnType<typeof createCaller>;
-export type AppRouterPaths = TrpcRouterPaths<AppRouterCaller>;
-export type TrpcRouterPaths<T> = T extends object
+type AppRouterCaller = ReturnType<typeof createCaller>;
+type AppRouterPaths = TrpcRouterPaths<AppRouterCaller>;
+type TrpcRouterPaths<T> = T extends object
   ? {
-      // biome-ignore lint/suspicious/noExplicitAny: ignore
-      [K in keyof T]: T[K] extends (...args: any[]) => any
+      [K in keyof T]: T[K] extends (...args: unknown[]) => unknown
         ? K
         : T[K] extends object
           ? K extends string
@@ -66,3 +58,6 @@ export type TrpcRouterPaths<T> = T extends object
           : K;
     }[keyof T]
   : never;
+
+export type { AppRouterCaller, AppRouterPaths, TrpcRouterPaths };
+export { createCaller, trpcClient, registerTrpcRoutes };

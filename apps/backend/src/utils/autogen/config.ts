@@ -1,18 +1,27 @@
-import { directory } from '@lightproject/common/utils';
+import { findProjectRoot } from '@lightproject/common/utils';
 import path from 'node:path';
 import { projectCache } from './utils/cache';
 
-// Project configuration
-export const projectDir = directory.findProjectRoot('.', 'package.json');
-export const servicesDir = path.resolve(projectDir, 'src/services');
+const projectDir = findProjectRoot('.', 'package.json');
+const servicesDir = path.resolve(projectDir, 'src/services');
 
-// Output paths
-export const autogenDir = path.resolve(projectDir, 'tmp/autogen');
-export const swaggerRoutesFile = path.resolve(autogenDir, 'swagger-routes.ts');
-export const swaggerJsonOutputFile = path.resolve(autogenDir, 'swagger-output.json');
-export const templateFile = path.resolve(autogenDir, 'template.json');
-export const openApiSpecFile = path.resolve(autogenDir, 'openapi.json');
-export const swaggerEndpointFiles = [swaggerRoutesFile];
+const autogenDir = path.resolve(projectDir, 'tmp/autogen');
+const swaggerRoutesFile = path.resolve(autogenDir, 'swagger-routes.ts');
+const swaggerJsonOutputFile = path.resolve(autogenDir, 'swagger-output.json');
+const templateFile = path.resolve(autogenDir, 'template.json');
+const openApiSpecFile = path.resolve(autogenDir, 'openapi.json');
+const swaggerEndpointFiles = [swaggerRoutesFile];
 
-// TypeScript project instance with caching for better performance
-export const getProject = () => projectCache.getProject();
+const getProject = () => projectCache.getProject();
+
+export {
+  projectDir,
+  servicesDir,
+  autogenDir,
+  swaggerRoutesFile,
+  swaggerJsonOutputFile,
+  templateFile,
+  openApiSpecFile,
+  swaggerEndpointFiles,
+  getProject,
+};

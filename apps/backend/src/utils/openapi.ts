@@ -1,19 +1,22 @@
-import { endpoints } from '@lightproject/common/configs';
-// import { generateOpenApiDocument } from 'trpc-openapi';
+// import { trpcDocsUrl, trpcUrl } from '@lightproject/common/configs';
 import { generateOpenAPIDocumentFromTRPCRouter } from 'openapi-trpc';
-
+// import { generateOpenApiDocument } from 'trpc-openapi';
+import type openApiTypes from 'openapi-types';
+import { trpcEndpoint } from '@lightproject/common/configs';
 import { trpcRouter } from '../routers/trpc';
 
-// export const openApiDocument = generateOpenApiDocument(trpcRouter, {
-//   baseUrl: endpoints.trpcUrl,
-//   docsUrl: endpoints.trpcDocsUrl,
+// const openApiDocument: openApiTypes.OpenAPI.Document = generateOpenApiDocument(trpcRouter, {
+//   baseUrl: trpcUrl,
+//   docsUrl: trpcDocsUrl,
 //   title: 'tRPC OpenAPI',
 //   version: '1.0.0',
 // });
 
-export const openApiDocument = generateOpenAPIDocumentFromTRPCRouter(
+const openApiDocument: openApiTypes.OpenAPI.Document = generateOpenAPIDocumentFromTRPCRouter(
   trpcRouter,
   {
-    pathPrefix: endpoints.trpcEndpoint,
-  }
+    pathPrefix: trpcEndpoint,
+  },
 );
+
+export { openApiDocument };

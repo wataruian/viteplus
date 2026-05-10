@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;
   return {
     ...getPackageViteConfig({
-      devCommand: 'vp dev',
+      // devCommand: 'vp dev',
       dir,
       excludeDevCommand: false,
       excludeStartCommand: false,

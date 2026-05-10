@@ -124,6 +124,7 @@ const getCommonViteConfig = ({
       rules: {
         'capitalized-comments': 'off',
         'id-length': 'off',
+        'max-classes-per-file': 'off',
         'max-depth': 'off',
         'max-lines': 'off',
         'max-lines-per-function': 'off',
@@ -133,6 +134,7 @@ const getCommonViteConfig = ({
         'no-continue': 'off',
         'no-control-regex': 'off',
         'no-empty-function': 'off',
+        'no-eq-null': 'off',
         'no-inline-comments': 'off',
         'no-magic-numbers': 'off',
         'no-ternary': 'off',

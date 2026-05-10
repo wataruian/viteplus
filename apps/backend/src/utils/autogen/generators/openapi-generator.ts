@@ -1,10 +1,6 @@
-import type { ParameterMetadata } from '@lightproject/common';
-
+import type { ParameterMetadata } from '@lightproject/common/types';
 import type { RouteInfo } from '../types';
 
-/**
- * OpenAPI operation definition
- */
 interface OpenApiOperation {
   description?: string;
   parameters?: OpenApiParameter[];
@@ -17,9 +13,6 @@ interface OpenApiOperation {
   tags?: string[];
 }
 
-/**
- * OpenAPI parameter definition
- */
 interface OpenApiParameter {
   description?: string;
   in: 'cookie' | 'header' | 'path' | 'query';
@@ -28,17 +21,11 @@ interface OpenApiParameter {
   schema: OpenApiSchema;
 }
 
-/**
- * OpenAPI response definition
- */
 interface OpenApiResponse {
   content?: Record<string, { schema: OpenApiSchema }>;
   description: string;
 }
 
-/**
- * OpenAPI schema definition
- */
 interface OpenApiSchema {
   allOf?: OpenApiSchema[];
   anyOf?: OpenApiSchema[];
@@ -53,31 +40,6 @@ interface OpenApiSchema {
   type?: string;
 }
 
-/**
- * Constants for example values
- */
-const EXAMPLE_NUMBER_VALUE = 123;
-const EXAMPLE_SECOND_NUMBER_VALUE = 456;
-const HTTP_STATUS_BAD_REQUEST = 400;
-const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
-
-/**
- * Example values for OpenAPI schema generation
- */
-const EXAMPLE_VALUES = {
-  booleanArray: [true, false],
-  booleanValue: true,
-  httpStatusBadRequest: HTTP_STATUS_BAD_REQUEST,
-  httpStatusInternalError: HTTP_STATUS_INTERNAL_SERVER_ERROR,
-  numberArray: [EXAMPLE_NUMBER_VALUE, EXAMPLE_SECOND_NUMBER_VALUE],
-  numberValue: EXAMPLE_NUMBER_VALUE,
-  stringArray: ['ABC', 'DEF'],
-  stringValue: 'ABC',
-} as const;
-
-/**
- * OpenAPI 3.0 specification structure
- */
 interface OpenApiSpec {
   components?: {
     schemas?: Record<string, OpenApiSchema>;
@@ -89,182 +51,26 @@ interface OpenApiSpec {
   };
   openapi: string;
   paths: Record<string, Record<string, OpenApiOperation>>;
-  servers: Array<{
+  servers: {
     description?: string;
     url: string;
-  }>;
+  }[];
 }
 
-/**
- * Generate OpenAPI 3.0 specification from route information
- */
-const generateOpenApiSpec = (
-  routes: RouteInfo[],
-  options: {
-    description?: string;
-    serverUrl?: string;
-    title?: string;
-    version?: string;
-  } = {}
-): OpenApiSpec => {
-  const {
-    description = 'Auto-generated API documentation from route discovery',
-    serverUrl = 'http://localhost:3000',
-    title = 'Pancake API',
-    version = '1.0.0',
-  } = options;
+const exampleValues = {
+  booleanArray: [true, false],
+  booleanValue: true,
+  httpStatusBadRequest: 400,
+  httpStatusInternalError: 500,
+  numberArray: [123, 456],
+  numberValue: 123,
+  stringArray: ['ABC', 'DEF'],
+  stringValue: 'ABC',
+} as const;
 
-  const spec: OpenApiSpec = {
-    components: {
-      schemas: {},
-    },
-    info: {
-      description,
-      title,
-      version,
-    },
-    openapi: '3.0.3',
-    paths: {},
-    servers: [
-      {
-        description: 'Development server',
-        url: serverUrl,
-      },
-    ],
-  };
-
-  // Group routes by path and method
-  const pathGroups = groupRoutesByPath(routes);
-
-  // Generate paths
-  for (const [path, pathRoutes] of Object.entries(pathGroups)) {
-    spec.paths[path] = {};
-
-    for (const route of pathRoutes) {
-      const method = (route.method || 'get').toLowerCase();
-      const operation = generateOperation(route);
-
-      spec.paths[path][method] = operation;
-    }
-  }
-
-  return spec;
-};
-
-/**
- * Group routes by normalized path
- */
-const groupRoutesByPath = (
-  routes: RouteInfo[]
-): Record<string, RouteInfo[]> => {
-  const groups: Record<string, RouteInfo[]> = {};
-
-  for (const route of routes) {
-    // Normalize path - handle empty paths
-    let normalizedPath = route.path || '/';
-
-    // Ensure path starts with /
-    if (!normalizedPath.startsWith('/')) {
-      normalizedPath = `/${normalizedPath}`;
-    }
-
-    if (!groups[normalizedPath]) {
-      groups[normalizedPath] = [];
-    }
-
-    groups[normalizedPath]?.push(route);
-  }
-
-  return groups;
-};
-
-/**
- * Generate OpenAPI operation from route info
- */
-const generateOperation = (route: RouteInfo): OpenApiOperation => {
-  const operation: OpenApiOperation = {
-    description: generateOperationDescription(route),
-    responses: generateResponses(route),
-    summary: generateOperationSummary(route),
-    tags: generateOperationTags(route),
-  };
-
-  // Handle parameters
-  if (route.input && route.input.length > 0) {
-    const method = (route.method || 'get').toLowerCase();
-
-    if (['delete', 'get', 'head'].includes(method)) {
-      // Query parameters for GET/DELETE operations
-      operation.parameters = route.input.map(param =>
-        convertToQueryParameter(param)
-      );
-    } else {
-      // Request body for POST/PUT/PATCH operations
-      operation.requestBody = {
-        content: {
-          'application/json': {
-            schema: convertParametersToRequestBodySchema(route.input),
-          },
-        },
-        required: route.input.some(p => p.required),
-      };
-    }
-  }
-
-  return operation;
-};
-
-/**
- * Generate operation summary
- */
-const generateOperationSummary = (route: RouteInfo): string => {
-  const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
-  const methodName = route.serviceMethod || 'unknown';
-
-  if (route.requestType === 'tRPC') {
-    const procedureType = route.type === 'mutation' ? 'Mutation' : 'Query';
-    return `${serviceName} ${methodName} (${procedureType})`;
-  }
-
-  return `${serviceName} ${methodName}`;
-};
-
-/**
- * Generate operation description with enhanced context
- */
-const generateOperationDescription = (route: RouteInfo): string => {
-  // Try to generate a more descriptive description based on method patterns
-  const enhancedDescription = generateMethodDescription(
-    route.serviceMethod,
-    route.serviceClass
-  );
-
-  if (enhancedDescription) {
-    return enhancedDescription;
-  }
-
-  // Fallback to basic description
-  const parts: string[] = [];
-
-  if (route.serviceClass && route.serviceMethod) {
-    parts.push(`Calls ${route.serviceClass}.${route.serviceMethod}()`);
-  }
-
-  if (route.requestType === 'tRPC') {
-    parts.push(`tRPC ${route.type || 'query'} procedure`);
-  } else {
-    parts.push('HTTP endpoint');
-  }
-
-  return parts.join(' - ');
-};
-
-/**
- * Generate enhanced method description based on method name and service class
- */
 const generateMethodDescription = (
   methodName?: string,
-  serviceClass?: string
+  serviceClass?: string,
 ): string | undefined => {
   if (!(methodName && serviceClass)) {
     return;
@@ -272,13 +78,11 @@ const generateMethodDescription = (
 
   const service = serviceClass.replace('Service', '');
 
-  // Method prefix lengths for resource extraction
-  const GetPrefixLength = 3; // "get".length
-  const CreateAddPrefixLength = 6; // "create".length, "add".length
-  const UpdateEditPrefixLength = 6; // "update".length, "edit".length
-  const DeleteRemovePrefixLength = 6; // "delete".length, "remove".length
+  const GetPrefixLength = 3;
+  const CreateAddPrefixLength = 6;
+  const UpdateEditPrefixLength = 6;
+  const DeleteRemovePrefixLength = 6;
 
-  // Handle common method patterns
   if (methodName === 'root') {
     return `Get ${service} service status and basic information`;
   }
@@ -335,99 +139,217 @@ const generateMethodDescription = (
     return 'Process primitive parameters and array data';
   }
 
-  return; // Let the caller use fallback description
+  return undefined;
 };
 
-/**
- * Generate operation tags
- */
+const getDefaultResponseSchema = (): OpenApiSchema => ({
+  properties: {
+    data: {
+      description: 'Response data payload',
+      type: 'object',
+    },
+    message: {
+      description: 'Response message',
+      type: 'string',
+    },
+    success: {
+      description: 'Operation success indicator',
+      type: 'boolean',
+    },
+  },
+  type: 'object',
+});
+
 const generateOperationTags = (route: RouteInfo): string[] => {
   const tags: string[] = [];
 
-  // Add service-based tag
   if (route.serviceClass) {
     tags.push(route.serviceClass.replace('Service', ''));
   }
 
-  // Add request type tag
   tags.push(route.requestType);
 
   return tags;
 };
 
-/**
- * Generate responses for the operation with enhanced schemas
- */
-const generateResponses = (
-  route: RouteInfo
-): Record<string, OpenApiResponse> => {
-  const successSchema = generateEnhancedResponseSchema(route.serviceMethod);
+const generateOperationSummary = (route: RouteInfo): string => {
+  const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
+  const methodName = route.serviceMethod || 'unknown';
 
-  return {
-    '200': {
-      content: {
-        'application/json': {
-          schema: successSchema,
-        },
-      },
-      description: 'Successful response',
-    },
-    '400': {
-      content: {
-        'application/json': {
-          schema: {
-            properties: {
-              error: {
-                description: 'Error message',
-                type: 'string',
-              },
-              statusCode: {
-                description: 'HTTP status code',
-                example: EXAMPLE_VALUES.httpStatusBadRequest,
-                type: 'number',
-              },
-            },
-            required: ['error', 'statusCode'],
-            type: 'object',
-          },
-        },
-      },
-      description: 'Bad request - Invalid input parameters',
-    },
-    '500': {
-      content: {
-        'application/json': {
-          schema: {
-            properties: {
-              error: {
-                description: 'Internal error message',
-                type: 'string',
-              },
-              statusCode: {
-                description: 'HTTP status code',
-                example: EXAMPLE_VALUES.httpStatusInternalError,
-                type: 'number',
-              },
-            },
-            required: ['error', 'statusCode'],
-            type: 'object',
-          },
-        },
-      },
-      description: 'Internal server error',
-    },
-  };
+  if (route.requestType === 'tRPC') {
+    const procedureType = route.type === 'mutation' ? 'Mutation' : 'Query';
+    return `${serviceName} ${methodName} (${procedureType})`;
+  }
+
+  return `${serviceName} ${methodName}`;
 };
 
-/**
- * Generate enhanced response schema based on method patterns
- */
+const parseObjectProperties = (content: string): string[] => {
+  const properties: string[] = [];
+  let current = '';
+  let braceDepth = 0;
+
+  for (const char of content) {
+    if (char === '{') {
+      braceDepth += 1;
+    } else if (char === '}') {
+      braceDepth -= 1;
+    } else if (char === ';' && braceDepth === 0) {
+      if (current.trim()) {
+        properties.push(current.trim());
+      }
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current.trim()) {
+    properties.push(current.trim());
+  }
+
+  return properties;
+};
+
+const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchema => {
+  const schema: OpenApiSchema = {};
+
+  if (defaultValue !== undefined) {
+    schema.default = defaultValue;
+  }
+
+  if (type.endsWith('[]')) {
+    const itemType = type.slice(0, -2);
+    return {
+      default: defaultValue,
+      items: convertTypeToSchema(itemType),
+      type: 'array',
+    };
+  }
+
+  if (type.includes(' | ')) {
+    const unionTypes = type.split(' | ').map((t) => t.trim());
+    const nonUndefinedTypes = unionTypes.filter((t) => t !== 'undefined');
+
+    if (nonUndefinedTypes.length === 1) {
+      const [singleType] = nonUndefinedTypes;
+      if (singleType) {
+        return convertTypeToSchema(singleType, defaultValue);
+      }
+    }
+
+    return {
+      default: defaultValue,
+      oneOf: nonUndefinedTypes.map((t) => convertTypeToSchema(t)),
+    };
+  }
+
+  if (type.startsWith('{') && type.endsWith('}')) {
+    const objectSchema: OpenApiSchema = {
+      default: defaultValue,
+      properties: {},
+      type: 'object',
+    };
+
+    const content = type.slice(1, -1).trim(); // Remove { }
+
+    if (!content) {
+      return objectSchema;
+    }
+
+    const required: string[] = [];
+    const properties: Record<string, OpenApiSchema> = {};
+
+    const props = parseObjectProperties(content);
+
+    for (const prop of props) {
+      const colonIndex = prop.indexOf(':');
+      if (colonIndex === -1) {
+        continue;
+      }
+
+      const propName = prop.slice(0, colonIndex).trim();
+      const propType = prop.slice(colonIndex + 1).trim();
+
+      const isOptional = propName.endsWith('?');
+      const cleanPropName = isOptional ? propName.slice(0, -1).trim() : propName;
+
+      properties[cleanPropName] = convertTypeToSchema(propType);
+
+      if (!isOptional) {
+        required.push(cleanPropName);
+      }
+    }
+
+    objectSchema.properties = properties;
+    if (required.length > 0) {
+      objectSchema.required = required;
+    }
+
+    return objectSchema;
+  }
+
+  switch (type) {
+    case 'any':
+    case 'unknown': {
+      return { default: defaultValue, description: 'Any value' };
+    }
+    case 'boolean': {
+      return { default: defaultValue, type: 'boolean' };
+    }
+    case 'number': {
+      return { default: defaultValue, type: 'number' };
+    }
+    case 'string': {
+      return { default: defaultValue, type: 'string' };
+    }
+    default: {
+      return {
+        default: defaultValue,
+        description: `Type: ${type}`,
+        type: 'string',
+      };
+    }
+  }
+};
+
+const convertToQueryParameter = (param: ParameterMetadata): OpenApiParameter => ({
+  in: 'query',
+  name: param.name,
+  required: param.required,
+  schema: convertTypeToSchema(param.type, param.defaultValue),
+});
+
+const convertParametersToRequestBodySchema = (params: ParameterMetadata[]): OpenApiSchema => {
+  const properties: Record<string, OpenApiSchema> = {};
+  const required: string[] = [];
+
+  for (const param of params) {
+    properties[param.name] = convertTypeToSchema(param.type, param.defaultValue);
+
+    if (param.required) {
+      required.push(param.name);
+    }
+  }
+
+  const schema: OpenApiSchema = {
+    properties,
+    type: 'object',
+  };
+
+  if (required.length > 0) {
+    schema.required = required;
+  }
+
+  return schema;
+};
+
 const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
   if (!methodName) {
     return getDefaultResponseSchema();
   }
 
-  // Pattern-based response schemas
   if (methodName === 'root') {
     return {
       properties: {
@@ -481,9 +403,7 @@ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
       properties: {
         data: {
           description: 'Processed input parameters and their values',
-          properties: {
-            // This would be dynamically generated based on input parameters
-          },
+          properties: {},
           type: 'object',
         },
         message: {
@@ -501,21 +421,21 @@ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
     return {
       properties: {
         booleanArrayOutput: {
-          example: EXAMPLE_VALUES.booleanArray,
+          example: exampleValues.booleanArray,
           items: { type: 'boolean' },
           type: 'array',
         },
         booleanOutput: {
-          example: EXAMPLE_VALUES.booleanValue,
+          example: exampleValues.booleanValue,
           type: 'boolean',
         },
         numberArrayOutput: {
-          example: EXAMPLE_VALUES.numberArray,
+          example: exampleValues.numberArray,
           items: { type: 'number' },
           type: 'array',
         },
         numberOutput: {
-          example: EXAMPLE_VALUES.numberValue,
+          example: exampleValues.numberValue,
           type: 'number',
         },
         objectBooleanArrayOutput: {
@@ -568,12 +488,12 @@ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
           type: 'object',
         },
         stringArrayOutput: {
-          example: EXAMPLE_VALUES.stringArray,
+          example: exampleValues.stringArray,
           items: { type: 'string' },
           type: 'array',
         },
         stringOutput: {
-          example: EXAMPLE_VALUES.stringValue,
+          example: exampleValues.stringValue,
           type: 'string',
         },
       },
@@ -581,235 +501,204 @@ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
     };
   }
 
-  // Default enhanced response
   return getDefaultResponseSchema();
 };
 
-/**
- * Get default response schema with enhanced structure
- */
-const getDefaultResponseSchema = (): OpenApiSchema => {
+const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> => {
+  const successSchema = generateEnhancedResponseSchema(route.serviceMethod);
+
   return {
-    properties: {
-      data: {
-        description: 'Response data payload',
-        type: 'object',
+    '200': {
+      content: {
+        'application/json': {
+          schema: successSchema,
+        },
       },
-      message: {
-        description: 'Response message',
-        type: 'string',
-      },
-      success: {
-        description: 'Operation success indicator',
-        type: 'boolean',
-      },
+      description: 'Successful response',
     },
-    type: 'object',
+    '400': {
+      content: {
+        'application/json': {
+          schema: {
+            properties: {
+              error: {
+                description: 'Error message',
+                type: 'string',
+              },
+              statusCode: {
+                description: 'HTTP status code',
+                example: exampleValues.httpStatusBadRequest,
+                type: 'number',
+              },
+            },
+            required: ['error', 'statusCode'],
+            type: 'object',
+          },
+        },
+      },
+      description: 'Bad request - Invalid input parameters',
+    },
+    '500': {
+      content: {
+        'application/json': {
+          schema: {
+            properties: {
+              error: {
+                description: 'Internal error message',
+                type: 'string',
+              },
+              statusCode: {
+                description: 'HTTP status code',
+                example: exampleValues.httpStatusInternalError,
+                type: 'number',
+              },
+            },
+            required: ['error', 'statusCode'],
+            type: 'object',
+          },
+        },
+      },
+      description: 'Internal server error',
+    },
   };
 };
 
-/**
- * Convert parameter metadata to query parameter
- */
-const convertToQueryParameter = (
-  param: ParameterMetadata
-): OpenApiParameter => {
-  return {
-    in: 'query',
-    name: param.name,
-    required: param.required,
-    schema: convertTypeToSchema(param.type, param.defaultValue),
-  };
+const generateOperationDescription = (route: RouteInfo): string => {
+  const enhancedDescription = generateMethodDescription(route.serviceMethod, route.serviceClass);
+
+  if (enhancedDescription) {
+    return enhancedDescription;
+  }
+
+  const parts: string[] = [];
+
+  if (route.serviceClass && route.serviceMethod) {
+    parts.push(`Calls ${route.serviceClass}.${route.serviceMethod}()`);
+  }
+
+  if (route.requestType === 'tRPC') {
+    parts.push(`tRPC ${route.type || 'query'} procedure`);
+  } else {
+    parts.push('HTTP endpoint');
+  }
+
+  return parts.join(' - ');
 };
 
-/**
- * Convert parameters to request body schema
- */
-const convertParametersToRequestBodySchema = (
-  params: ParameterMetadata[]
-): OpenApiSchema => {
-  const properties: Record<string, OpenApiSchema> = {};
-  const required: string[] = [];
-
-  for (const param of params) {
-    properties[param.name] = convertTypeToSchema(
-      param.type,
-      param.defaultValue
-    );
-
-    if (param.required) {
-      required.push(param.name);
-    }
-  }
-
-  const schema: OpenApiSchema = {
-    properties,
-    type: 'object',
+const generateOperation = (route: RouteInfo): OpenApiOperation => {
+  const operation: OpenApiOperation = {
+    description: generateOperationDescription(route),
+    responses: generateResponses(route),
+    summary: generateOperationSummary(route),
+    tags: generateOperationTags(route),
   };
 
-  if (required.length > 0) {
-    schema.required = required;
-  }
+  if (route.input && route.input.length > 0) {
+    const method = (route.method || 'get').toLowerCase();
 
-  return schema;
-};
-
-/**
- * Convert TypeScript type string to OpenAPI schema
- */
-const convertTypeToSchema = (
-  type: string,
-  defaultValue?: unknown
-): OpenApiSchema => {
-  const schema: OpenApiSchema = {};
-
-  if (defaultValue !== undefined) {
-    schema.default = defaultValue;
-  }
-
-  // Handle array types
-  if (type.endsWith('[]')) {
-    const itemType = type.slice(0, -2);
-    return {
-      default: defaultValue,
-      items: convertTypeToSchema(itemType),
-      type: 'array',
-    };
-  }
-
-  // Handle union types (e.g., "string | undefined")
-  if (type.includes(' | ')) {
-    const unionTypes = type.split(' | ').map(t => t.trim());
-    const nonUndefinedTypes = unionTypes.filter(t => t !== 'undefined');
-
-    if (nonUndefinedTypes.length === 1) {
-      const [singleType] = nonUndefinedTypes;
-      if (singleType) {
-        return convertTypeToSchema(singleType, defaultValue);
-      }
-    }
-
-    return {
-      default: defaultValue,
-      oneOf: nonUndefinedTypes.map(t => convertTypeToSchema(t)),
-    };
-  }
-
-  // Handle object types
-  if (type.startsWith('{') && type.endsWith('}')) {
-    return convertObjectTypeToSchema(type, defaultValue);
-  }
-
-  // Handle primitive types
-  switch (type) {
-    case 'any':
-    case 'unknown': {
-      return { default: defaultValue, description: 'Any value' };
-    }
-    case 'boolean': {
-      return { default: defaultValue, type: 'boolean' };
-    }
-    case 'number': {
-      return { default: defaultValue, type: 'number' };
-    }
-    case 'string': {
-      return { default: defaultValue, type: 'string' };
-    }
-    default: {
-      return {
-        default: defaultValue,
-        description: `Type: ${type}`,
-        type: 'string',
+    if (['delete', 'get', 'head'].includes(method)) {
+      operation.parameters = route.input.map((param) => convertToQueryParameter(param));
+    } else {
+      operation.requestBody = {
+        content: {
+          'application/json': {
+            schema: convertParametersToRequestBodySchema(route.input),
+          },
+        },
+        required: route.input.some((p) => p.required),
       };
     }
   }
+
+  return operation;
 };
 
-/**
- * Convert object type string to OpenAPI schema
- * Handles types like "{ foo: string; bar?: number; }"
- */
-const convertObjectTypeToSchema = (
-  type: string,
-  defaultValue?: unknown
-): OpenApiSchema => {
-  const schema: OpenApiSchema = {
-    default: defaultValue,
-    properties: {},
-    type: 'object',
+const groupRoutesByPath = (routes: RouteInfo[]): Record<string, RouteInfo[]> => {
+  const groups: Record<string, RouteInfo[]> = {};
+
+  for (const route of routes) {
+    let normalizedPath = route.path || '/';
+
+    if (!normalizedPath.startsWith('/')) {
+      normalizedPath = `/${normalizedPath}`;
+    }
+
+    if (!groups[normalizedPath]) {
+      groups[normalizedPath] = [];
+    }
+
+    groups[normalizedPath]?.push(route);
+  }
+
+  return groups;
+};
+
+const generateOpenApiSpec = (
+  routes: RouteInfo[],
+  options: {
+    description?: string;
+    serverUrl?: string;
+    title?: string;
+    version?: string;
+  } = {},
+): OpenApiSpec => {
+  const {
+    description = 'Auto-generated API documentation from route discovery',
+    serverUrl = 'http://localhost:3000',
+    title = 'Pancake API',
+    version = '1.0.0',
+  } = options;
+
+  const spec: OpenApiSpec = {
+    components: {
+      schemas: {},
+    },
+    info: {
+      description,
+      title,
+      version,
+    },
+    openapi: '3.0.3',
+    paths: {},
+    servers: [
+      {
+        description: 'Development server',
+        url: serverUrl,
+      },
+    ],
   };
 
-  // Simple parsing of object type - this could be enhanced with proper TypeScript AST parsing
-  const content = type.slice(1, -1).trim(); // Remove { }
+  const pathGroups = groupRoutesByPath(routes);
 
-  if (!content) {
-    return schema;
-  }
+  for (const [path, pathRoutes] of Object.entries(pathGroups)) {
+    spec.paths[path] = {};
 
-  const required: string[] = [];
-  const properties: Record<string, OpenApiSchema> = {};
+    for (const route of pathRoutes) {
+      const method = (route.method || 'get').toLowerCase();
+      const operation = generateOperation(route);
 
-  // Split by semicolon but handle nested objects
-  const props = parseObjectProperties(content);
-
-  for (const prop of props) {
-    const colonIndex = prop.indexOf(':');
-    if (colonIndex === -1) {
-      continue;
-    }
-
-    const propName = prop.slice(0, colonIndex).trim();
-    const propType = prop.slice(colonIndex + 1).trim();
-
-    const isOptional = propName.endsWith('?');
-    const cleanPropName = isOptional ? propName.slice(0, -1).trim() : propName;
-
-    properties[cleanPropName] = convertTypeToSchema(propType);
-
-    if (!isOptional) {
-      required.push(cleanPropName);
+      spec.paths[path][method] = operation;
     }
   }
 
-  schema.properties = properties;
-  if (required.length > 0) {
-    schema.required = required;
-  }
-
-  return schema;
+  return spec;
 };
 
-/**
- * Parse object properties handling nested braces
- */
-const parseObjectProperties = (content: string): string[] => {
-  const properties: string[] = [];
-  let current = '';
-  let braceDepth = 0;
-
-  for (const char of content) {
-    if (char === '{') {
-      braceDepth++;
-    } else if (char === '}') {
-      braceDepth--;
-    } else if (char === ';' && braceDepth === 0) {
-      if (current.trim()) {
-        properties.push(current.trim());
-      }
-      current = '';
-      continue;
-    }
-
-    current += char;
-  }
-
-  // Add the last property if it doesn't end with semicolon
-  if (current.trim()) {
-    properties.push(current.trim());
-  }
-
-  return properties;
+export type { OpenApiOperation, OpenApiParameter, OpenApiResponse, OpenApiSchema, OpenApiSpec };
+export {
+  exampleValues,
+  generateMethodDescription,
+  getDefaultResponseSchema,
+  generateOperationTags,
+  generateOperationSummary,
+  parseObjectProperties,
+  convertTypeToSchema,
+  convertToQueryParameter,
+  convertParametersToRequestBodySchema,
+  generateEnhancedResponseSchema,
+  generateResponses,
+  generateOperationDescription,
+  generateOperation,
+  groupRoutesByPath,
+  generateOpenApiSpec,
 };
-
-// Export the main function at the end
-export { generateOpenApiSpec };
