@@ -1,13 +1,5 @@
+import type { InvokableFunction } from '../types/parameter';
 import { isPlainObject } from '../validators/validate';
-
-interface ParsedParam {
-  defaultValue?: string;
-  name: string;
-}
-
-type InvokableFunction = {
-  bivarianceHack(...args: unknown[]): unknown;
-}['bivarianceHack'];
 
 const cleanDefaultValue = (val: string): string => val.replace(/^(['"`])(.*)\1$/, '$2');
 
@@ -196,7 +188,6 @@ const normalizeArgs = (fn: InvokableFunction, input: unknown): unknown[] => {
 const invokeWithParsedArgs = (fn: InvokableFunction, input: unknown): unknown =>
   fn(...normalizeArgs(fn, input));
 
-export type { ParsedParam, InvokableFunction };
 export {
   cleanDefaultValue,
   extractParameterName,

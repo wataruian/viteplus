@@ -1,5 +1,5 @@
 import { type MethodDeclaration, type Node, SyntaxKind } from 'ts-morph';
-import type { ParameterInfo, ParameterMetadata } from '../types/parameter';
+import type { ParameterInfo, ParameterMetadata, ServiceConstructor } from '../types/parameter';
 import { isCallable, isRecord } from '../validators/validate';
 import { extractParamNamesAndDefaults } from './invoker';
 
@@ -92,8 +92,6 @@ const fallbackToAstOnly = (methodDecl: MethodDeclaration): ParameterMetadata[] =
     type: param.getType().getText(),
   }));
 
-type ServiceConstructor = new (...args: unknown[]) => Record<string, unknown>;
-
 const isServiceConstructor = (val: unknown): val is ServiceConstructor => typeof val === 'function';
 
 /**
@@ -166,7 +164,6 @@ const extractParameterMetadata = async (
   }
 };
 
-export type { ServiceConstructor };
 export {
   extractJsDocDescription,
   isServiceConstructor,

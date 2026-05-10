@@ -1,4 +1,4 @@
-import { getEnv, getEnvironmentMode, isLocal } from '@lightproject/common/environment';
+import { getEnv, getEnvName, isLocal } from '@lightproject/common/environment';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
 import express from 'express';
@@ -6,7 +6,7 @@ import { greet } from '@lightproject/common/samples';
 import helmet from 'helmet';
 import { logger } from '@lightproject/common/logger';
 
-const env = getEnvironmentMode();
+const env = getEnvName();
 const useViteBackend = (getEnv('USE_VITE_BACKEND') ?? 'false').toLowerCase() === 'true';
 const port = Number.parseInt(getEnv('API_PORT') ?? '3000', 10);
 const app: express.Application = express();

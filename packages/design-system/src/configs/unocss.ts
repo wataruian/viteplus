@@ -33,13 +33,14 @@ for (const color of semanticColors) {
   intentClasses.push(...intentSoft(color).split(' '));
   intentClasses.push(...intentSolid(color).split(' '));
 }
+
 intentClasses.push(...intentInput('danger').split(' '), ...intentInput('success').split(' '));
 
 const componentsGlob = path.resolve(import.meta.dirname, '../components/**/*.tsx');
 
 const files = fg.globSync(componentsGlob);
-const raw: Record<string, ASTNode> = {};
 
+const raw: Record<string, ASTNode> = {};
 for (const file of files) {
   Object.assign(raw, extractStylesFromFile(file));
 }
@@ -86,4 +87,4 @@ const unoCssBaseConfig: UserConfig = {
 
 const unoCssConfig = defineConfig(unoCssBaseConfig);
 
-export { animation, themes, unoCssBaseConfig, unoCssConfig };
+export { unoCssBaseConfig, unoCssConfig };

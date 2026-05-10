@@ -258,7 +258,6 @@ const compileStylesRegistry = (registry: Record<string, ASTNode>) => {
 
 export type { ASTNode, Ctx };
 export {
-  warn,
   getKey,
   unwrap,
   stripTemplate,

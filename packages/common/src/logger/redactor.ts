@@ -1,4 +1,4 @@
-import type { RedactFn } from './types';
+import type { RedactFn } from '../types/log';
 import { isRecord } from '../validators/validate';
 import redactObj from 'redact-object';
 

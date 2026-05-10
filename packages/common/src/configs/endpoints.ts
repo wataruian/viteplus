@@ -1,5 +1,7 @@
 import { getEnv } from '../environment';
 
+type RequestType = (typeof requestTypes)[keyof typeof requestTypes];
+
 const apiBaseUrl = getEnv('API_URL', 'http://localhost:3000');
 const adminUrl = getEnv('ADMIN_URL', 'http://localhost:3001');
 const siteUrl = getEnv('SITE_URL', 'http://localhost:3002');
@@ -29,8 +31,6 @@ const requestTypes = {
   http: 'HTTP',
   trpc: 'tRPC',
 } as const;
-
-type RequestType = (typeof requestTypes)[keyof typeof requestTypes];
 
 const isTrpcEndpoint = (url: string): boolean =>
   (url.startsWith(trpcEndpoint) &&

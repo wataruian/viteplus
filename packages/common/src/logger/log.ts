@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel, LogStream, LoggerOptions } from './types';
+import type { LogEntry, LogLevel, LogStream, LoggerOptions } from '../types/log';
 import { formatJSON, formatPretty } from './formatters';
 import { getLogFormat, isBrowser, isLocal } from '../environment/env';
 import { isRecord } from '../validators/validate';

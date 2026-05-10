@@ -1,4 +1,4 @@
-import type { InternalStream, LogStream, RotationOptions } from './types';
+import type { InternalStream, LogStream, RotationOptions } from '../types/log';
 import { isRecord } from '../validators/validate';
 
 const isInternalStream = (value: unknown): value is InternalStream =>

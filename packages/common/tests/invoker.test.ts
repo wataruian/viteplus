@@ -11,21 +11,21 @@ const testArrayFirst = 9;
 const testArraySecond = 8;
 
 const noParams = () => 'noParams';
-const primitivesAndArray = ((var1: string, var2: number, var3?: string[]) => [
-  var1,
-  var2,
-  var3,
-]);
+
+const primitivesAndArray = (var1: string, var2: number, var3?: string[]) => [var1, var2, var3];
+
 const objectOnly = (options: { bar?: number; foo?: string }) => [options];
-const objectDestructured = (({ prop1, prop2 }: { prop1?: string; prop2?: number }) => [
+
+const objectDestructured = ({ prop1, prop2 }: { prop1?: string; prop2?: number }) => [
   { prop1, prop2 },
-]);
-const mixedParams = ((
+];
+
+const mixedParams = (
   a: string,
   b: number,
   options?: { bar?: number; foo?: string },
   arr?: number[],
-) => [a, b, options, arr]);
+) => [a, b, options, arr];
 
 describe('extractParamNamesAndDefaults', () => {
   it('should extract parameter names for noParams', () => {

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import {
   getEnv,
-  getEnvironmentMode,
+  getEnvName,
   getLogFormat,
   getLogLevel,
   isBrowser,
@@ -24,7 +24,7 @@ describe('Environment Helpers', () => {
   describe('Environment Mode and Config', () => {
     test.each([
       { fn: () => getEnv('ANY_VAR'), key: 'ANY_VAR', label: 'getEnv', value: 'any_value' },
-      { fn: getEnvironmentMode, key: 'ENV', label: 'getEnvironmentMode', value: 'DEVELOP' },
+      { fn: getEnvName, key: 'ENV', label: 'getEnvName', value: 'DEVELOP' },
       { fn: getLogFormat, key: 'LOG_FORMAT', label: 'getLogFormat', value: 'json' },
       { fn: getLogLevel, key: 'LOG_LEVEL', label: 'getLogLevel', value: 'debug' },
     ])('should correctly handle $label', ({ fn, key, value }) => {
@@ -33,9 +33,9 @@ describe('Environment Helpers', () => {
       expect(typeof result === 'string' ? result.toLowerCase() : result).toBe(value.toLowerCase());
     });
 
-    test('getEnvironmentMode should default to local', () => {
+    test('getEnvName should default to local', () => {
       vi.stubEnv('ENV', undefined);
-      expect(getEnvironmentMode()).toBe('local');
+      expect(getEnvName()).toBe('local');
     });
 
     test('getEnv should return undefined for non-existent variable', () => {

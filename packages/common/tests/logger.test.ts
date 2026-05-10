@@ -1,4 +1,4 @@
-import type { LogLevel, LoggerOptions } from '../src/logger/types';
+import type { LogLevel, LoggerOptions } from '../src/types/log';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 import { defaultRedactValue, redact } from '../src/logger/redactor';
 import { Logger } from '../src/logger/log';

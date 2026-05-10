@@ -10,12 +10,12 @@ const isBrowser = () =>
   (globalThis as { window?: unknown }).window !== undefined &&
   (globalThis as { document?: unknown }).document !== undefined;
 
-const getEnvironmentMode = () => getEnv('ENV')?.toLowerCase() ?? 'local';
-const isLocal = () => getEnvironmentMode() === 'local';
-const isDevelop = () => getEnvironmentMode() === 'develop';
-const isStaging = () => getEnvironmentMode() === 'staging';
-const isProduction = () => getEnvironmentMode() === 'production';
-const isTest = () => getEnvironmentMode() === 'test';
+const getEnvName = () => getEnv('ENV')?.toLowerCase() ?? 'local';
+const isLocal = () => getEnvName() === 'local';
+const isDevelop = () => getEnvName() === 'develop';
+const isStaging = () => getEnvName() === 'staging';
+const isProduction = () => getEnvName() === 'production';
+const isTest = () => getEnvName() === 'test';
 const isLocalOrTest = () => isLocal() || isTest();
 const isDevelopOrStagingOrProduction = () => isDevelop() || isStaging() || isProduction();
 const isCi = () => getEnv('CI')?.toLowerCase() === 'true' || getEnv('CI') === '1';
@@ -29,10 +29,10 @@ const isNonProduction = () =>
 const isOtherEnvironment = (environment = '') => {
   let isOtherEnv =
     !(isCi() || isTest() || isLocal() || isDevelop() || isStaging() || isProduction()) &&
-    getEnvironmentMode() !== '';
+    getEnvName() !== '';
 
   if (isOtherEnv && environment.trim().length > 0) {
-    isOtherEnv = getEnvironmentMode() === environment;
+    isOtherEnv = getEnvName() === environment;
   }
 
   return isOtherEnv;
@@ -41,7 +41,7 @@ const isOtherEnvironment = (environment = '') => {
 export {
   getEnv,
   isOtherEnvironment,
-  getEnvironmentMode,
+  getEnvName,
   isBrowser,
   isLocal,
   isNonProduction,

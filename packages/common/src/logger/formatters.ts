@@ -1,7 +1,7 @@
-import type { LogEntry } from './types';
+import type { LogEntry } from '../types/log';
 import pc from 'picocolors';
 
-const colors = {
+const formatColors = {
   debug: pc.gray,
   error: pc.red,
   info: pc.blue,
@@ -11,7 +11,7 @@ const colors = {
 const formatPretty = (entry: LogEntry, useColor = true): string => {
   const timestamp = useColor ? pc.gray(entry.timestamp) : entry.timestamp;
   const levelStr = entry.level.toUpperCase().padEnd(5);
-  const coloredLevel = useColor ? colors[entry.level](levelStr) : levelStr;
+  const coloredLevel = useColor ? formatColors[entry.level](levelStr) : levelStr;
 
   let output = `[${timestamp}] ${coloredLevel}: ${entry.message}`;
 
@@ -25,4 +25,4 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
 
 const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
 
-export { colors, formatPretty, formatJSON };
+export { formatColors, formatPretty, formatJSON };
