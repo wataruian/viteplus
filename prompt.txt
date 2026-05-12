@@ -9,3 +9,2442 @@ Analyze the repository.
 Update packages/design-system and apps/frontend to make a modern UI for Light Project website. Make use of unocss. The config and UI elements should only exists on the design system to avoid duplication and have a single source of truth.
 
 Create themes and color schemes in design-system
+
+---
+
+Fix lint errors from /Users/wataru/lightproject/viteplus/apps/backend
+
+You can run: cd /Users/wataru/lightproject/viteplus/apps/backend && vp run lint
+
+Here is output:
+
+VITE+ - The Unified Toolchain for the Web
+
+~/apps/backend$ vp lint ○ cache miss: 'apps/backend/package.json' modified, executing
+
+  × typescript(TS18046): 'reqLocals' is of type 'unknown'.
+    ╭─[src/middlewares/gateway-middleware.ts:50:9]
+ 49 │     const reqLocals = safeClone(allLocals || {});
+ 50 │     if (reqLocals['originalStatusCode']) {
+    ·         ─────────
+ 51 │       delete reqLocals['originalStatusCode'];
+    ╰────
+
+  × typescript(TS18046): 'reqLocals' is of type 'unknown'.
+    ╭─[src/middlewares/gateway-middleware.ts:51:14]
+ 50 │     if (reqLocals['originalStatusCode']) {
+ 51 │       delete reqLocals['originalStatusCode'];
+    ·              ─────────
+ 52 │     }
+    ╰────
+
+  × typescript(TS18046): 'reqLocals' is of type 'unknown'.
+    ╭─[src/middlewares/gateway-middleware.ts:53:9]
+ 52 │     }
+ 53 │     if (reqLocals['responseBody']) {
+    ·         ─────────
+ 54 │       delete reqLocals['responseBody'];
+    ╰────
+
+  × typescript(TS18046): 'reqLocals' is of type 'unknown'.
+    ╭─[src/middlewares/gateway-middleware.ts:54:14]
+ 53 │     if (reqLocals['responseBody']) {
+ 54 │       delete reqLocals['responseBody'];
+    ·              ─────────
+ 55 │     }
+    ╰────
+
+  × typescript(TS2698): Spread types may only be created from object types.
+    ╭─[src/middlewares/gateway-middleware.ts:58:7]
+ 57 │       ...req.locals,
+ 58 │       ...reqLocals,
+    ·       ────────────
+ 59 │     };
+    ╰────
+
+  × typescript(TS2322): Type 'unknown' is not assignable to type 'Locals & { originalStatusCode?: OriginalStatusCode; responseBody?: ResponseBody; }'.
+    ╭─[src/middlewares/gateway-middleware.ts:64:5]
+ 63 │     const resLocals = safeClone(allLocals || {});
+ 64 │     res.locals = safeClone({
+    ·     ──────────
+ 65 │       ...res.locals,
+    ╰────
+
+  × typescript(TS2698): Spread types may only be created from object types.
+    ╭─[src/middlewares/gateway-middleware.ts:66:7]
+ 65 │       ...res.locals,
+ 66 │       ...resLocals,
+    ·       ────────────
+ 67 │     });
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/trpc.ts:89:42]
+ 88 │ const createContext = (req: Request, res: Response): ServiceContext => {
+ 89 │   const sessionId = req.locals.sessionId || uuidv4();
+    ·                                          ──
+ 90 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/trpc.ts:89:21]
+ 88 │ const createContext = (req: Request, res: Response): ServiceContext => {
+ 89 │   const sessionId = req.locals.sessionId || uuidv4();
+    ·                     ────────────────────
+ 90 │ 
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/utils/trpc.ts:91:7]
+ 90 │ 
+ 91 │   if (!req.locals || typeof req.locals !== 'object') {
+    ·       ───────────
+ 92 │     req.locals = {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/trpc.ts:91:8]
+ 90 │ 
+ 91 │   if (!req.locals || typeof req.locals !== 'object') {
+    ·        ──────────
+ 92 │     req.locals = {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read.
+     ╭─[src/utils/trpc.ts:103:3]
+ 102 │     
+ 103 │ ╭─▶   if (!req.locals.sessionId) {
+ 104 │ │       req.locals.sessionId = sessionId;
+ 105 │ ╰─▶   }
+ 106 │     
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/trpc.ts:103:8]
+ 102 │ 
+ 103 │   if (!req.locals.sessionId) {
+     ·        ────────────────────
+ 104 │     req.locals.sessionId = sessionId;
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/services/test.ts:157:22]
+ 156 │   public static hello(firstName: string, lastName?: string) {
+ 157 │     const fullName = lastName ? `${firstName} ${lastName}` : firstName;
+     ·                      ────────
+ 158 │     return { message: `Hello, ${fullName}!` };
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Request' is more narrow than the original type.
+    ╭─[test-trpc.ts:19:19]
+ 18 │     
+ 19 │ ╭─▶   const request = app.makeRequest({
+ 20 │ │       host: apiUrl,
+ 21 │ ╰─▶   }) as unknown as Request;
+ 22 │       request.method = 'GET';
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Response' is more narrow than the original type.
+    ╭─[test-trpc.ts:27:20]
+ 26 │ 
+ 27 │   const response = app.makeResponse((_err: Error | null) => {}) as unknown as Response;
+    ·                    ───────────────────────────────────────────────────────────────────
+ 28 │ 
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[test-trpc.ts:38:7]
+ 37 │ 
+ 38 │   if (!trpcCaller.test) {
+    ·       ────────────────
+ 39 │     throw new Error('tRPC test endpoint not found');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[test-trpc.ts:38:8]
+ 37 │ 
+ 38 │   if (!trpcCaller.test) {
+    ·        ───────────────
+ 39 │     throw new Error('tRPC test endpoint not found');
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[test-trpc.ts:42:7]
+ 41 │ 
+ 42 │   if (!trpcCaller.test.hello) {
+    ·       ──────────────────────
+ 43 │     throw new Error('tRPC test.hello endpoint not found');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[test-trpc.ts:42:8]
+ 41 │ 
+ 42 │   if (!trpcCaller.test.hello) {
+    ·        ─────────────────────
+ 43 │     throw new Error('tRPC test.hello endpoint not found');
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Request' is more narrow than the original type.
+    ╭─[src/utils/trpc-router.ts:38:45]
+ 37 │           res: ExpressResponse;
+ 38 │         }): ServiceContext => createContext(req as Request, res as Response),
+    ·                                             ──────────────
+ 39 │         router: trpcRouter,
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Response' is more narrow than the original type.
+    ╭─[src/utils/trpc-router.ts:38:61]
+ 37 │           res: ExpressResponse;
+ 38 │         }): ServiceContext => createContext(req as Request, res as Response),
+    ·                                                             ───────────────
+ 39 │         router: trpcRouter,
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/utils/trpc-router.ts:43:53]
+ 42 │   } catch (error) {
+ 43 │     logger.error('Failed to register tRPC routes:', error as Record<string, unknown>);
+    ·                                                     ────────────────────────────────
+ 44 │     throw error;
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'typeof BaseService' is more narrow than the original type.
+    ╭─[src/services/base.ts:88:13]
+ 87 │   public get instance(): BaseServiceInterface | null {
+ 88 │     return (this.constructor as typeof BaseService).instance;
+    ·             ──────────────────────────────────────
+ 89 │   }
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'typeof BaseService' is more narrow than the original type.
+    ╭─[src/services/base.ts:92:6]
+ 91 │   public set instance(value: BaseServiceInterface | null) {
+ 92 │     (this.constructor as typeof BaseService).instance = value as BaseService;
+    ·      ──────────────────────────────────────
+ 93 │   }
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/generators/openapi-generator.ts:75:9]
+ 74 │ ): string | undefined => {
+ 75 │   if (!(methodName && serviceClass)) {
+    ·         ──────────
+ 76 │     return;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/generators/openapi-generator.ts:75:23]
+ 74 │ ): string | undefined => {
+ 75 │   if (!(methodName && serviceClass)) {
+    ·                       ────────────
+ 76 │     return;
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'BaseService' is more narrow than the original type.
+    ╭─[src/services/base.ts:92:57]
+ 91 │   public set instance(value: BaseServiceInterface | null) {
+ 92 │     (this.constructor as typeof BaseService).instance = value as BaseService;
+    ·                                                         ────────────────────
+ 93 │   }
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+    ╭─[src/utils/autogen/generators/openapi-generator.ts:87:5]
+ 86 │   if (methodName === 'root') {
+ 87 │     return `Get ${service} service status and basic information`;
+    ·     ─────────────────────────────────────────────────────────────
+ 88 │   }
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+    ╭─[src/utils/autogen/generators/openapi-generator.ts:92:5]
+ 91 │     const resource = methodName.slice(GetPrefixLength);
+ 92 │     return `Retrieve ${resource.toLowerCase()} data from ${service}`;
+    ·     ─────────────────────────────────────────────────────────────────
+ 93 │   }
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+    ╭─[src/utils/autogen/generators/openapi-generator.ts:97:5]
+ 96 │     const resource = methodName.slice(CreateAddPrefixLength);
+ 97 │     return `Create new ${resource.toLowerCase()} in ${service}`;
+    ·     ────────────────────────────────────────────────────────────
+ 98 │   }
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:102:5]
+ 101 │     const resource = methodName.slice(UpdateEditPrefixLength);
+ 102 │     return `Update existing ${resource.toLowerCase()} in ${service}`;
+     ·     ─────────────────────────────────────────────────────────────────
+ 103 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:107:5]
+ 106 │     const resource = methodName.slice(DeleteRemovePrefixLength);
+ 107 │     return `Delete ${resource.toLowerCase()} from ${service}`;
+     ·     ──────────────────────────────────────────────────────────
+ 108 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:111:5]
+ 110 │   if (methodName.includes('Success')) {
+ 111 │     return `Execute ${methodName.replace('Success', '')} operation successfully`;
+     ·     ─────────────────────────────────────────────────────────────────────────────
+ 112 │   }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:10:9]
+  9 │ ): Promise<ServiceMetadata> => {
+ 10 │   if (!(serviceClass && serviceMethod)) {
+    ·         ────────────
+ 11 │     return { input: undefined, serviceFilePath: undefined };
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:115:5]
+ 114 │   if (methodName.includes('Fail')) {
+ 115 │     return `Simulate ${methodName.replace('Fail', '')} operation failure for testing`;
+     ·     ──────────────────────────────────────────────────────────────────────────────────
+ 116 │   }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:10:25]
+  9 │ ): Promise<ServiceMetadata> => {
+ 10 │   if (!(serviceClass && serviceMethod)) {
+    ·                         ─────────────
+ 11 │     return { input: undefined, serviceFilePath: undefined };
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:119:5]
+ 118 │   if (methodName.startsWith('hello')) {
+ 119 │     return 'Generate personalized greeting message';
+     ·     ────────────────────────────────────────────────
+ 120 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:123:5]
+ 122 │   if (methodName.includes('Params')) {
+ 123 │     return 'Test and validate various parameter types and structures';
+     ·     ──────────────────────────────────────────────────────────────────
+ 124 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:127:5]
+ 126 │   if (methodName === 'mixedParams') {
+ 127 │     return 'Process mixed parameter types including primitives, objects, and arrays';
+     ·     ─────────────────────────────────────────────────────────────────────────────────
+ 128 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:131:5]
+ 130 │   if (methodName === 'objectOnly') {
+ 131 │     return 'Process object-only parameters with optional properties';
+     ·     ─────────────────────────────────────────────────────────────────
+ 132 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:135:5]
+ 134 │   if (methodName === 'objectDestructured') {
+ 135 │     return 'Process destructured object parameters';
+     ·     ────────────────────────────────────────────────
+ 136 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:139:5]
+ 138 │   if (methodName === 'primitivesAndArray') {
+ 139 │     return 'Process primitive parameters and array data';
+     ·     ─────────────────────────────────────────────────────
+ 140 │   }
+     ╰────
+
+  × typescript-eslint(consistent-return): Function 'generateMethodDescription' expected no return value.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:142:3]
+ 141 │ 
+ 142 │   return undefined;
+     ·   ─────────────────
+ 143 │ };
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:27:23]
+ 26 │ 
+ 27 │   if (!(methodDecl && serviceFilePath)) {
+    ·                       ───────────────
+ 28 │     return { input: undefined, serviceFilePath };
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:166:7]
+ 165 │ 
+ 166 │   if (route.serviceClass) {
+     ·       ──────────────────
+ 167 │     tags.push(route.serviceClass.replace('Service', ''));
+     ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:176:66]
+ 175 │ const generateOperationSummary = (route: RouteInfo): string => {
+ 176 │   const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
+     ·                                                                  ──
+ 177 │   const methodName = route.serviceMethod || 'unknown';
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:176:23]
+ 175 │ const generateOperationSummary = (route: RouteInfo): string => {
+ 176 │   const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
+     ·                       ──────────────────────────────────────────
+ 177 │   const methodName = route.serviceMethod || 'unknown';
+     ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:177:42]
+ 176 │   const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
+ 177 │   const methodName = route.serviceMethod || 'unknown';
+     ·                                          ──
+ 178 │ 
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:177:22]
+ 176 │   const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
+ 177 │   const methodName = route.serviceMethod || 'unknown';
+     ·                      ───────────────────
+ 178 │ 
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:48:10]
+ 47 │ 
+ 48 │     if (!fileName) {
+    ·          ────────
+ 49 │       return;
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'getServiceNameFromHandlerFile' expected no return value.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:53:5]
+ 52 │     const pascalCase = toPascalCase(fileName);
+ 53 │     return `${pascalCase}Service`;
+    ·     ──────────────────────────────
+ 54 │   } catch {
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'getServiceNameFromHandlerFile' expected no return value.
+    ╭─[src/utils/autogen/parsers/service-parser.ts:55:5]
+ 54 │   } catch {
+ 55 │     return undefined;
+    ·     ─────────────────
+ 56 │   }
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:349:8]
+ 348 │ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
+ 349 │   if (!methodName) {
+     ·        ──────────
+ 350 │     return getDefaultResponseSchema();
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+     ╭─[src/services/base.ts:103:9]
+ 102 │   ): T {
+ 103 │     if (!BaseService.instance) {
+     ·         ─────────────────────
+ 104 │       // Create a dummy context for singleton pattern
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+     ╭─[src/services/base.ts:103:10]
+ 102 │   ): T {
+ 103 │     if (!BaseService.instance) {
+     ·          ────────────────────
+ 104 │       // Create a dummy context for singleton pattern
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Request' is more narrow than the original type.
+     ╭─[src/services/base.ts:106:14]
+ 105 │       const dummyContext: ServiceContext = {
+ 106 │         req: {} as ServiceContext['req'],
+     ·              ───────────────────────────
+ 107 │         res: {} as ServiceContext['res'],
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Response' is more narrow than the original type.
+     ╭─[src/services/base.ts:107:14]
+ 106 │         req: {} as ServiceContext['req'],
+ 107 │         res: {} as ServiceContext['res'],
+     ·              ───────────────────────────
+ 108 │       };
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: the original type is assignable to the constraint of type 'T', but 'T' could be instantiated with a different subtype of its constraint.
+     ╭─[src/services/base.ts:112:12]
+ 111 │     }
+ 112 │     return BaseService.instance as T;
+     ·            ─────────────────────────
+ 113 │   }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:569:7]
+ 568 │ 
+ 569 │   if (enhancedDescription) {
+     ·       ───────────────────
+ 570 │     return enhancedDescription;
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:575:7]
+ 574 │ 
+ 575 │   if (route.serviceClass && route.serviceMethod) {
+     ·       ──────────────────
+ 576 │     parts.push(`Calls ${route.serviceClass}.${route.serviceMethod}()`);
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:575:29]
+ 574 │ 
+ 575 │   if (route.serviceClass && route.serviceMethod) {
+     ·                             ───────────────────
+ 576 │     parts.push(`Calls ${route.serviceClass}.${route.serviceMethod}()`);
+     ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:580:35]
+ 579 │   if (route.requestType === 'tRPC') {
+ 580 │     parts.push(`tRPC ${route.type || 'query'} procedure`);
+     ·                                   ──
+ 581 │   } else {
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:580:24]
+ 579 │   if (route.requestType === 'tRPC') {
+ 580 │     parts.push(`tRPC ${route.type || 'query'} procedure`);
+     ·                        ──────────
+ 581 │   } else {
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, ServiceMethod>' is more narrow than the original type.
+    ╭─[src/utils/route-handler.ts:30:30]
+ 29 │     try {
+ 30 │       const serviceMethod = (serviceClass as unknown as Record<string, ServiceMethod>)[
+    ·                              ────────────────────────────────────────────────────────
+ 31 │         method as unknown as string
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'string' is more narrow than the original type.
+    ╭─[src/utils/route-handler.ts:31:9]
+ 30 │       const serviceMethod = (serviceClass as unknown as Record<string, ServiceMethod>)[
+ 31 │         method as unknown as string
+    ·         ───────────────────────────
+ 32 │       ];
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:597:34]
+ 596 │   if (route.input && route.input.length > 0) {
+ 597 │     const method = (route.method || 'get').toLowerCase();
+     ·                                  ──
+ 598 │ 
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:597:21]
+ 596 │   if (route.input && route.input.length > 0) {
+ 597 │     const method = (route.method || 'get').toLowerCase();
+     ·                     ────────────
+ 598 │ 
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/utils/route-handler.ts:34:68]
+ 33 │ 
+ 34 │       const rawResult = await invokeWithParsedArgs(serviceMethod, (input as InputArgs) ?? {});
+    ·                                                                    ──────────────────
+ 35 │ 
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'InputArgs' is more narrow than the original type.
+    ╭─[src/utils/route-handler.ts:34:68]
+ 33 │ 
+ 34 │       const rawResult = await invokeWithParsedArgs(serviceMethod, (input as InputArgs) ?? {});
+    ·                                                                    ──────────────────
+ 35 │ 
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RawServiceResult' is more narrow than the original type.
+    ╭─[src/utils/route-handler.ts:36:22]
+ 35 │ 
+ 36 │       const result = rawResult as RawServiceResult;
+    ·                      ─────────────────────────────
+ 37 │ 
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/utils/route-handler.ts:51:9]
+ 50 │         `Error in route handler for ${serviceClass.name}.${String(method)}:`,
+ 51 │         error as Record<string, unknown>,
+    ·         ────────────────────────────────
+ 52 │       );
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:626:9]
+ 625 │ 
+ 626 │     if (!groups[normalizedPath]) {
+     ·         ───────────────────────
+ 627 │       groups[normalizedPath] = [];
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:626:10]
+ 625 │ 
+ 626 │     if (!groups[normalizedPath]) {
+     ·          ──────────────────────
+ 627 │       groups[normalizedPath] = [];
+     ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:677:36]
+ 676 │     for (const route of pathRoutes) {
+ 677 │       const method = (route.method || 'get').toLowerCase();
+     ·                                    ──
+ 678 │       const operation = generateOperation(route);
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/utils/autogen/generators/openapi-generator.ts:677:23]
+ 676 │     for (const route of pathRoutes) {
+ 677 │       const method = (route.method || 'get').toLowerCase();
+     ·                       ────────────
+ 678 │       const operation = generateOperation(route);
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:21:9]
+ 20 │     const result = extractServiceMethodFromChain(child);
+ 21 │     if (result) {
+    ·         ──────
+ 22 │       return result;
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:39:9]
+ 38 │     const [exportAssignment] = sourceFile.getExportAssignments();
+ 39 │     if (!exportAssignment) {
+    ·         ─────────────────
+ 40 │       return;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:39:10]
+ 38 │     const [exportAssignment] = sourceFile.getExportAssignments();
+ 39 │     if (!exportAssignment) {
+    ·          ────────────────
+ 40 │       return;
+    ╰────
+
+  × typescript-eslint(no-unnecessary-type-parameters): Type parameter T is used only once in the function signature.
+     ╭─[src/services/base.ts:115:22]
+ 114 │ 
+ 115 │   public getInstance<T extends BaseServiceInterface>(): T {
+     ·                      ──────────────────────────────     ┬
+     ·                                     │                   ╰── This is the only usage of type parameter T in the signature.
+ 116 │     const ctor = this.constructor as unknown as { getInstance: () => T };
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type '{ getInstance: () => T; }' is more narrow than the original type.
+     ╭─[src/services/base.ts:116:18]
+ 115 │   public getInstance<T extends BaseServiceInterface>(): T {
+ 116 │     const ctor = this.constructor as unknown as { getInstance: () => T };
+     ·                  ───────────────────────────────────────────────────────
+ 117 │     return ctor.getInstance();
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/discovery/http-discovery.ts:58:10]
+ 57 │ 
+ 58 │     if (!routePath) {
+    ·          ─────────
+ 59 │       return null;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/discovery/trpc-discovery.ts:26:17]
+ 25 │         const routePromises = fileRoutes.map(async (route) => {
+ 26 │           if (!(route.serviceClass && route.serviceMethod)) {
+    ·                 ──────────────────
+ 27 │             return null;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/utils/autogen/discovery/trpc-discovery.ts:26:39]
+ 25 │         const routePromises = fileRoutes.map(async (route) => {
+ 26 │           if (!(route.serviceClass && route.serviceMethod)) {
+    ·                                       ───────────────────
+ 27 │             return null;
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/autogen/discovery/trpc-discovery.ts:35:66]
+ 34 │ 
+ 35 │           const type: 'mutation' | 'query' = route.procedureType || 'query';
+    ·                                                                  ──
+ 36 │           const method = type === 'mutation' ? 'post' : 'get';
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+   ╭─[src/utils/autogen.ts:8:46]
+ 7 │   } catch (error) {
+ 8 │     logger.error('Error in autogen script:', error as Record<string, unknown>);
+   ·                                              ────────────────────────────────
+ 9 │     globalThis.process.exit(1);
+   ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/utils/autogen/index.ts:90:65]
+ 89 │     const totalTime = performanceTimer.getTotal();
+ 90 │     logger.error(`❌ Error after ${Math.round(totalTime)}ms:`, error as Record<string, unknown>);
+    ·                                                                ────────────────────────────────
+ 91 │     throw error;
+    ╰────
+
+  × typescript-eslint(consistent-type-exports): All exports in the declaration are only used as types. Use `export type`.
+     ╭─[src/utils/autogen/index.ts:104:1]
+ 103 │ export * from './parsers/trpc-parser';
+ 104 │ export * from './types';
+     · ──────
+ 105 │ export * from './validators/route-validator';
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+   ╭─[src/middlewares/capture-response.ts:6:7]
+ 5 │ const captureResponse = (res: Response): void => {
+ 6 │   if (res.locals?.metadata) {
+   ·       ────────────────────
+ 7 │     res.locals.metadata['source'] = 'captureResponse';
+   ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+   ╭─[src/middlewares/capture-response.ts:6:7]
+ 5 │ const captureResponse = (res: Response): void => {
+ 6 │   if (res.locals?.metadata) {
+   ·       ────────────────────
+ 7 │     res.locals.metadata['source'] = 'captureResponse';
+   ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+   ╭─[src/middlewares/capture-response.ts:6:7]
+ 5 │ const captureResponse = (res: Response): void => {
+ 6 │   if (res.locals?.metadata) {
+   ·       ────────────────────
+ 7 │     res.locals.metadata['source'] = 'captureResponse';
+   ╰────
+
+  × typescript-eslint(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`.
+    ╭─[src/middlewares/capture-response.ts:14:25]
+ 13 │   const originalJson = res.json;
+ 14 │   const originalWrite = res.write;
+    ·                         ─────────┬
+    ·                             │    ╰── This reference may be unbound and lose `this` context
+ 15 │   const originalEnd = res.end;
+    ╰────
+  help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.
+
+  × typescript-eslint(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`.
+    ╭─[src/middlewares/capture-response.ts:15:23]
+ 14 │   const originalWrite = res.write;
+ 15 │   const originalEnd = res.end;
+    ·                       ───────┬
+    ·                          │   ╰── This reference may be unbound and lose `this` context
+ 16 │ 
+    ╰────
+  help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+    ╭─[src/middlewares/capture-response.ts:20:9]
+ 19 │   res.send = (body: Buffer | object | string): Response => {
+ 20 │     if (body) {
+    ·         ────
+ 21 │       responseBody = body;
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/middlewares/capture-response.ts:27:9]
+ 26 │   res.json = (body: object): Response => {
+ 27 │     if (body) {
+    ·         ────
+ 28 │       responseBody = body;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/capture-response.ts:27:9]
+ 26 │   res.json = (body: object): Response => {
+ 27 │     if (body) {
+    ·         ────
+ 28 │       responseBody = body;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+    ╭─[src/middlewares/capture-response.ts:38:9]
+ 37 │   ): boolean => {
+ 38 │     if (chunk) {
+    ·         ─────
+ 39 │       const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/request-handler.ts:11:44]
+ 10 │   try {
+ 11 │     if (isTrpcEndpoint(req.originalUrl) && req.body && Buffer.isBuffer(req.body)) {
+    ·                                            ────────
+ 12 │       req.body = req.body.toString();
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'BufferEncoding' is more narrow than the original type.
+    ╭─[src/middlewares/capture-response.ts:44:45]
+ 43 │     if (typeof encodingOrCallback === 'function') {
+ 44 │       return originalWrite.call(res, chunk, '' as BufferEncoding, encodingOrCallback);
+    ·                                             ────────────────────
+ 45 │     }
+    ╰────
+
+  × typescript-eslint(no-unnecessary-type-assertion): This assertion is unnecessary since it does not change the type of the expression.
+    ╭─[src/middlewares/capture-response.ts:50:38]
+ 49 │       chunk,
+ 50 │       (encodingOrCallback ?? 'utf8') as BufferEncoding,
+    ·        ──────────────┬─────────────  ────────┬─────────
+    ·                      │                       ╰── Casting it to 'BufferEncoding' is unnecessary
+    ·                      ╰── This expression already has the type 'BufferEncoding'
+ 51 │       callback,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/request-handler.ts:19:13]
+ 18 │       ...req.locals.metadata,
+ 19 │       body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+    ·             ──────────────────────
+ 20 │       headers: loggingOptions.logHeaders ? safeSerialize(req.headers) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+    ╭─[src/middlewares/capture-response.ts:60:9]
+ 59 │   ): Response => {
+ 60 │     if (chunk && typeof chunk !== 'function') {
+    ·         ─────
+ 61 │       const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/request-handler.ts:20:16]
+ 19 │       body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+ 20 │       headers: loggingOptions.logHeaders ? safeSerialize(req.headers) : undefined,
+    ·                ─────────────────────────
+ 21 │       params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/request-handler.ts:21:15]
+ 20 │       headers: loggingOptions.logHeaders ? safeSerialize(req.headers) : undefined,
+ 21 │       params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ·               ────────────────────────
+ 22 │       query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/request-handler.ts:22:14]
+ 21 │       params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+ 22 │       query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ·              ───────────────────────
+ 23 │       source: 'requestHandler',
+    ╰────
+
+  × typescript-eslint(no-unnecessary-type-assertion): This assertion is unnecessary since it does not change the type of the expression.
+    ╭─[src/middlewares/capture-response.ts:73:72]
+ 72 │ 
+ 73 │     return originalEnd.call(res, chunk, (encodingOrCallback ?? 'utf8') as BufferEncoding, callback);
+    ·                                          ──────────────┬─────────────  ────────┬─────────
+    ·                                                        │                       ╰── Casting it to 'BufferEncoding' is unnecessary
+    ·                                                        ╰── This expression already has the type 'BufferEncoding'
+ 74 │   };
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/response-handler.ts:9:10]
+  8 │   try {
+  9 │     if (!req.locals?.metadata?.error && res.statusCode < 400) {
+    ·          ───────────────────────────
+ 10 │       const endTime = Date.now();
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/response-handler.ts:9:10]
+  8 │   try {
+  9 │     if (!req.locals?.metadata?.error && res.statusCode < 400) {
+    ·          ────────────────────
+ 10 │       const endTime = Date.now();
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/response-handler.ts:11:25]
+ 10 │       const endTime = Date.now();
+ 11 │       const startTime = req.locals?.metadata?.startTime;
+    ·                         ───────────────────────────────
+ 12 │       const duration = startTime ? endTime - startTime : undefined;
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/response-handler.ts:11:25]
+ 10 │       const endTime = Date.now();
+ 11 │       const startTime = req.locals?.metadata?.startTime;
+    ·                         ────────────────────
+ 12 │       const duration = startTime ? endTime - startTime : undefined;
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/response-handler.ts:14:52]
+ 13 │ 
+ 14 │       const responseBody = res.locals.responseBody || undefined;
+    ·                                                    ──
+ 15 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+    ╭─[src/middlewares/response-handler.ts:14:28]
+ 13 │ 
+ 14 │       const responseBody = res.locals.responseBody || undefined;
+    ·                            ───────────────────────
+ 15 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/response-handler.ts:18:15]
+ 17 │         ...req.locals.metadata,
+ 18 │         body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+    ·               ──────────────────────
+ 19 │         duration,
+    ╰────
+
+  × typescript-eslint(no-duplicate-type-constituents): Union type constituent is duplicated with  Partial<Locals>.
+    ╭─[src/middlewares/gateway-middleware.ts:25:29]
+ 24 │ }: {
+ 25 │   locals: Partial<Locals> | Partial<Request['locals']> | Partial<Response['locals']>;
+    ·           ───────┬───────   ──────────────────────────
+    ·                  ╰── Type 'Partial<Locals>' is first declared here.
+ 26 │   req?: null | Request | undefined;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/response-handler.ts:21:18]
+ 20 │         endTime,
+ 21 │         headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
+    ·                  ─────────────────────────
+ 22 │         params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/response-handler.ts:22:17]
+ 21 │         headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
+ 22 │         params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ·                 ────────────────────────
+ 23 │         query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/response-handler.ts:23:16]
+ 22 │         params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+ 23 │         query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ·                ───────────────────────
+ 24 │         responseBody,
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/middlewares/gateway-middleware.ts:34:7]
+ 33 │ 
+ 34 │   if (!locals) {
+    ·       ───────
+ 35 │     throw new Error('Locals must be provided to sync local variables');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/gateway-middleware.ts:34:8]
+ 33 │ 
+ 34 │   if (!locals) {
+    ·        ──────
+ 35 │     throw new Error('Locals must be provided to sync local variables');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable number value in conditional. Please handle the nullish and zero cases explicitly.
+    ╭─[src/middlewares/error-handler.ts:18:8]
+ 17 │ const getStatusCode = (statusCode?: number): number => {
+ 18 │   if (!statusCode) {
+    ·        ──────────
+ 19 │     return 500;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/response-handler.ts:45:7]
+ 44 │       isTrpcEndpoint(req.originalUrl) &&
+ 45 │       res.locals &&
+    ·       ──────────
+ 46 │       req.locals.metadata &&
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/response-handler.ts:46:7]
+ 45 │       res.locals &&
+ 46 │       req.locals.metadata &&
+    ·       ───────────────────
+ 47 │       req.locals.metadata.error
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/middlewares/response-handler.ts:46:7]
+ 45 │       res.locals &&
+ 46 │       req.locals.metadata &&
+    ·       ───────────────────
+ 47 │       req.locals.metadata.error
+    ╰────
+
+  × typescript-eslint(prefer-optional-chain): Prefer using an optional chain expression instead, as it's more concise and easier to read.
+    ╭─[src/middlewares/response-handler.ts:44:7]
+ 43 │         } else if (
+ 44 │ ╭─▶       isTrpcEndpoint(req.originalUrl) &&
+ 45 │ │         res.locals &&
+ 46 │ │         req.locals.metadata &&
+ 47 │ ╰─▶       req.locals.metadata.error
+ 48 │         ) {
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/middlewares/response-handler.ts:45:7]
+ 44 │       isTrpcEndpoint(req.originalUrl) &&
+ 45 │       res.locals &&
+    ·       ──────────
+ 46 │       req.locals.metadata &&
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/gateway-middleware.ts:49:43]
+ 48 │   if (req && (target === 'req' || target === 'both')) {
+ 49 │     const reqLocals = safeClone(allLocals || {});
+    ·                                           ──
+ 50 │     if (reqLocals['originalStatusCode']) {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/gateway-middleware.ts:49:33]
+ 48 │   if (req && (target === 'req' || target === 'both')) {
+ 49 │     const reqLocals = safeClone(allLocals || {});
+    ·                                 ─────────
+ 50 │     if (reqLocals['originalStatusCode']) {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/error-handler.ts:29:22]
+ 28 │     name: err.name || 'UnknownError',
+ 29 │     stack: err.stack || 'No stack trace available',
+    ·                      ──
+ 30 │     statusCode: getStatusCode(res?.statusCode),
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/middlewares/error-handler.ts:29:12]
+ 28 │     name: err.name || 'UnknownError',
+ 29 │     stack: err.stack || 'No stack trace available',
+    ·            ─────────
+ 30 │     statusCode: getStatusCode(res?.statusCode),
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/gateway-middleware.ts:50:9]
+ 49 │     const reqLocals = safeClone(allLocals || {});
+ 50 │     if (reqLocals['originalStatusCode']) {
+    ·         ───────────────────────────────
+ 51 │       delete reqLocals['originalStatusCode'];
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/error-handler.ts:30:31]
+ 29 │     stack: err.stack || 'No stack trace available',
+ 30 │     statusCode: getStatusCode(res?.statusCode),
+    ·                               ───────────────
+ 31 │   };
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/gateway-middleware.ts:53:9]
+ 52 │     }
+ 53 │     if (reqLocals['responseBody']) {
+    ·         ─────────────────────────
+ 54 │       delete reqLocals['responseBody'];
+    ╰────
+
+  × typescript-eslint(no-redundant-type-constituents): 'unknown' overrides all other types in this union type.
+    ╭─[src/middlewares/error-handler.ts:36:68]
+ 35 │ 
+ 36 │ const getErrorMessage = (error: Error | ErrorDetails | TRPCError | unknown): string => {
+    ·                                                                    ───────
+ 37 │   const errorMessage =
+    ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an error typed value.
+    ╭─[src/middlewares/gateway-middleware.ts:56:5]
+ 55 │         }
+ 56 │ ╭─▶     req.locals = {
+ 57 │ │         ...req.locals,
+ 58 │ │         ...reqLocals,
+ 59 │ ╰─▶     };
+ 60 │       }
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'PropertyAssignment | undefined' is more narrow than the original type.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:48:28]
+ 47 │     
+ 48 │ ╭─▶     const targetProperty = expression.getProperties().find((prop) => {
+ 49 │ │         if (Node.isPropertyAssignment(prop)) {
+ 50 │ │           const nameNode = prop.getNameNode();
+ 51 │ │           if (Node.isStringLiteral(nameNode)) {
+ 52 │ │             return nameNode.getLiteralValue() === path;
+ 53 │ │           }
+ 54 │ │           if (Node.isIdentifier(nameNode)) {
+ 55 │ │             return nameNode.getText() === path;
+ 56 │ │           }
+ 57 │ │         }
+ 58 │ │         return false;
+ 59 │ ╰─▶     }) as PropertyAssignment | undefined;
+ 60 │     
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/error-handler.ts:38:5]
+ 37 │   const errorMessage =
+ 38 │     error && typeof error === 'object' && 'message' in error
+    ·     ─────
+ 39 │       ? (error as { message: string }).message
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type '{ message: string; }' is more narrow than the original type.
+    ╭─[src/middlewares/error-handler.ts:39:10]
+ 38 │     error && typeof error === 'object' && 'message' in error
+ 39 │       ? (error as { message: string }).message
+    ·          ────────────────────────────
+ 40 │       : String(error);
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/gateway-middleware.ts:63:43]
+ 62 │   if (res && (target === 'res' || target === 'both')) {
+ 63 │     const resLocals = safeClone(allLocals || {});
+    ·                                           ──
+ 64 │     res.locals = safeClone({
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/gateway-middleware.ts:63:33]
+ 62 │   if (res && (target === 'res' || target === 'both')) {
+ 63 │     const resLocals = safeClone(allLocals || {});
+    ·                                 ─────────
+ 64 │     res.locals = safeClone({
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/middlewares/error-handler.ts:58:7]
+ 57 │ }) => {
+ 58 │   if (!req.locals) {
+    ·       ───────────
+ 59 │     req.locals = {} as Request['locals'];
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/error-handler.ts:58:8]
+ 57 │ }) => {
+ 58 │   if (!req.locals) {
+    ·        ──────────
+ 59 │     req.locals = {} as Request['locals'];
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/middlewares/initialize-request.ts:19:9]
+ 18 │   try {
+ 19 │     if (!req.locals) {
+    ·         ───────────
+ 20 │       req.locals = {} as Request['locals'];
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/initialize-request.ts:19:10]
+ 18 │   try {
+ 19 │     if (!req.locals) {
+    ·          ──────────
+ 20 │       req.locals = {} as Request['locals'];
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Locals' is more narrow than the original type.
+    ╭─[src/middlewares/error-handler.ts:59:18]
+ 58 │   if (!req.locals) {
+ 59 │     req.locals = {} as Request['locals'];
+    ·                  ───────────────────────
+ 60 │   }
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Locals' is more narrow than the original type.
+    ╭─[src/middlewares/initialize-request.ts:20:20]
+ 19 │     if (!req.locals) {
+ 20 │       req.locals = {} as Request['locals'];
+    ·                    ───────────────────────
+ 21 │     }
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/middlewares/error-handler.ts:62:7]
+ 61 │ 
+ 62 │   if (!req.locals.metadata) {
+    ·       ────────────────────
+ 63 │     req.locals.metadata = {} as Request['locals']['metadata'];
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/error-handler.ts:62:8]
+ 61 │ 
+ 62 │   if (!req.locals.metadata) {
+    ·        ───────────────────
+ 63 │     req.locals.metadata = {} as Request['locals']['metadata'];
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Metadata' is more narrow than the original type.
+    ╭─[src/middlewares/error-handler.ts:63:27]
+ 62 │   if (!req.locals.metadata) {
+ 63 │     req.locals.metadata = {} as Request['locals']['metadata'];
+    ·                           ───────────────────────────────────
+ 64 │   }
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read.
+    ╭─[src/middlewares/error-handler.ts:74:3]
+ 73 │     
+ 74 │ ╭─▶   if (!errorMessage) {
+ 75 │ │       errorMessage = getErrorMessage(err);
+ 76 │ ╰─▶   }
+ 77 │     
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/middlewares/error-handler.ts:74:8]
+ 73 │ 
+ 74 │   if (!errorMessage) {
+    ·        ────────────
+ 75 │     errorMessage = getErrorMessage(err);
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/middlewares/error-handler.ts:78:36]
+ 77 │ 
+ 78 │   const statusCode = getStatusCode(res?.statusCode);
+    ·                                    ───────────────
+ 79 │   res.statusCode = statusCode;
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/error-handler.ts:88:11]
+ 87 │     ...req.locals.metadata,
+ 88 │     body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+    ·           ──────────────────────
+ 89 │     duration,
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'ErrorDetails' is more narrow than the original type.
+    ╭─[src/middlewares/error-handler.ts:91:12]
+ 90 │     endTime,
+ 91 │     error: safeSerialize(error) as ErrorDetails,
+    ·            ────────────────────────────────────
+ 92 │     headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/error-handler.ts:92:14]
+ 91 │     error: safeSerialize(error) as ErrorDetails,
+ 92 │     headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
+    ·              ─────────────────────────
+ 93 │     params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ╰────
+
+  × typescript-eslint(no-unnecessary-type-conversion): This type conversion does not change the type or value of the expression.
+    ╭─[src/middlewares/initialize-request.ts:26:33]
+ 25 │     ({ nextColor: req.locals.color, previousColor } = getNextRandomColor(
+ 26 │       cryptoJs.SHA256(sessionId.toString()).toString(),
+    ·                       ────┬──── ──────────
+    ·                           ╰── This expression already has type '`${string}-${string}-${string}-${string}-${string}`'.
+ 27 │       previousColor ?? defaultColor,
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always falsy.
+    ╭─[src/middlewares/initialize-request.ts:30:9]
+ 29 │ 
+ 30 │     if (!req.locals.color) {
+    ·         ─────────────────
+ 31 │       req.locals.color = getRandomColor();
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/middlewares/initialize-request.ts:30:10]
+ 29 │ 
+ 30 │     if (!req.locals.color) {
+    ·          ────────────────
+ 31 │       req.locals.color = getRandomColor();
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/error-handler.ts:93:13]
+ 92 │     headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
+ 93 │     params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+    ·             ────────────────────────
+ 94 │     query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[src/middlewares/error-handler.ts:94:12]
+ 93 │     params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
+ 94 │     query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    ·            ───────────────────────
+ 95 │     source: 'errorHandler',
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+     ╭─[src/middlewares/error-handler.ts:108:28]
+ 107 │     
+ 108 │ ╭─▶   const serializedLocals = safeSerialize({
+ 109 │ │       ...req.locals,
+ 110 │ │       ...res.locals,
+ 111 │ ╰─▶   }) as Record<string, unknown>;
+ 112 │     
+     ╰────
+
+  × typescript-eslint(only-throw-error): Expected an error object to be thrown.
+     ╭─[src/middlewares/error-handler.ts:120:11]
+ 119 │   if (throwError) {
+ 120 │     throw err;
+     ·           ───
+ 121 │   }
+     ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+    ╭─[src/utils/http.ts:33:13]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·             ─────────────────────────────────────────────────────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/utils/http.ts:33:54]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                                      ──────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http.ts:33:69]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                                                     ──
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/utils/http.ts:33:21]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                     ────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/http.ts:33:37]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                     ─────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'ErrorDetails' is more narrow than the original type.
+     ╭─[src/middlewares/error-handler.ts:127:27]
+ 126 │ const getErrorResponse = (error: ErrorDetails, req: Request, res: Response): BaseResponse => {
+ 127 │   const serializedError = safeSerialize(error) as ErrorDetails;
+     ·                           ────────────────────────────────────
+ 128 │ 
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/http.ts:33:54]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                                      ──────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/utils/http.ts:33:37]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                     ─────────────
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http.ts:33:51]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                                   ──
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http.ts:33:34]
+ 32 │     try {
+ 33 │       const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+    ·                                  ──
+ 34 │       const handler = handlerFactory();
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+     ╭─[src/middlewares/error-handler.ts:133:37]
+ 132 │     message: serializedError.message || 'Error',
+ 133 │     sessionId: req.locals.sessionId || undefined,
+     ·                                     ──
+ 134 │     success: false,
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[src/middlewares/error-handler.ts:133:16]
+ 132 │     message: serializedError.message || 'Error',
+ 133 │     sessionId: req.locals.sessionId || undefined,
+     ·                ────────────────────
+ 134 │     success: false,
+     ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http.ts:36:35]
+ 35 │       const result = await Promise.resolve(handler({ ctx, input }));
+ 36 │       ctx.res.status(result?.code || 200).json(result);
+    ·                                   ──
+ 37 │     } catch (error) {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable number value in conditional. Please handle the nullish and zero cases explicitly.
+    ╭─[src/utils/http.ts:36:22]
+ 35 │       const result = await Promise.resolve(handler({ ctx, input }));
+ 36 │       ctx.res.status(result?.code || 200).json(result);
+    ·                      ────────────
+ 37 │     } catch (error) {
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[src/utils/http.ts:36:22]
+ 35 │       const result = await Promise.resolve(handler({ ctx, input }));
+ 36 │       ctx.res.status(result?.code || 200).json(result);
+    ·                      ────────────
+ 37 │     } catch (error) {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/initialize-request.ts:68:10]
+ 67 │   const store = asyncLocalStorage.getStore();
+ 68 │   return store ? ((store as Map<string, Locals>).get('locals')?.sessionId ?? 'no-id') : 'no-id';
+    ·          ─────
+ 69 │ };
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+     ╭─[src/middlewares/error-handler.ts:163:30]
+ 162 │   if (!res.headersSent) {
+ 163 │     res.status(getStatusCode(res?.statusCode)).json(errorResponse);
+     ·                              ───────────────
+ 164 │   }
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Map<string, Locals>' is more narrow than the original type.
+    ╭─[src/middlewares/initialize-request.ts:68:20]
+ 67 │   const store = asyncLocalStorage.getStore();
+ 68 │   return store ? ((store as Map<string, Locals>).get('locals')?.sessionId ?? 'no-id') : 'no-id';
+    ·                    ────────────────────────────
+ 69 │ };
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/initialize-request.ts:73:10]
+ 72 │   const store = asyncLocalStorage.getStore();
+ 73 │   return store
+    ·          ─────
+ 74 │     ? ((store as Map<string, Locals | undefined>).get('locals')?.color ?? getRandomColor())
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Map<string, Locals | undefined>' is more narrow than the original type.
+    ╭─[src/middlewares/initialize-request.ts:74:9]
+ 73 │   return store
+ 74 │     ? ((store as Map<string, Locals | undefined>).get('locals')?.color ?? getRandomColor())
+    ·         ────────────────────────────────────────
+ 75 │     : getRandomColor();
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/middlewares/initialize-request.ts:80:10]
+ 79 │   const store = asyncLocalStorage.getStore();
+ 80 │   return store
+    ·          ─────
+ 81 │     ? (store as Map<string, Locals>).get('locals')
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Map<string, Locals>' is more narrow than the original type.
+    ╭─[src/middlewares/initialize-request.ts:81:8]
+ 80 │   return store
+ 81 │     ? (store as Map<string, Locals>).get('locals')
+    ·        ────────────────────────────
+ 82 │     : { color: getRandomColor(), sessionId: 'no-id' };
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/middlewares/not-found-handler.ts:33:45]
+ 32 │   }
+ 33 │   for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+    ·                                             ───────────────────────────────
+ 34 │     if (key.startsWith('_def')) {
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'HttpMethod' is more narrow than the original type.
+    ╭─[src/utils/http-router.ts:22:28]
+ 21 │       for (const [path, { handler, method }] of Object.entries(route)) {
+ 22 │         const httpMethod = method.toLowerCase() as HttpMethod;
+    ·                            ──────────────────────────────────
+ 23 │         const fullPath = joinPaths(rootPath, path);
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type '{ _def?: unknown; }' is more narrow than the original type.
+    ╭─[src/middlewares/not-found-handler.ts:37:41]
+ 36 │     }
+ 37 │     if (typeof value === 'function' && (value as { _def?: unknown })._def !== undefined) {
+    ·                                         ───────────────────────────
+ 38 │       keys.push(`${prefix}${key}`);
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Request' is more narrow than the original type.
+    ╭─[src/utils/http-router.ts:28:20]
+ 27 │             const ctx: ServiceContext = {
+ 28 │               req: req as Request,
+    ·                    ──────────────
+ 29 │               res: res as Response,
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Response' is more narrow than the original type.
+    ╭─[src/utils/http-router.ts:29:20]
+ 28 │               req: req as Request,
+ 29 │               res: res as Response,
+    ·                    ───────────────
+ 30 │             };
+    ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+    ╭─[src/utils/http-router.ts:31:19]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                   ────────────────────────────────────────────────────────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/utils/http-router.ts:31:63]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                               ──────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http-router.ts:31:74]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                                          ──
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/utils/http-router.ts:31:38]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                      ────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/http-router.ts:31:50]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                  ─────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[src/utils/http-router.ts:31:63]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                               ──────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[src/utils/http-router.ts:31:50]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                  ─────────
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http-router.ts:31:60]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                                            ──
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http-router.ts:31:47]
+ 30 │             };
+ 31 │             const input: InputArgs = req.body || req.query || req.params || {};
+    ·                                               ──
+ 32 │             if (typeof handler === 'function') {
+    ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+    ╭─[src/utils/http-router.ts:33:21]
+ 32 │             if (typeof handler === 'function') {
+ 33 │               const response = await Promise.resolve(handler({ ctx, input }));
+    ·                     ─────────────────────────────────────────────────────────
+ 34 │               if (!res.headersSent) {
+    ╰────
+
+  × typescript-eslint(no-unsafe-call): Unsafe call of a(n) `Function` typed value.
+    ╭─[src/utils/http-router.ts:33:54]
+ 32 │             if (typeof handler === 'function') {
+ 33 │               const response = await Promise.resolve(handler({ ctx, input }));
+    ·                                                      ───────
+ 34 │               if (!res.headersSent) {
+    ╰────
+
+  × typescript-eslint(no-unsafe-argument): Unsafe argument of type any assigned to a parameter of type number.
+    ╭─[src/utils/http-router.ts:35:32]
+ 34 │               if (!res.headersSent) {
+ 35 │                 ctx.res.status(response.code || 200).json(response);
+    ·                                ────────────────────
+ 36 │               }
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/utils/http-router.ts:35:46]
+ 34 │               if (!res.headersSent) {
+ 35 │                 ctx.res.status(response.code || 200).json(response);
+    ·                                              ──
+ 36 │               }
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+    ╭─[src/utils/http-router.ts:35:32]
+ 34 │               if (!res.headersSent) {
+ 35 │                 ctx.res.status(response.code || 200).json(response);
+    ·                                ─────────────
+ 36 │               }
+    ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .code on an `any` value.
+    ╭─[src/utils/http-router.ts:35:41]
+ 34 │               if (!res.headersSent) {
+ 35 │                 ctx.res.status(response.code || 200).json(response);
+    ·                                         ────
+ 36 │               }
+    ╰────
+
+  × typescript-eslint(no-confusing-void-expression): Returning a void expression from a function is forbidden. Please move it before the `return` statement.
+    ╭─[src/middlewares/not-found-handler.ts:59:14]
+ 58 │     ) {
+ 59 │       return next();
+    ·              ──────
+ 60 │     }
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/utils/http-router.ts:43:53]
+ 42 │   } catch (error) {
+ 43 │     logger.error('Failed to register HTTP routes:', error as Record<string, unknown>);
+    ·                                                     ────────────────────────────────
+ 44 │     throw error;
+    ╰────
+
+  × typescript-eslint(no-useless-default-assignment): Default value is useless because the property is not nullish. This default assignment will never be used.
+    ╭─[src/middlewares/not-found-handler.ts:89:22]
+ 88 │ 
+ 89 │   const { pathname = '' } = parse(req.originalUrl);
+    ·                      ─┬─
+    ·                       ╰── Default value
+ 90 │ 
+    ╰────
+  help: Remove the default assignment
+
+  × typescript-eslint(no-deprecated): `parse` is deprecated. Use the WHATWG URL API instead.
+    ╭─[src/middlewares/not-found-handler.ts:89:29]
+ 88 │ 
+ 89 │   const { pathname = '' } = parse(req.originalUrl);
+    ·                             ─────
+ 90 │ 
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+     ╭─[src/middlewares/not-found-handler.ts:111:5]
+ 110 │     res.status(statusCode);
+ 111 │     next?.(error);
+     ·     ─────────────
+ 112 │   }
+     ╰────
+
+  × typescript-eslint(no-unsafe-argument): Unsafe argument of type any assigned to a parameter of type JsonObject | null | undefined.
+    ╭─[src/middlewares/swagger-openapi.ts:13:7]
+ 12 │         swaggerUi.setup(
+ 13 │ ╭─▶       (() => {
+ 14 │ │           const swaggerJson = readFile({
+ 15 │ │             encoding: 'utf8',
+ 16 │ │             // path: swaggerJsonOutputFile,
+ 17 │ │             path: openApiSpecFile,
+ 18 │ │           });
+ 19 │ │           try {
+ 20 │ │             const jsonString =
+ 21 │ │               typeof swaggerJson === 'string' ? swaggerJson : swaggerJson?.toString() || '{}';
+ 22 │ │             return JSON.parse(jsonString);
+ 23 │ │           } catch {
+ 24 │ │             return {};
+ 25 │ │           }
+ 26 │ ╰─▶       })(),
+ 27 │         ),
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/swagger-openapi.ts:21:85]
+ 20 │           const jsonString =
+ 21 │             typeof swaggerJson === 'string' ? swaggerJson : swaggerJson?.toString() || '{}';
+    ·                                                                                     ──
+ 22 │           return JSON.parse(jsonString);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/middlewares/swagger-openapi.ts:21:61]
+ 20 │           const jsonString =
+ 21 │             typeof swaggerJson === 'string' ? swaggerJson : swaggerJson?.toString() || '{}';
+    ·                                                             ───────────────────────
+ 22 │           return JSON.parse(jsonString);
+    ╰────
+
+  × typescript-eslint(no-unsafe-return): Unsafe return of a value of type `any`.
+    ╭─[src/middlewares/swagger-openapi.ts:22:11]
+ 21 │             typeof swaggerJson === 'string' ? swaggerJson : swaggerJson?.toString() || '{}';
+ 22 │           return JSON.parse(jsonString);
+    ·           ──────────────────────────────
+ 23 │         } catch {
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Request' is more narrow than the original type.
+    ╭─[src/middlewares/trust-proxy.ts:69:25]
+ 68 │   if (isTrpcEndpoint(req.originalUrl)) {
+ 69 │     errorHandler(error, req as unknown as Request, res as unknown as Response, next);
+    ·                         ─────────────────────────
+ 70 │   } else {
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Response' is more narrow than the original type.
+    ╭─[src/middlewares/trust-proxy.ts:69:52]
+ 68 │   if (isTrpcEndpoint(req.originalUrl)) {
+ 69 │     errorHandler(error, req as unknown as Request, res as unknown as Response, next);
+    ·                                                    ──────────────────────────
+ 70 │   } else {
+    ╰────
+
+  × typescript-eslint(prefer-nullish-coalescing): Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
+    ╭─[src/middlewares/trust-proxy.ts:81:28]
+ 80 │   const allowedIps = new Set(['127.0.0.1', '::1']);
+ 81 │   const requestIp = req.ip || req.socket.remoteAddress;
+    ·                            ──
+ 82 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[src/middlewares/trust-proxy.ts:81:21]
+ 80 │   const allowedIps = new Set(['127.0.0.1', '::1']);
+ 81 │   const requestIp = req.ip || req.socket.remoteAddress;
+    ·                     ──────
+ 82 │ 
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'string' is more narrow than the original type.
+    ╭─[src/middlewares/trust-proxy.ts:83:59]
+ 82 │ 
+ 83 │   const isLoopback = Boolean(requestIp) && allowedIps.has(requestIp as string);
+    ·                                                           ───────────────────
+ 84 │   const inSafeEnv = isLocal() || isTest() || isCi() || isOtherEnvironment();
+    ╰────
+
+  × typescript-eslint(non-nullable-type-assertion-style): Use a ! assertion to more succinctly remove null and undefined from the type.
+    ╭─[src/middlewares/trust-proxy.ts:83:59]
+ 82 │ 
+ 83 │   const isLoopback = Boolean(requestIp) && allowedIps.has(requestIp as string);
+    ·                                                           ───────────────────
+ 84 │   const inSafeEnv = isLocal() || isTest() || isCi() || isOtherEnvironment();
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'Record<string, unknown>' is more narrow than the original type.
+    ╭─[src/main.ts:31:48]
+ 30 │     } catch (error) {
+ 31 │       logger.error('Error in autogen script:', error as Record<string, unknown>);
+    ·                                                ────────────────────────────────
+ 32 │       globalThis.process.exit(1);
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'extractHttpServiceMethod' expected no return value.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:70:5]
+ 69 │ 
+ 70 │     return extractServiceMethodFromChain(propertyValue);
+    ·     ────────────────────────────────────────────────────
+ 71 │   } catch {
+    ╰────
+
+  × typescript-eslint(consistent-return): Function 'extractHttpServiceMethod' expected no return value.
+    ╭─[src/utils/autogen/parsers/http-parser.ts:72:5]
+ 71 │   } catch {
+ 72 │     return undefined;
+    ·     ─────────────────
+ 73 │   }
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+   ╭─[src/utils/filters.ts:6:18]
+ 5 │         ...input,
+ 6 │         orderBy: input?.['orderBy'] ?? undefined,
+   ·                  ──────────────────
+ 7 │         where: input?.['where'] ?? {},
+   ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+   ╭─[src/utils/filters.ts:7:16]
+ 6 │         orderBy: input?.['orderBy'] ?? undefined,
+ 7 │         where: input?.['where'] ?? {},
+   ·                ────────────────
+ 8 │       };
+   ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is more narrow than the original type.
+    ╭─[src/main.ts:42:11]
+ 41 │ 
+ 42 │   app.use(initializeRequest as ExpressRequestHandler);
+    ·           ──────────────────────────────────────────
+ 43 │   app.use(gatewayMiddleware as ExpressRequestHandler);
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is more narrow than the original type.
+    ╭─[src/main.ts:43:11]
+ 42 │   app.use(initializeRequest as ExpressRequestHandler);
+ 43 │   app.use(gatewayMiddleware as ExpressRequestHandler);
+    ·           ──────────────────────────────────────────
+ 44 │ 
+    ╰────
+
+  × typescript-eslint(use-unknown-in-catch-callback-variable): Prefer the safe `: unknown` for a `catch` callback variable.
+    ╭─[src/main.ts:54:32]
+ 53 │   if (isLocal()) {
+ 54 │     trpcPlayground(app).catch((error) => {
+    ·                                ─────
+ 55 │       logger.error('Failed to initialize tRPC Playground:', error);
+    ╰────
+
+  × typescript-eslint(no-unsafe-argument): Unsafe argument of type any assigned to a parameter of type Record<string, unknown> | undefined.
+    ╭─[src/main.ts:55:61]
+ 54 │     trpcPlayground(app).catch((error) => {
+ 55 │       logger.error('Failed to initialize tRPC Playground:', error);
+    ·                                                             ─────
+ 56 │     });
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): This condition will always return the same value since the types have no overlap.
+    ╭─[tests/sample.trpc.test.ts:10:28]
+  9 │ 
+ 10 │   if (path === undefined || path === null) {
+    ·                            ──┬──    ──┬──
+    ·                              │        ╰── Type: null
+    ·                              ╰── Type: "_def._config" | "_def.lazy" | "_def.procedure" | "_def.procedures" | "_def.record" | "_def.router" | "default.root" | "test._checkParams" | "test.asyncFailReject" | "test.asyncFailThrow" | ... 10 more ... | "test.unknown"
+ 11 │     throw new Error('Path is required');
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is more narrow than the original type.
+    ╭─[src/main.ts:64:11]
+ 63 │ 
+ 64 │   app.use(errorHandler as unknown as ExpressRequestHandler);
+    ·           ────────────────────────────────────────────────
+ 65 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/sample.trpc.test.ts:28:9]
+ 27 │   if (method === 'get') {
+ 28 │     if (input && Object.keys(input).length > 0) {
+    ·         ─────
+ 29 │       req.query({ input: transformer.stringify(input ?? {}) });
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/sample.trpc.test.ts:28:9]
+ 27 │   if (method === 'get') {
+ 28 │     if (input && Object.keys(input).length > 0) {
+    ·         ─────
+ 29 │       req.query({ input: transformer.stringify(input ?? {}) });
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[tests/sample.trpc.test.ts:29:48]
+ 28 │     if (input && Object.keys(input).length > 0) {
+ 29 │       req.query({ input: transformer.stringify(input ?? {}) });
+    ·                                                ─────
+ 30 │     }
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[tests/sample.trpc.test.ts:32:22]
+ 31 │   } else {
+ 32 │     req.send({ json: input ?? {} });
+    ·                      ─────
+ 33 │   }
+    ╰────
+
+  × typescript-eslint(return-await): Returning an awaited promise is not allowed in this context.
+    ╭─[tests/sample.trpc.test.ts:35:10]
+ 34 │ 
+ 35 │   return await Promise.resolve(req);
+    ·          ──────────────────────────
+ 36 │ };
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/autogen/index.test.ts:22:13]
+ 21 │ 
+ 22 │         if (route) {
+    ·             ─────
+ 23 │           expect(route).toHaveProperty('path');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/autogen/index.test.ts:22:13]
+ 21 │ 
+ 22 │         if (route) {
+    ·             ─────
+ 23 │           expect(route).toHaveProperty('path');
+    ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+     ╭─[tests/sample.trpc.test.ts:230:13]
+ 229 │ 
+ 230 │       const body = response?.body;
+     ·             ─────────────────────
+ 231 │       if (body) {
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+     ╭─[tests/sample.trpc.test.ts:230:20]
+ 229 │ 
+ 230 │       const body = response?.body;
+     ·                    ──────────────
+ 231 │       if (body) {
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:231:11]
+ 230 │       const body = response?.body;
+ 231 │       if (body) {
+     ·           ────
+ 232 │         expect(typeof body).toBe('object');
+     ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+     ╭─[tests/sample.trpc.test.ts:235:13]
+ 234 │ 
+ 235 │       const result = body?.result;
+     ·             ─────────────────────
+ 236 │       if (expected.success) {
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .result on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:235:28]
+ 234 │ 
+ 235 │       const result = body?.result;
+     ·                            ──────
+ 236 │       if (expected.success) {
+     ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+     ╭─[tests/sample.trpc.test.ts:240:13]
+ 239 │ 
+ 240 │       const resultData = result?.data;
+     ·             ─────────────────────────
+ 241 │       if (resultData) {
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .data on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:240:34]
+ 239 │ 
+ 240 │       const resultData = result?.data;
+     ·                                  ────
+ 241 │       if (resultData) {
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:241:11]
+ 240 │       const resultData = result?.data;
+ 241 │       if (resultData) {
+     ·           ──────────
+ 242 │         expect(typeof resultData).toBe('object');
+     ╰────
+
+  × typescript-eslint(no-unsafe-assignment): Unsafe assignment of an any value.
+     ╭─[tests/sample.trpc.test.ts:245:13]
+ 244 │ 
+ 245 │       const jsonData = resultData?.json;
+     ·             ───────────────────────────
+ 246 │       if (jsonData) {
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .json on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:245:36]
+ 244 │ 
+ 245 │       const jsonData = resultData?.json;
+     ·                                    ────
+ 246 │       if (jsonData) {
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:246:11]
+ 245 │       const jsonData = resultData?.json;
+ 246 │       if (jsonData) {
+     ·           ────────
+ 247 │         expect(jsonData).toMatchObject({
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:253:13]
+ 252 │ 
+ 253 │         if (jsonData.data && expected.data) {
+     ·             ─────────────
+ 254 │           expect(jsonData.data).toMatchObject(expected.data);
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:253:30]
+ 252 │ 
+ 253 │         if (jsonData.data && expected.data) {
+     ·                              ─────────────
+ 254 │           expect(jsonData.data).toMatchObject(expected.data);
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .data on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:253:22]
+ 252 │ 
+ 253 │         if (jsonData.data && expected.data) {
+     ·                      ────
+ 254 │           expect(jsonData.data).toMatchObject(expected.data);
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .data on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:254:27]
+ 253 │         if (jsonData.data && expected.data) {
+ 254 │           expect(jsonData.data).toMatchObject(expected.data);
+     ·                           ────
+ 255 │         }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:257:13]
+ 256 │ 
+ 257 │         if (jsonData.error) {
+     ·             ──────────────
+ 258 │           expect(typeof jsonData.error).toBe('object');
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .error on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:257:22]
+ 256 │ 
+ 257 │         if (jsonData.error) {
+     ·                      ─────
+ 258 │           expect(typeof jsonData.error).toBe('object');
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .error on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:258:34]
+ 257 │         if (jsonData.error) {
+ 258 │           expect(typeof jsonData.error).toBe('object');
+     ·                                  ─────
+ 259 │         }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected any value in conditional. Use a more specific type to ensure type safety.
+     ╭─[tests/sample.trpc.test.ts:261:13]
+ 260 │ 
+ 261 │         if (jsonData.sessionId) {
+     ·             ──────────────────
+ 262 │           expect(typeof jsonData.sessionId).toBe('string');
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .sessionId on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:261:22]
+ 260 │ 
+ 261 │         if (jsonData.sessionId) {
+     ·                      ─────────
+ 262 │           expect(typeof jsonData.sessionId).toBe('string');
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .sessionId on an `any` value.
+     ╭─[tests/sample.trpc.test.ts:262:34]
+ 261 │         if (jsonData.sessionId) {
+ 262 │           expect(typeof jsonData.sessionId).toBe('string');
+     ·                                  ─────────
+ 263 │         }
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/index.test.ts:46:33]
+ 45 │ 
+ 46 │       const routesWithService = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                                 ───────────────────────────────────────────────────────
+ 47 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/index.test.ts:46:54]
+ 45 │ 
+ 46 │       const routesWithService = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                                                      ──────────────
+ 47 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.
+    ╭─[tests/autogen/index.test.ts:60:32]
+ 59 │ 
+ 60 │       const routesWithParams = routes.filter((r) => r.input && r.input.length > 0);
+    ·                                ───────────────────────────────────────────────────
+ 61 │ 
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/sample.http.test.ts:16:27]
+ 15 │ 
+ 16 │   if (method !== 'get' && input) {
+    ·                           ─────
+ 17 │     req.send(input);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/sample.http.test.ts:16:27]
+ 15 │ 
+ 16 │   if (method !== 'get' && input) {
+    ·                           ─────
+ 17 │     req.send(input);
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/sample.http.test.ts:20:27]
+ 19 │ 
+ 20 │   if (method === 'get' && input) {
+    ·                           ─────
+ 21 │     req.query(input);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/sample.http.test.ts:20:27]
+ 19 │ 
+ 20 │   if (method === 'get' && input) {
+    ·                           ─────
+ 21 │     req.query(input);
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+    ╭─[tests/autogen/index.test.ts:64:13]
+ 63 │         const [route] = routesWithParams;
+ 64 │         if (route?.input) {
+    ·             ────────────
+ 65 │           const [param] = route.input;
+    ╰────
+
+  × typescript-eslint(return-await): Returning an awaited promise is not allowed in this context.
+    ╭─[tests/sample.http.test.ts:24:10]
+ 23 │ 
+ 24 │   return await Promise.resolve(req);
+    ·          ──────────────────────────
+ 25 │ };
+    ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/autogen/discovery/http-discovery.test.ts:36:11]
+ 35 │ 
+ 36 │       if (route) {
+    ·           ─────
+ 37 │         expect(typeof route.handlerFilePath).toBe('string');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/autogen/discovery/http-discovery.test.ts:36:11]
+ 35 │ 
+ 36 │       if (route) {
+    ·           ─────
+ 37 │         expect(typeof route.handlerFilePath).toBe('string');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/discovery/http-discovery.test.ts:68:29]
+ 67 │       // Find routes with service information
+ 68 │       const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                             ───────────────────────────────────────────────────────
+ 69 │       expect(serviceRoutes.length).toBeGreaterThan(0);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/discovery/http-discovery.test.ts:68:50]
+ 67 │       // Find routes with service information
+ 68 │       const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                                                  ──────────────
+ 69 │       expect(serviceRoutes.length).toBeGreaterThan(0);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/index.test.ts:90:37]
+ 89 │ 
+ 90 │       const routesWithHandlerFile = routes.filter((r) => r.handlerFilePath);
+    ·                                     ───────────────────────────────────────
+ 91 │ 
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[tests/autogen/index.test.ts:102:37]
+ 101 │ 
+ 102 │       const routesWithServiceFile = routes.filter((r) => r.serviceFilePath);
+     ·                                     ───────────────────────────────────────
+ 103 │ 
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[tests/autogen/discovery/http-discovery.test.ts:102:13]
+ 101 │         expect(route.handlerFilePath).toBeDefined();
+ 102 │         if (route.handlerFilePath) {
+     ·             ─────────────────────
+ 103 │           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+     ╭─[tests/autogen/index.test.ts:151:37]
+ 150 │     
+ 151 │ ╭─▶       const httpRoutesWithService = routes.filter(
+ 152 │ │           (r) => r.requestType === 'HTTP' && r.serviceClass,
+ 153 │ ╰─▶       );
+ 154 │           const trpcRoutesWithService = routes.filter(
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected value in conditional. A union of different types has inconsistent truthiness.
+     ╭─[tests/autogen/index.test.ts:154:37]
+ 153 │           );
+ 154 │ ╭─▶       const trpcRoutesWithService = routes.filter(
+ 155 │ │           (r) => r.requestType === 'tRPC' && r.serviceClass,
+ 156 │ ╰─▶       );
+ 157 │     
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary conditional, value is always truthy.
+    ╭─[tests/autogen/discovery/trpc-discovery.test.ts:38:13]
+ 37 │ 
+ 38 │         if (route) {
+    ·             ─────
+ 39 │           expect(typeof route.handlerFilePath).toBe('string');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected object value in conditional. An object is always truthy.
+    ╭─[tests/autogen/discovery/trpc-discovery.test.ts:38:13]
+ 37 │ 
+ 38 │         if (route) {
+    ·             ─────
+ 39 │           expect(typeof route.handlerFilePath).toBe('string');
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/discovery/trpc-discovery.test.ts:74:29]
+ 73 │       // Find routes with service information
+ 74 │       const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                             ───────────────────────────────────────────────────────
+ 75 │       expect(serviceRoutes.length).toBeGreaterThan(0);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+    ╭─[tests/autogen/discovery/trpc-discovery.test.ts:74:50]
+ 73 │       // Find routes with service information
+ 74 │       const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+    ·                                                  ──────────────
+ 75 │       expect(serviceRoutes.length).toBeGreaterThan(0);
+    ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[tests/autogen/parsers/service-parser.test.ts:113:11]
+ 112 │ 
+ 113 │       if (metadata.serviceFilePath) {
+     ·           ────────────────────────
+ 114 │         expect(metadata.serviceFilePath).toMatch(/default\.ts$/);
+     ╰────
+
+  × typescript-eslint(no-useless-default-assignment): Default value is useless because the property is not nullish. This default assignment will never be used.
+     ╭─[tests/sample.http.test.ts:205:42]
+ 204 │   for (const testCase of testCases) {
+ 205 │     const { endpoint, expected, method = 'get' } = testCase;
+     ·                                          ──┬───
+     ·                                            ╰── Default value
+ 206 │     const input = testCase.input ?? {};
+     ╰────
+  help: Remove the default assignment
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[tests/autogen/discovery/trpc-discovery.test.ts:99:13]
+  98 │       for (const route of routes) {
+  99 │         if (route.handlerFilePath) {
+     ·             ─────────────────────
+ 100 │           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
+     ╰────
+
+  × typescript-eslint(promise-function-async): Functions that return promises must be async.
+     ╭─[tests/autogen/parsers/service-parser.test.ts:153:26]
+ 152 │       const results = await Promise.all(
+ 153 │         serviceNames.map((serviceName) => extractServiceMetadata(serviceName, 'root')),
+     ·                          ────────────────────────────────────────────────────────────
+ 154 │       );
+     ╰────
+
+  × typescript-eslint(promise-function-async): Functions that return promises must be async.
+     ╭─[tests/autogen/parsers/service-parser.test.ts:173:25]
+ 172 │       const results = await Promise.all(
+ 173 │         testMethods.map((method) => extractServiceMetadata('TestService', method)),
+     ·                         ─────────────────────────────────────────────────────────
+ 174 │       );
+     ╰────
+
+  × typescript-eslint(strict-boolean-expressions): Unexpected nullable string value in conditional. Please handle the nullish and empty string cases explicitly.
+     ╭─[tests/autogen/parsers/service-parser.test.ts:179:13]
+ 178 │ 
+ 179 │         if (metadata.serviceFilePath) {
+     ·             ────────────────────────
+ 180 │           expect(metadata.serviceFilePath).toMatch(/test\.ts$/);
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .data on an `any` value.
+     ╭─[tests/sample.http.test.ts:223:30]
+ 222 │       if ('data' in expected) {
+ 223 │         expect(response.body.data).toEqual(expect.objectContaining(expected.data as object));
+     ·                              ────
+ 224 │       }
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'object' is more narrow than the original type.
+     ╭─[tests/sample.http.test.ts:223:68]
+ 222 │       if ('data' in expected) {
+ 223 │         expect(response.body.data).toEqual(expect.objectContaining(expected.data as object));
+     ·                                                                    ───────────────────────
+ 224 │       }
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+     ╭─[tests/autogen/index.test.ts:195:35]
+ 194 │         expect(correspondingRoute).toBeDefined();
+ 195 │         expect(element.path).toBe(correspondingRoute?.path);
+     ·                                   ────────────────────────
+ 196 │         expect(element.requestType).toBe(correspondingRoute?.requestType);
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .error on an `any` value.
+     ╭─[tests/sample.http.test.ts:227:30]
+ 226 │       if ('error' in expected) {
+ 227 │         expect(response.body.error).toMatchObject(expected.error as object);
+     ·                              ─────
+ 228 │       }
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'object' is more narrow than the original type.
+     ╭─[tests/sample.http.test.ts:227:51]
+ 226 │       if ('error' in expected) {
+ 227 │         expect(response.body.error).toMatchObject(expected.error as object);
+     ·                                                   ────────────────────────
+ 228 │       }
+     ╰────
+
+  × typescript-eslint(no-unnecessary-condition): Unnecessary optional chain on a non-nullish value.
+     ╭─[tests/autogen/index.test.ts:196:42]
+ 195 │         expect(element.path).toBe(correspondingRoute?.path);
+ 196 │         expect(element.requestType).toBe(correspondingRoute?.requestType);
+     ·                                          ───────────────────────────────
+ 197 │       }
+     ╰────
+
+  × typescript-eslint(no-unsafe-member-access): Unsafe member access .sessionId on an `any` value.
+     ╭─[tests/sample.http.test.ts:231:37]
+ 230 │       if ('sessionId' in expected) {
+ 231 │         expect(typeof response.body.sessionId).toBe('string');
+     ·                                     ─────────
+ 232 │       }
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RouteInfo' is more narrow than the original type.
+    ╭─[tests/autogen/validators/route-validator.test.ts:41:9]
+ 40 │           const routes: RouteInfo[] = [
+ 41 │ ╭─▶         {
+ 42 │ │             // Missing path - not setting the property at all makes it undefined
+ 43 │ │             handlerFilePath: '/path/to/handler.ts',
+ 44 │ │             requestType: 'HTTP',
+ 45 │ ╰─▶         } as RouteInfo,
+ 46 │             createMockRoute({
+    ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RouteInfo' is more narrow than the original type.
+     ╭─[tests/autogen/validators/route-validator.test.ts:339:9]
+ 338 │           const routes: RouteInfo[] = [
+ 339 │ ╭─▶         {
+ 340 │ │             // Missing path completely to trigger error
+ 341 │ │             handlerFilePath: '/path/to/handler.ts',
+ 342 │ │             requestType: 'HTTP',
+ 343 │ │             serviceMethod: 'InvalidMethodName', // Warning
+ 344 │ ╰─▶         } as RouteInfo,
+ 345 │           ];
+     ╰────
+
+  × typescript-eslint(no-unsafe-type-assertion): Unsafe type assertion: type 'RouteInfo' is more narrow than the original type.
+     ╭─[tests/autogen/validators/route-validator.test.ts:390:9]
+ 389 │           const routes: RouteInfo[] = [
+ 390 │ ╭─▶         {
+ 391 │ │             // Missing path completely to trigger structure error
+ 392 │ │             handlerFilePath: '/path/to/handler.ts',
+ 393 │ │             requestType: 'HTTP',
+ 394 │ │             serviceClass: 'invalid', // naming error
+ 395 │ │             serviceFilePath: '/wrong/path/test.ts', // structure error
+ 396 │ ╰─▶         } as RouteInfo,
+ 397 │           ];
+     ╰────
+
+Found 0 warnings and 295 errors.
+Finished in 456ms on 60 files with 410 rules using 8 threads.
+
+Pls fix lint errors without altering logic.
