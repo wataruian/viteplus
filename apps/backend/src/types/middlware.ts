@@ -90,10 +90,19 @@ interface Response extends ExpressResponse {
 
 type ResponseBody = null | Record<string, unknown> | string | undefined;
 
-type RouteHandler = (params: {
+interface TrpcRouteHandlerParams {
   ctx: ServiceContext;
-  input?: InputArgs;
-}) => BaseResponse | Promise<BaseResponse>;
+  input: unknown;
+  signal: AbortSignal | undefined;
+  path: string;
+  batchIndex?: number;
+}
+
+type RouteHandlerParams =
+  | (Record<string, unknown> & { ctx: ServiceContext; input?: unknown })
+  | TrpcRouteHandlerParams;
+
+type RouteHandler = (params: RouteHandlerParams) => BaseResponse | Promise<BaseResponse>;
 
 interface ServiceContext {
   next?: NextFunction | null | undefined;
@@ -123,6 +132,8 @@ export type {
   Query,
   Request,
   RequestHandler,
+  TrpcRouteHandlerParams,
+  RouteHandlerParams,
   Response,
   ResponseBody,
   RouteHandler,

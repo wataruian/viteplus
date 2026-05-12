@@ -1,14 +1,8 @@
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import fs from 'node:fs';
-import path from 'node:path';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
-
-import { projectDir } from '../../../src/utils/autogen/config';
 import { getHttpRoutes } from '../../../src/utils/autogen/discovery/http-discovery';
-
-const MIN_EXPECTED_ROUTES = 5;
-const MAX_DISCOVERY_TIME_MS = 5000;
-const SERVICE_CLASS_PATTERN = /Service$/;
-const TYPESCRIPT_FILE_PATTERN = /\.ts$/;
+import path from 'node:path';
+import { projectDir } from '../../../src/utils/autogen/config';
 
 describe('HTTP Discovery', () => {
   describe('getHttpRoutes', () => {
@@ -48,7 +42,7 @@ describe('HTTP Discovery', () => {
 
     it('should find default route', async () => {
       const routes = await getHttpRoutes();
-      const defaultRoute = routes.find(r => r.path === '/');
+      const defaultRoute = routes.find((r) => r.path === '/');
 
       expect(defaultRoute).toBeDefined();
       expect(defaultRoute?.serviceClass).toBe('DefaultService');
@@ -56,14 +50,12 @@ describe('HTTP Discovery', () => {
 
     it('should find test routes', async () => {
       const routes = await getHttpRoutes();
-      const testRoutes = routes.filter(r => r.path.startsWith('/test'));
+      const testRoutes = routes.filter((r) => r.path.startsWith('/test'));
 
       expect(testRoutes.length).toBeGreaterThan(0);
 
       // Check specific test routes
-      const asyncSuccessRoute = testRoutes.find(
-        r => r.path === '/test/async-success'
-      );
+      const asyncSuccessRoute = testRoutes.find((r) => r.path === '/test/async-success');
       expect(asyncSuccessRoute).toBeDefined();
       expect(asyncSuccessRoute?.serviceClass).toBe('TestService');
       expect(asyncSuccessRoute?.serviceMethod).toBe('asyncSuccess');
@@ -73,14 +65,12 @@ describe('HTTP Discovery', () => {
       const routes = await getHttpRoutes();
 
       // Find routes with service information
-      const serviceRoutes = routes.filter(
-        r => r.serviceClass && r.serviceMethod
-      );
+      const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
       // Verify service naming convention
       for (const route of serviceRoutes) {
-        expect(route.serviceClass).toMatch(SERVICE_CLASS_PATTERN);
+        expect(route.serviceClass).toMatch(/Service$/);
         expect(route.serviceMethod).toBeTruthy();
       }
     });
@@ -90,17 +80,17 @@ describe('HTTP Discovery', () => {
 
       // Should have routes from different method types (GET, POST, etc.)
       // The path structure doesn't directly indicate method, but we should have various routes
-      expect(routes.length).toBeGreaterThan(MIN_EXPECTED_ROUTES);
+      expect(routes.length).toBeGreaterThan(5);
     });
 
     it('should handle nested route paths', async () => {
       const routes = await getHttpRoutes();
-      const nestedRoutes = routes.filter(r => r.path.includes('/'));
+      const nestedRoutes = routes.filter((r) => r.path.includes('/'));
 
       expect(nestedRoutes.length).toBeGreaterThan(0);
 
       // Check for test subroutes
-      const testSubroutes = routes.filter(r => r.path.startsWith('/test/'));
+      const testSubroutes = routes.filter((r) => r.path.startsWith('/test/'));
       expect(testSubroutes.length).toBeGreaterThan(0);
     });
 
@@ -111,7 +101,7 @@ describe('HTTP Discovery', () => {
         expect(route.handlerFilePath).toBeDefined();
         if (route.handlerFilePath) {
           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
-          expect(route.handlerFilePath).toMatch(TYPESCRIPT_FILE_PATTERN);
+          expect(route.handlerFilePath).toMatch(/\.ts$/);
         }
       }
     });
@@ -119,10 +109,8 @@ describe('HTTP Discovery', () => {
     it('should handle parameter routes', async () => {
       const routes = await getHttpRoutes();
       const paramRoutes = routes.filter(
-        r =>
-          r.path.includes('hello') ||
-          r.path.includes('primitives') ||
-          r.path.includes('object')
+        (r) =>
+          r.path.includes('hello') || r.path.includes('primitives') || r.path.includes('object'),
       );
 
       expect(paramRoutes.length).toBeGreaterThan(0);
@@ -164,7 +152,7 @@ describe('HTTP Discovery', () => {
       const endTime = Date.now();
 
       expect(routes).toBeDefined();
-      expect(endTime - startTime).toBeLessThan(MAX_DISCOVERY_TIME_MS); // Should complete within 5 seconds
+      expect(endTime - startTime).toBeLessThan(5000); // Should complete within 5 seconds
     });
   });
 });

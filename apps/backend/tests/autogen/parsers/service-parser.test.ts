@@ -1,14 +1,10 @@
-import { describe, expect, it } from 'vitest';
-
+import { describe, expect, it } from 'vite-plus/test';
 import {
   extractServiceMetadata,
   getRouteHandlerFilePath,
   getServiceNameFromHandlerFile,
   toPascalCase,
 } from '../../../src/utils/autogen/parsers/service-parser';
-
-const DEFAULT_SERVICE_PATTERN = /default\.ts$/;
-const TEST_SERVICE_PATTERN = /test\.ts$/;
 
 describe('Service Parser', () => {
   describe('toPascalCase', () => {
@@ -57,7 +53,7 @@ describe('Service Parser', () => {
 
     it('should handle complex paths', () => {
       const result = getServiceNameFromHandlerFile(
-        '/Users/project/src/services/my-custom-service.ts'
+        '/Users/project/src/services/my-custom-service.ts',
       );
       expect(result).toBe('MyCustomServiceService');
     });
@@ -74,15 +70,9 @@ describe('Service Parser', () => {
     it('should handle different route naming patterns', () => {
       const routerDir = '/router';
 
-      expect(getRouteHandlerFilePath(routerDir, 'defaultRoutes')).toBe(
-        '/router/routes/default.ts'
-      );
-      expect(getRouteHandlerFilePath(routerDir, 'userRoutes')).toBe(
-        '/router/routes/user.ts'
-      );
-      expect(getRouteHandlerFilePath(routerDir, 'authRoutes')).toBe(
-        '/router/routes/auth.ts'
-      );
+      expect(getRouteHandlerFilePath(routerDir, 'defaultRoutes')).toBe('/router/routes/default.ts');
+      expect(getRouteHandlerFilePath(routerDir, 'userRoutes')).toBe('/router/routes/user.ts');
+      expect(getRouteHandlerFilePath(routerDir, 'authRoutes')).toBe('/router/routes/auth.ts');
     });
 
     it('should handle routes without "Routes" suffix', () => {
@@ -105,10 +95,7 @@ describe('Service Parser', () => {
 
     it('should return empty metadata for undefined service method', async () => {
       const serviceMethod: string | undefined = undefined;
-      const metadata = await extractServiceMetadata(
-        'TestService',
-        serviceMethod
-      );
+      const metadata = await extractServiceMetadata('TestService', serviceMethod);
 
       expect(metadata).toEqual({
         input: undefined,
@@ -124,15 +111,12 @@ describe('Service Parser', () => {
       expect(metadata).toHaveProperty('input');
 
       if (metadata.serviceFilePath) {
-        expect(metadata.serviceFilePath).toMatch(DEFAULT_SERVICE_PATTERN);
+        expect(metadata.serviceFilePath).toMatch(/default\.ts$/);
       }
     });
 
     it('should handle non-existent service gracefully', async () => {
-      const metadata = await extractServiceMetadata(
-        'NonExistentService',
-        'someMethod'
-      );
+      const metadata = await extractServiceMetadata('NonExistentService', 'someMethod');
 
       expect(metadata).toEqual({
         input: undefined,
@@ -141,10 +125,7 @@ describe('Service Parser', () => {
     });
 
     it('should handle non-existent method gracefully', async () => {
-      const metadata = await extractServiceMetadata(
-        'DefaultService',
-        'nonExistentMethod'
-      );
+      const metadata = await extractServiceMetadata('DefaultService', 'nonExistentMethod');
 
       expect(metadata).toHaveProperty('serviceFilePath');
       expect(metadata).toHaveProperty('input');
@@ -168,8 +149,11 @@ describe('Service Parser', () => {
     it('should work with real service files', async () => {
       const serviceNames = ['DefaultService', 'TestService'];
 
-      for (const serviceName of serviceNames) {
-        const metadata = await extractServiceMetadata(serviceName, 'root');
+      const results = await Promise.all(
+        serviceNames.map((serviceName) => extractServiceMetadata(serviceName, 'root')),
+      );
+
+      for (const metadata of results) {
         expect(metadata).toBeDefined();
       }
     });
@@ -185,12 +169,15 @@ describe('Service Parser', () => {
         'mixedParams',
       ];
 
-      for (const method of testMethods) {
-        const metadata = await extractServiceMetadata('TestService', method);
+      const results = await Promise.all(
+        testMethods.map((method) => extractServiceMetadata('TestService', method)),
+      );
+
+      for (const metadata of results) {
         expect(metadata).toBeDefined();
 
         if (metadata.serviceFilePath) {
-          expect(metadata.serviceFilePath).toMatch(TEST_SERVICE_PATTERN);
+          expect(metadata.serviceFilePath).toMatch(/test\.ts$/);
         }
       }
     });
@@ -199,10 +186,7 @@ describe('Service Parser', () => {
   describe('Error handling', () => {
     it('should handle TypeScript parsing errors gracefully', async () => {
       // This test assumes the parser handles TS errors without throwing
-      const metadata = await extractServiceMetadata(
-        'TestService',
-        'someMethod'
-      );
+      const metadata = await extractServiceMetadata('TestService', 'someMethod');
       expect(metadata).toBeDefined();
       expect(metadata).toHaveProperty('serviceFilePath');
       expect(metadata).toHaveProperty('input');
@@ -210,10 +194,7 @@ describe('Service Parser', () => {
 
     it('should handle file system errors gracefully', async () => {
       // Test with service that might not exist
-      const metadata = await extractServiceMetadata(
-        'FileSystemErrorService',
-        'test'
-      );
+      const metadata = await extractServiceMetadata('FileSystemErrorService', 'test');
       expect(metadata).toEqual({
         input: undefined,
         serviceFilePath: undefined,

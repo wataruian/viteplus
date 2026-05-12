@@ -1,22 +1,10 @@
-import { endpoints } from '@lightproject/common/configs';
+import type { MakeTrcpRequestOptions, TestEnvironment, TrpcTestCase } from '../src/types/testing';
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import request from 'supertest';
-import { vi } from 'vitest';
-
-import type {
-  MakeTrcpRequestOptions,
-  TestEnvironment,
-  TrpcTestCase,
-} from '../src/types/testing';
-
 import { transformer } from '../src/utils/trpc';
+import { trpcEndpoint } from '@lightproject/common/configs';
 
-const { trpcEndpoint } = endpoints;
-
-const makeRequest = async ({
-  input = {},
-  path,
-  type,
-}: MakeTrcpRequestOptions) => {
+const makeRequest = async ({ input = {}, path, type }: MakeTrcpRequestOptions) => {
   const method = type === 'query' ? 'get' : 'post';
 
   if (path === undefined || path === null) {
@@ -30,8 +18,7 @@ const makeRequest = async ({
   const { createTestApp } = await import('../src/main');
   const app = createTestApp();
 
-  // const req = request(await app)[method](normalizedEndpoint);
-  const req = request(app)[method](normalizedEndpoint);
+  const req = request(await app)[method](normalizedEndpoint);
 
   req.set('Content-Type', 'application/json');
   req.set('Accept', 'application/json');
@@ -48,7 +35,7 @@ const makeRequest = async ({
   return await Promise.resolve(req);
 };
 
-const testCases: Record<string, TrpcTestCase[]> = {
+const cases: Record<string, TrpcTestCase[]> = {
   'has access': [
     {
       description: `GET ${trpcEndpoint}/test.asyncFailReject returns 500`,
@@ -281,14 +268,14 @@ const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
 
 describe('tRPC', () => {
   describe('has access', () => {
-    runTests('test', testCases['has access'] ?? []);
+    runTests('test', cases['has access'] ?? []);
   });
 
   describe('no access', () => {
-    runTests('other-test', testCases['no access'] ?? []);
+    runTests('other-test', cases['no access'] ?? []);
   });
 
   describe('test param endpoints', () => {
-    runTests('test', testCases['test param endpoints'] ?? []);
+    runTests('test', cases['test param endpoints'] ?? []);
   });
 });

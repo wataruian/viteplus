@@ -2,6 +2,7 @@ import type {
   BaseResponse,
   InputArgs,
   RouteHandler,
+  RouteHandlerParams,
   ServiceContext,
   ServiceMethod,
 } from '../types/middlware';
@@ -9,31 +10,28 @@ import type { BaseService } from '../services/base';
 import { invokeWithParsedArgs } from '@lightproject/common/utils';
 import { logger } from '@lightproject/common/logger';
 
-interface CreateRouteHandler {
-  <S extends BaseService>(
-    serviceClass: new (ctx: ServiceContext, inputArgs?: InputArgs) => S,
-    method: keyof S,
-  ): (opts: { ctx: ServiceContext; input: unknown }) => Promise<BaseResponse>;
-  <S extends BaseService>(
-    serviceClass: new (ctx: ServiceContext, inputArgs?: InputArgs) => S,
-    method: keyof S,
-  ): RouteHandler;
-}
+type CreateRouteHandler = <
+  C extends new (ctx: ServiceContext, inputArgs?: InputArgs) => BaseService,
+>(
+  serviceClass: C,
+  method: keyof C,
+) => RouteHandler;
 
 type RawServiceResult = Partial<BaseResponse> & Record<string, unknown>;
 
 const createRouteHandlerImpl =
-  <S extends BaseService>(
-    serviceClass: new (ctx: ServiceContext, inputArgs?: InputArgs) => S,
-    method: keyof S,
-  ): ((opts: { ctx: ServiceContext; input: unknown }) => Promise<BaseResponse>) =>
-  async ({ ctx, input }: { ctx: ServiceContext; input: unknown }) => {
+  <C extends new (ctx: ServiceContext, inputArgs?: InputArgs) => BaseService>(
+    serviceClass: C,
+    method: keyof C,
+  ): RouteHandler =>
+  async (params: RouteHandlerParams) => {
+    const { input } = params as { ctx: ServiceContext; input?: unknown };
     try {
-      const serviceInstance = new serviceClass(ctx, (input as InputArgs) ?? {});
+      const serviceMethod = (serviceClass as unknown as Record<string, ServiceMethod>)[
+        method as unknown as string
+      ];
 
-      const serviceMethod = serviceInstance[method] as ServiceMethod;
-
-      const rawResult = await invokeWithParsedArgs(serviceMethod, serviceInstance.input);
+      const rawResult = await invokeWithParsedArgs(serviceMethod, (input as InputArgs) ?? {});
 
       const result = rawResult as RawServiceResult;
 

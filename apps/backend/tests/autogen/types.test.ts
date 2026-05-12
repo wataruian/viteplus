@@ -1,12 +1,5 @@
-import { describe, expect, it } from 'vitest';
-
-import type {
-  RouteHandlerInfo,
-  RouteInfo,
-  ServiceMetadata,
-} from '../../src/utils/autogen/types';
-
-const DEFAULT_USER_AGE = 18;
+import type { RouteHandlerInfo, RouteInfo, ServiceMetadata } from '../../src/utils/autogen/types';
+import { describe, expect, it } from 'vite-plus/test';
 
 describe('Autogen Types', () => {
   describe('RouteHandlerInfo', () => {
@@ -122,7 +115,7 @@ describe('Autogen Types', () => {
             type: 'string',
           },
           {
-            defaultValue: DEFAULT_USER_AGE,
+            defaultValue: 18,
             description: 'User age',
             name: 'age',
             required: false,
@@ -136,7 +129,7 @@ describe('Autogen Types', () => {
       expect(metadata.input?.[0]?.name).toBe('name');
       expect(metadata.input?.[0]?.required).toBe(true);
       expect(metadata.input?.[1]?.name).toBe('age');
-      expect(metadata.input?.[1]?.defaultValue).toBe(DEFAULT_USER_AGE);
+      expect(metadata.input?.[1]?.defaultValue).toBe(18);
       expect(metadata.serviceFilePath).toBe('/path/to/service.ts');
     });
 

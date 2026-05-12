@@ -29,7 +29,7 @@ interface MakeTrcpRequestOptions {
   input?: Record<string, unknown>;
   ip?: string;
   method?: HttpMethod;
-  path?: 'test.unknown' | AppRouterPaths;
+  path: AppRouterPaths | 'test.unknown';
   type: TRPCProcedureType;
 }
 
@@ -47,7 +47,7 @@ interface TrpcTestCase {
     trpcError?: string | undefined;
   };
   input?: null | Record<string, unknown> | undefined;
-  path: 'test.unknown' | AppRouterPaths;
+  path: AppRouterPaths | 'test.unknown';
   type: TRPCProcedureType;
 }
 

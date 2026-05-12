@@ -1,12 +1,8 @@
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import fs from 'node:fs';
-import path from 'node:path';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
-
-import { projectDir } from '../../../src/utils/autogen/config';
 import { getTrpcRoutes } from '../../../src/utils/autogen/discovery/trpc-discovery';
-
-const SERVICE_NAME_PATTERN = /Service$/;
-const TYPESCRIPT_FILE_PATTERN = /\.ts$/;
+import path from 'node:path';
+import { projectDir } from '../../../src/utils/autogen/config';
 
 describe('tRPC Discovery', () => {
   describe('getTrpcRoutes', () => {
@@ -49,7 +45,7 @@ describe('tRPC Discovery', () => {
 
     it('should find default tRPC route', async () => {
       const routes = await getTrpcRoutes();
-      const defaultRoute = routes.find(r => r.path === '/trpc/default.root');
+      const defaultRoute = routes.find((r) => r.path === '/trpc/default.root');
 
       expect(defaultRoute).toBeDefined();
       if (defaultRoute) {
@@ -59,14 +55,12 @@ describe('tRPC Discovery', () => {
 
     it('should find test tRPC routes', async () => {
       const routes = await getTrpcRoutes();
-      const testRoutes = routes.filter(r => r.path.startsWith('/trpc/test'));
+      const testRoutes = routes.filter((r) => r.path.startsWith('/trpc/test'));
 
       expect(testRoutes.length).toBeGreaterThan(0);
 
       // Check specific test routes
-      const asyncSuccessRoute = testRoutes.find(
-        r => r.path === '/trpc/test.asyncSuccess'
-      );
+      const asyncSuccessRoute = testRoutes.find((r) => r.path === '/trpc/test.asyncSuccess');
       if (asyncSuccessRoute) {
         expect(asyncSuccessRoute.serviceClass).toBe('TestService');
         expect(asyncSuccessRoute.serviceMethod).toBe('asyncSuccess');
@@ -77,28 +71,24 @@ describe('tRPC Discovery', () => {
       const routes = await getTrpcRoutes();
 
       // Find routes with service information
-      const serviceRoutes = routes.filter(
-        r => r.serviceClass && r.serviceMethod
-      );
+      const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
       // Verify service naming convention
       for (const route of serviceRoutes) {
-        expect(route.serviceClass).toMatch(SERVICE_NAME_PATTERN);
+        expect(route.serviceClass).toMatch(/Service$/);
         expect(route.serviceMethod).toBeTruthy();
       }
     });
 
     it('should handle nested tRPC route paths', async () => {
       const routes = await getTrpcRoutes();
-      const nestedRoutes = routes.filter(r => r.path.includes('.'));
+      const nestedRoutes = routes.filter((r) => r.path.includes('.'));
 
       expect(nestedRoutes.length).toBeGreaterThan(0);
 
       // Check for test subroutes (e.g., "/trpc/test.asyncSuccess")
-      const testSubroutes = routes.filter(r =>
-        r.path.startsWith('/trpc/test.')
-      );
+      const testSubroutes = routes.filter((r) => r.path.startsWith('/trpc/test.'));
       expect(testSubroutes.length).toBeGreaterThan(0);
     });
 
@@ -108,7 +98,7 @@ describe('tRPC Discovery', () => {
       for (const route of routes) {
         if (route.handlerFilePath) {
           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
-          expect(route.handlerFilePath).toMatch(TYPESCRIPT_FILE_PATTERN);
+          expect(route.handlerFilePath).toMatch(/\.ts$/);
         }
       }
     });
@@ -116,10 +106,8 @@ describe('tRPC Discovery', () => {
     it('should handle parameter routes in tRPC format', async () => {
       const routes = await getTrpcRoutes();
       const paramRoutes = routes.filter(
-        r =>
-          r.path.includes('hello') ||
-          r.path.includes('primitives') ||
-          r.path.includes('object')
+        (r) =>
+          r.path.includes('hello') || r.path.includes('primitives') || r.path.includes('object'),
       );
 
       expect(paramRoutes.length).toBeGreaterThan(0);
@@ -179,8 +167,8 @@ describe('tRPC Discovery', () => {
       const routes = await getTrpcRoutes();
 
       // Should handle both flat routes ("/trpc/default.root") and nested routes ("/trpc/test.something")
-      const flatRoutes = routes.filter(r => r.path.includes('/trpc/default.'));
-      const nestedRoutes = routes.filter(r => r.path.includes('/trpc/test.'));
+      const flatRoutes = routes.filter((r) => r.path.includes('/trpc/default.'));
+      const nestedRoutes = routes.filter((r) => r.path.includes('/trpc/test.'));
 
       expect(flatRoutes.length).toBeGreaterThan(0);
       expect(nestedRoutes.length).toBeGreaterThan(0);

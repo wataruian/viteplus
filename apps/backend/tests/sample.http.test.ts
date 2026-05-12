@@ -1,20 +1,9 @@
-import { endpoints } from '@lightproject/common/configs';
+import type { HttpTestCase, MakeHttpRequestOptions, TestEnvironment } from '../src/types/testing';
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+import { apiEndpoint } from '@lightproject/common/configs';
 import request from 'supertest';
-import { vi } from 'vitest';
 
-import type {
-  HttpTestCase,
-  MakeHttpRequestOptions,
-  TestEnvironment,
-} from '../src/types/testing';
-
-const { apiEndpoint } = endpoints;
-
-const makeRequest = async ({
-  endpoint,
-  input = {},
-  method = 'get',
-}: MakeHttpRequestOptions) => {
+const makeRequest = async ({ endpoint, input = {}, method = 'get' }: MakeHttpRequestOptions) => {
   const normalizedEndpoint = endpoint.startsWith(apiEndpoint)
     ? endpoint
     : `${apiEndpoint}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
@@ -22,8 +11,7 @@ const makeRequest = async ({
   const { createTestApp } = await import('../src/main');
   const app = createTestApp();
 
-  // const req = request(await app)[method](normalizedEndpoint);
-  const req = request(app)[method](normalizedEndpoint);
+  const req = request(await app)[method](normalizedEndpoint);
 
   if (method !== 'get' && input) {
     req.send(input);
@@ -36,7 +24,7 @@ const makeRequest = async ({
   return await Promise.resolve(req);
 };
 
-const testCases: Record<string, HttpTestCase[]> = {
+const cases: Record<string, HttpTestCase[]> = {
   'has access': [
     {
       description: `GET ${apiEndpoint}/test/async-fail-reject returns 500`,
@@ -232,9 +220,7 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
       });
 
       if ('data' in expected) {
-        expect(response.body.data).toEqual(
-          expect.objectContaining(expected.data as object)
-        );
+        expect(response.body.data).toEqual(expect.objectContaining(expected.data as object));
       }
 
       if ('error' in expected) {
@@ -250,14 +236,14 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
 
 describe('HTTP', () => {
   describe('has access', () => {
-    runTests('test', testCases['has access'] ?? []);
+    runTests('test', cases['has access'] ?? []);
   });
 
   describe('no access', () => {
-    runTests('other-test', testCases['no access'] ?? []);
+    runTests('other-test', cases['no access'] ?? []);
   });
 
   describe('test param endpoints', () => {
-    runTests('test', testCases['test param endpoints'] ?? []);
+    runTests('test', cases['test param endpoints'] ?? []);
   });
 });

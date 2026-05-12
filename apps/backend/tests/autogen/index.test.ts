@@ -1,16 +1,5 @@
-import { describe, expect, it } from 'vitest';
-
+import { describe, expect, it } from 'vite-plus/test';
 import { extractAllRoutes } from '../../src/utils/autogen';
-
-// Test constants for route discovery expectations
-const MIN_EXPECTED_ROUTES = 20;
-const MAX_EXPECTED_ROUTES = 35;
-const MAX_DISCOVERY_TIME_MS = 10_000;
-
-// Regex patterns for route validation
-const SERVICE_CLASS_PATTERN = /Service$/;
-const TS_FILE_PATTERN = /\.ts$/;
-const SERVICES_PATH_PATTERN = /services/;
 
 describe('Autogen Main', () => {
   describe('extractAllRoutes', () => {
@@ -44,8 +33,8 @@ describe('Autogen Main', () => {
     it('should find both HTTP and tRPC routes', async () => {
       const routes = await extractAllRoutes();
 
-      const httpRoutes = routes.filter(r => r.requestType === 'HTTP');
-      const trpcRoutes = routes.filter(r => r.requestType === 'tRPC');
+      const httpRoutes = routes.filter((r) => r.requestType === 'HTTP');
+      const trpcRoutes = routes.filter((r) => r.requestType === 'tRPC');
 
       expect(httpRoutes.length).toBeGreaterThan(0);
       expect(trpcRoutes.length).toBeGreaterThan(0);
@@ -54,15 +43,13 @@ describe('Autogen Main', () => {
     it('should include service metadata when available', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithService = routes.filter(
-        r => r.serviceClass && r.serviceMethod
-      );
+      const routesWithService = routes.filter((r) => r.serviceClass && r.serviceMethod);
 
       expect(routesWithService.length).toBeGreaterThan(0);
 
       // Check service naming convention
       for (const route of routesWithService) {
-        expect(route.serviceClass).toMatch(SERVICE_CLASS_PATTERN);
+        expect(route.serviceClass).toMatch(/Service$/);
         expect(route.serviceMethod).toBeTruthy();
       }
     });
@@ -70,9 +57,7 @@ describe('Autogen Main', () => {
     it('should include parameter metadata', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithParams = routes.filter(
-        r => r.input && r.input.length > 0
-      );
+      const routesWithParams = routes.filter((r) => r.input && r.input.length > 0);
 
       if (routesWithParams.length > 0) {
         const [route] = routesWithParams;
@@ -90,11 +75,9 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       // Should have various path patterns
-      const rootRoutes = routes.filter(
-        r => r.path === '/' || r.path === 'root'
-      );
+      const rootRoutes = routes.filter((r) => r.path === '/' || r.path === 'root');
       const testRoutes = routes.filter(
-        r => r.path.includes('test') || r.path.startsWith('/test')
+        (r) => r.path.includes('test') || r.path.startsWith('/test'),
       );
 
       expect(rootRoutes.length).toBeGreaterThan(0);
@@ -104,25 +87,25 @@ describe('Autogen Main', () => {
     it('should provide file path information', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithHandlerFile = routes.filter(r => r.handlerFilePath);
+      const routesWithHandlerFile = routes.filter((r) => r.handlerFilePath);
 
       expect(routesWithHandlerFile.length).toBeGreaterThan(0);
 
       for (const route of routesWithHandlerFile) {
-        expect(route.handlerFilePath).toMatch(TS_FILE_PATTERN);
+        expect(route.handlerFilePath).toMatch(/\.ts$/);
       }
     });
 
     it('should provide service file path information', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithServiceFile = routes.filter(r => r.serviceFilePath);
+      const routesWithServiceFile = routes.filter((r) => r.serviceFilePath);
 
       expect(routesWithServiceFile.length).toBeGreaterThan(0);
 
       for (const route of routesWithServiceFile) {
-        expect(route.serviceFilePath).toMatch(TS_FILE_PATTERN);
-        expect(route.serviceFilePath).toMatch(SERVICES_PATH_PATTERN);
+        expect(route.serviceFilePath).toMatch(/\.ts$/);
+        expect(route.serviceFilePath).toMatch(/services/);
       }
     });
   });
@@ -132,18 +115,16 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       // Based on the previous successful run, we expect around 27 routes
-      expect(routes.length).toBeGreaterThanOrEqual(MIN_EXPECTED_ROUTES);
-      expect(routes.length).toBeLessThanOrEqual(MAX_EXPECTED_ROUTES);
+      expect(routes.length).toBeGreaterThanOrEqual(20);
+      expect(routes.length).toBeLessThanOrEqual(35);
     });
 
     it('should find default routes', async () => {
       const routes = await extractAllRoutes();
 
-      const defaultHttpRoute = routes.find(
-        r => r.path === '/' && r.requestType === 'HTTP'
-      );
+      const defaultHttpRoute = routes.find((r) => r.path === '/' && r.requestType === 'HTTP');
       const defaultTrpcRoute = routes.find(
-        r => r.path === '/trpc/default.root' && r.requestType === 'tRPC'
+        (r) => r.path === '/trpc/default.root' && r.requestType === 'tRPC',
       );
 
       expect(defaultHttpRoute).toBeDefined();
@@ -154,10 +135,10 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       const httpTestRoutes = routes.filter(
-        r => r.requestType === 'HTTP' && r.path.startsWith('/test')
+        (r) => r.requestType === 'HTTP' && r.path.startsWith('/test'),
       );
       const trpcTestRoutes = routes.filter(
-        r => r.requestType === 'tRPC' && r.path.startsWith('/trpc/test')
+        (r) => r.requestType === 'tRPC' && r.path.startsWith('/trpc/test'),
       );
 
       expect(httpTestRoutes.length).toBeGreaterThan(0);
@@ -168,10 +149,10 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       const httpRoutesWithService = routes.filter(
-        r => r.requestType === 'HTTP' && r.serviceClass
+        (r) => r.requestType === 'HTTP' && r.serviceClass,
       );
       const trpcRoutesWithService = routes.filter(
-        r => r.requestType === 'tRPC' && r.serviceClass
+        (r) => r.requestType === 'tRPC' && r.serviceClass,
       );
 
       // Should have service routes in both types
@@ -179,15 +160,11 @@ describe('Autogen Main', () => {
       expect(trpcRoutesWithService.length).toBeGreaterThan(0);
 
       // Check for common services
-      const httpServices = new Set(
-        httpRoutesWithService.map(r => r.serviceClass)
-      );
-      const trpcServices = new Set(
-        trpcRoutesWithService.map(r => r.serviceClass)
-      );
+      const httpServices = new Set(httpRoutesWithService.map((r) => r.serviceClass));
+      const trpcServices = new Set(trpcRoutesWithService.map((r) => r.serviceClass));
 
       // Should have overlapping services
-      const commonServices = [...httpServices].filter(s => trpcServices.has(s));
+      const commonServices = [...httpServices].filter((s) => trpcServices.has(s));
       expect(commonServices.length).toBeGreaterThan(0);
     });
   });
@@ -199,7 +176,7 @@ describe('Autogen Main', () => {
       const endTime = Date.now();
 
       expect(routes).toBeDefined();
-      expect(endTime - startTime).toBeLessThan(MAX_DISCOVERY_TIME_MS); // 10 seconds max
+      expect(endTime - startTime).toBeLessThan(10_000);
     });
 
     it('should be deterministic', async () => {
@@ -209,8 +186,8 @@ describe('Autogen Main', () => {
       expect(routes1.length).toBe(routes2.length);
 
       // Sort routes by path for comparison
-      const sorted1 = routes1.sort((a, b) => a.path.localeCompare(b.path));
-      const sorted2 = routes2.sort((a, b) => a.path.localeCompare(b.path));
+      const sorted1 = routes1.toSorted((a, b) => a.path.localeCompare(b.path));
+      const sorted2 = routes2.toSorted((a, b) => a.path.localeCompare(b.path));
 
       for (const [i, element] of sorted1.entries()) {
         const correspondingRoute = sorted2[i];

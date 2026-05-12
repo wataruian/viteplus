@@ -1,6 +1,3 @@
-import path from 'node:path';
-import { describe, expect, it } from 'vitest';
-
 import {
   autogenDir,
   getProject,
@@ -12,13 +9,13 @@ import {
   swaggerRoutesFile,
   templateFile,
 } from '../../src/utils/autogen/config';
-
-const API_DIR_REGEX = /apps\/api$/;
+import { describe, expect, it } from 'vite-plus/test';
+import path from 'node:path';
 
 describe('Autogen Config', () => {
   describe('Project configuration', () => {
     it('should have correct projectDir', () => {
-      expect(projectDir).toMatch(API_DIR_REGEX);
+      expect(projectDir).toMatch(/apps\/api$/);
       expect(path.isAbsolute(projectDir)).toBe(true);
     });
 
@@ -35,12 +32,8 @@ describe('Autogen Config', () => {
     });
 
     it('should have correct file paths', () => {
-      expect(swaggerRoutesFile).toBe(
-        path.resolve(autogenDir, 'swagger-routes.ts')
-      );
-      expect(swaggerJsonOutputFile).toBe(
-        path.resolve(autogenDir, 'swagger-output.json')
-      );
+      expect(swaggerRoutesFile).toBe(path.resolve(autogenDir, 'swagger-routes.ts'));
+      expect(swaggerJsonOutputFile).toBe(path.resolve(autogenDir, 'swagger-output.json'));
       expect(templateFile).toBe(path.resolve(autogenDir, 'template.json'));
       expect(openApiSpecFile).toBe(path.resolve(autogenDir, 'openapi.json'));
     });
@@ -50,12 +43,7 @@ describe('Autogen Config', () => {
     });
 
     it('should use absolute paths for all output files', () => {
-      const outputFiles = [
-        swaggerRoutesFile,
-        swaggerJsonOutputFile,
-        templateFile,
-        openApiSpecFile,
-      ];
+      const outputFiles = [swaggerRoutesFile, swaggerJsonOutputFile, templateFile, openApiSpecFile];
 
       for (const file of outputFiles) {
         expect(path.isAbsolute(file)).toBe(true);

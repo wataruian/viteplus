@@ -1,19 +1,9 @@
-import { endpoints } from '@lightproject/common/configs';
-// @ts-expect-error
+import type { Locals, Request, Response, ServiceContext } from './src/types/middlware';
+import { apiUrl, trpcEndpoint } from '@lightproject/common/configs';
+import { createCaller, trpcClient } from './src/utils/trpc-router';
 import MockExpress from 'mock-express';
 
-import type {
-  Locals,
-  Request,
-  Response,
-  ServiceContext,
-} from './src/types/middlware';
-
-import { createCaller, trpcClient } from './src/utils/trpc-router';
-
 const testCaller = async () => {
-  console.info('Testing tRPC caller...');
-
   const app = MockExpress();
 
   const locals: Locals = {
@@ -21,24 +11,20 @@ const testCaller = async () => {
       method: 'POST',
       requestType: 'tRPC',
       startTime: Date.now(),
-      url: endpoints.trpcEndpoint,
+      url: trpcEndpoint,
     },
     sessionId: 'test',
   };
 
   const request = app.makeRequest({
-    host: endpoints.apiUrl,
+    host: apiUrl,
   }) as unknown as Request;
   request.method = 'GET';
-  request.url = endpoints.trpcEndpoint;
+  request.url = trpcEndpoint;
   request.originalUrl = request.url;
   request.locals = locals;
 
-  const response = app.makeResponse((err: Error | null) => {
-    if (err) {
-      console.error('Response error:', err);
-    }
-  }) as unknown as Response;
+  const response = app.makeResponse((_err: Error | null) => {}) as unknown as Response;
 
   response.locals = locals;
 
@@ -61,37 +47,25 @@ const testCaller = async () => {
     trpcCaller.test.hello({
       firstName: 'Test',
       lastName: 'World',
-    })
+    }),
   );
 
-  console.info('Test result:', result);
+  globalThis.console.log('tRPC Caller Result:', result);
 };
 
 const testClient = async () => {
-  console.info('Testing tRPC client...');
+  const result = await Promise.resolve(trpcClient.test.hello.mutate({ firstName: 'Test' }));
 
-  const result = await Promise.resolve(
-    trpcClient.test.hello.mutate({ firstName: 'Test' })
-  );
-
-  console.info('Test result:', result);
+  globalThis.console.log('tRPC Client Result:', result);
 };
 
 const main = async () => {
-  console.info('Starting tRPC test...');
-
   await testCaller();
   await testClient();
-
-  console.info('tRPC test completed successfully');
 };
 
-main()
-  .then(() => {
-    console.info('Test completed successfully');
-    return;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    process.exit(1);
-  });
+try {
+  await main();
+} catch (error) {
+  globalThis.console.error('Error in tRPC tests:', error);
+}

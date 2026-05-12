@@ -1,12 +1,10 @@
-import { describe, expect, it } from 'vitest';
-
-import type { RouteInfo } from '../../../src/utils/autogen/types';
-
 import {
   RouteValidator,
   type ValidationConfig,
   validateRoutes,
-} from '../../../src/utils/autogen/validators';
+} from '../../../src/utils/autogen/validators/route-validator';
+import { describe, expect, it } from 'vite-plus/test';
+import type { RouteInfo } from '../../../src/utils/autogen/types';
 
 const createMockRoute = (overrides: Partial<RouteInfo> = {}): RouteInfo => ({
   handlerFilePath: '/path/to/handler.ts',
@@ -55,12 +53,10 @@ describe('RouteValidator', () => {
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
 
-      const pathError = result.errors.find(e => e.code === 'MISSING_PATH');
+      const pathError = result.errors.find((e) => e.code === 'MISSING_PATH');
       expect(pathError).toBeDefined();
 
-      const requestTypeError = result.errors.find(
-        e => e.code === 'MISSING_REQUEST_TYPE'
-      );
+      const requestTypeError = result.errors.find((e) => e.code === 'MISSING_REQUEST_TYPE');
       expect(requestTypeError).toBeDefined();
     });
   });
@@ -82,7 +78,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(false);
-      const namingErrors = result.errors.filter(e => e.type === 'naming');
+      const namingErrors = result.errors.filter((e) => e.type === 'naming');
       expect(namingErrors.length).toBeGreaterThan(0);
     });
 
@@ -102,7 +98,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(true);
-      const namingErrors = result.errors.filter(e => e.type === 'naming');
+      const namingErrors = result.errors.filter((e) => e.type === 'naming');
       expect(namingErrors).toHaveLength(0);
     });
 
@@ -126,9 +122,7 @@ describe('RouteValidator', () => {
 
       // Method naming is warning, not error
       expect(result.isValid).toBe(true);
-      const methodWarnings = result.warnings.filter(
-        w => w.code === 'INVALID_METHOD_NAMING'
-      );
+      const methodWarnings = result.warnings.filter((w) => w.code === 'INVALID_METHOD_NAMING');
       expect(methodWarnings.length).toBeGreaterThan(0);
     });
   });
@@ -145,7 +139,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(false);
-      const pathError = result.errors.find(e => e.code === 'INVALID_HTTP_PATH');
+      const pathError = result.errors.find((e) => e.code === 'INVALID_HTTP_PATH');
       expect(pathError).toBeDefined();
     });
 
@@ -164,13 +158,11 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(false);
-      const trpcPathError = result.errors.find(
-        e => e.code === 'INVALID_TRPC_PATH'
-      );
+      const trpcPathError = result.errors.find((e) => e.code === 'INVALID_TRPC_PATH');
       expect(trpcPathError).toBeDefined();
 
       const dotNotationWarning = result.warnings.find(
-        w => w.code === 'MISSING_TRPC_DOT_NOTATION'
+        (w) => w.code === 'MISSING_TRPC_DOT_NOTATION',
       );
       expect(dotNotationWarning).toBeDefined();
     });
@@ -204,9 +196,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(false);
-      const locationError = result.errors.find(
-        e => e.code === 'INVALID_SERVICE_LOCATION'
-      );
+      const locationError = result.errors.find((e) => e.code === 'INVALID_SERVICE_LOCATION');
       expect(locationError).toBeDefined();
     });
 
@@ -221,9 +211,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(true); // Warning, not error
-      const filenameWarning = result.warnings.find(
-        w => w.code === 'MISMATCHED_SERVICE_FILENAME'
-      );
+      const filenameWarning = result.warnings.find((w) => w.code === 'MISMATCHED_SERVICE_FILENAME');
       expect(filenameWarning).toBeDefined();
     });
   });
@@ -240,9 +228,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(false);
-      const patternError = result.errors.find(
-        e => e.code === 'MISSING_ROUTE_HANDLER_PATTERN'
-      );
+      const patternError = result.errors.find((e) => e.code === 'MISSING_ROUTE_HANDLER_PATTERN');
       expect(patternError).toBeDefined();
     });
 
@@ -261,9 +247,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(true); // Warnings, not errors
-      const methodWarnings = result.warnings.filter(
-        w => w.code === 'HTTP_METHOD_MISMATCH'
-      );
+      const methodWarnings = result.warnings.filter((w) => w.code === 'HTTP_METHOD_MISMATCH');
       expect(methodWarnings.length).toBe(2);
     });
 
@@ -288,9 +272,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes);
 
       expect(result.isValid).toBe(true); // Warnings, not errors
-      const procedureWarnings = result.warnings.filter(
-        w => w.code === 'TRPC_PROCEDURE_MISMATCH'
-      );
+      const procedureWarnings = result.warnings.filter((w) => w.code === 'TRPC_PROCEDURE_MISMATCH');
       expect(procedureWarnings.length).toBe(2);
     });
   });
@@ -310,9 +292,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes, configWithoutEnforcement);
 
       // Should not fail when enforcement is disabled
-      const serviceSuffixErrors = result.errors.filter(
-        e => e.code === 'INVALID_SERVICE_SUFFIX'
-      );
+      const serviceSuffixErrors = result.errors.filter((e) => e.code === 'INVALID_SERVICE_SUFFIX');
       expect(serviceSuffixErrors).toHaveLength(0);
     });
 
@@ -331,9 +311,7 @@ describe('RouteValidator', () => {
       const result = validateRoutes(routes, configWithoutStrictness);
 
       // Should not fail when strict conventions are disabled
-      const patternErrors = result.errors.filter(
-        e => e.code === 'MISSING_ROUTE_HANDLER_PATTERN'
-      );
+      const patternErrors = result.errors.filter((e) => e.code === 'MISSING_ROUTE_HANDLER_PATTERN');
       expect(patternErrors).toHaveLength(0);
     });
 
@@ -367,7 +345,7 @@ describe('RouteValidator', () => {
       ];
 
       const result = validator.validate(routes);
-      const summary = validator.getSummary(result);
+      const summary = RouteValidator.getSummary(result);
 
       expect(summary).toContain('3 issues found'); // 2 errors + 1 warning
       expect(summary).toContain('❌ Errors: 2');
@@ -400,7 +378,7 @@ describe('RouteValidator', () => {
       // Should pass validation with correct filename patterns
       expect(result.isValid).toBe(true);
       const filenameWarnings = result.warnings.filter(
-        w => w.code === 'MISMATCHED_SERVICE_FILENAME'
+        (w) => w.code === 'MISMATCHED_SERVICE_FILENAME',
       );
       expect(filenameWarnings).toHaveLength(0);
     });
@@ -420,8 +398,8 @@ describe('RouteValidator', () => {
 
       const result = validateRoutes(routes);
 
-      const structureErrors = result.errors.filter(e => e.type === 'structure');
-      const namingErrors = result.errors.filter(e => e.type === 'naming');
+      const structureErrors = result.errors.filter((e) => e.type === 'structure');
+      const namingErrors = result.errors.filter((e) => e.type === 'naming');
 
       expect(structureErrors.length).toBeGreaterThan(0);
       expect(namingErrors.length).toBeGreaterThan(0);
@@ -437,9 +415,7 @@ describe('RouteValidator', () => {
 
       const result = validateRoutes(routes);
 
-      const suffixError = result.errors.find(
-        e => e.code === 'INVALID_SERVICE_SUFFIX'
-      );
+      const suffixError = result.errors.find((e) => e.code === 'INVALID_SERVICE_SUFFIX');
       expect(suffixError).toBeDefined();
       expect(suffixError?.suggestion).toContain('TestNameService');
     });

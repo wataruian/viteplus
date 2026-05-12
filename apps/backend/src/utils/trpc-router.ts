@@ -46,7 +46,20 @@ const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
 };
 
 type AppRouterCaller = ReturnType<typeof createCaller>;
-type AppRouterPaths = TrpcRouterPaths<AppRouterCaller>;
+type AppRouterPaths = ExtractRouterPaths<TrpcRouter>;
+
+type ExtractRouterPaths<T> = T extends object
+  ? {
+      [K in keyof T]: T[K] extends object
+        ? K extends string
+          ? {
+              [P in keyof T[K]]: P extends string ? `${K}.${P}` : never;
+            }[keyof T[K]]
+          : never
+        : never;
+    }[keyof T]
+  : never;
+
 type TrpcRouterPaths<T> = T extends object
   ? {
       [K in keyof T]: T[K] extends (...args: unknown[]) => unknown
@@ -59,5 +72,5 @@ type TrpcRouterPaths<T> = T extends object
     }[keyof T]
   : never;
 
-export type { AppRouterCaller, AppRouterPaths, TrpcRouterPaths };
+export type { AppRouterCaller, AppRouterPaths, TrpcRouterPaths, ExtractRouterPaths };
 export { createCaller, trpcClient, registerTrpcRoutes };
