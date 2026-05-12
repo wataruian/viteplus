@@ -2,8 +2,6 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import np from 'node:path';
 
-const getScriptDir = (): string => import.meta.dirname;
-
 const pathExists = (path: string): boolean => {
   try {
     return fs.existsSync(path);
@@ -12,39 +10,11 @@ const pathExists = (path: string): boolean => {
   }
 };
 
-/**
- * Finds the project root directory by looking for a marker file (default: package.json)
- * @param startDir The directory to start searching from (defaults to current file's directory)
- * @param marker The marker file to look for (default: 'package.json')
- * @returns The absolute path to the project root directory
- * @throws {Error} If the project root cannot be found
- */
-const findProjectRoot = (startDir: string = getScriptDir(), marker = '.git'): string => {
-  const root = np.resolve('/');
-  let currentDir = np.resolve(startDir);
+const getScriptDir = (): string => import.meta.dirname;
 
-  while (currentDir !== root) {
-    const potentialMarker = np.resolve(currentDir, marker);
+const getScriptFilePath = (): string => import.meta.filename;
 
-    if (pathExists(potentialMarker)) {
-      return currentDir;
-    }
-
-    const parentDir = np.dirname(currentDir);
-    if (parentDir === currentDir) {
-      break;
-    }
-    currentDir = parentDir;
-  }
-
-  throw new Error(`Could not find project root directory (looking for ${marker})`);
-};
-
-const getProjectRoot = (): string => findProjectRoot();
-
-const getScriptFile = (): string => import.meta.filename;
-
-const getFileName = (): string => np.basename(import.meta.filename);
+const getScriptFileName = (): string => np.basename(import.meta.filename);
 
 const getImporterDir = (): string => {
   const error = new Error('Getting importer directory');
@@ -69,7 +39,7 @@ const getImporterDir = (): string => {
       filePath = fileURLToPath(filePath);
     }
 
-    if (filePath === getScriptFile()) {
+    if (filePath === getScriptFilePath()) {
       continue;
     }
 
@@ -81,13 +51,13 @@ const getImporterDir = (): string => {
   return globalThis.process.cwd();
 };
 
-const getImporterFile = (): string => {
+const getImporterFilePath = (): string => {
   const error = new Error('Getting importer file');
   const stackFrames = error.stack?.split('\n') ?? [];
 
   for (let i = 2; i < stackFrames.length; i += 1) {
     const frame = stackFrames[i]?.trim() ?? '';
-    const match = /\(?(.+?):\d+:\d+\)?$/.exec(frame);
+    const match = /(?:at\s+(?:.+?\s+\()?)((?:file:\/\/)?[^():]+):\d+:\d+\)?$/.exec(frame);
     const filePath0 = match?.[1];
     if (filePath0 === undefined || filePath0 === '') {
       continue;
@@ -95,7 +65,7 @@ const getImporterFile = (): string => {
 
     const filePath = filePath0.startsWith('file://') ? fileURLToPath(filePath0) : filePath0;
 
-    if (filePath === getScriptFile()) {
+    if (filePath === getScriptFilePath()) {
       continue;
     }
 
@@ -105,9 +75,13 @@ const getImporterFile = (): string => {
   return globalThis.process.argv[1] ?? '';
 };
 
+const getImporterFileName = (): string => np.basename(getImporterFilePath());
+
 const getCallerDir = (): string => globalThis.process.cwd();
 
-const getCallerFile = (): string => globalThis.process.argv[1] ?? '';
+const getCallerFilePath = (): string => globalThis.process.argv[1] ?? '';
+
+const getCallerFileName = (): string => np.basename(getCallerFilePath());
 
 const isDirectory = (path: string): boolean => {
   if (!pathExists(path)) {
@@ -115,6 +89,27 @@ const isDirectory = (path: string): boolean => {
   }
 
   return fs.lstatSync(path).isDirectory();
+};
+
+const getProjectRoot = (startDir: string = getScriptDir(), marker = '.git'): string => {
+  const root = np.resolve('/');
+  let currentDir = np.resolve(startDir);
+
+  while (currentDir !== root) {
+    const potentialMarker = np.resolve(currentDir, marker);
+
+    if (pathExists(potentialMarker)) {
+      return currentDir;
+    }
+
+    const parentDir = np.dirname(currentDir);
+    if (parentDir === currentDir) {
+      break;
+    }
+    currentDir = parentDir;
+  }
+
+  throw new Error(`Could not find project root directory (looking for ${marker})`);
 };
 
 const readFile = ({
@@ -330,22 +325,23 @@ const backupPath = ({
 };
 
 export {
-  backupPath,
-  copyPath,
+  pathExists,
+  getScriptDir,
+  getScriptFileName,
+  getScriptFilePath,
+  getImporterDir,
+  getImporterFilePath,
+  getImporterFileName,
+  getCallerDir,
+  getCallerFilePath,
+  getCallerFileName,
+  isDirectory,
+  getProjectRoot,
+  readFile,
   createDir,
   createFile,
   deletePath,
-  findProjectRoot,
-  getCallerDir,
-  getCallerFile,
-  getFileName,
-  getImporterDir,
-  getImporterFile,
-  getProjectRoot,
-  getScriptDir,
-  getScriptFile,
-  isDirectory,
+  copyPath,
   movePath,
-  pathExists,
-  readFile,
+  backupPath,
 };

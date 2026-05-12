@@ -1,8 +1,8 @@
-import { findProjectRoot } from '@lightproject/common/utils';
+import { getCallerDir } from '@lightproject/common/utils';
 import path from 'node:path';
 import { projectCache } from './utils/cache';
 
-const projectDir = findProjectRoot('.', 'package.json');
+const projectDir = getCallerDir();
 const servicesDir = path.resolve(projectDir, 'src/services');
 
 const autogenDir = path.resolve(projectDir, 'tmp/autogen');
