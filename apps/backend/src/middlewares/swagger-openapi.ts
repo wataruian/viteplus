@@ -11,12 +11,12 @@ const swaggerOpenApiMiddleware = (app: Express) => {
     swaggerUi.serve,
     swaggerUi.setup(
       (() => {
-        const swaggerJson = readFile({
-          encoding: 'utf8',
-          // path: swaggerJsonOutputFile,
-          path: openApiSpecFile,
-        });
         try {
+          const swaggerJson = readFile({
+            encoding: 'utf8',
+            // path: swaggerJsonOutputFile,
+            path: openApiSpecFile,
+          });
           const jsonString =
             typeof swaggerJson === 'string' ? swaggerJson : (swaggerJson?.toString() ?? '{}');
           const parsed = JSON.parse(jsonString) as unknown;
