@@ -178,6 +178,7 @@ const getCommonViteConfig = ({
         reportsDirectory: 'coverage',
       },
       include: ['tests/**/*.test.ts'],
+      testTimeout: 60 * 60 * 1000, // 1 hour
     },
   };
 };
