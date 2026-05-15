@@ -1,77 +1,83 @@
 import { Buffer } from 'node:buffer';
-import type { Response } from '../types/middlware';
+import type express from 'express';
+import { isLocals } from '../types/middlware';
+import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 
-const captureResponse = (res: Response): void => {
-  if (res.locals?.metadata) {
-    res.locals.metadata['source'] = 'captureResponse';
+const isDataChunk = (v: unknown): v is string | Buffer | Uint8Array =>
+  typeof v === 'string' || v instanceof Buffer || v instanceof Uint8Array;
+
+const captureResponse = (res: express.Response): void => {
+  const locals = Reflect.get(res, 'locals') as unknown;
+  if (isLocals(locals)) {
+    const metadata = locals.metadata as unknown;
+    if (isRecord(metadata)) {
+      Reflect.set(metadata, 'source', 'captureResponse');
+    }
+    logger.info('Registering response data', locals);
   }
 
-  logger.info('Registering response data', res.locals);
-
-  const originalSend = res.send;
-  const originalJson = res.json;
-  const originalWrite = res.write;
-  const originalEnd = res.end;
+  const originalWrite = res.write.bind(res);
+  const originalEnd = res.end.bind(res);
 
   let responseBody: Buffer | null | object | string = null;
 
-  res.send = (body: Buffer | object | string): Response => {
-    if (body) {
-      responseBody = body;
-    }
-    return originalSend.call(res, body);
-  };
-
-  res.json = (body: object): Response => {
-    if (body) {
-      responseBody = body;
-    }
-    return originalJson.call(res, body);
-  };
-
-  res.write = (
-    chunk: string | Buffer | Uint8Array,
-    encodingOrCallback?: ((error: Error | null | undefined) => void) | BufferEncoding,
-    callback?: (error: Error | null | undefined) => void,
-  ): boolean => {
-    if (chunk) {
+  Reflect.set(
+    res,
+    'write',
+    (
+      chunk: string | Buffer | Uint8Array,
+      encodingOrCallback?: ((error: Error | null | undefined) => void) | BufferEncoding,
+      callback?: (error: Error | null | undefined) => void,
+    ): boolean => {
       const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
       responseBody = chunkString;
-    }
 
-    if (typeof encodingOrCallback === 'function') {
-      return originalWrite.call(res, chunk, '' as BufferEncoding, encodingOrCallback);
-    }
+      if (typeof encodingOrCallback === 'function') {
+        originalWrite(chunk, 'utf8', encodingOrCallback);
+        return true;
+      }
 
-    return originalWrite.call(
-      res,
-      chunk,
-      (encodingOrCallback ?? 'utf8') as BufferEncoding,
-      callback,
-    );
-  };
+      originalWrite(chunk, encodingOrCallback ?? 'utf8', callback);
+      return true;
+    },
+  );
 
-  res.end = (
-    chunk?: string | Buffer | Uint8Array | (() => void),
-    encodingOrCallback?: (() => void) | BufferEncoding,
-    callback?: () => void,
-  ): Response => {
-    if (chunk && typeof chunk !== 'function') {
-      const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
-      responseBody = chunkString;
-    }
+  Reflect.set(
+    res,
+    'end',
+    (
+      chunk?: string | Buffer | Uint8Array | (() => void),
+      encodingOrCallback?: (() => void) | BufferEncoding,
+      callback?: () => void,
+    ): express.Response => {
+      if (typeof chunk === 'function') {
+        originalEnd(chunk);
+        return res;
+      }
 
-    if (typeof chunk === 'function') {
-      return originalEnd.call(res, undefined, 'utf8', chunk);
-    }
+      if (isDataChunk(chunk)) {
+        const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
+        responseBody = chunkString;
+      }
 
-    if (typeof encodingOrCallback === 'function') {
-      return originalEnd.call(res, chunk, 'utf8', encodingOrCallback);
-    }
+      if (typeof encodingOrCallback === 'function') {
+        if (isDataChunk(chunk)) {
+          originalEnd(chunk, 'utf8', encodingOrCallback);
+        } else {
+          originalEnd(undefined, 'utf8', encodingOrCallback);
+        }
+        return res;
+      }
 
-    return originalEnd.call(res, chunk, (encodingOrCallback ?? 'utf8') as BufferEncoding, callback);
-  };
+      if (isDataChunk(chunk)) {
+        originalEnd(chunk, encodingOrCallback ?? 'utf8', callback);
+      } else {
+        originalEnd(undefined, encodingOrCallback ?? 'utf8', callback);
+      }
+      return res;
+    },
+  );
 
   Object.defineProperty(res, 'responseBody', {
     configurable: true,

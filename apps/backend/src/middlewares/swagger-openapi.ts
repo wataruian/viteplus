@@ -1,8 +1,8 @@
 import type { Express } from 'express';
 import { docsEndpoint } from '@lightproject/common/configs';
+import { isRecord } from '@lightproject/common/validators';
 import { openApiSpecFile } from '../utils/autogen';
 import { readFile } from '@lightproject/common/utils';
-// import { swaggerJsonOutputFile } from '../utils/autogen';
 import swaggerUi from 'swagger-ui-express';
 
 const swaggerOpenApiMiddleware = (app: Express) => {
@@ -18,8 +18,9 @@ const swaggerOpenApiMiddleware = (app: Express) => {
         });
         try {
           const jsonString =
-            typeof swaggerJson === 'string' ? swaggerJson : swaggerJson?.toString() || '{}';
-          return JSON.parse(jsonString);
+            typeof swaggerJson === 'string' ? swaggerJson : (swaggerJson?.toString() ?? '{}');
+          const parsed = JSON.parse(jsonString) as unknown;
+          return isRecord(parsed) ? parsed : {};
         } catch {
           return {};
         }

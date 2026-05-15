@@ -27,13 +27,16 @@ const publicHttp = {
   }),
 };
 
+import { isRecord } from '@lightproject/common/validators';
+
 const makeHttp = (method: HttpMethod) => (handlerFactory: () => RouteHandler) => ({
   handler: async (ctx: ServiceContext) => {
     try {
-      const input = ctx.req.body || ctx.req.query || ctx.req.params || {};
+      const inputRaw: unknown = ctx.req.body ?? ctx.req.query ?? ctx.req.params ?? {};
+      const input = isRecord(inputRaw) ? inputRaw : {};
       const handler = handlerFactory();
       const result = await Promise.resolve(handler({ ctx, input }));
-      ctx.res.status(result?.code || 200).json(result);
+      ctx.res.status(result.code ?? 200).json(result);
     } catch (error) {
       ctx.res.status(500).json({
         code: 500,

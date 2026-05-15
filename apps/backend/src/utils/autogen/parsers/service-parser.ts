@@ -7,7 +7,12 @@ const extractServiceMetadata = async (
   serviceClass: string | undefined,
   serviceMethod: string | undefined,
 ): Promise<ServiceMetadata> => {
-  if (!(serviceClass && serviceMethod)) {
+  if (
+    serviceClass === undefined ||
+    serviceMethod === undefined ||
+    serviceClass === '' ||
+    serviceMethod === ''
+  ) {
     return { input: undefined, serviceFilePath: undefined };
   }
 
@@ -24,7 +29,7 @@ const extractServiceMetadata = async (
   const serviceClassDecl = serviceFile.getClass(serviceClass);
   const methodDecl = serviceClassDecl?.getMethod(serviceMethod);
 
-  if (!(methodDecl && serviceFilePath)) {
+  if (methodDecl === undefined || (serviceFilePath as string) === '') {
     return { input: undefined, serviceFilePath };
   }
 
@@ -45,8 +50,8 @@ const getServiceNameFromHandlerFile = (handlerFilePath: string): string | undefi
   try {
     const fileName = handlerFilePath.split('/').pop()?.replace('.ts', '');
 
-    if (!fileName) {
-      return;
+    if (fileName === undefined || fileName === '') {
+      return undefined;
     }
 
     const pascalCase = toPascalCase(fileName);

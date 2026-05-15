@@ -75,18 +75,18 @@ type Params = null | Record<string, unknown> | string | undefined;
 
 type Query = null | Record<string, unknown> | string | undefined;
 
-interface Request extends ExpressRequest {
+type CustomRequest = Omit<ExpressRequest, 'locals'> & {
   locals: Locals;
-}
+};
 
 type RequestHandler = ExpressRequestHandler;
 
-interface Response extends ExpressResponse {
+type CustomResponse = Omit<ExpressResponse, 'locals'> & {
   locals: Locals & {
     originalStatusCode?: OriginalStatusCode;
     responseBody?: ResponseBody;
   };
-}
+};
 
 type ResponseBody = null | Record<string, unknown> | string | undefined;
 
@@ -106,13 +106,35 @@ type RouteHandler = (params: RouteHandlerParams) => BaseResponse | Promise<BaseR
 
 interface ServiceContext {
   next?: NextFunction | null | undefined;
-  req: Request;
-  res: Response;
+  req: CustomRequest;
+  res: CustomResponse;
 }
 
 type ServiceMethod = (...args: unknown[]) => BaseResponse | Promise<BaseResponse>;
 
 type SessionId = null | string | undefined;
+
+const isBaseResponse = (value: unknown): value is BaseResponse =>
+  typeof value === 'object' && value !== null && 'success' in value;
+
+const isError = (value: unknown): value is Error => value instanceof Error;
+
+const isLocals = (value: unknown): value is Locals =>
+  typeof value === 'object' && value !== null && 'metadata' in value && 'sessionId' in value;
+
+const isHttpMethod = (value: unknown): value is HttpMethod =>
+  typeof value === 'string' &&
+  ['get', 'post', 'put', 'delete', 'patch', 'options', 'head'].includes(value.toLowerCase());
+
+const isCustomRequest = (req: ExpressRequest): req is CustomRequest => isLocals(req.locals);
+
+const isCustomResponse = (res: ExpressResponse): res is CustomResponse => isLocals(res.locals);
+
+const assertIsCustomRequest: (req: unknown) => asserts req is CustomRequest = (_req: unknown) => {};
+
+const assertIsCustomResponse: (res: unknown) => asserts res is CustomResponse = (
+  _res: unknown,
+) => {};
 
 export type {
   Primitive,
@@ -130,11 +152,11 @@ export type {
   OriginalStatusCode,
   Params,
   Query,
-  Request,
+  CustomRequest as Request,
   RequestHandler,
   TrpcRouteHandlerParams,
   RouteHandlerParams,
-  Response,
+  CustomResponse as Response,
   ResponseBody,
   RouteHandler,
   ServiceContext,
@@ -149,3 +171,14 @@ export type {
   RequestHandler as ExpressRequestHandler,
   Response as ExpressResponse,
 } from 'express';
+
+export {
+  isBaseResponse,
+  isError,
+  isLocals,
+  isHttpMethod,
+  isCustomRequest,
+  isCustomResponse,
+  assertIsCustomRequest,
+  assertIsCustomResponse,
+};

@@ -3,8 +3,8 @@ const fixFilter = (input: null | Record<string, unknown> | undefined) =>
     ? {}
     : {
         ...input,
-        orderBy: input?.['orderBy'] ?? undefined,
-        where: input?.['where'] ?? {},
+        orderBy: input['orderBy'] ?? undefined,
+        where: input['where'] ?? {},
       };
 
 export { fixFilter };

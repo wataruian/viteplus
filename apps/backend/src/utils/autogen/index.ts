@@ -87,7 +87,10 @@ const build = async () => {
     logger.info('🎉 OpenAPI specification generation completed successfully!');
   } catch (error) {
     const totalTime = performanceTimer.getTotal();
-    logger.error(`❌ Error after ${Math.round(totalTime)}ms:`, error as Record<string, unknown>);
+    logger.error(
+      `❌ Error after ${Math.round(totalTime)}ms:`,
+      error instanceof Error ? { message: error.message, stack: error.stack } : { error },
+    );
     throw error;
   }
 };
@@ -101,5 +104,5 @@ export * from './generators/openapi-generator';
 export * from './parsers/http-parser';
 export * from './parsers/service-parser';
 export * from './parsers/trpc-parser';
-export * from './types';
+export type * from './types';
 export * from './validators/route-validator';

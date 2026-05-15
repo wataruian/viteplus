@@ -1,4 +1,13 @@
-import type { InputArgs, ServiceContext } from '../types/middlware';
+import {
+  type InputArgs,
+  type ServiceContext,
+  assertIsCustomRequest,
+  assertIsCustomResponse,
+} from '../types/middlware';
+
+const assertIsGetInstanceFn: (fn: unknown) => asserts fn is () => BaseServiceInterface = (
+  _fn: unknown,
+) => {};
 
 interface BaseServiceInterface {
   /**
@@ -32,7 +41,7 @@ interface BaseServiceInterface {
    * This method is used to get the singleton instance of the service.
    * It is intended to be used by derived classes to get the singleton instance of the service.
    */
-  getInstance<T extends BaseServiceInterface>(): T;
+  getInstance(): BaseServiceInterface;
 
   /**
    * Getter for the input arguments of the service.
@@ -63,7 +72,7 @@ interface BaseServiceInterface {
 }
 
 abstract class BaseService implements BaseServiceInterface {
-  public static instance: BaseService;
+  public static instance: BaseService | null = null;
 
   public context: ServiceContext;
   public inputArgs: InputArgs = {};
@@ -84,12 +93,15 @@ abstract class BaseService implements BaseServiceInterface {
     this.inputArgs = inputArgs;
   }
 
+  private _instance: BaseServiceInterface | null = null;
+
   public get instance(): BaseServiceInterface | null {
-    return (this.constructor as typeof BaseService).instance;
+    return this._instance ?? BaseService.instance;
   }
 
   public set instance(value: BaseServiceInterface | null) {
-    (this.constructor as typeof BaseService).instance = value as BaseService;
+    this._instance = value;
+    BaseService.instance = value instanceof BaseService ? value : null;
   }
 
   public constructor(ctx: ServiceContext, inputArgs: InputArgs = {}) {
@@ -100,21 +112,32 @@ abstract class BaseService implements BaseServiceInterface {
   public static getInstance<T extends BaseService>(
     this: new (ctx: ServiceContext, inputArgs?: InputArgs) => T,
   ): T {
-    if (!BaseService.instance) {
-      // Create a dummy context for singleton pattern
+    if (BaseService.instance === null) {
+      const req: unknown = { locals: {} };
+      assertIsCustomRequest(req);
+      const res: unknown = { locals: {} };
+      assertIsCustomResponse(res);
       const dummyContext: ServiceContext = {
-        req: {} as ServiceContext['req'],
-        res: {} as ServiceContext['res'],
+        req,
+        res,
       };
-      // biome-ignore lint/complexity/noThisInStatic: ignore
       BaseService.instance = new this(dummyContext);
     }
-    return BaseService.instance as T;
+    if (BaseService.instance instanceof this) {
+      return BaseService.instance;
+    }
+    throw new Error('Failed to get service instance');
   }
 
-  public getInstance<T extends BaseServiceInterface>(): T {
-    const ctor = this.constructor as unknown as { getInstance: () => T };
-    return ctor.getInstance();
+  public getInstance(): BaseServiceInterface {
+    const ctor = this.constructor;
+    const getInstance: unknown = Reflect.get(ctor, 'getInstance');
+
+    if (typeof getInstance === 'function') {
+      assertIsGetInstanceFn(getInstance);
+      return getInstance();
+    }
+    throw new Error('getInstance not found on service constructor');
   }
 
   public static cleanup?(): Promise<void> {

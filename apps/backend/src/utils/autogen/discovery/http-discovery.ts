@@ -55,7 +55,7 @@ const processRouteProperties = async (
     const nameNode = property.getNameNode();
     const routePath = extractRoutePath(nameNode);
 
-    if (!routePath) {
+    if (routePath === null || routePath === '') {
       return null;
     }
 

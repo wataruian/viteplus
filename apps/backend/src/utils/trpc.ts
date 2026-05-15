@@ -7,7 +7,6 @@ import type {
 // import { type TRPCError, initTRPC } from '@trpc/server';
 // import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
 import type { OpenApiMeta } from 'trpc-openapi';
-import { getRequestType } from '@lightproject/common/configs';
 // import { isProduction } from '@lightproject/common/environment';
 import { initTRPC } from '@trpc/server';
 import { randomUUID } from 'node:crypto';
@@ -86,30 +85,13 @@ const transformer = superjson;
 // };
 
 const createContext = (req: Request, res: Response): ServiceContext => {
-  const sessionId = req.locals.sessionId || uuidv4();
+  const sessionId = req.locals.sessionId ?? uuidv4();
+  req.locals.sessionId ??= sessionId;
 
-  if (!req.locals || typeof req.locals !== 'object') {
-    req.locals = {
-      metadata: {
-        method: req.method,
-        requestType: getRequestType(req.originalUrl),
-        startTime: Date.now(),
-        url: req.originalUrl,
-      },
-      sessionId,
-    };
-  }
-
-  if (!req.locals.sessionId) {
-    req.locals.sessionId = sessionId;
-  }
-
-  const ctx = {
+  return {
     req,
     res,
   };
-
-  return ctx;
 };
 
 const t = initTRPC.meta<OpenApiMeta>().context<Awaited<ReturnType<typeof createContext>>>().create({

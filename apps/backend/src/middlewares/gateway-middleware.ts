@@ -1,10 +1,13 @@
-import type {
-  Locals,
-  MiddlewareLoggingOptionsType,
-  NextFunction,
-  Request,
-  Response,
+import {
+  type Locals,
+  type MiddlewareLoggingOptionsType,
+  type Request,
+  type Response,
+  assertIsCustomRequest,
+  assertIsCustomResponse,
 } from '../types/middlware';
+import type express from 'express';
+import { isRecord } from '@lightproject/common/validators';
 import { requestHandler } from './request-handler';
 import { responseHandler } from './response-handler';
 import { safeClone } from '@lightproject/common/utils';
@@ -16,60 +19,66 @@ const loggingOptions: MiddlewareLoggingOptionsType = {
   logQuery: false,
 };
 
+const cleanLocals = (locals: Record<string, unknown>): void => {
+  if ('originalStatusCode' in locals) {
+    delete locals['originalStatusCode'];
+  }
+  if ('responseBody' in locals) {
+    delete locals['responseBody'];
+  }
+};
+
 const syncLocals = ({
   locals,
   req,
   res,
   target = 'both',
 }: {
-  locals: Partial<Locals> | Partial<Request['locals']> | Partial<Response['locals']>;
+  locals: Partial<Locals>;
   req?: null | Request | undefined;
   res?: null | Response | undefined;
   target?: 'both' | 'req' | 'res';
 }): void => {
-  if (typeof target !== 'string' || !['both', 'req', 'res'].includes(target)) {
-    throw new Error('Target must be either "both", "req", or "res"');
+  if (!['both', 'req', 'res'].includes(target)) {
+    throw new TypeError('Target must be either "both", "req", or "res"');
   }
 
-  if (!locals) {
-    throw new Error('Locals must be provided to sync local variables');
-  }
-
-  if (!(req || res)) {
+  if (req === undefined && res === undefined) {
     throw new Error('Either req or res must be provided to sync local variables');
   }
 
-  const allLocals = safeClone({
+  const allLocalsRaw = safeClone({
     ...req?.locals,
     ...res?.locals,
     ...locals,
   });
 
-  if (req && (target === 'req' || target === 'both')) {
-    const reqLocals = safeClone(allLocals || {});
-    if (reqLocals['originalStatusCode']) {
-      delete reqLocals['originalStatusCode'];
-    }
-    if (reqLocals['responseBody']) {
-      delete reqLocals['responseBody'];
-    }
-    req.locals = {
-      ...req.locals,
-      ...reqLocals,
-    };
+  if (!isRecord(allLocalsRaw)) {
+    throw new Error('Failed to clone locals');
   }
 
-  if (res && (target === 'res' || target === 'both')) {
-    const resLocals = safeClone(allLocals || {});
-    res.locals = safeClone({
-      ...res.locals,
-      ...resLocals,
-    });
+  const allLocals = allLocalsRaw;
+
+  if (req !== null && req !== undefined && (target === 'req' || target === 'both')) {
+    const reqLocals = { ...allLocals };
+    cleanLocals(reqLocals);
+    Object.assign(req.locals, reqLocals);
+  }
+
+  if (res !== null && res !== undefined && (target === 'res' || target === 'both')) {
+    const resLocals = { ...allLocals };
+    Object.assign(res.locals, resLocals);
   }
 };
 
-const gatewayMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+const gatewayMiddleware = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+): void => {
   try {
+    assertIsCustomRequest(req);
+    assertIsCustomResponse(res);
     requestHandler(req, res, next);
     res.on('finish', () => {
       try {
@@ -78,7 +87,6 @@ const gatewayMiddleware = (req: Request, res: Response, next: NextFunction): voi
         next(error);
       }
     });
-    // next();
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,4 @@
-import { Node, type PropertyAssignment } from 'ts-morph';
+import { Node } from 'ts-morph';
 import { getProject } from '../config';
 
 const extractServiceMethodFromChain = (node: Node): string | undefined => {
@@ -18,7 +18,7 @@ const extractServiceMethodFromChain = (node: Node): string | undefined => {
 
   for (const child of node.getChildren()) {
     const result = extractServiceMethodFromChain(child);
-    if (result) {
+    if (result !== undefined && result !== '') {
       return result;
     }
   }
@@ -31,18 +31,19 @@ const extractHttpServiceMethod = (handlerFilePath: string, path: string): string
     const project = getProject();
     const sourceFile = project.getSourceFile(handlerFilePath);
 
-    if (!sourceFile) {
-      return;
+    if (sourceFile === undefined) {
+      return undefined;
     }
 
-    const [exportAssignment] = sourceFile.getExportAssignments();
-    if (!exportAssignment) {
-      return;
+    const exportAssignments = sourceFile.getExportAssignments();
+    if (exportAssignments.length === 0) {
+      return undefined;
     }
 
+    const [exportAssignment] = exportAssignments;
     const expression = exportAssignment.getExpression();
     if (!Node.isObjectLiteralExpression(expression)) {
-      return;
+      return undefined;
     }
 
     const targetProperty = expression.getProperties().find((prop) => {
@@ -56,15 +57,15 @@ const extractHttpServiceMethod = (handlerFilePath: string, path: string): string
         }
       }
       return false;
-    }) as PropertyAssignment | undefined;
+    });
 
-    if (!targetProperty) {
-      return;
+    if (targetProperty === undefined || !Node.isPropertyAssignment(targetProperty)) {
+      return undefined;
     }
 
     const propertyValue = targetProperty.getInitializer();
-    if (!propertyValue) {
-      return;
+    if (propertyValue === undefined) {
+      return undefined;
     }
 
     return extractServiceMethodFromChain(propertyValue);

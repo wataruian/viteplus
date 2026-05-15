@@ -26,21 +26,17 @@ describe('tRPC Discovery', () => {
     it('should return RouteHandlerInfo objects with correct structure', async () => {
       const routes = await getTrpcRoutes();
 
-      if (routes.length > 0) {
-        const [route] = routes;
+      const [route] = routes;
 
-        expect(route).toBeDefined();
-        expect(route).toHaveProperty('handlerFilePath');
-        expect(route).toHaveProperty('path');
-        expect(route).toHaveProperty('serviceClass');
-        expect(route).toHaveProperty('serviceMethod');
+      expect(route).toBeDefined();
+      expect(route).toHaveProperty('handlerFilePath');
+      expect(route).toHaveProperty('path');
+      expect(route).toHaveProperty('serviceClass');
+      expect(route).toHaveProperty('serviceMethod');
 
-        if (route) {
-          expect(typeof route.handlerFilePath).toBe('string');
-          expect(typeof route.path).toBe('string');
-          // serviceClass and serviceMethod can be undefined for non-service routes
-        }
-      }
+      expect(typeof route.handlerFilePath).toBe('string');
+      expect(typeof route.path).toBe('string');
+      // serviceClass and serviceMethod can be undefined for non-service routes
     });
 
     it('should find default tRPC route', async () => {
@@ -48,7 +44,7 @@ describe('tRPC Discovery', () => {
       const defaultRoute = routes.find((r) => r.path === '/trpc/default.root');
 
       expect(defaultRoute).toBeDefined();
-      if (defaultRoute) {
+      if (defaultRoute !== undefined) {
         expect(defaultRoute.serviceClass).toBe('DefaultService');
       }
     });
@@ -61,7 +57,7 @@ describe('tRPC Discovery', () => {
 
       // Check specific test routes
       const asyncSuccessRoute = testRoutes.find((r) => r.path === '/trpc/test.asyncSuccess');
-      if (asyncSuccessRoute) {
+      if (asyncSuccessRoute !== undefined) {
         expect(asyncSuccessRoute.serviceClass).toBe('TestService');
         expect(asyncSuccessRoute.serviceMethod).toBe('asyncSuccess');
       }
@@ -71,13 +67,19 @@ describe('tRPC Discovery', () => {
       const routes = await getTrpcRoutes();
 
       // Find routes with service information
-      const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+      const serviceRoutes = routes.filter(
+        (r) =>
+          r.serviceClass !== undefined &&
+          r.serviceClass !== '' &&
+          r.serviceMethod !== undefined &&
+          r.serviceMethod !== '',
+      );
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
       // Verify service naming convention
       for (const route of serviceRoutes) {
         expect(route.serviceClass).toMatch(/Service$/);
-        expect(route.serviceMethod).toBeTruthy();
+        expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
       }
     });
 
@@ -96,7 +98,7 @@ describe('tRPC Discovery', () => {
       const routes = await getTrpcRoutes();
 
       for (const route of routes) {
-        if (route.handlerFilePath) {
+        if (route.handlerFilePath !== undefined && route.handlerFilePath !== '') {
           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
           expect(route.handlerFilePath).toMatch(/\.ts$/);
         }

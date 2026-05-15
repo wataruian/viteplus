@@ -8,7 +8,7 @@ import { safeSerialize } from '@lightproject/common/utils';
 
 const requestHandler = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    if (isTrpcEndpoint(req.originalUrl) && req.body && Buffer.isBuffer(req.body)) {
+    if (isTrpcEndpoint(req.originalUrl) && Buffer.isBuffer(req.body)) {
       req.body = req.body.toString();
     }
 
@@ -16,10 +16,10 @@ const requestHandler = (req: Request, res: Response, next: NextFunction): void =
 
     const metadata: Record<string, unknown> = {
       ...req.locals.metadata,
-      body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
-      headers: loggingOptions.logHeaders ? safeSerialize(req.headers) : undefined,
-      params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
-      query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+      body: loggingOptions.logBody === true ? safeSerialize(req.body) : undefined,
+      headers: loggingOptions.logHeaders === true ? safeSerialize(req.headers) : undefined,
+      params: loggingOptions.logParams === true ? safeSerialize(req.params) : undefined,
+      query: loggingOptions.logQuery === true ? safeSerialize(req.query) : undefined,
       source: 'requestHandler',
     };
 

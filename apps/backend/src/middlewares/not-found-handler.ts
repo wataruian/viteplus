@@ -8,7 +8,7 @@ import {
 } from '@lightproject/common/configs';
 import { httpRouter } from '../routers/http';
 import { isLocal } from '@lightproject/common/environment';
-import { parse } from 'node:url';
+import { isRecord } from '@lightproject/common/validators';
 import { trpcRouter } from '../routers/trpc';
 
 const trailingSlashesRegex = /\/+$/;
@@ -27,16 +27,18 @@ const getHttpRouterPaths = (
 
 const getTrpcProcedureKeys = (node: unknown, prefix = ''): string[] => {
   const keys: string[] = [];
-  if (typeof node !== 'object' || node === null) {
+  if (!isRecord(node)) {
     return keys;
   }
-  for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+  for (const [key, value] of Object.entries(node)) {
     if (key.startsWith('_def')) {
       continue;
     }
-    if (typeof value === 'function' && (value as { _def?: unknown })._def !== undefined) {
+    const defRaw: unknown = typeof value === 'function' ? Reflect.get(value, '_def') : undefined;
+    const def = isRecord(defRaw) ? defRaw : undefined;
+    if (isRecord(def)) {
       keys.push(`${prefix}${key}`);
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (isRecord(value)) {
       keys.push(...getTrpcProcedureKeys(value, `${prefix}${key}.`));
     }
   }
@@ -56,7 +58,8 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
       normalizedUrl === swaggerTrpcPath ||
       normalizedUrl === trpcPlaygroundPath
     ) {
-      return next();
+      next();
+      return;
     }
   }
 
@@ -86,12 +89,10 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
       : `${normalizedTrpcEndpoint}${path.startsWith('/') ? '' : '/'}${path}`,
   );
 
-  const { pathname = '' } = parse(req.originalUrl);
+  const { pathname } = new globalThis.URL(req.originalUrl, 'http://localhost');
 
-  const normalizedHttpPath = (pathname ?? '').replace(trailingSlashesRegex, '');
-  const normalizedTrpcPath = (pathname ?? '')
-    .replace(/\/batch$/, '')
-    .replace(trailingSlashesRegex, '');
+  const normalizedHttpPath = pathname.replace(trailingSlashesRegex, '');
+  const normalizedTrpcPath = pathname.replace(/\/batch$/, '').replace(trailingSlashesRegex, '');
 
   const isHttpEndpoint =
     httpPaths.includes(normalizedHttpPath) || httpPaths.includes(`${normalizedHttpPath}/`);
@@ -108,7 +109,7 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
       statusCode,
     };
     res.status(statusCode);
-    next?.(error);
+    next(error);
   }
 
   next();

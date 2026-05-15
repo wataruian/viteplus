@@ -1,4 +1,9 @@
-import type { Locals, Request, Response, ServiceContext } from './src/types/middlware';
+import {
+  type Locals,
+  type ServiceContext,
+  assertIsCustomRequest,
+  assertIsCustomResponse,
+} from './src/types/middlware';
 import { apiUrl, trpcEndpoint } from '@lightproject/common/configs';
 import { createCaller, trpcClient } from './src/utils/trpc-router';
 import MockExpress from 'mock-express';
@@ -16,15 +21,19 @@ const testCaller = async () => {
     sessionId: 'test',
   };
 
-  const request = app.makeRequest({
+  const requestRaw: unknown = app.makeRequest({
     host: apiUrl,
-  }) as unknown as Request;
+  });
+  assertIsCustomRequest(requestRaw);
+  const request = requestRaw;
   request.method = 'GET';
   request.url = trpcEndpoint;
   request.originalUrl = request.url;
   request.locals = locals;
 
-  const response = app.makeResponse((_err: Error | null) => {}) as unknown as Response;
+  const responseRaw: unknown = app.makeResponse((_err: Error | null) => {});
+  assertIsCustomResponse(responseRaw);
+  const response = responseRaw;
 
   response.locals = locals;
 
@@ -34,14 +43,6 @@ const testCaller = async () => {
   };
 
   const trpcCaller = createCaller(ctx);
-
-  if (!trpcCaller.test) {
-    throw new Error('tRPC test endpoint not found');
-  }
-
-  if (!trpcCaller.test.hello) {
-    throw new Error('tRPC test.hello endpoint not found');
-  }
 
   const result = await Promise.resolve(
     trpcCaller.test.hello({

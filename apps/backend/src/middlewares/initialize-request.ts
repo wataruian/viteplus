@@ -1,40 +1,25 @@
-import type { Locals, NextFunction, Request, Response } from '../types/middlware';
-import { defaultColor, getNextRandomColor, getRandomColor } from '@lightproject/common/utils';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import type { ChalkInstance } from 'chalk';
-import cryptoJs from 'crypto-js';
+import type { Locals } from '../types/middlware';
+import type express from 'express';
+import { getRandomColor } from '@lightproject/common/utils';
 import { getRequestType } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
 import { randomUUID } from 'node:crypto';
-import { syncLocals } from './gateway-middleware';
 
 const uuidv4 = () => randomUUID();
 
 const asyncLocalStorage = new AsyncLocalStorage();
 
-let previousColor: ChalkInstance | undefined = undefined;
-
-const initializeRequest = (req: Request, res: Response, next: NextFunction) => {
+const initializeRequest = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
   try {
-    if (!req.locals) {
-      req.locals = {} as Request['locals'];
-    }
-
     const sessionId = uuidv4();
 
-    ({ nextColor: req.locals.color, previousColor } = getNextRandomColor(
-      cryptoJs.SHA256(sessionId.toString()).toString(),
-      previousColor ?? defaultColor,
-    ));
-
-    if (!req.locals.color) {
-      req.locals.color = getRandomColor();
-    }
-
-    previousColor = req.locals.color;
-
-    const locals: Locals = {
-      ...req.locals,
+    const initialLocals: Locals = {
+      color: getRandomColor(sessionId),
       metadata: {
         method: req.method,
         requestType: getRequestType(req.originalUrl),
@@ -45,17 +30,12 @@ const initializeRequest = (req: Request, res: Response, next: NextFunction) => {
       sessionId,
     };
 
-    syncLocals({
-      locals,
-      req,
-      target: 'req',
-    });
+    Reflect.set(req, 'locals', initialLocals);
+    Reflect.set(res, 'locals', initialLocals);
 
-    logger.info(`Initializing [${req.method}] request session`, req.locals);
+    logger.info(`Initializing [${req.method}] request session`, initialLocals);
 
-    asyncLocalStorage.run(new Map<string, Locals>([['locals', locals]]), () => {
-      res.locals = req.locals;
-      res.locals.originalStatusCode = res.statusCode;
+    asyncLocalStorage.run(new Map<string, Locals>([['locals', initialLocals]]), () => {
       next();
     });
   } catch (error) {
@@ -63,22 +43,22 @@ const initializeRequest = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const isLocalsMap = (v: unknown): v is Map<string, Locals> => v instanceof Map;
+
 const getSessionId = () => {
   const store = asyncLocalStorage.getStore();
-  return store ? ((store as Map<string, Locals>).get('locals')?.sessionId ?? 'no-id') : 'no-id';
+  return isLocalsMap(store) ? (store.get('locals')?.sessionId ?? 'no-id') : 'no-id';
 };
 
 const getColor = () => {
   const store = asyncLocalStorage.getStore();
-  return store
-    ? ((store as Map<string, Locals | undefined>).get('locals')?.color ?? getRandomColor())
-    : getRandomColor();
+  return isLocalsMap(store) ? (store.get('locals')?.color ?? getRandomColor()) : getRandomColor();
 };
 
 const getLocals = () => {
   const store = asyncLocalStorage.getStore();
-  return store
-    ? (store as Map<string, Locals>).get('locals')
+  return isLocalsMap(store)
+    ? (store.get('locals') ?? { color: getRandomColor(), sessionId: 'no-id' })
     : { color: getRandomColor(), sessionId: 'no-id' };
 };
 

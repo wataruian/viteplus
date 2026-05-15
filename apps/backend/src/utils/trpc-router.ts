@@ -1,9 +1,9 @@
-import type {
-  ExpressRequest,
-  ExpressResponse,
-  Request,
-  Response,
-  ServiceContext,
+import {
+  type ExpressRequest,
+  type ExpressResponse,
+  type ServiceContext,
+  assertIsCustomRequest,
+  assertIsCustomResponse,
 } from '../types/middlware';
 import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
@@ -11,6 +11,7 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
 import type { Express } from 'express';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 
 const createCaller = (ctx: ServiceContext) => trpcRouter.createCaller(ctx);
@@ -35,12 +36,19 @@ const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
         }: {
           req: ExpressRequest;
           res: ExpressResponse;
-        }): ServiceContext => createContext(req as Request, res as Response),
+        }): ServiceContext => {
+          assertIsCustomRequest(req);
+          assertIsCustomResponse(res);
+          return createContext(req, res);
+        },
         router: trpcRouter,
       }),
     );
   } catch (error) {
-    logger.error('Failed to register tRPC routes:', error as Record<string, unknown>);
+    logger.error(
+      'Failed to register tRPC routes:',
+      isRecord(error) ? error : { error: String(error) },
+    );
     throw error;
   }
 };

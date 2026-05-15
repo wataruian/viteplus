@@ -8,14 +8,22 @@ import type {
 import { loggingOptions, syncLocals } from './gateway-middleware';
 import type { TRPCError } from '@trpc/server';
 import { isProduction } from '@lightproject/common/environment';
+import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 import { safeSerialize } from '@lightproject/common/utils';
 
 const enableErrorStack =
   globalThis.process.env['ENABLE_ERROR_STACK'] === 'true' ? true : !isProduction();
 
+const isErrorDetails = (value: unknown): value is ErrorDetails =>
+  typeof value === 'object' &&
+  value !== null &&
+  'message' in value &&
+  'name' in value &&
+  'statusCode' in value;
+
 const getStatusCode = (statusCode?: number): number => {
-  if (!statusCode) {
+  if (statusCode === undefined || statusCode === 0) {
     return 500;
   }
 
@@ -24,22 +32,22 @@ const getStatusCode = (statusCode?: number): number => {
 
 const getErrorDetails = (err: Error | ErrorDetails | TRPCError, res: Response) => {
   const error: ErrorDetails = {
-    message: err.message || 'Unknown error occurred',
-    name: err.name || 'UnknownError',
-    stack: err.stack || 'No stack trace available',
-    statusCode: getStatusCode(res?.statusCode),
+    message: err.message === '' ? 'Unknown error occurred' : err.message,
+    name: err.name === '' ? 'UnknownError' : err.name,
+    stack: err.stack ?? 'No stack trace available',
+    statusCode: getStatusCode(res.statusCode),
   };
 
   return error;
 };
 
-const getErrorMessage = (error: Error | ErrorDetails | TRPCError | unknown): string => {
+const getErrorMessage = (error: unknown): string => {
   const errorMessage =
-    error && typeof error === 'object' && 'message' in error
-      ? (error as { message: string }).message
+    error !== null && typeof error === 'object' && 'message' in error
+      ? String(Reflect.get(error, 'message'))
       : String(error);
 
-  return errorMessage || 'Unknown error occurred';
+  return errorMessage === '' ? 'Unknown error occurred' : errorMessage;
 };
 
 const handleError = ({
@@ -55,27 +63,15 @@ const handleError = ({
   res: Response;
   throwError?: boolean;
 }) => {
-  if (!req.locals) {
-    req.locals = {} as Request['locals'];
-  }
-
-  if (!req.locals.metadata) {
-    req.locals.metadata = {} as Request['locals']['metadata'];
-  }
-
   const startTime = req.locals.metadata.startTime || Date.now();
-
-  if (!req.locals.metadata.startTime) {
-    req.locals.metadata.startTime = startTime;
-  }
 
   let errorMessage = message;
 
-  if (!errorMessage) {
+  if (errorMessage === undefined || errorMessage === '') {
     errorMessage = getErrorMessage(err);
   }
 
-  const statusCode = getStatusCode(res?.statusCode);
+  const statusCode = getStatusCode(res.statusCode);
   res.statusCode = statusCode;
 
   const error = getErrorDetails(err, res);
@@ -85,13 +81,16 @@ const handleError = ({
 
   const metadata = {
     ...req.locals.metadata,
-    body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+    body: loggingOptions.logBody === true ? safeSerialize(req.body) : undefined,
     duration,
     endTime,
-    error: safeSerialize(error) as ErrorDetails,
-    headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
-    params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
-    query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+    error: (() => {
+      const s = safeSerialize(error);
+      return isErrorDetails(s) ? s : error;
+    })(),
+    headers: loggingOptions.logHeaders === true ? safeSerialize(res.getHeaders()) : undefined,
+    params: loggingOptions.logParams === true ? safeSerialize(req.params) : undefined,
+    query: loggingOptions.logQuery === true ? safeSerialize(req.query) : undefined,
     source: 'errorHandler',
     statusCode,
   };
@@ -105,10 +104,12 @@ const handleError = ({
     target: 'both',
   });
 
-  const serializedLocals = safeSerialize({
+  const serializedLocalsRaw = safeSerialize({
     ...req.locals,
     ...res.locals,
-  }) as Record<string, unknown>;
+  });
+
+  const serializedLocals = isRecord(serializedLocalsRaw) ? serializedLocalsRaw : {};
 
   logger.error(`Error [${req.method}]: ${errorMessage}`, serializedLocals);
 
@@ -117,32 +118,26 @@ const handleError = ({
   }
 
   if (throwError) {
-    throw err;
+    throw err instanceof Error ? err : new Error(JSON.stringify(err));
   }
 
   return error;
 };
 
 const getErrorResponse = (error: ErrorDetails, req: Request, res: Response): BaseResponse => {
-  const serializedError = safeSerialize(error) as ErrorDetails;
+  const serializedErrorRaw = safeSerialize(error);
+  const serializedError = isErrorDetails(serializedErrorRaw) ? serializedErrorRaw : error;
 
   const errorResponse: BaseResponse = {
     code: res.statusCode,
     error: serializedError,
-    message: serializedError.message || 'Error',
-    sessionId: req.locals.sessionId || undefined,
+    message: serializedError.message === '' ? 'Error' : serializedError.message,
+    sessionId: req.locals.sessionId ?? undefined,
     success: false,
   };
 
   return errorResponse;
 };
-
-const isErrorDetails = (value: unknown): value is ErrorDetails =>
-  typeof value === 'object' &&
-  value !== null &&
-  'message' in value &&
-  'name' in value &&
-  'statusCode' in value;
 
 const errorHandler = (
   err: Error,
@@ -160,7 +155,7 @@ const errorHandler = (
   const errorResponse = getErrorResponse(errorDetails, req, res);
 
   if (!res.headersSent) {
-    res.status(getStatusCode(res?.statusCode)).json(errorResponse);
+    res.status(getStatusCode(res.statusCode)).json(errorResponse);
   }
 
   return errorResponse;

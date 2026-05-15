@@ -19,14 +19,12 @@ describe('Autogen Main', () => {
 
         expect(route).toBeDefined();
 
-        if (route) {
-          expect(route).toHaveProperty('path');
-          expect(route).toHaveProperty('requestType');
+        expect(route).toHaveProperty('path');
+        expect(route).toHaveProperty('requestType');
 
-          expect(typeof route.path).toBe('string');
-          expect(typeof route.requestType).toBe('string');
-          expect(['HTTP', 'tRPC']).toContain(route.requestType);
-        }
+        expect(typeof route.path).toBe('string');
+        expect(typeof route.requestType).toBe('string');
+        expect(['HTTP', 'tRPC']).toContain(route.requestType);
       }
     });
 
@@ -43,25 +41,31 @@ describe('Autogen Main', () => {
     it('should include service metadata when available', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithService = routes.filter((r) => r.serviceClass && r.serviceMethod);
+      const routesWithService = routes.filter(
+        (r) =>
+          r.serviceClass !== undefined &&
+          r.serviceClass !== '' &&
+          r.serviceMethod !== undefined &&
+          r.serviceMethod !== '',
+      );
 
       expect(routesWithService.length).toBeGreaterThan(0);
 
       // Check service naming convention
       for (const route of routesWithService) {
         expect(route.serviceClass).toMatch(/Service$/);
-        expect(route.serviceMethod).toBeTruthy();
+        expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
       }
     });
 
     it('should include parameter metadata', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithParams = routes.filter((r) => r.input && r.input.length > 0);
+      const routesWithParams = routes.filter((r) => r.input !== undefined && r.input.length > 0);
 
       if (routesWithParams.length > 0) {
         const [route] = routesWithParams;
-        if (route?.input) {
+        if (route.input !== undefined && route.input.length > 0) {
           const [param] = route.input;
 
           expect(param).toHaveProperty('name');
@@ -87,7 +91,9 @@ describe('Autogen Main', () => {
     it('should provide file path information', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithHandlerFile = routes.filter((r) => r.handlerFilePath);
+      const routesWithHandlerFile = routes.filter(
+        (r) => r.handlerFilePath !== undefined && r.handlerFilePath !== '',
+      );
 
       expect(routesWithHandlerFile.length).toBeGreaterThan(0);
 
@@ -99,7 +105,9 @@ describe('Autogen Main', () => {
     it('should provide service file path information', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithServiceFile = routes.filter((r) => r.serviceFilePath);
+      const routesWithServiceFile = routes.filter(
+        (r) => r.serviceFilePath !== undefined && r.serviceFilePath !== '',
+      );
 
       expect(routesWithServiceFile.length).toBeGreaterThan(0);
 
@@ -149,10 +157,10 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       const httpRoutesWithService = routes.filter(
-        (r) => r.requestType === 'HTTP' && r.serviceClass,
+        (r) => r.requestType === 'HTTP' && r.serviceClass !== undefined && r.serviceClass !== '',
       );
       const trpcRoutesWithService = routes.filter(
-        (r) => r.requestType === 'tRPC' && r.serviceClass,
+        (r) => r.requestType === 'tRPC' && r.serviceClass !== undefined && r.serviceClass !== '',
       );
 
       // Should have service routes in both types
@@ -191,9 +199,8 @@ describe('Autogen Main', () => {
 
       for (const [i, element] of sorted1.entries()) {
         const correspondingRoute = sorted2[i];
-        expect(correspondingRoute).toBeDefined();
-        expect(element.path).toBe(correspondingRoute?.path);
-        expect(element.requestType).toBe(correspondingRoute?.requestType);
+        expect(element.path).toBe(correspondingRoute.path);
+        expect(element.requestType).toBe(correspondingRoute.requestType);
       }
     });
   });

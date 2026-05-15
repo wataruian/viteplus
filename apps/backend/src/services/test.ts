@@ -154,7 +154,8 @@ class TestService extends BaseService {
   }
 
   public static hello(firstName: string, lastName?: string) {
-    const fullName = lastName ? `${firstName} ${lastName}` : firstName;
+    const fullName =
+      lastName !== undefined && lastName !== '' ? `${firstName} ${lastName}` : firstName;
     return { message: `Hello, ${fullName}!` };
   }
 

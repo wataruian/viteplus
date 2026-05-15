@@ -4,8 +4,8 @@ import {
   trpcEndpoint,
   trpcPlaygroundUrl,
 } from '@lightproject/common/configs';
+import { assertIsCustomRequest, assertIsCustomResponse, isError } from './types/middlware';
 import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
-import type { ExpressRequestHandler } from './types/middlware';
 import { build } from './utils/autogen';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
@@ -28,7 +28,10 @@ const createApp = async (shouldAutogen = false) => {
     try {
       await build();
     } catch (error) {
-      logger.error('Error in autogen script:', error as Record<string, unknown>);
+      logger.error(
+        'Error in autogen script:',
+        error instanceof Error ? { message: error.message, stack: error.stack } : { error },
+      );
       globalThis.process.exit(1);
     }
   }
@@ -39,8 +42,8 @@ const createApp = async (shouldAutogen = false) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cors(corsOptions));
 
-  app.use(initializeRequest as ExpressRequestHandler);
-  app.use(gatewayMiddleware as ExpressRequestHandler);
+  app.use(initializeRequest);
+  app.use(gatewayMiddleware);
 
   app.set('trust proxy', true);
   app.use(trustProxyMiddleware);
@@ -51,17 +54,30 @@ const createApp = async (shouldAutogen = false) => {
   registerTrpcRoutes(app, trpcEndpoint);
 
   if (isLocal()) {
-    trpcPlayground(app).catch((error) => {
-      logger.error('Failed to initialize tRPC Playground:', error);
+    trpcPlayground(app).catch((error: unknown) => {
+      logger.error(
+        'Failed to initialize tRPC Playground:',
+        error instanceof Error ? { message: error.message, stack: error.stack } : { error },
+      );
     });
     logger.info(`🧪 tRPC Playground: ${trpcPlaygroundUrl}`);
     swaggerOpenApiMiddleware(app);
     logger.info(`📚 Swagger UI: ${docsUrl}`);
   }
 
-  app.use(notFoundHandler);
+  app.use(notFoundHandler as express.RequestHandler);
 
-  app.use(errorHandler as unknown as ExpressRequestHandler);
+  app.use(
+    (err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (isError(err)) {
+        assertIsCustomRequest(req);
+        assertIsCustomResponse(res);
+        errorHandler(err, req, res, next);
+      } else {
+        next(err);
+      }
+    },
+  );
 
   return app;
 };

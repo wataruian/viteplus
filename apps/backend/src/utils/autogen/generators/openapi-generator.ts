@@ -68,24 +68,11 @@ const exampleValues = {
   stringValue: 'ABC',
 } as const;
 
-const generateMethodDescription = (
-  methodName?: string,
-  serviceClass?: string,
-): string | undefined => {
-  if (!(methodName && serviceClass)) {
-    return;
-  }
-
-  const service = serviceClass.replace('Service', '');
-
+const getActionDescription = (methodName: string, service: string): string | undefined => {
   const GetPrefixLength = 3;
   const CreateAddPrefixLength = 6;
   const UpdateEditPrefixLength = 6;
   const DeleteRemovePrefixLength = 6;
-
-  if (methodName === 'root') {
-    return `Get ${service} service status and basic information`;
-  }
 
   if (methodName.startsWith('get')) {
     const resource = methodName.slice(GetPrefixLength);
@@ -107,6 +94,10 @@ const generateMethodDescription = (
     return `Delete ${resource.toLowerCase()} from ${service}`;
   }
 
+  return undefined;
+};
+
+const getSpecialDescription = (methodName: string): string | undefined => {
   if (methodName.includes('Success')) {
     return `Execute ${methodName.replace('Success', '')} operation successfully`;
   }
@@ -123,23 +114,41 @@ const generateMethodDescription = (
     return 'Test and validate various parameter types and structures';
   }
 
-  if (methodName === 'mixedParams') {
-    return 'Process mixed parameter types including primitives, objects, and arrays';
+  const exactMatches: Record<string, string> = {
+    mixedParams: 'Process mixed parameter types including primitives, objects, and arrays',
+    objectDestructured: 'Process destructured object parameters',
+    objectOnly: 'Process object-only parameters with optional properties',
+    primitivesAndArray: 'Process primitive parameters and array data',
+  };
+
+  return exactMatches[methodName];
+};
+
+const generateMethodDescription = (
+  methodName?: string,
+  serviceClass?: string,
+): string | undefined => {
+  if (
+    methodName === undefined ||
+    serviceClass === undefined ||
+    methodName === '' ||
+    serviceClass === ''
+  ) {
+    return undefined;
   }
 
-  if (methodName === 'objectOnly') {
-    return 'Process object-only parameters with optional properties';
+  const service = serviceClass.replace('Service', '');
+
+  if (methodName === 'root') {
+    return `Get ${service} service status and basic information`;
   }
 
-  if (methodName === 'objectDestructured') {
-    return 'Process destructured object parameters';
+  const actionDesc = getActionDescription(methodName, service);
+  if (actionDesc !== undefined) {
+    return actionDesc;
   }
 
-  if (methodName === 'primitivesAndArray') {
-    return 'Process primitive parameters and array data';
-  }
-
-  return undefined;
+  return getSpecialDescription(methodName);
 };
 
 const getDefaultResponseSchema = (): OpenApiSchema => ({
@@ -163,7 +172,7 @@ const getDefaultResponseSchema = (): OpenApiSchema => ({
 const generateOperationTags = (route: RouteInfo): string[] => {
   const tags: string[] = [];
 
-  if (route.serviceClass) {
+  if (route.serviceClass !== undefined && route.serviceClass !== '') {
     tags.push(route.serviceClass.replace('Service', ''));
   }
 
@@ -173,8 +182,8 @@ const generateOperationTags = (route: RouteInfo): string[] => {
 };
 
 const generateOperationSummary = (route: RouteInfo): string => {
-  const serviceName = route.serviceClass?.replace('Service', '') || 'Unknown';
-  const methodName = route.serviceMethod || 'unknown';
+  const serviceName = route.serviceClass?.replace('Service', '') ?? 'Unknown';
+  const methodName = route.serviceMethod ?? 'unknown';
 
   if (route.requestType === 'tRPC') {
     const procedureType = route.type === 'mutation' ? 'Mutation' : 'Query';
@@ -346,7 +355,7 @@ const convertParametersToRequestBodySchema = (params: ParameterMetadata[]): Open
 };
 
 const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
-  if (!methodName) {
+  if (methodName === undefined || methodName === '') {
     return getDefaultResponseSchema();
   }
 
@@ -566,18 +575,23 @@ const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> =>
 const generateOperationDescription = (route: RouteInfo): string => {
   const enhancedDescription = generateMethodDescription(route.serviceMethod, route.serviceClass);
 
-  if (enhancedDescription) {
+  if (enhancedDescription !== undefined && enhancedDescription !== '') {
     return enhancedDescription;
   }
 
   const parts: string[] = [];
 
-  if (route.serviceClass && route.serviceMethod) {
+  if (
+    route.serviceClass !== undefined &&
+    route.serviceClass !== '' &&
+    route.serviceMethod !== undefined &&
+    route.serviceMethod !== ''
+  ) {
     parts.push(`Calls ${route.serviceClass}.${route.serviceMethod}()`);
   }
 
   if (route.requestType === 'tRPC') {
-    parts.push(`tRPC ${route.type || 'query'} procedure`);
+    parts.push(`tRPC ${route.type ?? 'query'} procedure`);
   } else {
     parts.push('HTTP endpoint');
   }
@@ -593,8 +607,8 @@ const generateOperation = (route: RouteInfo): OpenApiOperation => {
     tags: generateOperationTags(route),
   };
 
-  if (route.input && route.input.length > 0) {
-    const method = (route.method || 'get').toLowerCase();
+  if (route.input !== undefined && route.input.length > 0) {
+    const method = (route.method ?? 'get').toLowerCase();
 
     if (['delete', 'get', 'head'].includes(method)) {
       operation.parameters = route.input.map((param) => convertToQueryParameter(param));
@@ -623,9 +637,7 @@ const groupRoutesByPath = (routes: RouteInfo[]): Record<string, RouteInfo[]> => 
       normalizedPath = `/${normalizedPath}`;
     }
 
-    if (!groups[normalizedPath]) {
-      groups[normalizedPath] = [];
-    }
+    groups[normalizedPath] ??= [];
 
     groups[normalizedPath]?.push(route);
   }
@@ -674,7 +686,7 @@ const generateOpenApiSpec = (
     spec.paths[path] = {};
 
     for (const route of pathRoutes) {
-      const method = (route.method || 'get').toLowerCase();
+      const method = (route.method ?? 'get').toLowerCase();
       const operation = generateOperation(route);
 
       spec.paths[path][method] = operation;

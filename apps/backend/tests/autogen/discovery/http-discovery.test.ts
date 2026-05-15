@@ -33,11 +33,9 @@ describe('HTTP Discovery', () => {
       expect(route).toHaveProperty('serviceClass');
       expect(route).toHaveProperty('serviceMethod');
 
-      if (route) {
-        expect(typeof route.handlerFilePath).toBe('string');
-        expect(typeof route.path).toBe('string');
-        // serviceClass and serviceMethod can be undefined for non-service routes
-      }
+      expect(typeof route.handlerFilePath).toBe('string');
+      expect(typeof route.path).toBe('string');
+      // serviceClass and serviceMethod can be undefined for non-service routes
     });
 
     it('should find default route', async () => {
@@ -45,7 +43,9 @@ describe('HTTP Discovery', () => {
       const defaultRoute = routes.find((r) => r.path === '/');
 
       expect(defaultRoute).toBeDefined();
-      expect(defaultRoute?.serviceClass).toBe('DefaultService');
+      if (defaultRoute !== undefined) {
+        expect(defaultRoute.serviceClass).toBe('DefaultService');
+      }
     });
 
     it('should find test routes', async () => {
@@ -57,21 +57,29 @@ describe('HTTP Discovery', () => {
       // Check specific test routes
       const asyncSuccessRoute = testRoutes.find((r) => r.path === '/test/async-success');
       expect(asyncSuccessRoute).toBeDefined();
-      expect(asyncSuccessRoute?.serviceClass).toBe('TestService');
-      expect(asyncSuccessRoute?.serviceMethod).toBe('asyncSuccess');
+      if (asyncSuccessRoute !== undefined) {
+        expect(asyncSuccessRoute.serviceClass).toBe('TestService');
+        expect(asyncSuccessRoute.serviceMethod).toBe('asyncSuccess');
+      }
     });
 
     it('should extract service information correctly', async () => {
       const routes = await getHttpRoutes();
 
       // Find routes with service information
-      const serviceRoutes = routes.filter((r) => r.serviceClass && r.serviceMethod);
+      const serviceRoutes = routes.filter(
+        (r) =>
+          r.serviceClass !== undefined &&
+          r.serviceClass !== '' &&
+          r.serviceMethod !== undefined &&
+          r.serviceMethod !== '',
+      );
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
       // Verify service naming convention
       for (const route of serviceRoutes) {
         expect(route.serviceClass).toMatch(/Service$/);
-        expect(route.serviceMethod).toBeTruthy();
+        expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
       }
     });
 
@@ -99,7 +107,7 @@ describe('HTTP Discovery', () => {
 
       for (const route of routes) {
         expect(route.handlerFilePath).toBeDefined();
-        if (route.handlerFilePath) {
+        if (route.handlerFilePath !== undefined && route.handlerFilePath !== '') {
           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
           expect(route.handlerFilePath).toMatch(/\.ts$/);
         }

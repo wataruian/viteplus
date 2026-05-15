@@ -23,7 +23,12 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
         const fileRoutes = extractTrpcRoutesFromFile(filePath, routerPrefix);
 
         const routePromises = fileRoutes.map(async (route) => {
-          if (!(route.serviceClass && route.serviceMethod)) {
+          if (
+            route.serviceClass === undefined ||
+            route.serviceMethod === undefined ||
+            route.serviceClass === '' ||
+            route.serviceMethod === ''
+          ) {
             return null;
           }
 
@@ -32,7 +37,7 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             route.serviceMethod,
           );
 
-          const type: 'mutation' | 'query' = route.procedureType || 'query';
+          const type: 'mutation' | 'query' = route.procedureType ?? 'query';
           const method = type === 'mutation' ? 'post' : 'get';
 
           return {

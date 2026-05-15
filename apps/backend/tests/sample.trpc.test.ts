@@ -7,7 +7,7 @@ import { trpcEndpoint } from '@lightproject/common/configs';
 const makeRequest = async ({ input = {}, path, type }: MakeTrcpRequestOptions) => {
   const method = type === 'query' ? 'get' : 'post';
 
-  if (path === undefined || path === null) {
+  if (path === undefined) {
     throw new Error('Path is required');
   }
 
@@ -25,14 +25,14 @@ const makeRequest = async ({ input = {}, path, type }: MakeTrcpRequestOptions) =
   req.buffer(true);
 
   if (method === 'get') {
-    if (input && Object.keys(input).length > 0) {
-      req.query({ input: transformer.stringify(input ?? {}) });
+    if (Object.keys(input).length > 0) {
+      req.query({ input: transformer.stringify(input) });
     }
   } else {
-    req.send({ json: input ?? {} });
+    req.send({ json: input });
   }
 
-  return await Promise.resolve(req);
+  return req;
 };
 
 const cases: Record<string, TrpcTestCase[]> = {
@@ -227,39 +227,47 @@ const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
 
       expect(response.status).toBe(expected.code);
 
-      const body = response?.body;
-      if (body) {
-        expect(typeof body).toBe('object');
+      const body = response.body as unknown;
+      if (typeof body !== 'object' || body === null) {
+        throw new Error('Response body is not an object');
       }
 
-      const result = body?.result;
+      const result = Reflect.get(body, 'result') as unknown;
       if (expected.success) {
         expect(result).toBeDefined();
       }
 
-      const resultData = result?.data;
-      if (resultData) {
-        expect(typeof resultData).toBe('object');
-      }
+      if (typeof result === 'object' && result !== null) {
+        const resultData = Reflect.get(result, 'data') as unknown;
+        if (typeof resultData === 'object' && resultData !== null) {
+          const jsonData = Reflect.get(resultData, 'json') as unknown;
+          if (typeof jsonData === 'object' && jsonData !== null) {
+            expect(jsonData).toMatchObject({
+              code: expected.code,
+              message: expected.message,
+              success: expected.success,
+            });
 
-      const jsonData = resultData?.json;
-      if (jsonData) {
-        expect(jsonData).toMatchObject({
-          code: expected.code,
-          message: expected.message,
-          success: expected.success,
-        });
+            const jsonDataData = Reflect.get(jsonData, 'data') as unknown;
+            if (
+              jsonDataData !== undefined &&
+              jsonDataData !== null &&
+              expected.data !== undefined &&
+              expected.data !== null
+            ) {
+              expect(jsonDataData).toMatchObject(expected.data as object);
+            }
 
-        if (jsonData.data && expected.data) {
-          expect(jsonData.data).toMatchObject(expected.data);
-        }
+            const jsonDataError = Reflect.get(jsonData, 'error') as unknown;
+            if (jsonDataError !== undefined && jsonDataError !== null) {
+              expect(typeof jsonDataError).toBe('object');
+            }
 
-        if (jsonData.error) {
-          expect(typeof jsonData.error).toBe('object');
-        }
-
-        if (jsonData.sessionId) {
-          expect(typeof jsonData.sessionId).toBe('string');
+            const jsonDataSessionId = Reflect.get(jsonData, 'sessionId') as unknown;
+            if (jsonDataSessionId !== undefined && jsonDataSessionId !== null) {
+              expect(typeof jsonDataSessionId).toBe('string');
+            }
+          }
         }
       }
     });

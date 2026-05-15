@@ -5,7 +5,10 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
   try {
     await build();
   } catch (error) {
-    logger.error('Error in autogen script:', error as Record<string, unknown>);
+    logger.error(
+      'Error in autogen script:',
+      error instanceof Error ? { message: error.message, stack: error.stack } : { error },
+    );
     globalThis.process.exit(1);
   }
 }

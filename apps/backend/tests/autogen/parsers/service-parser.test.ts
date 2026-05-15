@@ -110,7 +110,7 @@ describe('Service Parser', () => {
       expect(metadata).toHaveProperty('serviceFilePath');
       expect(metadata).toHaveProperty('input');
 
-      if (metadata.serviceFilePath) {
+      if (metadata.serviceFilePath !== undefined && metadata.serviceFilePath !== '') {
         expect(metadata.serviceFilePath).toMatch(/default\.ts$/);
       }
     });
@@ -136,7 +136,7 @@ describe('Service Parser', () => {
       // Test with TestService hello method which should have parameters
       const metadata = await extractServiceMetadata('TestService', 'hello');
 
-      if (metadata.input && metadata.input.length > 0) {
+      if (metadata.input !== undefined && metadata.input.length > 0) {
         const [param] = metadata.input;
         expect(param).toHaveProperty('name');
         expect(param).toHaveProperty('type');
@@ -150,7 +150,10 @@ describe('Service Parser', () => {
       const serviceNames = ['DefaultService', 'TestService'];
 
       const results = await Promise.all(
-        serviceNames.map((serviceName) => extractServiceMetadata(serviceName, 'root')),
+        serviceNames.map(async (serviceName) => {
+          const metadata = await extractServiceMetadata(serviceName, 'root');
+          return metadata;
+        }),
       );
 
       for (const metadata of results) {
@@ -170,13 +173,16 @@ describe('Service Parser', () => {
       ];
 
       const results = await Promise.all(
-        testMethods.map((method) => extractServiceMetadata('TestService', method)),
+        testMethods.map(async (method) => {
+          const metadata = await extractServiceMetadata('TestService', method);
+          return metadata;
+        }),
       );
 
       for (const metadata of results) {
         expect(metadata).toBeDefined();
 
-        if (metadata.serviceFilePath) {
+        if (metadata.serviceFilePath !== undefined && metadata.serviceFilePath !== '') {
           expect(metadata.serviceFilePath).toMatch(/test\.ts$/);
         }
       }

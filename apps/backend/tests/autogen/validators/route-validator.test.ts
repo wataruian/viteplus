@@ -39,10 +39,11 @@ describe('RouteValidator', () => {
     it('should report errors for missing required fields', () => {
       const routes: RouteInfo[] = [
         {
-          // Missing path - not setting the property at all makes it undefined
+          // Missing path - using empty string triggers the error while remaining type-safe
           handlerFilePath: '/path/to/handler.ts',
+          path: '',
           requestType: 'HTTP',
-        } as RouteInfo,
+        },
         createMockRoute({
           requestType: '', // Missing request type
         }),
@@ -339,9 +340,10 @@ describe('RouteValidator', () => {
         {
           // Missing path completely to trigger error
           handlerFilePath: '/path/to/handler.ts',
+          path: '',
           requestType: 'HTTP',
           serviceMethod: 'InvalidMethodName', // Warning
-        } as RouteInfo,
+        },
       ];
 
       const result = validator.validate(routes);
@@ -390,10 +392,11 @@ describe('RouteValidator', () => {
         {
           // Missing path completely to trigger structure error
           handlerFilePath: '/path/to/handler.ts',
+          path: '',
           requestType: 'HTTP',
           serviceClass: 'invalid', // naming error
           serviceFilePath: '/wrong/path/test.ts', // structure error
-        } as RouteInfo,
+        },
       ];
 
       const result = validateRoutes(routes);

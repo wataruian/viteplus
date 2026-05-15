@@ -6,21 +6,24 @@ import { safeSerialize } from '@lightproject/common/utils';
 
 const responseHandler = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    if (!req.locals?.metadata?.error && res.statusCode < 400) {
+    if (
+      (req.locals.metadata.error === undefined || req.locals.metadata.error === null) &&
+      res.statusCode < 400
+    ) {
       const endTime = Date.now();
-      const startTime = req.locals?.metadata?.startTime;
-      const duration = startTime ? endTime - startTime : undefined;
+      const { startTime } = req.locals.metadata;
+      const duration = startTime === 0 ? undefined : endTime - startTime;
 
-      const responseBody = res.locals.responseBody || undefined;
+      const responseBody = res.locals.responseBody ?? undefined;
 
       const metadata: Record<string, unknown> = {
         ...req.locals.metadata,
-        body: loggingOptions.logBody ? safeSerialize(req.body) : undefined,
+        body: loggingOptions.logBody === true ? safeSerialize(req.body) : undefined,
         duration,
         endTime,
-        headers: loggingOptions.logHeaders ? safeSerialize(res.getHeaders()) : undefined,
-        params: loggingOptions.logParams ? safeSerialize(req.params) : undefined,
-        query: loggingOptions.logQuery ? safeSerialize(req.query) : undefined,
+        headers: loggingOptions.logHeaders === true ? safeSerialize(res.getHeaders()) : undefined,
+        params: loggingOptions.logParams === true ? safeSerialize(req.params) : undefined,
+        query: loggingOptions.logQuery === true ? safeSerialize(req.query) : undefined,
         responseBody,
         source: 'responseHandler',
         statusCode: res.statusCode,
@@ -42,9 +45,8 @@ const responseHandler = (req: Request, res: Response, next: NextFunction): void 
       next();
     } else if (
       isTrpcEndpoint(req.originalUrl) &&
-      res.locals &&
-      req.locals.metadata &&
-      req.locals.metadata.error
+      req.locals.metadata.error !== undefined &&
+      req.locals.metadata.error !== null
     ) {
       next(req.locals.metadata.error);
     }

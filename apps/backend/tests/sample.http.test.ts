@@ -13,15 +13,13 @@ const makeRequest = async ({ endpoint, input = {}, method = 'get' }: MakeHttpReq
 
   const req = request(await app)[method](normalizedEndpoint);
 
-  if (method !== 'get' && input) {
+  if (method === 'get') {
+    req.query(input);
+  } else {
     req.send(input);
   }
 
-  if (method === 'get' && input) {
-    req.query(input);
-  }
-
-  return await Promise.resolve(req);
+  return req;
 };
 
 const cases: Record<string, HttpTestCase[]> = {
@@ -202,7 +200,7 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
   });
 
   for (const testCase of testCases) {
-    const { endpoint, expected, method = 'get' } = testCase;
+    const { endpoint, expected, method } = testCase;
     const input = testCase.input ?? {};
 
     it(`should handle ${method.toUpperCase()} ${endpoint}`, async () => {
@@ -213,22 +211,27 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
       });
 
       expect(response.status).toBe(expected.code);
-      expect(response.body).toMatchObject({
+      const body = response.body as unknown;
+      if (typeof body !== 'object' || body === null) {
+        throw new Error('Response body is not an object');
+      }
+
+      expect(body).toMatchObject({
         code: expected.code,
         message: expected.message,
         success: expected.success,
       });
 
-      if ('data' in expected) {
-        expect(response.body.data).toEqual(expect.objectContaining(expected.data as object));
+      if ('data' in expected && expected.data !== undefined && expected.data !== null) {
+        expect(Reflect.get(body, 'data')).toEqual(expect.objectContaining(expected.data as object));
       }
 
-      if ('error' in expected) {
-        expect(response.body.error).toMatchObject(expected.error as object);
+      if ('error' in expected && expected.error !== undefined && expected.error !== null) {
+        expect(Reflect.get(body, 'error')).toMatchObject(expected.error as object);
       }
 
       if ('sessionId' in expected) {
-        expect(typeof response.body.sessionId).toBe('string');
+        expect(typeof Reflect.get(body, 'sessionId')).toBe('string');
       }
     });
   }
