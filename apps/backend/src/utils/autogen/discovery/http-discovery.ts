@@ -113,7 +113,18 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
       return;
     }
 
-    await processRouteProperties(exportAssignment.getExpression(), handlerFilePath, routes);
+    let expression = exportAssignment.getExpression();
+    if (Node.isIdentifier(expression)) {
+      const varDecl = handlerFile.getVariableDeclaration(expression.getText());
+      if (varDecl) {
+        const init = varDecl.getInitializer();
+        if (init) {
+          expression = init;
+        }
+      }
+    }
+
+    await processRouteProperties(expression, handlerFilePath, routes);
   });
 
   await Promise.all(discoveryPromises);

@@ -102,12 +102,13 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
 
   if (!isValidEndpoint) {
     const statusCode = 404;
-    const error = {
-      message: 'Not Found',
+    const error = new Error('Not Found');
+
+    Object.assign(error, {
       name: 'NotFoundError',
       stack: 'No stack trace available',
       statusCode,
-    };
+    });
     res.status(statusCode);
     next(error);
   }

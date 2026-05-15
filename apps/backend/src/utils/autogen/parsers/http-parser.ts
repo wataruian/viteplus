@@ -41,7 +41,18 @@ const extractHttpServiceMethod = (handlerFilePath: string, path: string): string
     }
 
     const [exportAssignment] = exportAssignments;
-    const expression = exportAssignment.getExpression();
+    let expression = exportAssignment.getExpression();
+
+    if (Node.isIdentifier(expression)) {
+      const varDecl = sourceFile.getVariableDeclaration(expression.getText());
+      if (varDecl) {
+        const init = varDecl.getInitializer();
+        if (init) {
+          expression = init;
+        }
+      }
+    }
+
     if (!Node.isObjectLiteralExpression(expression)) {
       return undefined;
     }

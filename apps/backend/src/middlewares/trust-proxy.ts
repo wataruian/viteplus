@@ -54,19 +54,19 @@ const handleAccessDenied = (
   next: ExpressNextFunction,
 ) => {
   const statusCode = 403;
-  const error = {
-    message: 'Access denied',
+  const error = new Error('Access denied');
+  Object.assign(error, {
     name: 'AccessDeniedError',
     stack: 'No stack trace available',
     statusCode,
-  };
+  });
 
   res.status(statusCode);
 
   if (isTrpcEndpoint(req.originalUrl)) {
     assertIsCustomRequest(req);
     assertIsCustomResponse(res);
-    errorHandler(new Error(JSON.stringify(error)), req, res, next);
+    errorHandler(error, req, res, next);
   } else {
     next(error);
   }
