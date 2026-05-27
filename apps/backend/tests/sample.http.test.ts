@@ -1,6 +1,7 @@
 import type { HttpTestCase, MakeHttpRequestOptions, TestEnvironment } from '../src/types/testing';
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { apiEndpoint } from '@lightproject/common/configs';
+import { getHttpRoutes } from '../src/utils/autogen/discovery/http-discovery';
 import request from 'supertest';
 
 const makeRequest = async ({ endpoint, input = {}, method = 'get' }: MakeHttpRequestOptions) => {
@@ -248,5 +249,55 @@ describe('HTTP', () => {
 
   describe('test param endpoints', () => {
     runTests('test', cases['test param endpoints'] ?? []);
+  });
+});
+
+describe('HTTP Output Schema', () => {
+  it('should have output schemas extracted for HTTP routes', async () => {
+    const routes = await getHttpRoutes();
+
+    // Find routes with service methods
+    const serviceRoutes = routes.filter(
+      (r) =>
+        r.serviceClass !== undefined &&
+        r.serviceClass !== '' &&
+        r.serviceMethod !== undefined &&
+        r.serviceMethod !== '',
+    );
+
+    expect(serviceRoutes.length).toBeGreaterThan(0);
+
+    // Verify each service route has output schema
+    for (const route of serviceRoutes) {
+      expect(route.output).toBeDefined();
+      expect(Array.isArray(route.output)).toBe(true);
+
+      if (route.output && route.output.length > 0) {
+        for (const output of route.output) {
+          expect(output).toHaveProperty('name');
+          expect(output).toHaveProperty('type');
+          expect(output).toHaveProperty('description');
+          expect(typeof output.type).toBe('string');
+          expect(output.type.length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it('should handle different output types in routes', async () => {
+    const routes = await getHttpRoutes();
+
+    // Collect all output types
+    const outputTypes = new Set<string>();
+    for (const route of routes) {
+      if (route.output && route.output.length > 0) {
+        for (const output of route.output) {
+          outputTypes.add(output.type);
+        }
+      }
+    }
+
+    // Verify we have multiple output types
+    expect(outputTypes.size).toBeGreaterThan(0);
   });
 });

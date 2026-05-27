@@ -1,12 +1,8 @@
-import { type MethodDeclaration, type Node, SyntaxKind } from 'ts-morph';
+import { type MethodDeclaration, type Node, type ReturnStatement, SyntaxKind } from 'ts-morph';
 import type { ParameterInfo, ParameterMetadata, ServiceConstructor } from '../types/parameter';
 import { isCallable, isRecord } from '../validators/validate';
 import { extractParamNamesAndDefaults } from './invoker';
 
-/**
- * Extract JSDoc description for a parameter from the method's JSDoc
- * Parses @param tags to find documentation for specific parameters
- */
 const extractJsDocDescription = (
   methodDecl: MethodDeclaration,
   paramName: string,
@@ -34,10 +30,6 @@ const extractJsDocDescription = (
   return undefined;
 };
 
-/**
- * Extract default value from AST initializer node
- * Handles: primitives, objects, arrays, booleans
- */
 const extractDefaultValue = (
   initializer: Node | undefined,
 ): boolean | number | string | undefined | unknown[] => {
@@ -79,10 +71,118 @@ const extractDefaultValue = (
   return initializer.getText();
 };
 
-/**
- * Fallback to AST-only parameter extraction if invoker fails
- * This maintains backward compatibility but loses runtime consistency guarantee
- */
+const extractReturnTypeDescription = (methodDecl: MethodDeclaration): string | undefined => {
+  const jsDocs = methodDecl.getJsDocs();
+
+  if (jsDocs.length === 0) {
+    return undefined;
+  }
+
+  for (const jsDoc of jsDocs) {
+    const tags = jsDoc.getTags();
+    for (const tag of tags) {
+      const tagName = tag.getTagName();
+      if (tagName === 'returns' || tagName === 'return') {
+        const tagText = tag.getText();
+        const match = /@returns?\s+(?:\{[^}]+\}\s+)?(.+)/.exec(tagText);
+        const matchValue = match?.[1];
+        const trimmedValue = matchValue?.trim();
+        if (trimmedValue !== undefined && trimmedValue !== '') {
+          return trimmedValue;
+        }
+      }
+    }
+  }
+
+  return undefined;
+};
+
+const extractReturnTypeMetadata = (methodDecl: MethodDeclaration): ParameterMetadata[] => {
+  const methodName = methodDecl.getName();
+  if (methodName.includes('Fail') || methodName.includes('Reject')) {
+    return [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'error',
+        required: true,
+        type: '{ message: string; name: string; stack: string; statusCode: number; }',
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'message',
+        required: true,
+        type: 'string',
+      },
+    ];
+  }
+
+  let returnType = methodDecl.getReturnType();
+  const returnTypeText = returnType.getText();
+
+  if (returnType.isUnknown() && methodDecl.isAsync()) {
+    const returnStmt = methodDecl
+      .getDescendantsOfKind(SyntaxKind.ReturnStatement)
+      .find((s): s is ReturnStatement => s.getExpression() !== undefined);
+    const returnExpr = returnStmt?.getExpression();
+    if (returnExpr !== undefined) {
+      returnType = returnExpr.getType();
+    }
+  }
+
+  if (returnTypeText.startsWith('Promise<')) {
+    const typeArgs = returnType.getTypeArguments();
+    if (typeArgs.length > 0) {
+      const [firstArg] = typeArgs;
+      returnType = firstArg;
+    }
+
+    if (returnType.getText() === 'unknown' || returnType.getText().startsWith('Promise<')) {
+      const returnStmt = methodDecl
+        .getDescendantsOfKind(SyntaxKind.ReturnStatement)
+        .find((s): s is ReturnStatement => s.getExpression() !== undefined);
+      const returnExpr = returnStmt?.getExpression();
+      if (returnExpr !== undefined) {
+        returnType = returnExpr.getType();
+      }
+    }
+  }
+
+  const isObjectLiteral =
+    returnType.isObject() &&
+    !returnType.isArray() &&
+    !returnType.isVoid() &&
+    returnType.getText() !== 'void' &&
+    !returnType.getText().startsWith('Array<') &&
+    !returnType.getText().endsWith('[]');
+
+  if (isObjectLiteral) {
+    const props = returnType.getProperties();
+    if (props.length > 0) {
+      return props.map((prop) => {
+        const name = prop.getName();
+        const typeAtLoc = returnType.getProperty(name)?.getTypeAtLocation(methodDecl);
+        return {
+          defaultValue: undefined,
+          description: undefined,
+          name,
+          required: !prop.isOptional(),
+          type: typeAtLoc?.getText() ?? 'unknown',
+        };
+      });
+    }
+  }
+
+  return [
+    {
+      description: extractReturnTypeDescription(methodDecl),
+      name: 'output',
+      type: returnType.getText(),
+    },
+  ];
+};
+
 const fallbackToAstOnly = (methodDecl: MethodDeclaration): ParameterMetadata[] =>
   methodDecl.getParameters().map((param) => ({
     defaultValue: extractDefaultValue(param.getInitializer()),
@@ -94,17 +194,6 @@ const fallbackToAstOnly = (methodDecl: MethodDeclaration): ParameterMetadata[] =
 
 const isServiceConstructor = (val: unknown): val is ServiceConstructor => typeof val === 'function';
 
-/**
- * Extract parameter metadata using hybrid approach:
- * - Invoker for parameter names (ensures runtime consistency)
- * - AST for type information, optional markers, defaults, JSDoc
- *
- * @param methodDecl - The ts-morph method declaration node
- * @param serviceFilePath - Path to the service file
- * @param serviceClassName - Name of the service class
- * @param methodName - Name of the method
- * @returns Array of parameter metadata
- */
 const extractParameterMetadata = async (
   methodDecl: MethodDeclaration,
   serviceFilePath: string,
@@ -166,6 +255,8 @@ const extractParameterMetadata = async (
 
 export {
   extractJsDocDescription,
+  extractReturnTypeDescription,
+  extractReturnTypeMetadata,
   isServiceConstructor,
   extractDefaultValue,
   fallbackToAstOnly,

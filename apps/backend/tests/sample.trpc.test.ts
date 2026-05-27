@@ -1,5 +1,6 @@
 import type { MakeTrcpRequestOptions, TestEnvironment, TrpcTestCase } from '../src/types/testing';
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+import { getTrpcRoutes } from '../src/utils/autogen/discovery/trpc-discovery';
 import request from 'supertest';
 import { transformer } from '../src/utils/trpc';
 import { trpcEndpoint } from '@lightproject/common/configs';
@@ -285,5 +286,55 @@ describe('tRPC', () => {
 
   describe('test param endpoints', () => {
     runTests('test', cases['test param endpoints'] ?? []);
+  });
+});
+
+describe('tRPC Output Schema', () => {
+  it('should have output schemas extracted for tRPC routes', async () => {
+    const routes = await getTrpcRoutes();
+
+    // Find routes with service methods
+    const serviceRoutes = routes.filter(
+      (r) =>
+        r.serviceClass !== undefined &&
+        r.serviceClass !== '' &&
+        r.serviceMethod !== undefined &&
+        r.serviceMethod !== '',
+    );
+
+    expect(serviceRoutes.length).toBeGreaterThan(0);
+
+    // Verify each service route has output schema
+    for (const route of serviceRoutes) {
+      expect(route.output).toBeDefined();
+      expect(Array.isArray(route.output)).toBe(true);
+
+      if (route.output && route.output.length > 0) {
+        for (const output of route.output) {
+          expect(output).toHaveProperty('name');
+          expect(output).toHaveProperty('type');
+          expect(output).toHaveProperty('description');
+          expect(typeof output.type).toBe('string');
+          expect(output.type.length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it('should handle different output types in tRPC routes', async () => {
+    const routes = await getTrpcRoutes();
+
+    // Collect all output types
+    const outputTypes = new Set<string>();
+    for (const route of routes) {
+      if (route.output && route.output.length > 0) {
+        for (const output of route.output) {
+          outputTypes.add(output.type);
+        }
+      }
+    }
+
+    // Verify we have multiple output types
+    expect(outputTypes.size).toBeGreaterThan(0);
   });
 });

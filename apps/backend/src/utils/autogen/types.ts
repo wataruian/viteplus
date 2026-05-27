@@ -23,6 +23,7 @@ interface RouteInfo {
 
 interface ServiceMetadata {
   input: ParameterMetadata[] | undefined;
+  output: ParameterMetadata[] | undefined;
   serviceFilePath: string | undefined;
 }
 

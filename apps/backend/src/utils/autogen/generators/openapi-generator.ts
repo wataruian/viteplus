@@ -326,7 +326,7 @@ const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchem
 const convertToQueryParameter = (param: ParameterMetadata): OpenApiParameter => ({
   in: 'query',
   name: param.name,
-  required: param.required,
+  required: param.required ?? false,
   schema: convertTypeToSchema(param.type, param.defaultValue),
 });
 
@@ -337,7 +337,7 @@ const convertParametersToRequestBodySchema = (params: ParameterMetadata[]): Open
   for (const param of params) {
     properties[param.name] = convertTypeToSchema(param.type, param.defaultValue);
 
-    if (param.required) {
+    if (param.required !== undefined && param.required) {
       required.push(param.name);
     }
   }
@@ -619,7 +619,7 @@ const generateOperation = (route: RouteInfo): OpenApiOperation => {
             schema: convertParametersToRequestBodySchema(route.input),
           },
         },
-        required: route.input.some((p) => p.required),
+        required: route.input.some((p) => p.required !== undefined && p.required),
       };
     }
   }

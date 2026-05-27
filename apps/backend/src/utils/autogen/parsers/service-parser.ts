@@ -1,7 +1,7 @@
+import { extractParameterMetadata, extractReturnTypeMetadata } from '@lightproject/common/utils';
 import { getProject, servicesDir } from '../config';
 import type { ServiceMetadata } from '../types';
 import type { SourceFile } from 'ts-morph';
-import { extractParameterMetadata } from '@lightproject/common/utils';
 
 const extractServiceMetadata = async (
   serviceClass: string | undefined,
@@ -13,7 +13,7 @@ const extractServiceMetadata = async (
     serviceClass === '' ||
     serviceMethod === ''
   ) {
-    return { input: undefined, serviceFilePath: undefined };
+    return { input: undefined, output: undefined, serviceFilePath: undefined };
   }
 
   const project = getProject();
@@ -22,7 +22,7 @@ const extractServiceMetadata = async (
     .find((sf) => sf.getClass(serviceClass));
 
   if (!serviceFile) {
-    return { input: undefined, serviceFilePath: undefined };
+    return { input: undefined, output: undefined, serviceFilePath: undefined };
   }
 
   const serviceFilePath = serviceFile.getFilePath();
@@ -30,14 +30,16 @@ const extractServiceMetadata = async (
   const methodDecl = serviceClassDecl?.getMethod(serviceMethod);
 
   if (methodDecl === undefined || (serviceFilePath as string) === '') {
-    return { input: undefined, serviceFilePath };
+    return { input: undefined, output: undefined, serviceFilePath };
   }
 
   const input = await Promise.resolve(
     extractParameterMetadata(methodDecl, serviceFilePath, serviceClass, serviceMethod),
   );
 
-  return { input, serviceFilePath };
+  const output = extractReturnTypeMetadata(methodDecl);
+
+  return { input, output, serviceFilePath };
 };
 
 const toPascalCase = (str: string): string =>

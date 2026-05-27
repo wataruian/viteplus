@@ -12,7 +12,7 @@ interface ParameterMetadata extends ParameterInfo {
   defaultValue?: boolean | number | string | undefined | unknown[];
   description?: string | undefined;
   properties?: ParameterMetadata[] | undefined;
-  required: boolean;
+  required?: boolean | undefined;
   type: string;
 }
 

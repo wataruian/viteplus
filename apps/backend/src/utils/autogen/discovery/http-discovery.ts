@@ -63,19 +63,26 @@ const processRouteProperties = async (
     const serviceClass = getServiceNameFromHandlerFile(handlerFilePath);
     const serviceMethod = extractHttpServiceMethod(handlerFilePath, routePath);
 
-    const { input, serviceFilePath } = await extractServiceMetadata(serviceClass, serviceMethod);
+    const { input, output, serviceFilePath } = await extractServiceMetadata(
+      serviceClass,
+      serviceMethod,
+    );
 
-    return {
+    const returnValue = {
       handlerFilePath,
       input,
       method,
-      output: undefined,
+      output,
       path: routePath,
       requestType: 'HTTP',
       serviceClass,
       serviceFilePath,
       serviceMethod,
     } as RouteInfo;
+
+    globalThis.console.log('httpReturnValue', returnValue);
+
+    return returnValue;
   });
 
   const discoveredRoutes = await Promise.all(routePromises);

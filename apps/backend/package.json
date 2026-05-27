@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts"
+  },
   "dependencies": {
     "@lightproject/common": "workspace:*",
     "@trpc/client": "catalog:",
@@ -35,8 +38,6 @@
     "mock-express": "catalog:",
     "supertest": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:",
-    "vite-plugin-node": "catalog:",
     "vite-plus": "catalog:"
   }
 }

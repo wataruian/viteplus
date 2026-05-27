@@ -122,6 +122,15 @@ describe('Autogen Types', () => {
             type: 'number',
           },
         ],
+        output: [
+          {
+            defaultValue: undefined,
+            description: 'User profile data',
+            name: 'output',
+            required: true,
+            type: 'UserProfile',
+          },
+        ],
         serviceFilePath: '/path/to/service.ts',
       };
 
@@ -130,27 +139,41 @@ describe('Autogen Types', () => {
       expect(metadata.input?.[0]?.required).toBe(true);
       expect(metadata.input?.[1]?.name).toBe('age');
       expect(metadata.input?.[1]?.defaultValue).toBe(18);
+      expect(metadata.output).toHaveLength(1);
+      expect(metadata.output?.[0]?.type).toBe('UserProfile');
       expect(metadata.serviceFilePath).toBe('/path/to/service.ts');
     });
 
     it('should allow undefined input and service path', () => {
       const metadata: ServiceMetadata = {
         input: undefined,
+        output: undefined,
         serviceFilePath: undefined,
       };
 
       expect(metadata.input).toBeUndefined();
+      expect(metadata.output).toBeUndefined();
       expect(metadata.serviceFilePath).toBeUndefined();
     });
 
     it('should allow empty input array', () => {
       const metadata: ServiceMetadata = {
         input: [],
+        output: [
+          {
+            defaultValue: undefined,
+            description: undefined,
+            name: 'output',
+            required: true,
+            type: 'void',
+          },
+        ],
         serviceFilePath: '/path/to/service.ts',
       };
 
       expect(metadata.input).toEqual([]);
       expect(metadata.input).toHaveLength(0);
+      expect(metadata.output).toHaveLength(1);
     });
   });
 

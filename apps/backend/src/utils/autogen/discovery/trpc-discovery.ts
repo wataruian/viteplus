@@ -32,19 +32,20 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             return null;
           }
 
-          const { input: serviceInput, serviceFilePath } = await extractServiceMetadata(
-            route.serviceClass,
-            route.serviceMethod,
-          );
+          const {
+            input: serviceInput,
+            output,
+            serviceFilePath,
+          } = await extractServiceMetadata(route.serviceClass, route.serviceMethod);
 
           const type: 'mutation' | 'query' = route.procedureType ?? 'query';
           const method = type === 'mutation' ? 'post' : 'get';
 
-          return {
+          const returnValue = {
             handlerFilePath: filePath,
             input: serviceInput,
             method,
-            output: undefined, // @TODO: Extract output schema from AST
+            output,
             path: route.path,
             requestType: 'tRPC',
             serviceClass: route.serviceClass,
@@ -52,6 +53,10 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             serviceMethod: route.serviceMethod,
             type,
           } as RouteInfo;
+
+          globalThis.console.log('trpcReturnValue', returnValue);
+
+          return returnValue;
         });
 
         const discoveredRoutes = await Promise.all(routePromises);
