@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import fs from 'node:fs';
 import { getHttpRoutes } from '../../../src/utils/autogen/discovery/http-discovery';
+import { isRecord } from '@lightproject/common/validators';
 import path from 'node:path';
 import { projectDir } from '../../../src/utils/autogen/config';
 
@@ -9,7 +10,6 @@ describe('HTTP Discovery', () => {
     const httpRoutesDir = path.resolve(projectDir, 'src/routers/http/routes');
 
     beforeAll(() => {
-      // Ensure we have actual route files to test with
       if (!fs.existsSync(httpRoutesDir)) {
         throw new Error(`HTTP routes directory not found: ${httpRoutesDir}`);
       }
@@ -37,8 +37,41 @@ describe('HTTP Discovery', () => {
 
       expect(typeof route.handlerFilePath).toBe('string');
       expect(typeof route.path).toBe('string');
-      // serviceClass and serviceMethod can be undefined for non-service routes
-      // input and output can be undefined or an array
+
+      const inputSchema = isRecord(route) ? route.input : undefined;
+      if (Array.isArray(inputSchema)) {
+        for (const input of inputSchema) {
+          if (!isRecord(input)) {
+            continue;
+          }
+          expect(input).toHaveProperty('name');
+          expect(input).toHaveProperty('description');
+          expect(input).toHaveProperty('required');
+
+          const typeVal = input.type;
+          if (typeof typeVal === 'string') {
+            expect(typeVal.length).toBeGreaterThan(0);
+            expect(typeVal).not.toBe('unknown');
+          }
+        }
+      }
+
+      const outputSchema = isRecord(route) ? route.output : undefined;
+      if (Array.isArray(outputSchema)) {
+        for (const output of outputSchema) {
+          if (!isRecord(output)) {
+            continue;
+          }
+          expect(output).toHaveProperty('name');
+          expect(output).toHaveProperty('type');
+          expect(output).toHaveProperty('description');
+
+          const typeVal = output.type;
+          if (typeof typeVal === 'string') {
+            expect(typeVal).not.toBe('unknown');
+          }
+        }
+      }
     });
 
     it('should find default route', async () => {
@@ -57,7 +90,6 @@ describe('HTTP Discovery', () => {
 
       expect(testRoutes.length).toBeGreaterThan(0);
 
-      // Check specific test routes
       const asyncSuccessRoute = testRoutes.find((r) => r.path === '/test/async-success');
       expect(asyncSuccessRoute).toBeDefined();
       if (asyncSuccessRoute !== undefined) {
@@ -69,7 +101,6 @@ describe('HTTP Discovery', () => {
     it('should extract service information correctly', async () => {
       const routes = await getHttpRoutes();
 
-      // Find routes with service information
       const serviceRoutes = routes.filter(
         (r) =>
           r.serviceClass !== undefined &&
@@ -79,7 +110,6 @@ describe('HTTP Discovery', () => {
       );
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
-      // Verify service naming convention
       for (const route of serviceRoutes) {
         expect(route.serviceClass).toMatch(/Service$/);
         expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
@@ -89,11 +119,9 @@ describe('HTTP Discovery', () => {
     it('should extract output schema from service methods', async () => {
       const routes = await getHttpRoutes();
 
-      // Find routes with output schema
       const outputRoutes = routes.filter((r) => r.output !== undefined && r.output.length > 0);
       expect(outputRoutes.length).toBeGreaterThan(0);
 
-      // Verify output structure
       for (const route of outputRoutes) {
         expect(Array.isArray(route.output)).toBe(true);
         for (const output of route.output ?? []) {
@@ -108,8 +136,6 @@ describe('HTTP Discovery', () => {
     it('should handle different HTTP methods', async () => {
       const routes = await getHttpRoutes();
 
-      // Should have routes from different method types (GET, POST, etc.)
-      // The path structure doesn't directly indicate method, but we should have various routes
       expect(routes.length).toBeGreaterThan(5);
     });
 
@@ -119,7 +145,6 @@ describe('HTTP Discovery', () => {
 
       expect(nestedRoutes.length).toBeGreaterThan(0);
 
-      // Check for test subroutes
       const testSubroutes = routes.filter((r) => r.path.startsWith('/test/'));
       expect(testSubroutes.length).toBeGreaterThan(0);
     });
@@ -149,7 +174,6 @@ describe('HTTP Discovery', () => {
 
   describe('Error handling', () => {
     it('should handle missing routes directory gracefully', async () => {
-      // Mock fs.readdirSync to simulate missing directory
       const fsReaddirSyncSpy = vi.spyOn(fs, 'readdirSync');
       fsReaddirSyncSpy.mockImplementation(() => {
         throw new Error('ENOENT: no such file or directory');
@@ -157,10 +181,8 @@ describe('HTTP Discovery', () => {
 
       try {
         const routes = await getHttpRoutes();
-        // Should return empty array or handle gracefully
         expect(Array.isArray(routes)).toBe(true);
       } catch (error) {
-        // Should throw meaningful error
         expect(error).toBeInstanceOf(Error);
       } finally {
         fsReaddirSyncSpy.mockRestore();
@@ -168,8 +190,6 @@ describe('HTTP Discovery', () => {
     });
 
     it('should handle invalid TypeScript files', async () => {
-      // This test would require mocking the TypeScript project
-      // For now, we assume the discovery handles TS errors gracefully
       const routes = await getHttpRoutes();
       expect(Array.isArray(routes)).toBe(true);
     });
@@ -182,7 +202,7 @@ describe('HTTP Discovery', () => {
       const endTime = Date.now();
 
       expect(routes).toBeDefined();
-      expect(endTime - startTime).toBeLessThan(5000); // Should complete within 5 seconds
+      expect(endTime - startTime).toBeLessThan(5000);
     });
   });
 });

@@ -59,8 +59,6 @@ describe('Autogen Config', () => {
     });
 
     it('should use correct tsconfig path', () => {
-      // We can't directly access the tsconfig path from the project instance,
-      // but we can verify the project was created successfully
       const project = getProject();
       expect(project.getSourceFiles().length).toBeGreaterThanOrEqual(0);
     });
@@ -68,7 +66,6 @@ describe('Autogen Config', () => {
 
   describe('Path relationships', () => {
     it('should have consistent path structure', () => {
-      // All paths should be under the same project root
       expect(servicesDir.startsWith(projectDir)).toBe(true);
       expect(autogenDir.startsWith(projectDir)).toBe(true);
     });

@@ -51,7 +51,6 @@ describe('Autogen Main', () => {
 
       expect(routesWithService.length).toBeGreaterThan(0);
 
-      // Check service naming convention
       for (const route of routesWithService) {
         expect(route.serviceClass).toMatch(/Service$/);
         expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
@@ -75,10 +74,26 @@ describe('Autogen Main', () => {
       }
     });
 
+    it('should include output metadata', async () => {
+      const routes = await extractAllRoutes();
+
+      const routesWithOutput = routes.filter((r) => r.output !== undefined && r.output.length > 0);
+
+      expect(routesWithOutput.length).toBeGreaterThan(0);
+
+      for (const route of routesWithOutput) {
+        const output = route.output ?? [];
+        const [field] = output;
+        expect(field).toBeDefined();
+        expect(field).toHaveProperty('name');
+        expect(field).toHaveProperty('type');
+        expect(field.type).not.toBe('unknown');
+      }
+    });
+
     it('should handle different route types', async () => {
       const routes = await extractAllRoutes();
 
-      // Should have various path patterns
       const rootRoutes = routes.filter((r) => r.path === '/' || r.path === 'root');
       const testRoutes = routes.filter(
         (r) => r.path.includes('test') || r.path.startsWith('/test'),
@@ -121,8 +136,6 @@ describe('Autogen Main', () => {
   describe('Route discovery coverage', () => {
     it('should discover expected number of routes', async () => {
       const routes = await extractAllRoutes();
-
-      // Based on the previous successful run, we expect around 27 routes
       expect(routes.length).toBeGreaterThanOrEqual(20);
       expect(routes.length).toBeLessThanOrEqual(35);
     });
@@ -163,17 +176,243 @@ describe('Autogen Main', () => {
         (r) => r.requestType === 'tRPC' && r.serviceClass !== undefined && r.serviceClass !== '',
       );
 
-      // Should have service routes in both types
       expect(httpRoutesWithService.length).toBeGreaterThan(0);
       expect(trpcRoutesWithService.length).toBeGreaterThan(0);
 
-      // Check for common services
       const httpServices = new Set(httpRoutesWithService.map((r) => r.serviceClass));
       const trpcServices = new Set(trpcRoutesWithService.map((r) => r.serviceClass));
 
-      // Should have overlapping services
       const commonServices = [...httpServices].filter((s) => trpcServices.has(s));
       expect(commonServices.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Route input/output shapes', () => {
+    const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
+
+    const errorOutput = [
+      {
+        name: 'error',
+        required: true,
+        type: '{ message: string; name: string; stack: string; statusCode: number; }',
+      },
+      ...messageOutput,
+    ] as const;
+
+    const sharedRouteCases = [
+      {
+        httpPath: '/test/_check-params',
+        input: [
+          { name: '_stringInput', required: false, type: 'string' },
+          { name: '_stringArrayInput', required: false },
+          { name: '_numberInput', required: false, type: 'number' },
+          { name: '_numberArrayInput', required: false },
+          { name: '_booleanInput', required: false, type: 'boolean' },
+          { name: '_booleanArrayInput', required: false },
+          { name: '_objectStringInput', required: false, type: '{ string: string; }' },
+          { name: '_objectStringArrayInput', required: false },
+          { name: '_objectNumberInput', required: false, type: '{ number: number; }' },
+          { name: '_objectNumberArrayInput', required: false },
+          { name: '_objectBooleanInput', required: false, type: '{ boolean: boolean; }' },
+          { name: '_objectBooleanArrayInput', required: false },
+          { name: '_objectMultipleInput', required: false },
+          { name: '_string', required: false, type: 'string' },
+          { name: '_stringArray', required: false },
+        ],
+        output: [
+          {
+            name: 'data',
+            required: true,
+            type: '{ booleanArrayOutput: {}; booleanOutput: boolean; numberArrayOutput: {}; numberOutput: number; objectBooleanArrayOutput: { booleanArray: {}; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; object: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; string: string; stringArray: {}; }; objectArray: {}; string: string; stringArray: {}; }; objectNumberArrayOutput: { numberArray: {}; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: {}; }; objectStringOutput: { string: string; }; stringArrayOutput: {}; stringOutput: string; }',
+          },
+          ...messageOutput,
+        ],
+        trpcPath: '/trpc/test._checkParams',
+      },
+      {
+        httpPath: '/test/async-fail-reject',
+        input: [],
+        output: errorOutput,
+        trpcPath: '/trpc/test.asyncFailReject',
+      },
+      {
+        httpPath: '/test/async-fail-throw',
+        input: [],
+        output: errorOutput,
+        trpcPath: '/trpc/test.asyncFailThrow',
+      },
+      {
+        httpPath: '/test/async-success',
+        input: [],
+        output: messageOutput,
+        trpcPath: '/trpc/test.asyncSuccess',
+      },
+      {
+        httpPath: '/test/hello',
+        input: [
+          { name: 'firstName', required: true, type: 'string' },
+          { name: 'lastName', required: false, type: 'string | undefined' },
+        ],
+        output: messageOutput,
+        trpcPath: '/trpc/test.hello',
+      },
+      {
+        httpPath: '/test/mixed-params',
+        input: [
+          { name: 'a', required: true, type: 'string' },
+          { name: 'b', required: true, type: 'number' },
+          { name: 'options', required: false, type: '{ bar?: number; foo?: string; } | undefined' },
+          { name: 'arr', required: false },
+        ],
+        output: [
+          {
+            name: 'data',
+            required: true,
+            type: '{ a: string; arr: {} | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
+          },
+          ...messageOutput,
+        ],
+        trpcPath: '/trpc/test.mixedParams',
+      },
+      {
+        httpPath: '/test/object-destructured',
+        input: [
+          { name: '{ prop1, prop2 }', required: true, type: '{ prop1?: string; prop2?: number; }' },
+        ],
+        output: [
+          {
+            name: 'data',
+            required: true,
+            type: '{ prop1: string | undefined; prop2: number | undefined; }',
+          },
+          ...messageOutput,
+        ],
+        trpcPath: '/trpc/test.objectDestructured',
+      },
+      {
+        httpPath: '/test/object-only',
+        input: [{ name: 'options', required: true, type: '{ bar?: number; foo?: string; }' }],
+        output: [
+          { name: 'data', required: true, type: '{ bar?: number; foo?: string; }' },
+          ...messageOutput,
+        ],
+        trpcPath: '/trpc/test.objectOnly',
+      },
+      {
+        httpPath: '/test/primitives-and-array',
+        input: [
+          { name: 'var1', required: true, type: 'string' },
+          { name: 'var2', required: true, type: 'number' },
+          { name: 'var3', required: false },
+        ],
+        output: [
+          {
+            name: 'data',
+            required: true,
+            type: '{ var1: string; var2: number; var3: {} | undefined; }',
+          },
+          ...messageOutput,
+        ],
+        trpcPath: '/trpc/test.primitivesAndArray',
+      },
+      {
+        httpPath: '/test/sync-fail-reject',
+        input: [],
+        output: errorOutput,
+        trpcPath: '/trpc/test.syncFailReject',
+      },
+      {
+        httpPath: '/test/sync-fail-throw',
+        input: [],
+        output: errorOutput,
+        trpcPath: '/trpc/test.syncFailThrow',
+      },
+      {
+        httpPath: '/test/sync-success',
+        input: [],
+        output: messageOutput,
+        trpcPath: '/trpc/test.syncSuccess',
+      },
+    ] as const;
+
+    const expectedRoutes = [
+      {
+        input: [] as const,
+        output: messageOutput,
+        path: '/',
+        requestType: 'HTTP' as const,
+      },
+      ...sharedRouteCases.map((c) => ({
+        input: c.input,
+        output: c.output,
+        path: c.httpPath,
+        requestType: 'HTTP' as const,
+      })),
+      {
+        input: [] as const,
+        output: messageOutput,
+        path: '/trpc/default.root',
+        requestType: 'tRPC' as const,
+      },
+      ...sharedRouteCases.map((c) => ({
+        input: c.input,
+        output: c.output,
+        path: c.trpcPath,
+        requestType: 'tRPC' as const,
+      })),
+    ];
+
+    it.each(expectedRoutes)(
+      'should match shape for $requestType $path',
+      async ({ input, output, path, requestType }) => {
+        const routes = await extractAllRoutes();
+        const route = routes.find((r) => r.path === path && r.requestType === requestType);
+
+        expect(route).toBeDefined();
+        if (!route) {
+          return;
+        }
+
+        const routeInput = route.input ?? [];
+        for (const expectedParam of input) {
+          const found = routeInput.find((p) => p.name === expectedParam.name);
+          expect(found, `input param '${expectedParam.name}'`).toBeDefined();
+          if (found) {
+            if ('type' in expectedParam) {
+              expect(found.type).toBe(expectedParam.type);
+            }
+            expect(found.required).toBe(expectedParam.required);
+          }
+        }
+
+        const routeOutput = route.output ?? [];
+        expect(routeOutput).toHaveLength(output.length);
+        for (const expectedField of output) {
+          const found = routeOutput.find((f) => f.name === expectedField.name);
+          expect(found, `output field '${expectedField.name}'`).toBeDefined();
+          if (found) {
+            if ('type' in expectedField) {
+              expect(found.type).toBe(expectedField.type);
+            }
+            expect(found.required).toBe(expectedField.required);
+          }
+        }
+      },
+    );
+
+    it('should have no unknown output types across all routes', async () => {
+      const routes = await extractAllRoutes();
+
+      for (const route of routes) {
+        if (route.output !== undefined) {
+          for (const field of route.output) {
+            expect(
+              field.type,
+              `Route ${route.path} output field '${field.name}' should not be unknown`,
+            ).not.toBe('unknown');
+          }
+        }
+      }
     });
   });
 
@@ -193,7 +432,6 @@ describe('Autogen Main', () => {
 
       expect(routes1.length).toBe(routes2.length);
 
-      // Sort routes by path for comparison
       const sorted1 = routes1.toSorted((a, b) => a.path.localeCompare(b.path));
       const sorted2 = routes2.toSorted((a, b) => a.path.localeCompare(b.path));
 
@@ -207,7 +445,6 @@ describe('Autogen Main', () => {
 
   describe('Error handling', () => {
     it('should handle discovery errors gracefully', async () => {
-      // The function should not throw even if individual route files have issues
       const routes = await extractAllRoutes();
       expect(Array.isArray(routes)).toBe(true);
     });

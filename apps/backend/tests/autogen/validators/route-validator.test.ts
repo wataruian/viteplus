@@ -39,13 +39,12 @@ describe('RouteValidator', () => {
     it('should report errors for missing required fields', () => {
       const routes: RouteInfo[] = [
         {
-          // Missing path - using empty string triggers the error while remaining type-safe
           handlerFilePath: '/path/to/handler.ts',
           path: '',
           requestType: 'HTTP',
         },
         createMockRoute({
-          requestType: '', // Missing request type
+          requestType: '',
         }),
       ];
 
@@ -69,10 +68,10 @@ describe('RouteValidator', () => {
           serviceClass: 'InvalidService',
         }),
         createMockRoute({
-          serviceClass: 'invalid_service', // Wrong case
+          serviceClass: 'invalid_service',
         }),
         createMockRoute({
-          serviceClass: 'ValidService', // Should be 'ValidServiceService'
+          serviceClass: 'ValidService',
         }),
       ];
 
@@ -107,21 +106,20 @@ describe('RouteValidator', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
           serviceClass: 'TestService',
-          serviceMethod: 'InvalidMethodName', // PascalCase instead of camelCase
+          serviceMethod: 'InvalidMethodName',
         }),
         createMockRoute({
           serviceClass: 'TestService',
-          serviceMethod: 'invalid_method_name', // snake_case
+          serviceMethod: 'invalid_method_name',
         }),
         createMockRoute({
           serviceClass: 'TestService',
-          serviceMethod: '_privateMethod', // Should be allowed
+          serviceMethod: '_privateMethod',
         }),
       ];
 
       const result = validateRoutes(routes);
 
-      // Method naming is warning, not error
       expect(result.isValid).toBe(true);
       const methodWarnings = result.warnings.filter((w) => w.code === 'INVALID_METHOD_NAMING');
       expect(methodWarnings.length).toBeGreaterThan(0);
@@ -132,7 +130,7 @@ describe('RouteValidator', () => {
     it('should validate HTTP path formats', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          path: '/trpc/something', // HTTP route with tRPC prefix
+          path: '/trpc/something',
           requestType: 'HTTP',
         }),
       ];
@@ -147,11 +145,11 @@ describe('RouteValidator', () => {
     it('should validate tRPC path formats', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          path: '/api/something', // tRPC route without /trpc prefix
+          path: '/api/something',
           requestType: 'tRPC',
         }),
         createMockRoute({
-          path: '/trpc/invalid-format', // Missing dot notation
+          path: '/trpc/invalid-format',
           requestType: 'tRPC',
         }),
       ];
@@ -190,7 +188,7 @@ describe('RouteValidator', () => {
     it('should validate service file locations', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          serviceFilePath: '/wrong/location/test.ts', // Not in services directory
+          serviceFilePath: '/wrong/location/test.ts',
         }),
       ];
 
@@ -205,13 +203,13 @@ describe('RouteValidator', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
           serviceClass: 'UserProfileService',
-          serviceFilePath: '/src/services/wrong-name.ts', // Should be user-profile.ts
+          serviceFilePath: '/src/services/wrong-name.ts',
         }),
       ];
 
       const result = validateRoutes(routes);
 
-      expect(result.isValid).toBe(true); // Warning, not error
+      expect(result.isValid).toBe(true);
       const filenameWarning = result.warnings.find((w) => w.code === 'MISMATCHED_SERVICE_FILENAME');
       expect(filenameWarning).toBeDefined();
     });
@@ -221,8 +219,8 @@ describe('RouteValidator', () => {
     it('should validate createRouteHandler pattern usage', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          serviceClass: undefined, // Missing service class
-          serviceMethod: undefined, // Missing service method
+          serviceClass: undefined,
+          serviceMethod: undefined,
         }),
       ];
 
@@ -237,17 +235,17 @@ describe('RouteValidator', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
           method: 'get',
-          serviceMethod: 'createUser', // GET with create method
+          serviceMethod: 'createUser',
         }),
         createMockRoute({
           method: 'post',
-          serviceMethod: 'getUser', // POST with get method
+          serviceMethod: 'getUser',
         }),
       ];
 
       const result = validateRoutes(routes);
 
-      expect(result.isValid).toBe(true); // Warnings, not errors
+      expect(result.isValid).toBe(true);
       const methodWarnings = result.warnings.filter((w) => w.code === 'HTTP_METHOD_MISMATCH');
       expect(methodWarnings.length).toBe(2);
     });
@@ -259,20 +257,20 @@ describe('RouteValidator', () => {
           requestType: 'tRPC',
           serviceClass: 'UserService',
           serviceMethod: 'createUser',
-          type: 'query', // Query with create method
+          type: 'query',
         }),
         createMockRoute({
           path: '/trpc/user.getUser',
           requestType: 'tRPC',
           serviceClass: 'UserService',
           serviceMethod: 'getUser',
-          type: 'mutation', // Mutation with get method
+          type: 'mutation',
         }),
       ];
 
       const result = validateRoutes(routes);
 
-      expect(result.isValid).toBe(true); // Warnings, not errors
+      expect(result.isValid).toBe(true);
       const procedureWarnings = result.warnings.filter((w) => w.code === 'TRPC_PROCEDURE_MISMATCH');
       expect(procedureWarnings.length).toBe(2);
     });
@@ -282,7 +280,7 @@ describe('RouteValidator', () => {
     it('should respect enforceServiceNaming option', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          serviceClass: 'InvalidNaming', // Missing 'Service' suffix
+          serviceClass: 'InvalidNaming',
         }),
       ];
 
@@ -292,7 +290,6 @@ describe('RouteValidator', () => {
 
       const result = validateRoutes(routes, configWithoutEnforcement);
 
-      // Should not fail when enforcement is disabled
       const serviceSuffixErrors = result.errors.filter((e) => e.code === 'INVALID_SERVICE_SUFFIX');
       expect(serviceSuffixErrors).toHaveLength(0);
     });
@@ -311,7 +308,6 @@ describe('RouteValidator', () => {
 
       const result = validateRoutes(routes, configWithoutStrictness);
 
-      // Should not fail when strict conventions are disabled
       const patternErrors = result.errors.filter((e) => e.code === 'MISSING_ROUTE_HANDLER_PATTERN');
       expect(patternErrors).toHaveLength(0);
     });
@@ -338,18 +334,17 @@ describe('RouteValidator', () => {
       const validator = new RouteValidator();
       const routes: RouteInfo[] = [
         {
-          // Missing path completely to trigger error
           handlerFilePath: '/path/to/handler.ts',
           path: '',
           requestType: 'HTTP',
-          serviceMethod: 'InvalidMethodName', // Warning
+          serviceMethod: 'InvalidMethodName',
         },
       ];
 
       const result = validator.validate(routes);
       const summary = RouteValidator.getSummary(result);
 
-      expect(summary).toContain('3 issues found'); // 2 errors + 1 warning
+      expect(summary).toContain('3 issues found');
       expect(summary).toContain('❌ Errors: 2');
       expect(summary).toContain('MISSING_PATH');
     });
@@ -363,7 +358,6 @@ describe('RouteValidator', () => {
     });
 
     it('should validate service filename patterns indirectly', () => {
-      // Test the filename validation indirectly through validation results
       const routes: RouteInfo[] = [
         createMockRoute({
           serviceClass: 'UserProfileService',
@@ -377,7 +371,6 @@ describe('RouteValidator', () => {
 
       const result = validateRoutes(routes);
 
-      // Should pass validation with correct filename patterns
       expect(result.isValid).toBe(true);
       const filenameWarnings = result.warnings.filter(
         (w) => w.code === 'MISMATCHED_SERVICE_FILENAME',
@@ -390,12 +383,11 @@ describe('RouteValidator', () => {
     it('should properly categorize validation errors', () => {
       const routes: RouteInfo[] = [
         {
-          // Missing path completely to trigger structure error
           handlerFilePath: '/path/to/handler.ts',
           path: '',
           requestType: 'HTTP',
-          serviceClass: 'invalid', // naming error
-          serviceFilePath: '/wrong/path/test.ts', // structure error
+          serviceClass: 'invalid',
+          serviceFilePath: '/wrong/path/test.ts',
         },
       ];
 
@@ -406,13 +398,12 @@ describe('RouteValidator', () => {
 
       expect(structureErrors.length).toBeGreaterThan(0);
       expect(namingErrors.length).toBeGreaterThan(0);
-      // Convention errors depend on strictConventions config
     });
 
     it('should include helpful suggestions in error messages', () => {
       const routes: RouteInfo[] = [
         createMockRoute({
-          serviceClass: 'TestName', // Missing 'Service' suffix
+          serviceClass: 'TestName',
         }),
       ];
 

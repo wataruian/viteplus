@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts"
+    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts",
+    "test-trpc": "tsx --conditions=typescript ./src/test-trpc.ts"
   },
   "dependencies": {
     "@lightproject/common": "workspace:*",

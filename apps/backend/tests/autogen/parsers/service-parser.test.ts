@@ -7,6 +7,149 @@ import {
 } from '../../../src/utils/autogen/parsers/service-parser';
 
 describe('Service Parser', () => {
+  const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
+
+  const errorOutput = [
+    {
+      name: 'error',
+      required: true,
+      type: '{ message: string; name: string; stack: string; statusCode: number; }',
+    },
+    ...messageOutput,
+  ] as const;
+
+  const expectedServiceMethods = [
+    {
+      input: [
+        { name: '_stringInput', required: false, type: 'string' },
+        { name: '_stringArrayInput', required: false },
+        { name: '_numberInput', required: false, type: 'number' },
+        { name: '_numberArrayInput', required: false },
+        { name: '_booleanInput', required: false, type: 'boolean' },
+        { name: '_booleanArrayInput', required: false },
+        { name: '_objectStringInput', required: false, type: '{ string: string; }' },
+        { name: '_objectStringArrayInput', required: false },
+        { name: '_objectNumberInput', required: false, type: '{ number: number; }' },
+        { name: '_objectNumberArrayInput', required: false },
+        { name: '_objectBooleanInput', required: false, type: '{ boolean: boolean; }' },
+        { name: '_objectBooleanArrayInput', required: false },
+        { name: '_objectMultipleInput', required: false },
+        { name: '_string', required: false, type: 'string' },
+        { name: '_stringArray', required: false },
+      ],
+      method: '_checkParams',
+      output: [
+        {
+          name: 'data',
+          required: true,
+          type: '{ booleanArrayOutput: {}; booleanOutput: boolean; numberArrayOutput: {}; numberOutput: number; objectBooleanArrayOutput: { booleanArray: {}; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; object: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; string: string; stringArray: {}; }; objectArray: {}; string: string; stringArray: {}; }; objectNumberArrayOutput: { numberArray: {}; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: {}; }; objectStringOutput: { string: string; }; stringArrayOutput: {}; stringOutput: string; }',
+        },
+        ...messageOutput,
+      ],
+    },
+    {
+      input: [],
+      method: 'asyncFailReject',
+      output: errorOutput,
+    },
+    {
+      input: [],
+      method: 'asyncFailThrow',
+      output: errorOutput,
+    },
+    {
+      input: [],
+      method: 'asyncSuccess',
+      output: messageOutput,
+    },
+    {
+      input: [
+        { name: 'firstName', required: true, type: 'string' },
+        { name: 'lastName', required: false, type: 'string | undefined' },
+      ],
+      method: 'hello',
+      output: messageOutput,
+    },
+    {
+      input: [
+        { name: 'a', required: true, type: 'string' },
+        { name: 'b', required: true, type: 'number' },
+        { name: 'options', required: false, type: '{ bar?: number; foo?: string; } | undefined' },
+        { name: 'arr', required: false },
+      ],
+      method: 'mixedParams',
+      output: [
+        {
+          name: 'data',
+          required: true,
+          type: '{ a: string; arr: {} | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
+        },
+        ...messageOutput,
+      ],
+    },
+    {
+      input: [
+        { name: '{ prop1, prop2 }', required: true, type: '{ prop1?: string; prop2?: number; }' },
+      ],
+      method: 'objectDestructured',
+      output: [
+        {
+          name: 'data',
+          required: true,
+          type: '{ prop1: string | undefined; prop2: number | undefined; }',
+        },
+        ...messageOutput,
+      ],
+    },
+    {
+      input: [{ name: 'options', required: true, type: '{ bar?: number; foo?: string; }' }],
+      method: 'objectOnly',
+      output: [
+        { name: 'data', required: true, type: '{ bar?: number; foo?: string; }' },
+        ...messageOutput,
+      ],
+    },
+    {
+      input: [
+        { name: 'var1', required: true, type: 'string' },
+        { name: 'var2', required: true, type: 'number' },
+        { name: 'var3', required: false },
+      ],
+      method: 'primitivesAndArray',
+      output: [
+        {
+          name: 'data',
+          required: true,
+          type: '{ var1: string; var2: number; var3: {} | undefined; }',
+        },
+        ...messageOutput,
+      ],
+    },
+    {
+      input: [],
+      method: 'syncFailReject',
+      output: errorOutput,
+    },
+    {
+      input: [],
+      method: 'syncFailThrow',
+      output: errorOutput,
+    },
+    {
+      input: [],
+      method: 'syncSuccess',
+      output: messageOutput,
+    },
+  ] as const;
+
+  const expectedDefaultServiceMethods = [
+    {
+      input: [],
+      method: 'root',
+      output: messageOutput,
+    },
+  ] as const;
+
   describe('toPascalCase', () => {
     it('should convert kebab-case to PascalCase', () => {
       expect(toPascalCase('user-profile')).toBe('UserProfile');
@@ -104,7 +247,6 @@ describe('Service Parser', () => {
     });
 
     it('should extract metadata for existing service and method', async () => {
-      // Test with DefaultService which should exist
       const metadata = await extractServiceMetadata('DefaultService', 'root');
 
       expect(metadata).toHaveProperty('serviceFilePath');
@@ -129,18 +271,93 @@ describe('Service Parser', () => {
 
       expect(metadata).toHaveProperty('serviceFilePath');
       expect(metadata).toHaveProperty('input');
-      // Should return service file path even if method doesn't exist
     });
 
-    it('should extract parameter information when available', async () => {
-      // Test with TestService hello method which should have parameters
-      const metadata = await extractServiceMetadata('TestService', 'hello');
+    it.each(expectedServiceMethods)(
+      'should extract correct input and output shape for TestService.$method',
+      async ({ input, method, output }) => {
+        const metadata = await extractServiceMetadata('TestService', method);
 
-      if (metadata.input !== undefined && metadata.input.length > 0) {
-        const [param] = metadata.input;
-        expect(param).toHaveProperty('name');
-        expect(param).toHaveProperty('type');
-        expect(param).toHaveProperty('required');
+        expect(metadata).toBeDefined();
+
+        const extractedInput = metadata.input ?? [];
+        expect(extractedInput).toHaveLength(input.length);
+        for (const expectedParam of input) {
+          const found = extractedInput.find((p) => p.name === expectedParam.name);
+          expect(found, `input param '${expectedParam.name}'`).toBeDefined();
+          if (found) {
+            if ('type' in expectedParam) {
+              expect(found.type).toBe(expectedParam.type);
+            }
+            expect(found.required).toBe(expectedParam.required);
+          }
+        }
+
+        const extractedOutput = metadata.output ?? [];
+        expect(extractedOutput).toHaveLength(output.length);
+        for (const expectedField of output) {
+          const found = extractedOutput.find((f) => f.name === expectedField.name);
+          expect(found, `output field '${expectedField.name}'`).toBeDefined();
+          if (found) {
+            if ('type' in expectedField) {
+              expect(found.type).toBe(expectedField.type);
+            }
+            expect(found.required).toBe(expectedField.required);
+          }
+        }
+      },
+    );
+
+    it.each(expectedDefaultServiceMethods)(
+      'should extract correct input and output shape for DefaultService.$method',
+      async ({ input, method, output }) => {
+        const metadata = await extractServiceMetadata('DefaultService', method);
+
+        expect(metadata).toBeDefined();
+
+        const extractedInput = metadata.input ?? [];
+        expect(extractedInput).toHaveLength(input.length);
+
+        const extractedOutput = metadata.output ?? [];
+        expect(extractedOutput).toHaveLength(output.length);
+        for (const expectedField of output) {
+          const found = extractedOutput.find((f) => f.name === expectedField.name);
+          expect(found, `output field '${expectedField.name}'`).toBeDefined();
+          if (found) {
+            if ('type' in expectedField) {
+              expect(found.type).toBe(expectedField.type);
+            }
+            expect(found.required).toBe(expectedField.required);
+          }
+        }
+      },
+    );
+
+    it('should never produce unknown output types across all tested methods', async () => {
+      const methods = [
+        ...expectedServiceMethods.map((m) => ({
+          method: m.method,
+          serviceName: 'TestService' as const,
+        })),
+        ...expectedDefaultServiceMethods.map((m) => ({
+          method: m.method,
+          serviceName: 'DefaultService' as const,
+        })),
+      ];
+      const metadatas = await Promise.all(
+        methods.map(async ({ method, serviceName }) => {
+          const metadata = await extractServiceMetadata(serviceName, method);
+          return { metadata, method, serviceName };
+        }),
+      );
+      for (const { metadata, method, serviceName } of metadatas) {
+        const output = metadata.output ?? [];
+        for (const field of output) {
+          expect(
+            field.type,
+            `${serviceName}.${method} output field '${field.name}' should not be unknown`,
+          ).not.toBe('unknown');
+        }
       }
     });
   });
@@ -162,15 +379,7 @@ describe('Service Parser', () => {
     });
 
     it('should handle service method discovery', async () => {
-      const testMethods = [
-        'hello',
-        'asyncSuccess',
-        'syncSuccess',
-        'primitivesAndArray',
-        'objectOnly',
-        'objectDestructured',
-        'mixedParams',
-      ];
+      const testMethods = expectedServiceMethods.map((m) => m.method);
 
       const results = await Promise.all(
         testMethods.map(async (method) => {
@@ -191,7 +400,6 @@ describe('Service Parser', () => {
 
   describe('Error handling', () => {
     it('should handle TypeScript parsing errors gracefully', async () => {
-      // This test assumes the parser handles TS errors without throwing
       const metadata = await extractServiceMetadata('TestService', 'someMethod');
       expect(metadata).toBeDefined();
       expect(metadata).toHaveProperty('serviceFilePath');
@@ -199,7 +407,6 @@ describe('Service Parser', () => {
     });
 
     it('should handle file system errors gracefully', async () => {
-      // Test with service that might not exist
       const metadata = await extractServiceMetadata('FileSystemErrorService', 'test');
       expect(metadata).toEqual({
         input: undefined,

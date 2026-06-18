@@ -134,6 +134,64 @@ const cases: Record<string, TrpcTestCase[]> = {
   ],
   'test param endpoints': [
     {
+      description: `POST ${trpcEndpoint}/test._checkParams returns correct output`,
+      expected: {
+        code: 200,
+        data: {
+          booleanArrayOutput: [true, false],
+          booleanOutput: true,
+          numberArrayOutput: [123, 456],
+          numberOutput: 123,
+          objectBooleanArrayOutput: { booleanArray: [true, false] },
+          objectBooleanOutput: { boolean: true },
+          objectMultipleOutput: {
+            boolean: false,
+            booleanArray: [true, false],
+            number: 123,
+            numberArray: [123, 456],
+            object: {
+              boolean: true,
+              booleanArray: [true, false],
+              number: 123,
+              numberArray: [123, 456],
+              string: 'ABC',
+              stringArray: ['ABC', 'DEF'],
+            },
+            objectArray: [
+              {
+                boolean: true,
+                booleanArray: [true, false],
+                number: 123,
+                numberArray: [123, 456],
+                string: 'ABC',
+                stringArray: ['ABC', 'DEF'],
+              },
+              {
+                boolean: false,
+                booleanArray: [false, true],
+                number: 456,
+                numberArray: [456, 789],
+                string: 'DEF',
+                stringArray: ['DEF', 'GHI'],
+              },
+            ],
+            string: 'ABC',
+            stringArray: ['ABC', 'DEF'],
+          },
+          objectNumberArrayOutput: { numberArray: [123, 456] },
+          objectNumberOutput: { number: 123 },
+          objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
+          objectStringOutput: { string: 'ABC' },
+          stringArrayOutput: ['ABC', 'DEF'],
+          stringOutput: 'ABC',
+        },
+        message: 'Check parameters processed successfully',
+        success: true,
+      },
+      path: 'test._checkParams',
+      type: 'mutation',
+    },
+    {
       description: `POST ${trpcEndpoint}/test.hello returns 200`,
       expected: {
         code: 200,
@@ -142,46 +200,6 @@ const cases: Record<string, TrpcTestCase[]> = {
       },
       input: { firstName: 'Test', lastName: 'World' },
       path: 'test.hello',
-      type: 'mutation',
-    },
-    {
-      description: `POST ${trpcEndpoint}/test.primitivesAndArray returns correct array`,
-      expected: {
-        code: 200,
-        data: {
-          var1: 'foo',
-          var2: 42,
-          var3: ['a', 'b'],
-        },
-        message: 'Primitives and array processed successfully',
-        success: true,
-      },
-      input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
-      path: 'test.primitivesAndArray',
-      type: 'mutation',
-    },
-    {
-      description: `POST ${trpcEndpoint}/test.objectOnly returns correct object`,
-      expected: {
-        code: 200,
-        data: { bar: 1, foo: 'baz' },
-        message: 'Object parameters processed successfully',
-        success: true,
-      },
-      input: { bar: 1, foo: 'baz' },
-      path: 'test.objectOnly',
-      type: 'mutation',
-    },
-    {
-      description: `POST ${trpcEndpoint}/test.objectDestructured returns correct object`,
-      expected: {
-        code: 200,
-        data: { prop1: 'hello', prop2: 99 },
-        message: 'Object destructured parameters processed successfully',
-        success: true,
-      },
-      input: { prop1: 'hello', prop2: 99 },
-      path: 'test.objectDestructured',
       type: 'mutation',
     },
     {
@@ -199,6 +217,46 @@ const cases: Record<string, TrpcTestCase[]> = {
       },
       input: { a: 'x', arr: [1, 2], b: 7, options: { bar: 2, foo: 'y' } },
       path: 'test.mixedParams',
+      type: 'mutation',
+    },
+    {
+      description: `POST ${trpcEndpoint}/test.objectDestructured returns correct object`,
+      expected: {
+        code: 200,
+        data: { prop1: 'hello', prop2: 99 },
+        message: 'Object destructured parameters processed successfully',
+        success: true,
+      },
+      input: { prop1: 'hello', prop2: 99 },
+      path: 'test.objectDestructured',
+      type: 'mutation',
+    },
+    {
+      description: `POST ${trpcEndpoint}/test.objectOnly returns correct object`,
+      expected: {
+        code: 200,
+        data: { bar: 1, foo: 'baz' },
+        message: 'Object parameters processed successfully',
+        success: true,
+      },
+      input: { bar: 1, foo: 'baz' },
+      path: 'test.objectOnly',
+      type: 'mutation',
+    },
+    {
+      description: `POST ${trpcEndpoint}/test.primitivesAndArray returns correct array`,
+      expected: {
+        code: 200,
+        data: {
+          var1: 'foo',
+          var2: 42,
+          var3: ['a', 'b'],
+        },
+        message: 'Primitives and array processed successfully',
+        success: true,
+      },
+      input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
+      path: 'test.primitivesAndArray',
       type: 'mutation',
     },
   ],
@@ -293,7 +351,6 @@ describe('tRPC Output Schema', () => {
   it('should have output schemas extracted for tRPC routes', async () => {
     const routes = await getTrpcRoutes();
 
-    // Find routes with service methods
     const serviceRoutes = routes.filter(
       (r) =>
         r.serviceClass !== undefined &&
@@ -304,7 +361,6 @@ describe('tRPC Output Schema', () => {
 
     expect(serviceRoutes.length).toBeGreaterThan(0);
 
-    // Verify each service route has output schema
     for (const route of serviceRoutes) {
       expect(route.output).toBeDefined();
       expect(Array.isArray(route.output)).toBe(true);
@@ -324,7 +380,6 @@ describe('tRPC Output Schema', () => {
   it('should handle different output types in tRPC routes', async () => {
     const routes = await getTrpcRoutes();
 
-    // Collect all output types
     const outputTypes = new Set<string>();
     for (const route of routes) {
       if (route.output && route.output.length > 0) {
@@ -334,7 +389,6 @@ describe('tRPC Output Schema', () => {
       }
     }
 
-    // Verify we have multiple output types
     expect(outputTypes.size).toBeGreaterThan(0);
   });
 });

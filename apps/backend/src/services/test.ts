@@ -87,27 +87,19 @@ class TestService extends BaseService {
     _stringArray: string[] = ['ABC', 'DEF'],
   ) {
     return {
-      booleanArrayOutput: [true, false],
-      booleanOutput: true,
-      numberArrayOutput: [123, 456],
-      numberOutput: 123,
-      objectBooleanArrayOutput: { booleanArray: [true, false] },
-      objectBooleanOutput: { boolean: true },
-      objectMultipleOutput: {
-        boolean: false,
-        booleanArray: [true, false],
-        number: 123,
-        numberArray: [123, 456],
-        object: {
-          boolean: true,
+      data: {
+        booleanArrayOutput: [true, false],
+        booleanOutput: true,
+        numberArrayOutput: [123, 456],
+        numberOutput: 123,
+        objectBooleanArrayOutput: { booleanArray: [true, false] },
+        objectBooleanOutput: { boolean: true },
+        objectMultipleOutput: {
+          boolean: false,
           booleanArray: [true, false],
           number: 123,
           numberArray: [123, 456],
-          string: 'ABC',
-          stringArray: ['ABC', 'DEF'],
-        },
-        objectArray: [
-          {
+          object: {
             boolean: true,
             booleanArray: [true, false],
             number: 123,
@@ -115,26 +107,37 @@ class TestService extends BaseService {
             string: 'ABC',
             stringArray: ['ABC', 'DEF'],
           },
-          {
-            boolean: false,
-            booleanArray: [false, true],
-            number: 456,
-            numberArray: [456, 789],
-            string: 'DEF',
-            stringArray: ['DEF', 'GHI'],
-          },
-        ],
-        string: 'ABC',
-        stringArray: ['ABC', 'DEF'],
+          objectArray: [
+            {
+              boolean: true,
+              booleanArray: [true, false],
+              number: 123,
+              numberArray: [123, 456],
+              string: 'ABC',
+              stringArray: ['ABC', 'DEF'],
+            },
+            {
+              boolean: false,
+              booleanArray: [false, true],
+              number: 456,
+              numberArray: [456, 789],
+              string: 'DEF',
+              stringArray: ['DEF', 'GHI'],
+            },
+          ],
+          string: 'ABC',
+          stringArray: ['ABC', 'DEF'],
+        },
+        objectNumberArrayOutput: {
+          numberArray: [123, 456],
+        },
+        objectNumberOutput: { number: 123 },
+        objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
+        objectStringOutput: { string: 'ABC' },
+        stringArrayOutput: ['ABC', 'DEF'],
+        stringOutput: 'ABC',
       },
-      objectNumberArrayOutput: {
-        numberArray: [123, 456],
-      },
-      objectNumberOutput: { number: 123 },
-      objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
-      objectStringOutput: { string: 'ABC' },
-      stringArrayOutput: ['ABC', 'DEF'],
-      stringOutput: 'ABC',
+      message: 'Check parameters processed successfully',
     };
   }
 

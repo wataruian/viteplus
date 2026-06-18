@@ -121,6 +121,64 @@ const cases: Record<string, HttpTestCase[]> = {
   ],
   'test param endpoints': [
     {
+      description: `POST ${apiEndpoint}/test/_check-params returns correct output`,
+      endpoint: `${apiEndpoint}/test/_check-params`,
+      expected: {
+        code: 200,
+        data: {
+          booleanArrayOutput: [true, false],
+          booleanOutput: true,
+          numberArrayOutput: [123, 456],
+          numberOutput: 123,
+          objectBooleanArrayOutput: { booleanArray: [true, false] },
+          objectBooleanOutput: { boolean: true },
+          objectMultipleOutput: {
+            boolean: false,
+            booleanArray: [true, false],
+            number: 123,
+            numberArray: [123, 456],
+            object: {
+              boolean: true,
+              booleanArray: [true, false],
+              number: 123,
+              numberArray: [123, 456],
+              string: 'ABC',
+              stringArray: ['ABC', 'DEF'],
+            },
+            objectArray: [
+              {
+                boolean: true,
+                booleanArray: [true, false],
+                number: 123,
+                numberArray: [123, 456],
+                string: 'ABC',
+                stringArray: ['ABC', 'DEF'],
+              },
+              {
+                boolean: false,
+                booleanArray: [false, true],
+                number: 456,
+                numberArray: [456, 789],
+                string: 'DEF',
+                stringArray: ['DEF', 'GHI'],
+              },
+            ],
+            string: 'ABC',
+            stringArray: ['ABC', 'DEF'],
+          },
+          objectNumberArrayOutput: { numberArray: [123, 456] },
+          objectNumberOutput: { number: 123 },
+          objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
+          objectStringOutput: { string: 'ABC' },
+          stringArrayOutput: ['ABC', 'DEF'],
+          stringOutput: 'ABC',
+        },
+        message: 'Check parameters processed successfully',
+        success: true,
+      },
+      method: 'post',
+    },
+    {
       description: `POST ${apiEndpoint}/test/hello returns 200`,
       endpoint: `${apiEndpoint}/test/hello`,
       expected: {
@@ -129,46 +187,6 @@ const cases: Record<string, HttpTestCase[]> = {
         success: true,
       },
       input: { firstName: 'Test', lastName: 'World' },
-      method: 'post',
-    },
-    {
-      description: `POST ${apiEndpoint}/test/primitives-and-array returns correct array`,
-      endpoint: `${apiEndpoint}/test/primitives-and-array`,
-      expected: {
-        code: 200,
-        data: {
-          var1: 'foo',
-          var2: 42,
-          var3: ['a', 'b'],
-        },
-        message: 'Primitives and array processed successfully',
-        success: true,
-      },
-      input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
-      method: 'post',
-    },
-    {
-      description: `POST ${apiEndpoint}/test/object-only returns correct object`,
-      endpoint: `${apiEndpoint}/test/object-only`,
-      expected: {
-        code: 200,
-        data: { bar: 1, foo: 'baz' },
-        message: 'Object parameters processed successfully',
-        success: true,
-      },
-      input: { bar: 1, foo: 'baz' },
-      method: 'post',
-    },
-    {
-      description: `POST ${apiEndpoint}/test/object-destructured returns correct object`,
-      endpoint: `${apiEndpoint}/test/object-destructured`,
-      expected: {
-        code: 200,
-        data: { prop1: 'hello', prop2: 99 },
-        message: 'Object destructured parameters processed successfully',
-        success: true,
-      },
-      input: { prop1: 'hello', prop2: 99 },
       method: 'post',
     },
     {
@@ -186,6 +204,46 @@ const cases: Record<string, HttpTestCase[]> = {
         success: true,
       },
       input: { a: 'x', arr: [1, 2], b: 7, options: { bar: 2, foo: 'y' } },
+      method: 'post',
+    },
+    {
+      description: `POST ${apiEndpoint}/test/object-destructured returns correct object`,
+      endpoint: `${apiEndpoint}/test/object-destructured`,
+      expected: {
+        code: 200,
+        data: { prop1: 'hello', prop2: 99 },
+        message: 'Object destructured parameters processed successfully',
+        success: true,
+      },
+      input: { prop1: 'hello', prop2: 99 },
+      method: 'post',
+    },
+    {
+      description: `POST ${apiEndpoint}/test/object-only returns correct object`,
+      endpoint: `${apiEndpoint}/test/object-only`,
+      expected: {
+        code: 200,
+        data: { bar: 1, foo: 'baz' },
+        message: 'Object parameters processed successfully',
+        success: true,
+      },
+      input: { bar: 1, foo: 'baz' },
+      method: 'post',
+    },
+    {
+      description: `POST ${apiEndpoint}/test/primitives-and-array returns correct array`,
+      endpoint: `${apiEndpoint}/test/primitives-and-array`,
+      expected: {
+        code: 200,
+        data: {
+          var1: 'foo',
+          var2: 42,
+          var3: ['a', 'b'],
+        },
+        message: 'Primitives and array processed successfully',
+        success: true,
+      },
+      input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
       method: 'post',
     },
   ],
@@ -256,7 +314,6 @@ describe('HTTP Output Schema', () => {
   it('should have output schemas extracted for HTTP routes', async () => {
     const routes = await getHttpRoutes();
 
-    // Find routes with service methods
     const serviceRoutes = routes.filter(
       (r) =>
         r.serviceClass !== undefined &&
@@ -267,7 +324,6 @@ describe('HTTP Output Schema', () => {
 
     expect(serviceRoutes.length).toBeGreaterThan(0);
 
-    // Verify each service route has output schema
     for (const route of serviceRoutes) {
       expect(route.output).toBeDefined();
       expect(Array.isArray(route.output)).toBe(true);
@@ -287,7 +343,6 @@ describe('HTTP Output Schema', () => {
   it('should handle different output types in routes', async () => {
     const routes = await getHttpRoutes();
 
-    // Collect all output types
     const outputTypes = new Set<string>();
     for (const route of routes) {
       if (route.output && route.output.length > 0) {
@@ -297,7 +352,6 @@ describe('HTTP Output Schema', () => {
       }
     }
 
-    // Verify we have multiple output types
     expect(outputTypes.size).toBeGreaterThan(0);
   });
 });

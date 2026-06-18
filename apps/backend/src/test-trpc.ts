@@ -3,9 +3,9 @@ import {
   type ServiceContext,
   assertIsCustomRequest,
   assertIsCustomResponse,
-} from './src/types/middlware';
+} from './types/middlware';
 import { apiUrl, trpcEndpoint } from '@lightproject/common/configs';
-import { createCaller, trpcClient } from './src/utils/trpc-router';
+import { createCaller, trpcClient } from './utils/trpc-router';
 import MockExpress from 'mock-express';
 
 const testCaller = async () => {
@@ -60,13 +60,16 @@ const testClient = async () => {
   globalThis.console.log('tRPC Client Result:', result);
 };
 
-const main = async () => {
+const callTrpc = async () => {
   await testCaller();
   await testClient();
 };
 
-try {
-  await main();
-} catch (error) {
-  globalThis.console.error('Error in tRPC tests:', error);
-}
+const start = () => {
+  callTrpc().catch((error: unknown) => {
+    globalThis.console.error('Failed to call tRPC:', error);
+    globalThis.process.exit(1);
+  });
+};
+
+start();
