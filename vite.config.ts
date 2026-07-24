@@ -110,6 +110,7 @@ const getCommonViteConfig = ({
       useTabs: false,
     },
     lint: {
+      // jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
       categories: {
         correctness: 'error',
         nursery: 'error',
@@ -122,6 +123,7 @@ const getCommonViteConfig = ({
       ignorePatterns: commonIgnorePatterns,
       options: { typeAware: true, typeCheck: true },
       rules: {
+        // 'vite-plus/prefer-vite-plus-imports': 'error',
         'capitalized-comments': 'off',
         'id-length': 'off',
         'max-classes-per-file': 'off',

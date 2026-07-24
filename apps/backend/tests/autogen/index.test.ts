@@ -223,7 +223,7 @@ describe('Autogen Main', () => {
           {
             name: 'data',
             required: true,
-            type: '{ booleanArrayOutput: {}; booleanOutput: boolean; numberArrayOutput: {}; numberOutput: number; objectBooleanArrayOutput: { booleanArray: {}; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; object: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; string: string; stringArray: {}; }; objectArray: {}; string: string; stringArray: {}; }; objectNumberArrayOutput: { numberArray: {}; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: {}; }; objectStringOutput: { string: string; }; stringArrayOutput: {}; stringOutput: string; }',
+            type: '{ booleanArrayOutput: boolean\\[\\]; booleanOutput: boolean; numberArrayOutput: number\\[\\]; numberOutput: number; objectBooleanArrayOutput: { booleanArray: boolean\\[\\]; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumberArrayOutput: { numberArray: number\\[\\]; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: string\\[\\]; }; objectStringOutput: { string: string; }; stringArrayOutput: string\\[\\]; stringOutput: string; }',
           },
           ...messageOutput,
         ],
@@ -268,7 +268,7 @@ describe('Autogen Main', () => {
           {
             name: 'data',
             required: true,
-            type: '{ a: string; arr: {} | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
+            type: '{ a: string; arr: number\\[\\] | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
           },
           ...messageOutput,
         ],
@@ -309,7 +309,7 @@ describe('Autogen Main', () => {
           {
             name: 'data',
             required: true,
-            type: '{ var1: string; var2: number; var3: {} | undefined; }',
+            type: '{ var1: string; var2: number; var3: string[] | undefined; }',
           },
           ...messageOutput,
         ],

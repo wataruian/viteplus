@@ -1,0 +1,26 @@
+#:tombi schema.strict = false
+
+# monorepo_root = true
+
+# [monorepo]
+# config_roots = ["apps/*", "packages/*"]
+
+[settings]
+experimental = true
+
+[bootstrap.mise_shell_activate]
+zprofile = { enabled = true, mode = "shims" }
+zshrc = { enabled = true, mode = "activate" }
+bash_profile = { enabled = true, mode = "shims" }
+bashrc = { enabled = true, mode = "activate" }
+
+[tools]
+node = "24.14.1"
+pnpm = "11.10.0"
+# viteplus = "0.2.4"
+
+[env]
+_.file = ".env"
+
+[tasks]
+hello = "echo hello from mise: ${TEST_VAR}"

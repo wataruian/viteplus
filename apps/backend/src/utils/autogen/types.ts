@@ -12,7 +12,7 @@ interface RouteInfo {
   handlerFilePath?: string | undefined;
   input?: ParameterMetadata[] | undefined;
   method?: string | undefined;
-  output?: ParameterMetadata[] | undefined;
+  output?: ParameterMetadata | undefined;
   path: string;
   requestType: string;
   serviceClass?: string | undefined;
@@ -23,7 +23,7 @@ interface RouteInfo {
 
 interface ServiceMetadata {
   input: ParameterMetadata[] | undefined;
-  output: ParameterMetadata[] | undefined;
+  output: ParameterMetadata | undefined;
   serviceFilePath: string | undefined;
 }
 

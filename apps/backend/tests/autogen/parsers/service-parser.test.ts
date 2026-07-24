@@ -5,6 +5,7 @@ import {
   getServiceNameFromHandlerFile,
   toPascalCase,
 } from '../../../src/utils/autogen/parsers/service-parser';
+import { parseTypeString } from '@lightproject/common/utils';
 
 describe('Service Parser', () => {
   const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
@@ -42,7 +43,7 @@ describe('Service Parser', () => {
         {
           name: 'data',
           required: true,
-          type: '{ booleanArrayOutput: {}; booleanOutput: boolean; numberArrayOutput: {}; numberOutput: number; objectBooleanArrayOutput: { booleanArray: {}; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; object: { boolean: boolean; booleanArray: {}; number: number; numberArray: {}; string: string; stringArray: {}; }; objectArray: {}; string: string; stringArray: {}; }; objectNumberArrayOutput: { numberArray: {}; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: {}; }; objectStringOutput: { string: string; }; stringArrayOutput: {}; stringOutput: string; }',
+          type: '{ booleanArrayOutput: boolean\\[\\]; booleanOutput: boolean; numberArrayOutput: number\\[\\]; numberOutput: number; objectBooleanArrayOutput: { booleanArray: boolean\\[\\]; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumberArrayOutput: { numberArray: number\\[\\]; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: string\\[\\]; }; objectStringOutput: { string: string; }; stringArrayOutput: string\\[\\]; stringOutput: string; }',
         },
         ...messageOutput,
       ],
@@ -82,7 +83,7 @@ describe('Service Parser', () => {
         {
           name: 'data',
           required: true,
-          type: '{ a: string; arr: {} | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
+          type: '{ a: string; arr: number\\[\\] | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
         },
         ...messageOutput,
       ],
@@ -120,7 +121,7 @@ describe('Service Parser', () => {
         {
           name: 'data',
           required: true,
-          type: '{ var1: string; var2: number; var3: {} | undefined; }',
+          type: '{ var1: string; var2: number; var3: string[] | undefined; }',
         },
         ...messageOutput,
       ],
@@ -287,7 +288,8 @@ describe('Service Parser', () => {
           expect(found, `input param '${expectedParam.name}'`).toBeDefined();
           if (found) {
             if ('type' in expectedParam) {
-              expect(found.type).toBe(expectedParam.type);
+              const expectedType = typeof expectedParam.type === 'string' ? parseTypeString(expectedParam.type) : expectedParam.type;
+              expect(found.type).toEqual(expectedType);
             }
             expect(found.required).toBe(expectedParam.required);
           }
@@ -300,7 +302,8 @@ describe('Service Parser', () => {
           expect(found, `output field '${expectedField.name}'`).toBeDefined();
           if (found) {
             if ('type' in expectedField) {
-              expect(found.type).toBe(expectedField.type);
+              const expectedType = typeof expectedField.type === 'string' ? parseTypeString(expectedField.type) : expectedField.type;
+              expect(found.type).toEqual(expectedType);
             }
             expect(found.required).toBe(expectedField.required);
           }
@@ -325,7 +328,8 @@ describe('Service Parser', () => {
           expect(found, `output field '${expectedField.name}'`).toBeDefined();
           if (found) {
             if ('type' in expectedField) {
-              expect(found.type).toBe(expectedField.type);
+              const expectedType = typeof expectedField.type === 'string' ? parseTypeString(expectedField.type) : expectedField.type;
+              expect(found.type).toEqual(expectedType);
             }
             expect(found.required).toBe(expectedField.required);
           }

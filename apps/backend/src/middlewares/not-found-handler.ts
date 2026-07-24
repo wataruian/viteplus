@@ -1,8 +1,7 @@
 import type { ExpressNextFunction, ExpressRequest, ExpressResponse } from '../types/middlware';
 import {
-  apiDocsEndpoint,
   apiEndpoint,
-  trpcDocsEndpoint,
+  docsEndpoint,
   trpcEndpoint,
   trpcPlaygroundEndpoint,
 } from '@lightproject/common/configs';
@@ -47,17 +46,12 @@ const getTrpcProcedureKeys = (node: unknown, prefix = ''): string[] => {
 
 const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
   if (isLocal()) {
-    const swaggerHttpPath = apiDocsEndpoint.replace(trailingSlashesRegex, '');
-    const swaggerTrpcPath = trpcDocsEndpoint.replace(trailingSlashesRegex, '');
+    const swaggerPath = docsEndpoint.replace(trailingSlashesRegex, '');
     const trpcPlaygroundPath = trpcPlaygroundEndpoint.replace(trailingSlashesRegex, '');
 
     const normalizedUrl = req.originalUrl.replace(trailingSlashesRegex, '');
 
-    if (
-      normalizedUrl === swaggerHttpPath ||
-      normalizedUrl === swaggerTrpcPath ||
-      normalizedUrl === trpcPlaygroundPath
-    ) {
+    if (normalizedUrl === swaggerPath || normalizedUrl === trpcPlaygroundPath) {
       next();
       return;
     }

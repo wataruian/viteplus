@@ -18,10 +18,17 @@
     "bumpp": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
+    "vite": "catalog:",
     "vite-plus": "catalog:"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.10.0",
+      "onFail": "download"
+    }
   },
   "engines": {
     "node": "24.14.1"
-  },
-  "packageManager": "pnpm@10.33.0"
+  }
 }

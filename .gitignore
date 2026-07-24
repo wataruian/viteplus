@@ -10,7 +10,6 @@ lerna-debug.log*
 # Editor
 .vscode/*
 !.vscode/extensions.json
-!.vscode/mcp.json
 !.vscode/settings.json
 .idea
 .DS_Store
@@ -37,3 +36,4 @@ tmp
 
 # AI
 .ai-data
+.claude/worktrees

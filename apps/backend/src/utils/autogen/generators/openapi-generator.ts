@@ -1,5 +1,6 @@
-import type { ParameterMetadata } from '@lightproject/common/types';
+import type { ParameterMetadata, ParsedType } from '@lightproject/common/types';
 import type { RouteInfo } from '../types';
+import { apiEndpoint } from '@lightproject/common/configs';
 
 interface OpenApiOperation {
   description?: string;
@@ -172,11 +173,9 @@ const getDefaultResponseSchema = (): OpenApiSchema => ({
 const generateOperationTags = (route: RouteInfo): string[] => {
   const tags: string[] = [];
 
-  if (route.serviceClass !== undefined && route.serviceClass !== '') {
-    tags.push(route.serviceClass.replace('Service', ''));
+  if (route.requestType !== undefined && route.requestType !== '') {
+    tags.push(route.requestType);
   }
-
-  tags.push(route.requestType);
 
   return tags;
 };
@@ -201,17 +200,18 @@ const parseObjectProperties = (content: string): string[] => {
   for (const char of content) {
     if (char === '{') {
       braceDepth += 1;
+      current += char;
     } else if (char === '}') {
       braceDepth -= 1;
+      current += char;
     } else if (char === ';' && braceDepth === 0) {
       if (current.trim()) {
         properties.push(current.trim());
       }
       current = '';
-      continue;
+    } else {
+      current += char;
     }
-
-    current += char;
   }
 
   if (current.trim()) {
@@ -221,15 +221,60 @@ const parseObjectProperties = (content: string): string[] => {
   return properties;
 };
 
-const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchema => {
+const parsedTypeToString = (parsed: ParsedType | string | Record<string, unknown>): string => {
+  if (typeof parsed === 'string') {
+    return parsed;
+  }
+
+  if (typeof parsed !== 'object' || parsed === null) {
+    return 'unknown';
+  }
+
+  const parsedObj = parsed as ParsedType;
+
+  if ('kind' in parsedObj) {
+    switch (parsedObj.kind) {
+      case 'primitive': {
+        return parsedObj.base ?? 'unknown';
+      }
+      case 'array': {
+        const itemType = parsedTypeToString(parsedObj.itemType ?? 'unknown');
+        return `${itemType}[]`;
+      }
+      case 'union': {
+        const types = (parsedObj.types ?? []).map((t) => parsedTypeToString(t));
+        return types.join(' | ');
+      }
+      case 'object': {
+        const props = parsedObj.properties ?? {};
+        const propStrings = Object.entries(props).map(([key, value]) => {
+          const type = parsedTypeToString(value);
+          return `${key}: ${type}`;
+        });
+        return `{ ${propStrings.join('; ')}; }`;
+      }
+      default: {
+        return 'unknown';
+      }
+    }
+  }
+
+  return 'unknown';
+};
+
+const convertTypeToSchema = (
+  type: string | ParsedType | Record<string, unknown>,
+  defaultValue?: unknown,
+): OpenApiSchema => {
+  const typeString = parsedTypeToString(type);
   const schema: OpenApiSchema = {};
 
   if (defaultValue !== undefined) {
     schema.default = defaultValue;
   }
 
-  if (type.endsWith('[]')) {
-    const itemType = type.slice(0, -2);
+  if (typeString.endsWith('[]')) {
+    const itemType = typeString.slice(0, -2);
     return {
       default: defaultValue,
       items: convertTypeToSchema(itemType),
@@ -237,8 +282,8 @@ const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchem
     };
   }
 
-  if (type.includes(' | ')) {
-    const unionTypes = type.split(' | ').map((t) => t.trim());
+  if (typeString.includes(' | ')) {
+    const unionTypes = typeString.split(' | ').map((t) => t.trim());
     const nonUndefinedTypes = unionTypes.filter((t) => t !== 'undefined');
 
     if (nonUndefinedTypes.length === 1) {
@@ -254,14 +299,14 @@ const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchem
     };
   }
 
-  if (type.startsWith('{') && type.endsWith('}')) {
+  if (typeString.startsWith('{') && typeString.endsWith('}')) {
     const objectSchema: OpenApiSchema = {
       default: defaultValue,
       properties: {},
       type: 'object',
     };
 
-    const content = type.slice(1, -1).trim(); // Remove { }
+    const content = typeString.slice(1, -1).trim(); // Remove { }
 
     if (!content) {
       return objectSchema;
@@ -299,7 +344,7 @@ const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchem
     return objectSchema;
   }
 
-  switch (type) {
+  switch (typeString) {
     case 'any':
     case 'unknown': {
       return { default: defaultValue, description: 'Any value' };
@@ -316,7 +361,7 @@ const convertTypeToSchema = (type: string, defaultValue?: unknown): OpenApiSchem
     default: {
       return {
         default: defaultValue,
-        description: `Type: ${type}`,
+        description: `Type: ${typeString}`,
         type: 'string',
       };
     }
@@ -635,6 +680,11 @@ const groupRoutesByPath = (routes: RouteInfo[]): Record<string, RouteInfo[]> => 
 
     if (!normalizedPath.startsWith('/')) {
       normalizedPath = `/${normalizedPath}`;
+    }
+
+    if (route.requestType === 'HTTP' && !normalizedPath.startsWith(apiEndpoint)) {
+      normalizedPath =
+        normalizedPath === '/' ? `${apiEndpoint}` : `${apiEndpoint}${normalizedPath}`;
     }
 
     groups[normalizedPath] ??= [];

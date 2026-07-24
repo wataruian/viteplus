@@ -3,6 +3,7 @@ import { extractServiceMetadata } from '../parsers/service-parser';
 import { extractTrpcRoutesFromFile } from '../parsers/trpc-parser';
 import path from 'node:path';
 import { projectDir } from '../config';
+import util from 'node:util';
 
 const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
   const trpcRouterDir = path.resolve(projectDir, 'src/routers/trpc/routes');
@@ -54,7 +55,13 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             type,
           } as RouteInfo;
 
-          globalThis.console.log('trpcReturnValue', returnValue);
+          globalThis.console.log(
+            'trpcReturnValue',
+            util.inspect(returnValue, {
+              colors: true,
+              depth: null,
+            }),
+          );
 
           return returnValue;
         });

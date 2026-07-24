@@ -5,6 +5,7 @@
     "oxc.oxc-vscode",
     "antfu.unocss",
     "VoidZero.vite-plus-extension-pack",
-    "void-zero.vite-plus-extension-pack"
+    "void-zero.vite-plus-extension-pack",
+    "tombi-toml.tombi"
   ]
 }

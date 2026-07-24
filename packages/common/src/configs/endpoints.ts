@@ -15,14 +15,8 @@ const apiUrl = `${apiBaseUrl}${apiEndpoint}`;
 const docsEndpoint = '/docs';
 const docsUrl = `${apiBaseUrl}${docsEndpoint}`;
 
-const apiDocsEndpoint = '/api-docs';
-const apiDocsUrl = `${apiBaseUrl}${apiDocsEndpoint}`;
-
 const trpcEndpoint = '/trpc';
 const trpcUrl = `${apiBaseUrl}${trpcEndpoint}`;
-
-const trpcDocsEndpoint = '/trpc-docs';
-const trpcDocsUrl = `${apiBaseUrl}${trpcDocsEndpoint}`;
 
 const trpcPlaygroundEndpoint = '/trpc-playground';
 const trpcPlaygroundUrl = `${apiBaseUrl}${trpcPlaygroundEndpoint}`;
@@ -33,10 +27,8 @@ const requestTypes = {
 } as const;
 
 const isTrpcEndpoint = (url: string): boolean =>
-  (url.startsWith(trpcEndpoint) &&
-    !url.startsWith(trpcPlaygroundEndpoint) &&
-    !url.startsWith(trpcDocsEndpoint)) ||
-  (url.startsWith(trpcUrl) && !url.startsWith(trpcPlaygroundUrl) && !url.startsWith(trpcDocsUrl));
+  (url.startsWith(trpcEndpoint) && !url.startsWith(trpcPlaygroundEndpoint)) ||
+  (url.startsWith(trpcUrl) && !url.startsWith(trpcPlaygroundUrl));
 
 const getRequestType = (url: string): RequestType => {
   if (isTrpcEndpoint(url)) {
@@ -56,8 +48,6 @@ export type { RequestType };
 export {
   adminUrl,
   apiBaseUrl,
-  apiDocsEndpoint,
-  apiDocsUrl,
   apiEndpoint,
   apiUrl,
   docsEndpoint,
@@ -69,8 +59,6 @@ export {
   isTrpcRequest,
   requestTypes,
   siteUrl,
-  trpcDocsEndpoint,
-  trpcDocsUrl,
   trpcEndpoint,
   trpcPlaygroundEndpoint,
   trpcPlaygroundUrl,

@@ -116,7 +116,7 @@ const trpcRouteWrapper = t.middleware(async ({ next }) => {
     // const errorDetails = getErrorDetails(result.error, ctx.res);
     // ctx.req.locals.metadata.error = errorDetails;
     // ctx.res.locals.metadata.error = errorDetails;
-    // console.log('Error in TRPC route wrapper:', result.error);
+    // globalThis.console.log('Error in TRPC route wrapper:', result.error);
   }
 
   return result;

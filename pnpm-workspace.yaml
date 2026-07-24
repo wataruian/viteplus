@@ -2,6 +2,8 @@ packages:
   - apps/*
   - packages/*
 
+catalogMode: prefer
+
 allowBuilds:
   '@scarf/scarf': true
   esbuild: true
@@ -30,7 +32,7 @@ catalog:
   '@unocss/transformer-directives': npm:@unocss/transformer-directives@66.6.7
   '@unocss/transformer-variant-group': npm:@unocss/transformer-variant-group@66.6.7
   '@vitejs/plugin-react': npm:@vitejs/plugin-react@6.0.1
-  '@vitest/coverage-v8': npm:@vitest/coverage-v8@4.1.2
+  '@vitest/coverage-v8': npm:@vitest/coverage-v8@4.1.10
   axios: npm:axios@1.16.0
   bumpp: npm:bumpp@11.0.1
   chalk: npm:chalk@5.6.2
@@ -63,21 +65,15 @@ catalog:
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
   uuid: npm:uuid@11.0.0
-  vite: npm:@voidzero-dev/vite-plus-core@0.1.20
-  vite-plus: npm:vite-plus@0.1.20
-  vitest: npm:@voidzero-dev/vite-plus-test@0.1.20
+  vite: npm:@voidzero-dev/vite-plus-core@0.2.4
+  vite-plus: npm:vite-plus@0.2.4
   wcwidth: npm:wcwidth@1.0.1
   zod: npm:zod@4.4.3
 
-catalogMode: prefer
-
 overrides:
   vite: 'catalog:'
-  vitest: 'catalog:'
 peerDependencyRules:
   allowAny:
     - vite
-    - vitest
   allowedVersions:
     vite: '*'
-    vitest: '*'
