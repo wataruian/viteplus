@@ -87,19 +87,28 @@ class TestService extends BaseService {
     _stringArray: string[] = ['ABC', 'DEF'],
   ) {
     return {
-      data: {
-        booleanArrayOutput: [true, false],
-        booleanOutput: true,
-        numberArrayOutput: [123, 456],
-        numberOutput: 123,
-        objectBooleanArrayOutput: { booleanArray: [true, false] },
-        objectBooleanOutput: { boolean: true },
-        objectMultipleOutput: {
-          boolean: false,
+      booleanArrayOutput: [true, false],
+      booleanOutput: true,
+      message: 'Check parameters processed successfully',
+      numberArrayOutput: [123, 456],
+      numberOutput: 123,
+      objectBooleanArrayOutput: { booleanArray: [true, false] },
+      objectBooleanOutput: { boolean: true },
+      objectMultipleOutput: {
+        boolean: false,
+        booleanArray: [true, false],
+        number: 123,
+        numberArray: [123, 456],
+        object: {
+          boolean: true,
           booleanArray: [true, false],
           number: 123,
           numberArray: [123, 456],
-          object: {
+          string: 'ABC',
+          stringArray: ['ABC', 'DEF'],
+        },
+        objectArray: [
+          {
             boolean: true,
             booleanArray: [true, false],
             number: 123,
@@ -107,37 +116,26 @@ class TestService extends BaseService {
             string: 'ABC',
             stringArray: ['ABC', 'DEF'],
           },
-          objectArray: [
-            {
-              boolean: true,
-              booleanArray: [true, false],
-              number: 123,
-              numberArray: [123, 456],
-              string: 'ABC',
-              stringArray: ['ABC', 'DEF'],
-            },
-            {
-              boolean: false,
-              booleanArray: [false, true],
-              number: 456,
-              numberArray: [456, 789],
-              string: 'DEF',
-              stringArray: ['DEF', 'GHI'],
-            },
-          ],
-          string: 'ABC',
-          stringArray: ['ABC', 'DEF'],
-        },
-        objectNumberArrayOutput: {
-          numberArray: [123, 456],
-        },
-        objectNumberOutput: { number: 123 },
-        objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
-        objectStringOutput: { string: 'ABC' },
-        stringArrayOutput: ['ABC', 'DEF'],
-        stringOutput: 'ABC',
+          {
+            boolean: false,
+            booleanArray: [false, true],
+            number: 456,
+            numberArray: [456, 789],
+            string: 'DEF',
+            stringArray: ['DEF', 'GHI'],
+          },
+        ],
+        string: 'ABC',
+        stringArray: ['ABC', 'DEF'],
       },
-      message: 'Check parameters processed successfully',
+      objectNumberArrayOutput: {
+        numberArray: [123, 456],
+      },
+      objectNumberOutput: { number: 123 },
+      objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
+      objectStringOutput: { string: 'ABC' },
+      stringArrayOutput: ['ABC', 'DEF'],
+      stringOutput: 'ABC',
     };
   }
 
@@ -169,33 +167,35 @@ class TestService extends BaseService {
     arr?: number[],
   ) {
     return {
-      data: { a, arr, b, options },
+      a,
+      arr,
+      b,
       message: 'Mixed parameters processed successfully',
+      options,
     };
   }
 
   public static objectDestructured({ prop1, prop2 }: { prop1?: string; prop2?: number }) {
     return {
-      data: { prop1, prop2 },
       message: 'Object destructured parameters processed successfully',
+      prop1,
+      prop2,
     };
   }
 
   public static objectOnly(options: { bar?: number; foo?: string }) {
     return {
-      data: options,
       message: 'Object parameters processed successfully',
+      options,
     };
   }
 
   public static primitivesAndArray(var1: string, var2: number, var3?: string[]) {
     return {
-      data: {
-        var1,
-        var2,
-        var3,
-      },
       message: 'Primitives and array processed successfully',
+      var1,
+      var2,
+      var3,
     };
   }
 

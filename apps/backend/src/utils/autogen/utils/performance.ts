@@ -42,8 +42,7 @@ class PerformanceTimer {
     const totalTime = this.getTotal();
     const formattedTotal = PerformanceTimer.formatDuration(totalTime);
 
-    logger.info(`\n📊 Performance Summary (Total: ${formattedTotal})`);
-    logger.info('='.repeat(50));
+    logger.info(`📊 Performance Summary (Total: ${formattedTotal})`);
 
     const sortedOps = [...this.operations].toSorted((a, b) => b.duration - a.duration);
 
@@ -53,8 +52,6 @@ class PerformanceTimer {
 
       logger.info(`  ${op.name.padEnd(25)} ${formattedDuration.padStart(8)} (${percentage}%)`);
     }
-
-    logger.info('='.repeat(50));
   }
 
   public start(): void {

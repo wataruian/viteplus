@@ -234,14 +234,23 @@ describe('Autogen Main', () => {
   });
 
   describe('Route input/output shapes', () => {
-    const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
+    const messageOutput = [
+      { name: 'code', required: true, type: 'number' },
+      { name: 'message', required: true, type: 'string' },
+      { name: 'sessionId', required: true, type: 'string' },
+      { name: 'success', required: true, type: 'boolean' },
+    ] as const;
 
     const errorOutput = [
-      { name: 'error', required: true, type: 'string' },
+      { name: 'code', required: true, type: 'number' },
+      {
+        name: 'error',
+        required: true,
+        type: '{ message: string; name: string; stack: string; statusCode: number; }',
+      },
       { name: 'message', required: true, type: 'string' },
-      { name: 'name', required: true, type: 'string' },
-      { name: 'stack', required: true, type: 'string' },
-      { name: 'statusCode', required: true, type: 'number' },
+      { name: 'sessionId', required: true, type: 'string' },
+      { name: 'success', required: true, type: 'boolean' },
     ] as const;
 
     const sharedRouteCases = [
@@ -338,7 +347,7 @@ describe('Autogen Main', () => {
         httpPath: '/test/object-only',
         input: [{ name: 'options', required: true, type: '{ bar?: number; foo?: string; }' }],
         output: [
-          { name: 'data', required: true, type: '{ bar?: number; foo?: string; }' },
+          { name: 'data', required: true, type: '{ options: { bar?: number; foo?: string; } }' },
           ...messageOutput,
         ],
         trpcPath: '/trpc/test.objectOnly',

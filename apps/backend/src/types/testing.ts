@@ -9,6 +9,7 @@ interface HttpTestCase {
   expected: {
     code: number;
     data?: unknown;
+    error?: unknown;
     message?: string;
     success: boolean;
   };
@@ -42,6 +43,7 @@ interface TrpcTestCase {
   expected: {
     code: number;
     data?: unknown;
+    error?: unknown;
     message?: string | undefined;
     success: boolean;
     trpcError?: string | undefined;

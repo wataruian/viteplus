@@ -223,7 +223,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/object-only`,
       expected: {
         code: 200,
-        data: { bar: 1, foo: 'baz' },
+        data: { options: { bar: 1, foo: 'baz' } },
         message: 'Object parameters processed successfully',
         success: true,
       },
@@ -289,9 +289,7 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
         expect(Reflect.get(body, 'error')).toMatchObject(expected.error);
       }
 
-      if ('sessionId' in expected) {
-        expect(typeof Reflect.get(body, 'sessionId')).toBe('string');
-      }
+      expect(typeof Reflect.get(body, 'sessionId')).toBe('string');
     });
   }
 };

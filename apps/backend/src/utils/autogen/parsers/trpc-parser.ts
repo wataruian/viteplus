@@ -1,5 +1,6 @@
 import { type CallExpression, Node, type PropertyAssignment, type SourceFile } from 'ts-morph';
 import type { RouteHandlerInfo } from '../types';
+import { getEnv } from '@lightproject/common/environment';
 import { getProject } from '../config';
 
 const getPropertyName = (property: PropertyAssignment): string | undefined => {
@@ -167,7 +168,9 @@ const extractRouteFromProperty = (
   } else if (Node.isIdentifier(initializer)) {
     const routerRef = initializer.getText();
 
-    globalThis.console.log('routerRef', routerRef);
+    if (getEnv('AUTOGEN_DEBUG') === 'true' || getEnv('AUTOGEN_DEBUG') === '1') {
+      globalThis.console.log('routerRef', routerRef);
+    }
 
     routes.push({
       handlerFilePath: filePath,

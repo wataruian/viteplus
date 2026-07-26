@@ -3,6 +3,7 @@ import { getProject, projectDir } from '../config';
 import { Node } from 'ts-morph';
 import type { RouteInfo } from '../types';
 import { extractHttpServiceMethod } from '../parsers/http-parser';
+import { getEnv } from '@lightproject/common/environment';
 import { inspect } from 'node:util';
 
 const extractHttpMethod = (initializer: Node | undefined): string => {
@@ -81,13 +82,15 @@ const processRouteProperties = async (
       serviceMethod,
     } as RouteInfo;
 
-    globalThis.console.log(
-      'httpReturnValue',
-      inspect(returnValue, {
-        colors: true,
-        depth: null,
-      }),
-    );
+    if (getEnv('AUTOGEN_DEBUG') === 'true' || getEnv('AUTOGEN_DEBUG') === '1') {
+      globalThis.console.log(
+        'httpReturnValue',
+        inspect(returnValue, {
+          colors: true,
+          depth: null,
+        }),
+      );
+    }
 
     return returnValue;
   });

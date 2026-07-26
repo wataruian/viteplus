@@ -235,7 +235,7 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `POST ${trpcEndpoint}/test.objectOnly returns correct object`,
       expected: {
         code: 200,
-        data: { bar: 1, foo: 'baz' },
+        data: { options: { bar: 1, foo: 'baz' } },
         message: 'Object parameters processed successfully',
         success: true,
       },
@@ -323,9 +323,7 @@ const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
             }
 
             const jsonDataSessionId = Reflect.get(jsonData, 'sessionId') as unknown;
-            if (jsonDataSessionId !== undefined && jsonDataSessionId !== null) {
-              expect(typeof jsonDataSessionId).toBe('string');
-            }
+            expect(typeof jsonDataSessionId).toBe('string');
           }
         }
       }
