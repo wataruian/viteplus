@@ -387,6 +387,18 @@ describe('Autogen Main', () => {
         output: messageOutput,
         trpcPath: '/trpc/test.syncSuccess',
       },
+      {
+        httpPath: '/test/custom-type-array',
+        input: [{ name: 'testUsers', required: true }],
+        output: [{ name: 'data', required: true }, ...messageOutput],
+        trpcPath: '/trpc/test.customTypeArray',
+      },
+      {
+        httpPath: '/test/custom-type-single',
+        input: [{ name: 'testUser', required: true }],
+        output: [{ name: 'data', required: true }, ...messageOutput],
+        trpcPath: '/trpc/test.customTypeSingle',
+      },
     ] as const;
 
     const expectedRoutes = [

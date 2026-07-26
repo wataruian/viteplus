@@ -264,6 +264,16 @@ describe('Service Parser', () => {
       method: 'syncSuccess',
       output: messageOutput,
     },
+    {
+      input: [{ name: 'testUsers', required: true }],
+      method: 'customTypeArray',
+      output: [{ name: 'data', required: true }, ...messageOutput],
+    },
+    {
+      input: [{ name: 'testUser', required: true }],
+      method: 'customTypeSingle',
+      output: [{ name: 'data', required: true }, ...messageOutput],
+    },
   ];
 
   const expectedDefaultServiceMethods: readonly TestParams[] = [

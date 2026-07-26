@@ -1,7 +1,7 @@
 VITE+ - The Unified Toolchain for the Web
 
 ~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts
-[2026-07-26T12:02:36.729Z] INFO : 🚀 Starting autogen build process...
+[2026-07-26T13:27:09.624Z] INFO : 🚀 Starting autogen build process...
 httpReturnValue {
   handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
   input: [],
@@ -527,6 +527,196 @@ httpReturnValue {
   serviceClass: 'TestService',
   serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
   serviceMethod: 'asyncSuccess'
+}
+httpReturnValue {
+  handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+  input: [
+    {
+      defaultValue: undefined,
+      description: undefined,
+      name: 'testUsers',
+      required: true,
+      type: {
+        itemType: {
+          kind: 'object',
+          properties: {
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            age: { base: 'number', kind: 'primitive', required: true },
+            address: {
+              kind: 'object',
+              properties: {
+                province: { base: 'string', kind: 'primitive', required: true },
+                city: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false },
+                houseNumber: { base: 'number', kind: 'primitive', required: true }
+              },
+              required: true
+            }
+          }
+        },
+        kind: 'array'
+      }
+    }
+  ],
+  method: 'post',
+  output: {
+    description: undefined,
+    name: 'output',
+    required: true,
+    type: {
+      kind: 'object',
+      properties: {
+        message: { base: 'string', kind: 'primitive' },
+        data: {
+          kind: 'object',
+          properties: {
+            testUsers: {
+              itemType: {
+                kind: 'object',
+                properties: {
+                  firstName: { base: 'string', kind: 'primitive', required: true },
+                  middleName: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  age: { base: 'number', kind: 'primitive', required: true },
+                  address: {
+                    kind: 'object',
+                    properties: {
+                      province: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      city: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      street: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: false
+                      },
+                      houseNumber: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      }
+                    },
+                    required: true
+                  }
+                }
+              },
+              kind: 'array'
+            }
+          }
+        },
+        code: { base: 'number', kind: 'primitive', required: true },
+        sessionId: { base: 'string', kind: 'primitive', required: true },
+        success: { base: 'boolean', kind: 'primitive', required: true }
+      }
+    }
+  },
+  path: '/test/custom-type-array',
+  requestType: 'HTTP',
+  serviceClass: 'TestService',
+  serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+  serviceMethod: 'customTypeArray'
+}
+httpReturnValue {
+  handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+  input: [
+    {
+      defaultValue: undefined,
+      description: undefined,
+      name: 'testUser',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          firstName: { base: 'string', kind: 'primitive', required: true },
+          middleName: { base: 'string', kind: 'primitive', required: false },
+          lastName: { base: 'string', kind: 'primitive', required: true },
+          age: { base: 'number', kind: 'primitive', required: true },
+          address: {
+            kind: 'object',
+            properties: {
+              province: { base: 'string', kind: 'primitive', required: true },
+              city: { base: 'string', kind: 'primitive', required: true },
+              street: { base: 'string', kind: 'primitive', required: false },
+              houseNumber: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: true
+          }
+        }
+      }
+    }
+  ],
+  method: 'post',
+  output: {
+    description: undefined,
+    name: 'output',
+    required: true,
+    type: {
+      kind: 'object',
+      properties: {
+        message: { base: 'string', kind: 'primitive' },
+        data: {
+          kind: 'object',
+          properties: {
+            testUser: {
+              kind: 'object',
+              properties: {
+                firstName: { base: 'string', kind: 'primitive', required: true },
+                middleName: { base: 'string', kind: 'primitive', required: false },
+                lastName: { base: 'string', kind: 'primitive', required: true },
+                age: { base: 'number', kind: 'primitive', required: true },
+                address: {
+                  kind: 'object',
+                  properties: {
+                    province: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    city: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    street: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
+                    },
+                    houseNumber: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    }
+                  },
+                  required: true
+                }
+              }
+            }
+          }
+        },
+        code: { base: 'number', kind: 'primitive', required: true },
+        sessionId: { base: 'string', kind: 'primitive', required: true },
+        success: { base: 'boolean', kind: 'primitive', required: true }
+      }
+    }
+  },
+  path: '/test/custom-type-single',
+  requestType: 'HTTP',
+  serviceClass: 'TestService',
+  serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+  serviceMethod: 'customTypeSingle'
 }
 httpReturnValue {
   handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
@@ -1429,6 +1619,198 @@ trpcReturnValue {
     {
       defaultValue: undefined,
       description: undefined,
+      name: 'testUsers',
+      required: true,
+      type: {
+        itemType: {
+          kind: 'object',
+          properties: {
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            age: { base: 'number', kind: 'primitive', required: true },
+            address: {
+              kind: 'object',
+              properties: {
+                province: { base: 'string', kind: 'primitive', required: true },
+                city: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false },
+                houseNumber: { base: 'number', kind: 'primitive', required: true }
+              },
+              required: true
+            }
+          }
+        },
+        kind: 'array'
+      }
+    }
+  ],
+  method: 'post',
+  output: {
+    description: undefined,
+    name: 'output',
+    required: true,
+    type: {
+      kind: 'object',
+      properties: {
+        message: { base: 'string', kind: 'primitive' },
+        data: {
+          kind: 'object',
+          properties: {
+            testUsers: {
+              itemType: {
+                kind: 'object',
+                properties: {
+                  firstName: { base: 'string', kind: 'primitive', required: true },
+                  middleName: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  age: { base: 'number', kind: 'primitive', required: true },
+                  address: {
+                    kind: 'object',
+                    properties: {
+                      province: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      city: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      street: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: false
+                      },
+                      houseNumber: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      }
+                    },
+                    required: true
+                  }
+                }
+              },
+              kind: 'array'
+            }
+          }
+        },
+        code: { base: 'number', kind: 'primitive', required: true },
+        sessionId: { base: 'string', kind: 'primitive', required: true },
+        success: { base: 'boolean', kind: 'primitive', required: true }
+      }
+    }
+  },
+  path: '/trpc/test.customTypeArray',
+  requestType: 'tRPC',
+  serviceClass: 'TestService',
+  serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+  serviceMethod: 'customTypeArray',
+  type: 'mutation'
+}
+trpcReturnValue {
+  handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+  input: [
+    {
+      defaultValue: undefined,
+      description: undefined,
+      name: 'testUser',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          firstName: { base: 'string', kind: 'primitive', required: true },
+          middleName: { base: 'string', kind: 'primitive', required: false },
+          lastName: { base: 'string', kind: 'primitive', required: true },
+          age: { base: 'number', kind: 'primitive', required: true },
+          address: {
+            kind: 'object',
+            properties: {
+              province: { base: 'string', kind: 'primitive', required: true },
+              city: { base: 'string', kind: 'primitive', required: true },
+              street: { base: 'string', kind: 'primitive', required: false },
+              houseNumber: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: true
+          }
+        }
+      }
+    }
+  ],
+  method: 'post',
+  output: {
+    description: undefined,
+    name: 'output',
+    required: true,
+    type: {
+      kind: 'object',
+      properties: {
+        message: { base: 'string', kind: 'primitive' },
+        data: {
+          kind: 'object',
+          properties: {
+            testUser: {
+              kind: 'object',
+              properties: {
+                firstName: { base: 'string', kind: 'primitive', required: true },
+                middleName: { base: 'string', kind: 'primitive', required: false },
+                lastName: { base: 'string', kind: 'primitive', required: true },
+                age: { base: 'number', kind: 'primitive', required: true },
+                address: {
+                  kind: 'object',
+                  properties: {
+                    province: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    city: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    street: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
+                    },
+                    houseNumber: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    }
+                  },
+                  required: true
+                }
+              }
+            }
+          }
+        },
+        code: { base: 'number', kind: 'primitive', required: true },
+        sessionId: { base: 'string', kind: 'primitive', required: true },
+        success: { base: 'boolean', kind: 'primitive', required: true }
+      }
+    }
+  },
+  path: '/trpc/test.customTypeSingle',
+  requestType: 'tRPC',
+  serviceClass: 'TestService',
+  serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+  serviceMethod: 'customTypeSingle',
+  type: 'mutation'
+}
+trpcReturnValue {
+  handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+  input: [
+    {
+      defaultValue: undefined,
+      description: undefined,
       name: 'firstName',
       required: true,
       type: { base: 'string', kind: 'primitive' }
@@ -1795,19 +2177,16 @@ trpcReturnValue {
   serviceMethod: 'syncSuccess',
   type: 'query'
 }
-[2026-07-26T12:02:38.145Z] WARN : No start time found for operation: Route Extraction
-[2026-07-26T12:02:38.145Z] INFO : 📋 Discovered 26 routes: 13 HTTP, 13 tRPC
-[2026-07-26T12:02:38.145Z] INFO : Validating 26 routes...
-[2026-07-26T12:02:38.146Z] INFO : ✅ All routes passed validation (0 warnings)
-[2026-07-26T12:02:38.146Z] INFO : ✅ All routes passed validation
-[2026-07-26T12:02:38.146Z] INFO : 🔄 Validating routes: [████████████████████] 26/26 (100%)
-[2026-07-26T12:02:38.146Z] WARN : No start time found for operation: Route Validation
-[2026-07-26T12:02:38.148Z] WARN : No start time found for operation: OpenAPI Generation
-[2026-07-26T12:02:38.150Z] WARN : No start time found for operation: File Operations
-[2026-07-26T12:02:38.150Z] INFO : ✅ OpenAPI spec generated with 26 paths
-[2026-07-26T12:02:38.150Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
-[2026-07-26T12:02:38.150Z] INFO : 
-📊 Performance Summary (Total: 1.42s)
-[2026-07-26T12:02:38.150Z] INFO : ==================================================
-[2026-07-26T12:02:38.150Z] INFO : ==================================================
-[2026-07-26T12:02:38.150Z] INFO : 🎉 OpenAPI specification generation completed successfully!
+[2026-07-26T13:27:11.039Z] WARN : No start time found for operation: Route Extraction
+[2026-07-26T13:27:11.039Z] INFO : 📋 Discovered 30 routes: 15 HTTP, 15 tRPC
+[2026-07-26T13:27:11.039Z] INFO : Validating 30 routes...
+[2026-07-26T13:27:11.040Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-07-26T13:27:11.040Z] INFO : ✅ All routes passed validation
+[2026-07-26T13:27:11.040Z] INFO : 🔄 Validating routes: [████████████████████] 30/30 (100%)
+[2026-07-26T13:27:11.040Z] WARN : No start time found for operation: Route Validation
+[2026-07-26T13:27:11.042Z] WARN : No start time found for operation: OpenAPI Generation
+[2026-07-26T13:27:11.046Z] WARN : No start time found for operation: File Operations
+[2026-07-26T13:27:11.046Z] INFO : ✅ OpenAPI spec generated with 30 paths
+[2026-07-26T13:27:11.046Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-07-26T13:27:11.046Z] INFO : 📊 Performance Summary (Total: 1.42s)
+[2026-07-26T13:27:11.046Z] INFO : 🎉 OpenAPI specification generation completed successfully!

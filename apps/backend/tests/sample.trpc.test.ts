@@ -259,6 +259,78 @@ const cases: Record<string, TrpcTestCase[]> = {
       path: 'test.primitivesAndArray',
       type: 'mutation',
     },
+    {
+      description: `POST ${trpcEndpoint}/test.customTypeArray returns correct structure`,
+      expected: {
+        code: 200,
+        data: {
+          testUsers: [
+            {
+              address: {
+                city: 'Sample',
+                houseNumber: 1,
+                province: 'Sample',
+              },
+              age: 25,
+              firstName: 'First',
+              lastName: 'Last',
+            },
+          ],
+        },
+        message: 'Custom type array processed successfully',
+        success: true,
+      },
+      input: {
+        testUsers: [
+          {
+            address: {
+              city: 'Sample',
+              houseNumber: 1,
+              province: 'Sample',
+            },
+            age: 25,
+            firstName: 'First',
+            lastName: 'Last',
+          },
+        ],
+      },
+      path: 'test.customTypeArray',
+      type: 'mutation',
+    },
+    {
+      description: `POST ${trpcEndpoint}/test.customTypeSingle returns correct structure`,
+      expected: {
+        code: 200,
+        data: {
+          testUser: {
+            address: {
+              city: 'Sample',
+              houseNumber: 1,
+              province: 'Sample',
+            },
+            age: 25,
+            firstName: 'First',
+            lastName: 'Last',
+          },
+        },
+        message: 'Custom type single processed successfully',
+        success: true,
+      },
+      input: {
+        testUser: {
+          address: {
+            city: 'Sample',
+            houseNumber: 1,
+            province: 'Sample',
+          },
+          age: 25,
+          firstName: 'First',
+          lastName: 'Last',
+        },
+      },
+      path: 'test.customTypeSingle',
+      type: 'mutation',
+    },
   ],
 };
 

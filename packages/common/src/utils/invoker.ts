@@ -165,6 +165,10 @@ const normalizeArgs = (fn: InvokableFunction, input: unknown): unknown[] => {
     return [input ?? {}];
   }
   if (paramNames.length === 1 && !paramNames[0].name.trim().startsWith('{')) {
+    const singleParamName = paramNames[0].name.trim();
+    if (isPlainObject(input) && singleParamName in input) {
+      return [input[singleParamName]];
+    }
     return [input ?? {}];
   }
 

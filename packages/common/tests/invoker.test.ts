@@ -27,6 +27,9 @@ const mixedParams = (
   arr?: number[],
 ) => [a, b, options, arr];
 
+const customTypeArrayParam = (testUsers: { firstName: string }[]) => [testUsers];
+const customTypeSingleParam = (testUser: { firstName: string }) => [testUser];
+
 describe('extractParamNamesAndDefaults', () => {
   it('should extract parameter names for noParams', () => {
     expect(extractParamNamesAndDefaults(noParams)).toEqual([]);
@@ -129,6 +132,16 @@ describe('normalizeArgs', () => {
   it('should handle mixed params with missing keys (defaults)', () => {
     expect(normalizeArgs(mixedParams, { a: 'a', b: 1 })).toEqual(['a', 1, undefined, undefined]);
   });
+  it('should handle customTypeArrayParam single param wrapper', () => {
+    expect(normalizeArgs(customTypeArrayParam, { testUsers: [{ firstName: 'First' }] })).toEqual([
+      [{ firstName: 'First' }],
+    ]);
+  });
+  it('should handle customTypeSingleParam single param wrapper', () => {
+    expect(normalizeArgs(customTypeSingleParam, { testUser: { firstName: 'First' } })).toEqual([
+      { firstName: 'First' },
+    ]);
+  });
 });
 
 describe('invokeWithParsedArgs', () => {
@@ -224,5 +237,15 @@ describe('invokeWithParsedArgs', () => {
       undefined,
       undefined,
     ]);
+  });
+  it('should invoke customTypeArrayParam with single param wrapper', () => {
+    expect(
+      invokeWithParsedArgs(customTypeArrayParam, { testUsers: [{ firstName: 'First' }] }),
+    ).toEqual([[{ firstName: 'First' }]]);
+  });
+  it('should invoke customTypeSingleParam with single param wrapper', () => {
+    expect(
+      invokeWithParsedArgs(customTypeSingleParam, { testUser: { firstName: 'First' } }),
+    ).toEqual([{ firstName: 'First' }]);
   });
 });

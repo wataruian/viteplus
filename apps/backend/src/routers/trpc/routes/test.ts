@@ -77,6 +77,29 @@ const primitivesAndArraySchema = z.object({
   var3: z.array(z.string()).optional(),
 });
 
+const addressSchema = z.object({
+  city: z.string(),
+  houseNumber: z.number(),
+  province: z.string(),
+  street: z.string().optional(),
+});
+
+const testUserSchema = z.object({
+  address: addressSchema,
+  age: z.number(),
+  firstName: z.string(),
+  lastName: z.string(),
+  middleName: z.string().optional(),
+});
+
+const customTypeArraySchema = z.object({
+  testUsers: z.array(testUserSchema),
+});
+
+const customTypeSingleSchema = z.object({
+  testUser: testUserSchema,
+});
+
 const testRouter = router({
   _checkParams: publicProcedure
     .input(checkParamsSchema)
@@ -84,6 +107,12 @@ const testRouter = router({
   asyncFailReject: publicProcedure.query(createRouteHandler(TestService, 'asyncFailReject')),
   asyncFailThrow: publicProcedure.query(createRouteHandler(TestService, 'asyncFailThrow')),
   asyncSuccess: publicProcedure.query(createRouteHandler(TestService, 'asyncSuccess')),
+  customTypeArray: publicProcedure
+    .input(customTypeArraySchema)
+    .mutation(createRouteHandler(TestService, 'customTypeArray')),
+  customTypeSingle: publicProcedure
+    .input(customTypeSingleSchema)
+    .mutation(createRouteHandler(TestService, 'customTypeSingle')),
   hello: publicProcedure.input(helloSchema).mutation(createRouteHandler(TestService, 'hello')),
   mixedParams: publicProcedure
     .input(mixedParamsSchema)

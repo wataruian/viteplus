@@ -9,6 +9,12 @@ const routes = {
   ),
   '/test/async-fail-throw': publicHttp.get(() => createRouteHandler(TestService, 'asyncFailThrow')),
   '/test/async-success': publicHttp.get(() => createRouteHandler(TestService, 'asyncSuccess')),
+  '/test/custom-type-array': publicHttp.post(() =>
+    createRouteHandler(TestService, 'customTypeArray'),
+  ),
+  '/test/custom-type-single': publicHttp.post(() =>
+    createRouteHandler(TestService, 'customTypeSingle'),
+  ),
   '/test/hello': publicHttp.post(() => createRouteHandler(TestService, 'hello')),
   '/test/mixed-params': publicHttp.post(() => createRouteHandler(TestService, 'mixedParams')),
   '/test/object-destructured': publicHttp.post(() =>

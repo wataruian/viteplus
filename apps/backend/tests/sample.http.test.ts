@@ -246,6 +246,78 @@ const cases: Record<string, HttpTestCase[]> = {
       input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
       method: 'post',
     },
+    {
+      description: `POST ${apiEndpoint}/test/custom-type-array returns correct structure`,
+      endpoint: `${apiEndpoint}/test/custom-type-array`,
+      expected: {
+        code: 200,
+        data: {
+          testUsers: [
+            {
+              address: {
+                city: 'Sample',
+                houseNumber: 1,
+                province: 'Sample',
+              },
+              age: 25,
+              firstName: 'First',
+              lastName: 'Last',
+            },
+          ],
+        },
+        message: 'Custom type array processed successfully',
+        success: true,
+      },
+      input: {
+        testUsers: [
+          {
+            address: {
+              city: 'Sample',
+              houseNumber: 1,
+              province: 'Sample',
+            },
+            age: 25,
+            firstName: 'First',
+            lastName: 'Last',
+          },
+        ],
+      },
+      method: 'post',
+    },
+    {
+      description: `POST ${apiEndpoint}/test/custom-type-single returns correct structure`,
+      endpoint: `${apiEndpoint}/test/custom-type-single`,
+      expected: {
+        code: 200,
+        data: {
+          testUser: {
+            address: {
+              city: 'Sample',
+              houseNumber: 1,
+              province: 'Sample',
+            },
+            age: 25,
+            firstName: 'First',
+            lastName: 'Last',
+          },
+        },
+        message: 'Custom type single processed successfully',
+        success: true,
+      },
+      input: {
+        testUser: {
+          address: {
+            city: 'Sample',
+            houseNumber: 1,
+            province: 'Sample',
+          },
+          age: 25,
+          firstName: 'First',
+          lastName: 'Last',
+        },
+      },
+      method: 'post',
+    },
   ],
 };
 

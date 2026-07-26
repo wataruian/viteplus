@@ -2,6 +2,21 @@ import type { InputArgs, ServiceContext } from '../types/middlware';
 import { BaseService } from './base';
 import { sleep } from '@lightproject/common/utils';
 
+interface Address {
+  province: string;
+  city: string;
+  street?: string;
+  houseNumber: number;
+}
+
+interface TestUser {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  age: number;
+  address: Address;
+}
+
 class TestService extends BaseService {
   public constructor(ctx: ServiceContext, inputArgs: InputArgs = {}) {
     super(ctx, inputArgs);
@@ -152,6 +167,20 @@ class TestService extends BaseService {
   public static async asyncSuccess() {
     await Promise.resolve(sleep(0));
     return { message: 'Async success' };
+  }
+
+  public static customTypeArray(testUsers: TestUser[]) {
+    return {
+      message: 'Custom type array processed successfully',
+      testUsers,
+    };
+  }
+
+  public static customTypeSingle(testUser: TestUser) {
+    return {
+      message: 'Custom type single processed successfully',
+      testUser,
+    };
   }
 
   public static hello(firstName: string, lastName?: string) {

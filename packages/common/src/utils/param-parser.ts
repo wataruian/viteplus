@@ -72,6 +72,27 @@ const areSerializedTypesEqual = (left: SerializedType, right: SerializedType): b
   );
 };
 
+// Forward declaration objects — assigned after the Impl functions are defined below.
+const serializeFwd: {
+  expression: (node: Node) => SerializedType;
+  fromType: (type: Type, node: Node) => SerializedType;
+  node: (node: Node) => SerializedType;
+  type: (type: Type, node?: Node) => SerializedType;
+} = {
+  expression: (_node: Node): SerializedType => {
+    throw new Error('serializeExpression not yet initialized');
+  },
+  fromType: (_type: Type, _node: Node): SerializedType => {
+    throw new Error('serializeFromType not yet initialized');
+  },
+  node: (_node: Node): SerializedType => {
+    throw new Error('serializeNode not yet initialized');
+  },
+  type: (_type: Type, _node?: Node): SerializedType => {
+    throw new Error('serializeType not yet initialized');
+  },
+};
+
 const isUndefinedLikeType = (type: Type): boolean => {
   const text = type.getText().trim();
   return type.isUndefined() || text === 'undefined' || text === 'void';
@@ -101,17 +122,97 @@ const mergeSerializedTypes = (types: SerializedType[]): SerializedType => {
   };
 };
 
-const parsedTypeToSerializedType = (parsed: ParsedType): SerializedType => {
+const resolveCustomTypeName = (name: string, node?: Node): SerializedType | undefined => {
+  if (!node) {
+    return undefined;
+  }
+  try {
+    const sourceFile = node.getSourceFile();
+
+    // 1. Local interface
+    const intf = sourceFile.getInterface(name);
+    if (intf) {
+      const properties: Record<string, SerializedType> = {};
+      for (const prop of intf.getProperties()) {
+        const propType = prop.getType();
+        const serialized = serializeFwd.fromType(propType, prop);
+        serialized.required = !prop.hasQuestionToken();
+        properties[prop.getName()] = serialized;
+      }
+      return {
+        kind: 'object',
+        properties,
+      };
+    }
+
+    // 2. Local type alias
+    const typeAlias = sourceFile.getTypeAlias(name);
+    if (typeAlias) {
+      const type = typeAlias.getType();
+      return serializeFwd.fromType(type, typeAlias);
+    }
+
+    // 3. Imported interface or type alias
+    for (const importDecl of sourceFile.getImportDeclarations()) {
+      const namedImports = importDecl.getNamedImports();
+      const found = namedImports.find((spec) => spec.getName() === name);
+      if (found) {
+        const resolvedSourceFile = importDecl.getModuleSpecifierSourceFile();
+        if (resolvedSourceFile) {
+          const resolvedIntf = resolvedSourceFile.getInterface(name);
+          if (resolvedIntf) {
+            const properties: Record<string, SerializedType> = {};
+            for (const prop of resolvedIntf.getProperties()) {
+              const propType = prop.getType();
+              const serialized = serializeFwd.fromType(propType, prop);
+              serialized.required = !prop.hasQuestionToken();
+              properties[prop.getName()] = serialized;
+            }
+            return {
+              kind: 'object',
+              properties,
+            };
+          }
+          const resolvedTypeAlias = resolvedSourceFile.getTypeAlias(name);
+          if (resolvedTypeAlias) {
+            return serializeFwd.fromType(resolvedTypeAlias.getType(), resolvedTypeAlias);
+          }
+        }
+      }
+    }
+  } catch {
+    // Avoid crashing if there's any AST traversal issue
+  }
+  return undefined;
+};
+
+const parsedTypeToSerializedType = (parsed: ParsedType, node?: Node): SerializedType => {
   const convertItem = (item: ParsedType | string | undefined): SerializedType | undefined => {
     if (item === undefined) {
       return undefined;
     }
 
     if (typeof item === 'string') {
+      const builtInPrimitives = [
+        'string',
+        'number',
+        'boolean',
+        'null',
+        'undefined',
+        'any',
+        'unknown',
+        'void',
+      ];
+      if (!builtInPrimitives.includes(item)) {
+        const custom = resolveCustomTypeName(item, node);
+        if (custom) {
+          return custom;
+        }
+      }
       return { base: item, kind: 'primitive' };
     }
 
-    return parsedTypeToSerializedType(item);
+    return parsedTypeToSerializedType(item, node);
   };
 
   const properties: Record<string, SerializedType> | undefined =
@@ -135,6 +236,22 @@ const parsedTypeToSerializedType = (parsed: ParsedType): SerializedType => {
   // We use Object.assign to add properties in the right order: base/itemType then kind
   const extras: Partial<SerializedType> = {};
   if (parsed.base !== undefined) {
+    const builtInPrimitives = [
+      'string',
+      'number',
+      'boolean',
+      'null',
+      'undefined',
+      'any',
+      'unknown',
+      'void',
+    ];
+    if (!builtInPrimitives.includes(parsed.base)) {
+      const custom = resolveCustomTypeName(parsed.base, node);
+      if (custom) {
+        return custom;
+      }
+    }
     extras.base = parsed.base;
   }
 
@@ -321,8 +438,105 @@ const parseTypeString = (typeStr: string): ParsedType | string => {
   return { base: typeStr, kind: 'primitive' };
 };
 
-const serializeType = (type: Type): SerializedType => {
+const serializeTypeArray = (
+  type: Type,
+  text: string,
+  enclosingNode?: Node,
+): SerializedType | undefined => {
+  const element = type.getArrayElementType();
+  if (element) {
+    return {
+      itemType: serializeFwd.type(element, enclosingNode),
+      kind: 'array',
+    };
+  }
+
+  if (type.isArray()) {
+    const [t] = type.getTypeArguments();
+    return {
+      itemType: serializeFwd.type(t, enclosingNode),
+      kind: 'array',
+    };
+  }
+
+  if (text.startsWith('Array<') && text.endsWith('>')) {
+    const [t] = type.getTypeArguments();
+    return {
+      itemType: serializeFwd.type(t, enclosingNode),
+      kind: 'array',
+    };
+  }
+
+  if (text.endsWith('[]')) {
+    const parsed = parseTypeString(text);
+    if (typeof parsed === 'string') {
+      return { base: parsed, kind: 'primitive' };
+    }
+
+    const normalized =
+      typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
+    return parsedTypeToSerializedType(normalized, enclosingNode);
+  }
+
+  return undefined;
+};
+
+const serializeTypeObject = (
+  type: Type,
+  text: string,
+  enclosingNode?: Node,
+): SerializedType | undefined => {
+  if (type.isObject() && !type.isArray()) {
+    const props: Record<string, SerializedType> = {};
+
+    for (const symbol of type.getProperties()) {
+      const declarations = symbol.getDeclarations();
+      const firstDecl = declarations.length > 0 ? declarations[0] : undefined;
+      const propEnclosingNode = firstDecl ?? enclosingNode;
+      let propType = propEnclosingNode
+        ? propEnclosingNode
+            .getSourceFile()
+            .getProject()
+            .getTypeChecker()
+            .getTypeOfSymbolAtLocation(symbol, propEnclosingNode)
+        : undefined;
+      if (firstDecl) {
+        propType = firstDecl.getType();
+      }
+      if (propType === undefined) {
+        continue;
+      }
+
+      const serialized = serializeFwd.type(propType, propEnclosingNode);
+      serialized.required = !symbol.isOptional();
+      props[symbol.getName()] = serialized;
+    }
+
+    if (
+      Object.keys(props).length === 0 &&
+      text &&
+      !text.startsWith('{') &&
+      !text.startsWith('typeof ') &&
+      !text.includes('=>')
+    ) {
+      const customResolved = resolveCustomTypeName(text, enclosingNode);
+      if (customResolved) {
+        return customResolved;
+      }
+    }
+
+    return {
+      kind: 'object',
+      properties: props,
+    };
+  }
+
+  return undefined;
+};
+
+const serializeType = (type: Type, node?: Node): SerializedType => {
   const text = type.getText();
+  const enclosingNode = node;
 
   // -------------------------
   // primitives
@@ -346,37 +560,9 @@ const serializeType = (type: Type): SerializedType => {
   // -------------------------
   // arrays
   // -------------------------
-  const element = type.getArrayElementType();
-  if (element) {
-    return {
-      itemType: serializeType(element),
-      kind: 'array',
-    };
-  }
-
-  if (type.isArray()) {
-    const [t] = type.getTypeArguments();
-    return {
-      itemType: serializeType(t),
-      kind: 'array',
-    };
-  }
-
-  if (text.startsWith('Array<') && text.endsWith('>')) {
-    const [t] = type.getTypeArguments();
-    return {
-      itemType: serializeType(t),
-      kind: 'array',
-    };
-  }
-
-  if (text.endsWith('[]')) {
-    const parsed = parseTypeString(text);
-    if (typeof parsed === 'string') {
-      return { base: parsed, kind: 'primitive' };
-    }
-
-    return parsedTypeToSerializedType(parsed);
+  const arrayResult = serializeTypeArray(type, text, enclosingNode);
+  if (arrayResult !== undefined) {
+    return arrayResult;
   }
 
   // -------------------------
@@ -388,37 +574,28 @@ const serializeType = (type: Type): SerializedType => {
       types: type
         .getUnionTypes()
         .filter((t) => !isUndefinedLikeType(t))
-        .map((t) => serializeType(t)),
+        .map((t) => serializeType(t, enclosingNode)),
     };
   }
 
   // -------------------------
   // object
   // -------------------------
-  if (type.isObject() && !type.isArray()) {
-    const props: Record<string, SerializedType> = {};
-
-    for (const symbol of type.getProperties()) {
-      const declarations = symbol.getDeclarations();
-      if (declarations.length === 0) {
-        continue;
-      }
-
-      const propType = declarations[0].getType();
-      const serialized = serializeType(propType);
-      serialized.required = !symbol.isOptional();
-      props[symbol.getName()] = serialized;
-    }
-
-    return {
-      kind: 'object',
-      properties: props,
-    };
+  const objectResult = serializeTypeObject(type, text, enclosingNode);
+  if (objectResult !== undefined) {
+    return objectResult;
   }
 
   // -------------------------
   // fallback
   // -------------------------
+  if (enclosingNode) {
+    const customResolved = resolveCustomTypeName(text, enclosingNode);
+    if (customResolved) {
+      return customResolved;
+    }
+  }
+
   return {
     base: text,
     kind: 'primitive',
@@ -458,17 +635,6 @@ const resolveIdentifierType = (node: Identifier): Type => {
 };
 
 // Forward declaration objects — assigned after the Impl functions are defined below.
-const serializeFwd: {
-  expression: (node: Node) => SerializedType;
-  node: (node: Node) => SerializedType;
-} = {
-  expression: (_node: Node): SerializedType => {
-    throw new Error('serializeExpression not yet initialized');
-  },
-  node: (_node: Node): SerializedType => {
-    throw new Error('serializeNode not yet initialized');
-  },
-};
 
 const serializeNode = (node: Node): SerializedType => serializeFwd.node(node);
 const serializeExpression = (node: Node): SerializedType => serializeFwd.expression(node);
@@ -528,6 +694,49 @@ const serializeFromTypePrimitive = (type: Type): SerializedType | undefined => {
   return undefined;
 };
 
+const serializeFromTypeArray = (
+  type: Type,
+  text: string,
+  node: Node,
+): SerializedType | undefined => {
+  const elementType = type.getArrayElementType();
+  if (elementType) {
+    return {
+      itemType: serializeFwd.fromType(elementType, node),
+      kind: 'array',
+    };
+  }
+
+  if (type.isArray()) {
+    const [t] = type.getTypeArguments();
+    return {
+      itemType: serializeFwd.fromType(t, node),
+      kind: 'array',
+    };
+  }
+
+  if (text.startsWith('Array<') && text.endsWith('>')) {
+    const [t] = type.getTypeArguments();
+    return {
+      itemType: serializeFwd.fromType(t, node),
+      kind: 'array',
+    };
+  }
+
+  if (text.endsWith('[]')) {
+    const parsed = parseTypeString(text);
+    if (typeof parsed === 'string') {
+      return { base: parsed, kind: 'primitive' };
+    }
+
+    const normalized =
+      typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
+    return parsedTypeToSerializedType(normalized, node);
+  }
+
+  return undefined;
+};
+
 const serializeFromType = (type: Type, node: Node): SerializedType => {
   const text = type.getText(node);
   // ----------------------------
@@ -541,37 +750,9 @@ const serializeFromType = (type: Type, node: Node): SerializedType => {
   // ----------------------------
   // ARRAY
   // ----------------------------
-  const elementType = type.getArrayElementType();
-  if (elementType) {
-    return {
-      itemType: serializeFromType(elementType, node),
-      kind: 'array',
-    };
-  }
-
-  if (type.isArray()) {
-    const [t] = type.getTypeArguments();
-    return {
-      itemType: serializeFromType(t, node),
-      kind: 'array',
-    };
-  }
-
-  if (text.startsWith('Array<') && text.endsWith('>')) {
-    const [t] = type.getTypeArguments();
-    return {
-      itemType: serializeFromType(t, node),
-      kind: 'array',
-    };
-  }
-
-  if (text.endsWith('[]')) {
-    const parsed = parseTypeString(text);
-    if (typeof parsed === 'string') {
-      return { base: parsed, kind: 'primitive' };
-    }
-
-    return parsedTypeToSerializedType(parsed);
+  const arrayResult = serializeFromTypeArray(type, text, node);
+  if (arrayResult !== undefined) {
+    return arrayResult;
   }
 
   // ----------------------------
@@ -598,14 +779,33 @@ const serializeFromType = (type: Type, node: Node): SerializedType => {
 
     for (const symbol of type.getProperties()) {
       const declarations = symbol.getDeclarations();
-      if (declarations.length === 0) {
-        continue;
+      const firstDecl = declarations.length > 0 ? declarations[0] : undefined;
+      const enclosingNode = firstDecl ?? node;
+      let propType = enclosingNode
+        .getSourceFile()
+        .getProject()
+        .getTypeChecker()
+        .getTypeOfSymbolAtLocation(symbol, enclosingNode);
+      if (firstDecl) {
+        propType = firstDecl.getType();
       }
 
-      const propType = declarations[0].getType();
-      const serialized = serializeFromType(propType, declarations[0]);
+      const serialized = serializeFromType(propType, enclosingNode);
       serialized.required = !symbol.isOptional();
       props[symbol.getName()] = serialized;
+    }
+
+    if (
+      Object.keys(props).length === 0 &&
+      text &&
+      !text.startsWith('{') &&
+      !text.startsWith('typeof ') &&
+      !text.includes('=>')
+    ) {
+      const customResolved = resolveCustomTypeName(text, node);
+      if (customResolved) {
+        return customResolved;
+      }
     }
 
     return {
@@ -614,9 +814,6 @@ const serializeFromType = (type: Type, node: Node): SerializedType => {
     };
   }
 
-  // ----------------------------
-  // FALLBACK
-  // ----------------------------
   return {
     base: text,
     kind: 'primitive',
@@ -776,6 +973,19 @@ const serializeExpressionFromType = (node: Node): SerializedType => {
   return { base: text, kind: 'primitive' };
 };
 
+const hasResolvedProperties = (type: SerializedType): boolean => {
+  if (type.kind === 'object') {
+    return type.properties !== undefined && Object.keys(type.properties).length > 0;
+  }
+  if (type.kind === 'array') {
+    return type.itemType !== undefined && hasResolvedProperties(type.itemType);
+  }
+  if (type.kind === 'union') {
+    return type.types?.some(hasResolvedProperties) ?? false;
+  }
+  return false;
+};
+
 const serializeExpressionImpl = (node: Node): SerializedType => {
   if (Node.isArrayLiteralExpression(node)) {
     return serializeArrayLiteral(node);
@@ -787,13 +997,43 @@ const serializeExpressionImpl = (node: Node): SerializedType => {
 
   if (Node.isIdentifier(node)) {
     const typeName = getParamOrVarTypeName(node);
+    const resolvedType = resolveIdentifierType(node);
     if (typeName !== undefined && typeName !== '') {
       const parsed = parseTypeString(typeName);
+      const normalized =
+        typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
+      const serialized = parsedTypeToSerializedType(normalized, node);
+      if (hasResolvedProperties(serialized)) {
+        return serialized;
+      }
       if (typeof parsed === 'object' && parsed.kind === 'array') {
-        return parsedTypeToSerializedType(parsed);
+        let baseType: string | undefined = undefined;
+        if (typeof parsed.itemType === 'string') {
+          baseType = parsed.itemType;
+        } else if (
+          parsed.itemType &&
+          typeof parsed.itemType === 'object' &&
+          'kind' in parsed.itemType &&
+          parsed.itemType.kind === 'primitive'
+        ) {
+          baseType = parsed.itemType.base;
+        }
+        const builtInPrimitives = [
+          'string',
+          'number',
+          'boolean',
+          'null',
+          'undefined',
+          'any',
+          'unknown',
+          'void',
+        ];
+        if (baseType !== undefined && builtInPrimitives.includes(baseType)) {
+          return parsedTypeToSerializedType(parsed, node);
+        }
       }
     }
-    return serializeFromType(resolveIdentifierType(node), node);
+    return serializeFromType(resolvedType, node);
   }
 
   const literalResult = serializeExpressionFromLiterals(node);
@@ -806,6 +1046,9 @@ const serializeExpressionImpl = (node: Node): SerializedType => {
 
 // Wire up the forward declarations now that the Impl functions are defined
 serializeFwd.expression = serializeExpressionImpl;
+serializeFwd.fromType = serializeFromType;
+serializeFwd.node = serializeNodeImpl;
+serializeFwd.type = serializeType;
 
 const extractJsDocDescription = (
   methodDecl: MethodDeclaration,
@@ -1018,7 +1261,7 @@ const extractReturnTypeMetadata = (
     );
   }
 
-  const serialized = serializeType(returnType);
+  const serialized = serializeType(returnType, methodDecl);
 
   return createOutputMetadata(serialized, description);
 };
@@ -1030,12 +1273,15 @@ const fallbackToAstOnly = (methodDecl: MethodDeclaration): ParameterMetadata[] =
       name = index === 0 ? 'payload' : `payload${index + 1}`;
     }
     const typeText = param.getTypeNode()?.getText() ?? param.getType().getText();
+    const parsed = parseTypeString(typeText);
+    const normalized =
+      typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
     return {
       defaultValue: extractDefaultValue(param.getInitializer()),
       description: extractJsDocDescription(methodDecl, name),
       name,
       required: !param.isOptional(),
-      type: parseTypeString(typeText),
+      type: parsedTypeToSerializedType(normalized, param),
     };
   });
 
@@ -1090,12 +1336,15 @@ const extractParameterMetadata = async (
       }
 
       const typeText = astParam.getTypeNode()?.getText() ?? astParam.getType().getText();
+      const parsed = parseTypeString(typeText);
+      const normalized =
+        typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
       return {
         defaultValue: extractDefaultValue(astParam.getInitializer()),
         description: extractJsDocDescription(methodDecl, paramName),
         name: paramName,
         required: !astParam.isOptional(),
-        type: parseTypeString(typeText),
+        type: parsedTypeToSerializedType(normalized, astParam),
       };
     });
 
