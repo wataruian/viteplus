@@ -4,7 +4,7 @@ const combineClasses = (...classes: (boolean | null | string | undefined)[]) => 
   const filtered = classes.filter(
     (cls): cls is string => typeof cls === 'string' && cls.trim().length > 0,
   );
-  const joined = filtered.join(' ').split(/\s+/);
+  const joined = filtered.join(' ').split(/\s+/u);
   const unique = [...new Set(joined)];
   return unique.filter(Boolean).join(' ');
 };
@@ -30,7 +30,7 @@ const getStyles = (...styles: unknown[]): string => {
     extract(style, result);
   }
 
-  const uniqueClasses = [...new Set(result.join(' ').split(/\s+/))];
+  const uniqueClasses = [...new Set(result.join(' ').split(/\s+/u))];
   return uniqueClasses.filter(Boolean).join(' ');
 };
 

@@ -12,8 +12,8 @@ declare module 'mock-express' {
   type MockExpressResponse = Record<string, unknown>;
 
   interface MockExpressApp {
-    makeRequest(options?: MockExpressRequest): MockExpressRequest;
-    makeResponse(callback?: (err: Error | null) => void): MockExpressResponse;
+    makeRequest: (options?: MockExpressRequest) => MockExpressRequest;
+    makeResponse: (callback?: (err: Error | null) => void) => MockExpressResponse;
   }
 
   function MockExpress(): MockExpressApp;

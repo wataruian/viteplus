@@ -71,7 +71,7 @@ const padEmoji = (
 
 const upperCaseFirstLetter = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-const uppercasePerWord = (str: string): string => str.replaceAll(/\b\w/g, (c) => c.toUpperCase());
+const uppercasePerWord = (str: string): string => str.replaceAll(/\b\w/gu, (c) => c.toUpperCase());
 
 export {
   generateShortUuid,

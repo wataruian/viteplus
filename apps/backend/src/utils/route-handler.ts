@@ -70,7 +70,7 @@ const createRouteHandlerImpl =
     }
   };
 
-const createRouteHandler = createRouteHandlerImpl as CreateRouteHandler;
+const createRouteHandler = createRouteHandlerImpl;
 
 export type { RawServiceResult, CreateRouteHandler };
 export { createRouteHandlerImpl, createRouteHandler };

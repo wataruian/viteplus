@@ -1,11 +1,13 @@
-import chalk, { type ChalkInstance, type ColorSupportLevel } from 'chalk';
+import chalk from 'chalk';
+const chalkInstance = chalk;
+export { chalkInstance };
 import { getEnv } from '../environment/env';
 import { getRandomText } from './text';
 
-const defaultChalkLevel = 3 as ColorSupportLevel;
+const defaultChalkLevel = 3 as 0 | 1 | 2 | 3;
 const chalkLevelEnv = getEnv('CHALK_LEVEL') ?? defaultChalkLevel.toString();
 
-const parsedLevel = Number.parseInt(chalkLevelEnv, 10);
+const parsedLevel = Math.trunc(Number(chalkLevelEnv));
 const normalizedChalkLevel = Number.isNaN(parsedLevel) ? 3 : Math.min(3, Math.max(0, parsedLevel));
 
 if (normalizedChalkLevel === 0) {
@@ -20,7 +22,7 @@ if (normalizedChalkLevel === 0) {
 
 const colors = [chalk.red, chalk.green, chalk.blue, chalk.yellow, chalk.cyan, chalk.magenta];
 
-const ansiEscapeCodeRegex = /^(\u001B\[[0-9;]*m)/;
+const ansiEscapeCodeRegex = /^(?<ansi>\u001B\[[0-9;]*m)/u;
 
 const defaultColor = chalk.white;
 const resetColor = chalk.reset;
@@ -43,7 +45,7 @@ const getRandomColor = (id = '') => {
   return colors[index];
 };
 
-const getNextRandomColor = (id: string, previousColor: ChalkInstance | undefined) => {
+const getNextRandomColor = (id: string, previousColor: typeof chalk | undefined) => {
   let colorId = id;
   if (!colorId) {
     colorId = getRandomText();
@@ -79,7 +81,6 @@ const getAnsiEscapeCodes = (colorFunction: (text: string) => string) => {
 };
 
 export {
-  chalk as chalkInstance,
   chalkLevelEnv,
   defaultChalkLevel,
   colors,

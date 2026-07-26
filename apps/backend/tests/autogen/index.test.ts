@@ -1,5 +1,50 @@
 import { describe, expect, it } from 'vite-plus/test';
 import { extractAllRoutes } from '../../src/utils/autogen';
+import { isParsedType } from '../../src/utils/autogen/generators/openapi-generator';
+
+const formatTypeToString = (type: unknown): string => {
+  if (typeof type === 'string') {
+    return type;
+  }
+  if (type === undefined || type === null || typeof type !== 'object') {
+    return 'unknown';
+  }
+  if (isParsedType(type)) {
+    switch (type.kind) {
+      case 'primitive': {
+        return type.base ?? 'unknown';
+      }
+      case 'array': {
+        return `${formatTypeToString(type.itemType)}[]`;
+      }
+      case 'union': {
+        const unionTypes = type.types ?? [];
+        return unionTypes.map((t) => formatTypeToString(t)).join(' | ');
+      }
+      case 'object': {
+        const properties = type.properties ?? {};
+        const props = Object.entries(properties).map(([k, v]) => {
+          const isOptional = typeof v === 'object' && 'required' in v && !(v.required ?? true);
+          return `${k}${isOptional ? '?' : ''}: ${formatTypeToString(v)}`;
+        });
+        return `{ ${props.join('; ')} }`;
+      }
+      default: {
+        return 'unknown';
+      }
+    }
+  }
+  return 'unknown';
+};
+
+const normalizeType = (str: string): string =>
+  str
+    .replaceAll(/\s+/gu, '')
+    .replaceAll('\\', '')
+    .replaceAll('|undefined', '')
+    .replaceAll('?:', ':')
+    .replaceAll(';', '')
+    .replaceAll(',', '');
 
 describe('Autogen Main', () => {
   describe('extractAllRoutes', () => {
@@ -52,7 +97,7 @@ describe('Autogen Main', () => {
       expect(routesWithService.length).toBeGreaterThan(0);
 
       for (const route of routesWithService) {
-        expect(route.serviceClass).toMatch(/Service$/);
+        expect(route.serviceClass).toMatch(/Service$/u);
         expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
       }
     });
@@ -77,17 +122,18 @@ describe('Autogen Main', () => {
     it('should include output metadata', async () => {
       const routes = await extractAllRoutes();
 
-      const routesWithOutput = routes.filter((r) => r.output !== undefined && r.output.length > 0);
+      const routesWithOutput = routes.filter((r) => r.output !== undefined);
 
       expect(routesWithOutput.length).toBeGreaterThan(0);
 
       for (const route of routesWithOutput) {
-        const output = route.output ?? [];
-        const [field] = output;
+        const field = route.output;
         expect(field).toBeDefined();
-        expect(field).toHaveProperty('name');
-        expect(field).toHaveProperty('type');
-        expect(field.type).not.toBe('unknown');
+        if (field) {
+          expect(field).toHaveProperty('name');
+          expect(field).toHaveProperty('type');
+          expect(field.type).not.toBe('unknown');
+        }
       }
     });
 
@@ -113,7 +159,7 @@ describe('Autogen Main', () => {
       expect(routesWithHandlerFile.length).toBeGreaterThan(0);
 
       for (const route of routesWithHandlerFile) {
-        expect(route.handlerFilePath).toMatch(/\.ts$/);
+        expect(route.handlerFilePath).toMatch(/\.ts$/u);
       }
     });
 
@@ -127,8 +173,8 @@ describe('Autogen Main', () => {
       expect(routesWithServiceFile.length).toBeGreaterThan(0);
 
       for (const route of routesWithServiceFile) {
-        expect(route.serviceFilePath).toMatch(/\.ts$/);
-        expect(route.serviceFilePath).toMatch(/services/);
+        expect(route.serviceFilePath).toMatch(/\.ts$/u);
+        expect(route.serviceFilePath).toMatch(/services/u);
       }
     });
   });
@@ -191,12 +237,11 @@ describe('Autogen Main', () => {
     const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
 
     const errorOutput = [
-      {
-        name: 'error',
-        required: true,
-        type: '{ message: string; name: string; stack: string; statusCode: number; }',
-      },
-      ...messageOutput,
+      { name: 'error', required: true, type: 'string' },
+      { name: 'message', required: true, type: 'string' },
+      { name: 'name', required: true, type: 'string' },
+      { name: 'stack', required: true, type: 'string' },
+      { name: 'statusCode', required: true, type: 'number' },
     ] as const;
 
     const sharedRouteCases = [
@@ -375,27 +420,56 @@ describe('Autogen Main', () => {
 
         const routeInput = route.input ?? [];
         for (const expectedParam of input) {
-          const found = routeInput.find((p) => p.name === expectedParam.name);
+          let expectedName: string = expectedParam.name;
+          if (expectedName.startsWith('{') && expectedName.endsWith('}')) {
+            expectedName = 'payload';
+          }
+          const found = routeInput.find((p) => p.name === expectedName);
           expect(found, `input param '${expectedParam.name}'`).toBeDefined();
-          if (found) {
+          if (found !== undefined) {
             if ('type' in expectedParam) {
-              expect(found.type).toBe(expectedParam.type);
+              const formattedFoundType = formatTypeToString(found.type);
+              expect(normalizeType(formattedFoundType)).toBe(normalizeType(expectedParam.type));
             }
             expect(found.required).toBe(expectedParam.required);
           }
         }
 
-        const routeOutput = route.output ?? [];
-        expect(routeOutput).toHaveLength(output.length);
-        for (const expectedField of output) {
-          const found = routeOutput.find((f) => f.name === expectedField.name);
-          expect(found, `output field '${expectedField.name}'`).toBeDefined();
-          if (found) {
-            if ('type' in expectedField) {
-              expect(found.type).toBe(expectedField.type);
+        const { output: routeOutput } = route;
+        if (output.length > 0) {
+          expect(routeOutput).toBeDefined();
+          if (routeOutput !== undefined) {
+            const { type: typeVal } = routeOutput;
+            expect(typeof typeVal).toBe('object');
+            expect(typeVal).not.toBeNull();
+            if (isParsedType(typeVal)) {
+              const { properties } = typeVal;
+              expect(properties).toBeDefined();
+              expect(Object.keys(properties ?? {})).toHaveLength(output.length);
+
+              for (const expectedField of output) {
+                const found = properties?.[expectedField.name];
+                expect(found, `output field '${expectedField.name}'`).toBeDefined();
+                if (found !== undefined) {
+                  if ('type' in expectedField) {
+                    const formattedFoundType = formatTypeToString(found);
+                    expect(normalizeType(formattedFoundType)).toBe(
+                      normalizeType(expectedField.type),
+                    );
+                  }
+                  if ('required' in expectedField) {
+                    const isRequired =
+                      typeof found === 'object' && 'required' in found
+                        ? (found.required ?? true)
+                        : true;
+                    expect(isRequired).toBe(expectedField.required);
+                  }
+                }
+              }
             }
-            expect(found.required).toBe(expectedField.required);
           }
+        } else {
+          expect(routeOutput).toBeUndefined();
         }
       },
     );
@@ -404,12 +478,18 @@ describe('Autogen Main', () => {
       const routes = await extractAllRoutes();
 
       for (const route of routes) {
-        if (route.output !== undefined) {
-          for (const field of route.output) {
-            expect(
-              field.type,
-              `Route ${route.path} output field '${field.name}' should not be unknown`,
-            ).not.toBe('unknown');
+        const { output } = route;
+        if (output !== undefined) {
+          const { type: outputType } = output;
+          expect(outputType).not.toBe('unknown');
+          if (isParsedType(outputType)) {
+            const { properties } = outputType;
+            if (properties) {
+              for (const field of Object.values(properties)) {
+                const fieldType = isParsedType(field) ? field.base : field;
+                expect(fieldType).not.toBe('unknown');
+              }
+            }
           }
         }
       }

@@ -24,8 +24,8 @@ test('returns an object-shaped output schema for object returns', () => {
     type: {
       kind: 'object',
       properties: {
-        data: expect.anything(),
-        message: expect.anything(),
+        data: expect.anything() as unknown,
+        message: expect.anything() as unknown,
       },
     },
   });

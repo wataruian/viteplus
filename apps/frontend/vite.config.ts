@@ -5,7 +5,7 @@ import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 
-const port = Number.parseInt(globalThis.process.env['ADMIN_PORT'] ?? '3001', 10);
+const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 
 export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;

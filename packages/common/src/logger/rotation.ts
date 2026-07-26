@@ -9,7 +9,8 @@ const createRotationStream = async (
   options: RotationOptions = {},
 ): Promise<LogStream> => {
   const { createStream } = await import('rotating-file-stream');
-  const { dirname, basename } = await import('node:path');
+  const { default: nodePath } = await import('node:path');
+  const { dirname, basename } = nodePath;
 
   const rawCompress = options.compress ?? 'gzip';
   const compress: boolean | 'gzip' =

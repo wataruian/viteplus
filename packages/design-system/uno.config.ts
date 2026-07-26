@@ -1,3 +1,1 @@
-import { unoCssConfig } from './src/configs/unocss';
-
-export default unoCssConfig;
+export { unoCssConfig as default } from './src/configs/unocss';

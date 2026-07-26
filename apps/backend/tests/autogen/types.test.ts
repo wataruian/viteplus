@@ -44,15 +44,13 @@ describe('Autogen Types', () => {
           },
         ],
         method: 'GET',
-        output: [
-          {
-            defaultValue: undefined,
-            description: 'Response data',
-            name: 'data',
-            required: true,
-            type: 'object',
-          },
-        ],
+        output: {
+          defaultValue: undefined,
+          description: 'Response data',
+          name: 'data',
+          required: true,
+          type: 'object',
+        },
         path: '/api/users/:id',
         requestType: 'HTTP',
         serviceClass: 'UserService',
@@ -67,7 +65,7 @@ describe('Autogen Types', () => {
       expect(route.serviceClass).toBe('UserService');
       expect(route.serviceMethod).toBe('getUser');
       expect(route.input).toHaveLength(1);
-      expect(route.output).toHaveLength(1);
+      expect(route.output).toBeDefined();
     });
 
     it('should allow minimal route info', () => {
@@ -122,15 +120,13 @@ describe('Autogen Types', () => {
             type: 'number',
           },
         ],
-        output: [
-          {
-            defaultValue: undefined,
-            description: 'User profile data',
-            name: 'output',
-            required: true,
-            type: 'UserProfile',
-          },
-        ],
+        output: {
+          defaultValue: undefined,
+          description: 'User profile data',
+          name: 'output',
+          required: true,
+          type: 'UserProfile',
+        },
         serviceFilePath: '/path/to/service.ts',
       };
 
@@ -139,8 +135,8 @@ describe('Autogen Types', () => {
       expect(metadata.input?.[0]?.required).toBe(true);
       expect(metadata.input?.[1]?.name).toBe('age');
       expect(metadata.input?.[1]?.defaultValue).toBe(18);
-      expect(metadata.output).toHaveLength(1);
-      expect(metadata.output?.[0]?.type).toBe('UserProfile');
+      expect(metadata.output).toBeDefined();
+      expect(metadata.output?.type).toBe('UserProfile');
       expect(metadata.serviceFilePath).toBe('/path/to/service.ts');
     });
 
@@ -159,21 +155,19 @@ describe('Autogen Types', () => {
     it('should allow empty input array', () => {
       const metadata: ServiceMetadata = {
         input: [],
-        output: [
-          {
-            defaultValue: undefined,
-            description: undefined,
-            name: 'output',
-            required: true,
-            type: 'void',
-          },
-        ],
+        output: {
+          defaultValue: undefined,
+          description: undefined,
+          name: 'output',
+          required: true,
+          type: 'void',
+        },
         serviceFilePath: '/path/to/service.ts',
       };
 
       expect(metadata.input).toEqual([]);
       expect(metadata.input).toHaveLength(0);
-      expect(metadata.output).toHaveLength(1);
+      expect(metadata.output).toBeDefined();
     });
   });
 

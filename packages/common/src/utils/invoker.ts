@@ -1,7 +1,8 @@
 import type { InvokableFunction } from '../types/parameter';
 import { isPlainObject } from '../validators/validate';
 
-const cleanDefaultValue = (val: string): string => val.replace(/^(['"`])(.*)\1$/, '$2');
+const cleanDefaultValue = (val: string): string =>
+  val.replace(/^(?<quote>['"`])(?<content>.*)\k<quote>$/u, '$2');
 
 /**
  * Extract parameter name, removing type annotations and default values
@@ -29,7 +30,7 @@ const extractParameterName = (paramStr: string): string => {
     return paramStr;
   }
 
-  const match = /^([^:=]+)/.exec(paramStr);
+  const match = /^(?<name>[^:=]+)/u.exec(paramStr);
   return match?.[1]?.trim() ?? paramStr.trim();
 };
 
@@ -119,8 +120,8 @@ const splitParametersRespectingBrackets = (paramsStr: string): string[] => {
 const extractParamNamesAndDefaults = (fn: InvokableFunction): { name: string }[] => {
   const fnStr = fn
     .toString()
-    .replaceAll(/\/\*.*?\*\//g, '')
-    .replaceAll(/\/\/.*$/gm, '');
+    .replaceAll(/\/\*.*?\*\//gu, '')
+    .replaceAll(/\/\/.*$/gmu, '');
 
   const paramsStr = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).trim();
 
@@ -186,7 +187,7 @@ const normalizeArgs = (fn: InvokableFunction, input: unknown): unknown[] => {
  * @returns The result of the invoked function.
  */
 const invokeWithParsedArgs = (fn: InvokableFunction, input: unknown): unknown =>
-  fn(...normalizeArgs(fn, input));
+  Reflect.apply(fn, undefined, normalizeArgs(fn, input)) as unknown;
 
 export {
   cleanDefaultValue,

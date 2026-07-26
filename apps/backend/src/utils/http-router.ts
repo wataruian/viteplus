@@ -14,7 +14,7 @@ import { isCallable } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 
 const joinPaths = (a: string, b: string) =>
-  `${a.replace(/\/+$/, '')}/${b.replace(/^\/+/, '')}`.replace(/\/+$/, '') || '/';
+  `${a.replace(/\/+$/u, '')}/${b.replace(/^\/+/u, '')}`.replace(/\/+$/u, '') || '/';
 
 const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void => {
   try {

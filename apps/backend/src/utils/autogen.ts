@@ -2,7 +2,7 @@ import { build } from './autogen';
 import { logger } from '@lightproject/common/logger';
 
 if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
-  const runBuild = () => {
+  globalThis.setTimeout(() => {
     build().catch((error: unknown) => {
       logger.error(
         'Error in autogen script:',
@@ -10,9 +10,7 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
       );
       globalThis.process.exit(1);
     });
-  };
-
-  runBuild();
+  }, 0);
 }
 
 export * from './autogen/index';

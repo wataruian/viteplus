@@ -5,8 +5,8 @@ import type {
   RequestHandler as ExpressRequestHandler,
   Response as ExpressResponse,
 } from 'express';
-import type { ChalkInstance } from 'chalk';
 import type { RequestType } from '@lightproject/common/configs';
+import type chalk from 'chalk';
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null;
 
@@ -39,7 +39,7 @@ type InputArgs = Record<string, Primitive | Record<string, unknown> | unknown[]>
 
 interface Locals extends ExpressLocals {
   [key: string]: unknown;
-  color?: ChalkInstance | undefined;
+  color?: typeof chalk | undefined;
   error?: ErrorDetails;
   metadata: Metadata;
   sessionId: SessionId;

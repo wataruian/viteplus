@@ -314,7 +314,7 @@ const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
               expected.data !== undefined &&
               expected.data !== null
             ) {
-              expect(jsonDataData).toMatchObject(expected.data as object);
+              expect(jsonDataData).toMatchObject(expected.data);
             }
 
             const jsonDataError = Reflect.get(jsonData, 'error') as unknown;
@@ -363,15 +363,15 @@ describe('tRPC Output Schema', () => {
 
     for (const route of serviceRoutes) {
       expect(route.output).toBeDefined();
-      expect(Array.isArray(route.output)).toBe(true);
+      const { output } = route;
 
-      if (route.output && route.output.length > 0) {
-        for (const output of route.output) {
-          expect(output).toHaveProperty('name');
-          expect(output).toHaveProperty('type');
-          expect(output).toHaveProperty('description');
-          expect(typeof output.type).toBe('string');
-          expect(output.type.length).toBeGreaterThan(0);
+      if (output) {
+        expect(output).toHaveProperty('name');
+        expect(output).toHaveProperty('type');
+        expect(output).toHaveProperty('description');
+        const typeStr = output.type;
+        if (typeof typeStr === 'string') {
+          expect(typeStr.length).toBeGreaterThan(0);
         }
       }
     }
@@ -382,10 +382,10 @@ describe('tRPC Output Schema', () => {
 
     const outputTypes = new Set<string>();
     for (const route of routes) {
-      if (route.output && route.output.length > 0) {
-        for (const output of route.output) {
-          outputTypes.add(output.type);
-        }
+      if (route.output) {
+        const { type: typeVal } = route.output;
+        const typeStr = typeof typeVal === 'string' ? typeVal : JSON.stringify(typeVal);
+        outputTypes.add(typeStr);
       }
     }
 

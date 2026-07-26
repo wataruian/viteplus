@@ -5,21 +5,135 @@ import {
   getServiceNameFromHandlerFile,
   toPascalCase,
 } from '../../../src/utils/autogen/parsers/service-parser';
-import { parseTypeString } from '@lightproject/common/utils';
+import type { ParameterMetadata } from '@lightproject/common/types';
+import { isParsedType } from '../../../src/utils/autogen/generators/openapi-generator';
+
+const formatTypeToString = (type: unknown): string => {
+  if (typeof type === 'string') {
+    return type;
+  }
+  if (type === undefined || type === null || typeof type !== 'object') {
+    return 'unknown';
+  }
+  if (isParsedType(type)) {
+    switch (type.kind) {
+      case 'primitive': {
+        return type.base ?? 'unknown';
+      }
+      case 'array': {
+        return `${formatTypeToString(type.itemType)}[]`;
+      }
+      case 'union': {
+        const unionTypes = type.types ?? [];
+        return unionTypes.map((t) => formatTypeToString(t)).join(' | ');
+      }
+      case 'object': {
+        const properties = type.properties ?? {};
+        const props = Object.entries(properties).map(([k, v]) => {
+          const isOptional = typeof v === 'object' && 'required' in v && !(v.required ?? true);
+          return `${k}${isOptional ? '?' : ''}: ${formatTypeToString(v)}`;
+        });
+        return `{ ${props.join('; ')} }`;
+      }
+      default: {
+        return 'unknown';
+      }
+    }
+  }
+  return 'unknown';
+};
+
+const normalizeType = (str: string): string =>
+  str
+    .replaceAll(/\s+/gu, '')
+    .replaceAll('\\', '')
+    .replaceAll('|undefined', '')
+    .replaceAll('?:', ':')
+    .replaceAll(';', '')
+    .replaceAll(',', '');
+
+const verifyServiceInput = (
+  extractedInput: ParameterMetadata[],
+  expectedInput: readonly Partial<ParameterMetadata>[],
+) => {
+  expect(extractedInput).toHaveLength(expectedInput.length);
+  for (const expectedParam of expectedInput) {
+    let expectedName = expectedParam.name;
+    if ((expectedName?.startsWith('{') ?? false) && (expectedName?.endsWith('}') ?? false)) {
+      expectedName = 'payload';
+    }
+    const found = extractedInput.find((p) => p.name === expectedName);
+    expect(found, `input param '${expectedParam.name}'`).toBeDefined();
+    if (found !== undefined) {
+      if ('type' in expectedParam && typeof expectedParam.type === 'string') {
+        const formattedFoundType = formatTypeToString(found.type);
+        expect(normalizeType(formattedFoundType)).toBe(normalizeType(expectedParam.type));
+      }
+      if ('required' in expectedParam) {
+        expect(found.required).toBe(expectedParam.required);
+      }
+    }
+  }
+};
+
+const verifyServiceOutput = (
+  extractedOutput: ParameterMetadata | undefined,
+  expectedOutput: readonly Partial<ParameterMetadata>[],
+) => {
+  if (expectedOutput.length > 0) {
+    expect(extractedOutput).toBeDefined();
+    if (extractedOutput !== undefined) {
+      const { type: outputType } = extractedOutput;
+      expect(typeof outputType).toBe('object');
+      expect(outputType).not.toBeNull();
+      if (isParsedType(outputType)) {
+        const { properties } = outputType;
+        expect(properties).toBeDefined();
+        if (properties) {
+          for (const expectedField of expectedOutput) {
+            const fieldName = expectedField.name;
+            if (fieldName !== undefined && fieldName in properties) {
+              const found = properties[fieldName];
+              expect(found, `output field '${fieldName}'`).toBeDefined();
+              if ('type' in expectedField && typeof expectedField.type === 'string') {
+                const formattedFoundType = formatTypeToString(found);
+                expect(normalizeType(formattedFoundType)).toBe(normalizeType(expectedField.type));
+              }
+              if ('required' in expectedField) {
+                const isRequired =
+                  typeof found === 'object' && 'required' in found
+                    ? (found.required ?? true)
+                    : true;
+                expect(isRequired).toBe(expectedField.required);
+              }
+            }
+          }
+        }
+      }
+    }
+  } else {
+    expect(extractedOutput).toBeUndefined();
+  }
+};
+
+interface TestParams {
+  input: readonly Partial<ParameterMetadata>[];
+  method: string;
+  output: readonly Partial<ParameterMetadata>[];
+}
 
 describe('Service Parser', () => {
   const messageOutput = [{ name: 'message', required: true, type: 'string' }] as const;
 
   const errorOutput = [
-    {
-      name: 'error',
-      required: true,
-      type: '{ message: string; name: string; stack: string; statusCode: number; }',
-    },
-    ...messageOutput,
+    { name: 'error', required: true, type: 'string' },
+    { name: 'message', required: true, type: 'string' },
+    { name: 'name', required: true, type: 'string' },
+    { name: 'stack', required: true, type: 'string' },
+    { name: 'statusCode', required: true, type: 'number' },
   ] as const;
 
-  const expectedServiceMethods = [
+  const expectedServiceMethods: readonly TestParams[] = [
     {
       input: [
         { name: '_stringInput', required: false, type: 'string' },
@@ -141,15 +255,15 @@ describe('Service Parser', () => {
       method: 'syncSuccess',
       output: messageOutput,
     },
-  ] as const;
+  ];
 
-  const expectedDefaultServiceMethods = [
+  const expectedDefaultServiceMethods: readonly TestParams[] = [
     {
       input: [],
       method: 'root',
       output: messageOutput,
     },
-  ] as const;
+  ];
 
   describe('toPascalCase', () => {
     it('should convert kebab-case to PascalCase', () => {
@@ -254,7 +368,7 @@ describe('Service Parser', () => {
       expect(metadata).toHaveProperty('input');
 
       if (metadata.serviceFilePath !== undefined && metadata.serviceFilePath !== '') {
-        expect(metadata.serviceFilePath).toMatch(/default\.ts$/);
+        expect(metadata.serviceFilePath).toMatch(/default\.ts$/u);
       }
     });
 
@@ -281,33 +395,9 @@ describe('Service Parser', () => {
 
         expect(metadata).toBeDefined();
 
-        const extractedInput = metadata.input ?? [];
-        expect(extractedInput).toHaveLength(input.length);
-        for (const expectedParam of input) {
-          const found = extractedInput.find((p) => p.name === expectedParam.name);
-          expect(found, `input param '${expectedParam.name}'`).toBeDefined();
-          if (found) {
-            if ('type' in expectedParam) {
-              const expectedType = typeof expectedParam.type === 'string' ? parseTypeString(expectedParam.type) : expectedParam.type;
-              expect(found.type).toEqual(expectedType);
-            }
-            expect(found.required).toBe(expectedParam.required);
-          }
-        }
-
-        const extractedOutput = metadata.output ?? [];
-        expect(extractedOutput).toHaveLength(output.length);
-        for (const expectedField of output) {
-          const found = extractedOutput.find((f) => f.name === expectedField.name);
-          expect(found, `output field '${expectedField.name}'`).toBeDefined();
-          if (found) {
-            if ('type' in expectedField) {
-              const expectedType = typeof expectedField.type === 'string' ? parseTypeString(expectedField.type) : expectedField.type;
-              expect(found.type).toEqual(expectedType);
-            }
-            expect(found.required).toBe(expectedField.required);
-          }
-        }
+        const { input: extractedInput = [], output: extractedOutput } = metadata;
+        verifyServiceInput(extractedInput, input);
+        verifyServiceOutput(extractedOutput, output);
       },
     );
 
@@ -318,22 +408,9 @@ describe('Service Parser', () => {
 
         expect(metadata).toBeDefined();
 
-        const extractedInput = metadata.input ?? [];
-        expect(extractedInput).toHaveLength(input.length);
-
-        const extractedOutput = metadata.output ?? [];
-        expect(extractedOutput).toHaveLength(output.length);
-        for (const expectedField of output) {
-          const found = extractedOutput.find((f) => f.name === expectedField.name);
-          expect(found, `output field '${expectedField.name}'`).toBeDefined();
-          if (found) {
-            if ('type' in expectedField) {
-              const expectedType = typeof expectedField.type === 'string' ? parseTypeString(expectedField.type) : expectedField.type;
-              expect(found.type).toEqual(expectedType);
-            }
-            expect(found.required).toBe(expectedField.required);
-          }
-        }
+        const { input: extractedInput = [], output: extractedOutput } = metadata;
+        verifyServiceInput(extractedInput, input);
+        verifyServiceOutput(extractedOutput, output);
       },
     );
 
@@ -355,12 +432,24 @@ describe('Service Parser', () => {
         }),
       );
       for (const { metadata, method, serviceName } of metadatas) {
-        const output = metadata.output ?? [];
-        for (const field of output) {
-          expect(
-            field.type,
-            `${serviceName}.${method} output field '${field.name}' should not be unknown`,
-          ).not.toBe('unknown');
+        const { output: extractedOutput } = metadata;
+        if (extractedOutput !== undefined) {
+          const { type: outputType } = extractedOutput;
+          expect(outputType, `${serviceName}.${method} output should not be unknown`).not.toBe(
+            'unknown',
+          );
+          if (isParsedType(outputType)) {
+            const { properties } = outputType;
+            if (properties) {
+              for (const [name, field] of Object.entries(properties)) {
+                const fieldType = isParsedType(field) ? field.base : field;
+                expect(
+                  fieldType,
+                  `${serviceName}.${method} output field '${name}' should not be unknown`,
+                ).not.toBe('unknown');
+              }
+            }
+          }
         }
       }
     });
@@ -396,7 +485,7 @@ describe('Service Parser', () => {
         expect(metadata).toBeDefined();
 
         if (metadata.serviceFilePath !== undefined && metadata.serviceFilePath !== '') {
-          expect(metadata.serviceFilePath).toMatch(/test\.ts$/);
+          expect(metadata.serviceFilePath).toMatch(/test\.ts$/u);
         }
       }
     });

@@ -57,20 +57,15 @@ describe('tRPC Discovery', () => {
         }
       }
 
-      const outputSchema = isRecord(route) ? route.output : undefined;
-      if (Array.isArray(outputSchema)) {
-        for (const output of outputSchema) {
-          if (!isRecord(output)) {
-            continue;
-          }
-          expect(output).toHaveProperty('name');
-          expect(output).toHaveProperty('type');
-          expect(output).toHaveProperty('description');
+      const outputSchema = route.output;
+      if (outputSchema && typeof outputSchema === 'object') {
+        expect(outputSchema).toHaveProperty('name');
+        expect(outputSchema).toHaveProperty('type');
+        expect(outputSchema).toHaveProperty('description');
 
-          const typeVal = output.type;
-          if (typeof typeVal === 'string') {
-            expect(typeVal).not.toBe('unknown');
-          }
+        const typeVal = outputSchema.type;
+        if (typeof typeVal === 'string') {
+          expect(typeVal).not.toBe('unknown');
         }
       }
     });
@@ -111,7 +106,7 @@ describe('tRPC Discovery', () => {
       expect(serviceRoutes.length).toBeGreaterThan(0);
 
       for (const route of serviceRoutes) {
-        expect(route.serviceClass).toMatch(/Service$/);
+        expect(route.serviceClass).toMatch(/Service$/u);
         expect(route.serviceMethod !== undefined && route.serviceMethod !== '').toBeTruthy();
       }
     });
@@ -119,16 +114,16 @@ describe('tRPC Discovery', () => {
     it('should extract output schema from service methods', async () => {
       const routes = await getTrpcRoutes();
 
-      const outputRoutes = routes.filter((r) => r.output !== undefined && r.output.length > 0);
+      const outputRoutes = routes.filter((r) => r.output !== undefined);
       expect(outputRoutes.length).toBeGreaterThan(0);
 
       for (const route of outputRoutes) {
-        expect(Array.isArray(route.output)).toBe(true);
-        for (const output of route.output ?? []) {
+        const { output } = route;
+        expect(output).toBeDefined();
+        if (output) {
           expect(output).toHaveProperty('name');
           expect(output).toHaveProperty('type');
           expect(output).toHaveProperty('description');
-          expect(typeof output.type).toBe('string');
         }
       }
     });
@@ -149,7 +144,7 @@ describe('tRPC Discovery', () => {
       for (const route of routes) {
         if (route.handlerFilePath !== undefined && route.handlerFilePath !== '') {
           expect(path.isAbsolute(route.handlerFilePath)).toBe(true);
-          expect(route.handlerFilePath).toMatch(/\.ts$/);
+          expect(route.handlerFilePath).toMatch(/\.ts$/u);
         }
       }
     });

@@ -158,7 +158,7 @@ const resolveValue = (node: ASTNode, ctx: Ctx): unknown => {
     }
 
     case 'template': {
-      return node.raw.replaceAll(/\$\{([^}]+)\}/g, (_, expr: string) => {
+      return node.raw.replaceAll(/\$\{(?<expr>[^}]+)\}/gu, (_, expr: string) => {
         const path = expr.trim();
         const value = resolvePath(ctx, path);
 

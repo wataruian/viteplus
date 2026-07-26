@@ -14,7 +14,7 @@ interface BaseServiceInterface {
    * Method to clean up resources used by the service.
    * This method is intended to be overridden by derived classes to perform cleanup operations.
    */
-  cleanup?(): Promise<void>;
+  cleanup?: () => Promise<void>;
 
   /**
    * The context of the service, which contains the request and response objects.
@@ -41,7 +41,7 @@ interface BaseServiceInterface {
    * This method is used to get the singleton instance of the service.
    * It is intended to be used by derived classes to get the singleton instance of the service.
    */
-  getInstance(): BaseServiceInterface;
+  getInstance: () => BaseServiceInterface;
 
   /**
    * Getter for the input arguments of the service.
@@ -93,14 +93,14 @@ abstract class BaseService implements BaseServiceInterface {
     this.inputArgs = inputArgs;
   }
 
-  private _instance: BaseServiceInterface | null = null;
+  private serviceInstance: BaseServiceInterface | null = null;
 
   public get instance(): BaseServiceInterface | null {
-    return this._instance ?? BaseService.instance;
+    return this.serviceInstance ?? BaseService.instance;
   }
 
   public set instance(value: BaseServiceInterface | null) {
-    this._instance = value;
+    this.serviceInstance = value;
     BaseService.instance = value instanceof BaseService ? value : null;
   }
 

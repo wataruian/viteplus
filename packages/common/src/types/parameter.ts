@@ -1,5 +1,5 @@
 type InvokableFunction = {
-  bivarianceHack(...args: unknown[]): unknown;
+  bivarianceHack: (...args: never[]) => unknown;
 }['bivarianceHack'];
 
 type ModuleExports = Record<string, unknown>;

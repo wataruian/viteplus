@@ -3,7 +3,7 @@ import { getProject, projectDir } from '../config';
 import { Node } from 'ts-morph';
 import type { RouteInfo } from '../types';
 import { extractHttpServiceMethod } from '../parsers/http-parser';
-import util from 'node:util';
+import { inspect } from 'node:util';
 
 const extractHttpMethod = (initializer: Node | undefined): string => {
   if (!initializer) {
@@ -83,7 +83,7 @@ const processRouteProperties = async (
 
     globalThis.console.log(
       'httpReturnValue',
-      util.inspect(returnValue, {
+      inspect(returnValue, {
         colors: true,
         depth: null,
       }),

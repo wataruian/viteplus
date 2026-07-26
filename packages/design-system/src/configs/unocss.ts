@@ -30,8 +30,7 @@ const semanticColors: ColorKeyMap[] = ['primary', 'accent', 'success', 'warning'
 
 const intentClasses: string[] = [];
 for (const color of semanticColors) {
-  intentClasses.push(...intentSoft(color).split(' '));
-  intentClasses.push(...intentSolid(color).split(' '));
+  intentClasses.push(...intentSoft(color).split(' '), ...intentSolid(color).split(' '));
 }
 
 intentClasses.push(...intentInput('danger').split(' '), ...intentInput('success').split(' '));
@@ -60,8 +59,8 @@ const safelist = [
 const unoCssBaseConfig: UserConfig = {
   content: {
     pipeline: {
-      exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]dist[\\/]/],
-      include: [/\.(vue|svelte|[jt]sx|mdx?|html)($|\?)/, '**/*.{js,ts,jsx,tsx}'],
+      exclude: [/[\\/]node_modules[\\/]/u, /[\\/]\.git[\\/]/u, /[\\/]dist[\\/]/u],
+      include: [/\.(?:vue|svelte|[jt]sx|mdx?|html)(?:$|\?)/u, '**/*.{js,ts,jsx,tsx}'],
     },
   },
   preflights: [

@@ -15,7 +15,7 @@ import path from 'node:path';
 describe('Autogen Config', () => {
   describe('Project configuration', () => {
     it('should have correct projectDir', () => {
-      expect(projectDir).toMatch(/apps\/backend$/);
+      expect(projectDir).toMatch(/apps\/backend$/u);
       expect(path.isAbsolute(projectDir)).toBe(true);
     });
 

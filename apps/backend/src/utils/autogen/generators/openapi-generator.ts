@@ -170,15 +170,7 @@ const getDefaultResponseSchema = (): OpenApiSchema => ({
   type: 'object',
 });
 
-const generateOperationTags = (route: RouteInfo): string[] => {
-  const tags: string[] = [];
-
-  if (route.requestType !== undefined && route.requestType !== '') {
-    tags.push(route.requestType);
-  }
-
-  return tags;
-};
+const generateOperationTags = (route: RouteInfo): string[] => [route.requestType];
 
 const generateOperationSummary = (route: RouteInfo): string => {
   const serviceName = route.serviceClass?.replace('Service', '') ?? 'Unknown';
@@ -221,37 +213,37 @@ const parseObjectProperties = (content: string): string[] => {
   return properties;
 };
 
+const isParsedType = (val: unknown): val is ParsedType =>
+  typeof val === 'object' && val !== null && 'kind' in val;
+
 const parsedTypeToString = (parsed: ParsedType | string | Record<string, unknown>): string => {
   if (typeof parsed === 'string') {
     return parsed;
   }
 
-  if (typeof parsed !== 'object' || parsed === null) {
+  const parsedVal = parsed as unknown;
+  if (typeof parsedVal !== 'object' || parsedVal === null) {
     return 'unknown';
   }
 
-  const parsedObj = parsed as ParsedType;
-
-  if ('kind' in parsedObj) {
-    switch (parsedObj.kind) {
+  if (isParsedType(parsedVal)) {
+    switch (parsedVal.kind) {
       case 'primitive': {
-        return parsedObj.base ?? 'unknown';
+        return parsedVal.base ?? 'unknown';
       }
       case 'array': {
-        const itemType = parsedTypeToString(parsedObj.itemType ?? 'unknown');
+        const itemType = parsedTypeToString(parsedVal.itemType ?? 'unknown');
         return `${itemType}[]`;
       }
       case 'union': {
-        const types = (parsedObj.types ?? []).map((t) => parsedTypeToString(t));
+        const types = (parsedVal.types ?? []).map((t) => parsedTypeToString(t));
         return types.join(' | ');
       }
       case 'object': {
-        const props = parsedObj.properties ?? {};
-        const propStrings = Object.entries(props).map(([key, value]) => {
-          const type = parsedTypeToString(value);
-          return `${key}: ${type}`;
-        });
-        return `{ ${propStrings.join('; ')}; }`;
+        const props = Object.entries(parsedVal.properties ?? {}).map(
+          ([k, v]) => `${k}: ${parsedTypeToString(v)}`,
+        );
+        return `{ ${props.join('; ')} }`;
       }
       default: {
         return 'unknown';
@@ -683,8 +675,7 @@ const groupRoutesByPath = (routes: RouteInfo[]): Record<string, RouteInfo[]> => 
     }
 
     if (route.requestType === 'HTTP' && !normalizedPath.startsWith(apiEndpoint)) {
-      normalizedPath =
-        normalizedPath === '/' ? `${apiEndpoint}` : `${apiEndpoint}${normalizedPath}`;
+      normalizedPath = normalizedPath === '/' ? apiEndpoint : `${apiEndpoint}${normalizedPath}`;
     }
 
     groups[normalizedPath] ??= [];
@@ -748,6 +739,7 @@ const generateOpenApiSpec = (
 
 export type { OpenApiOperation, OpenApiParameter, OpenApiResponse, OpenApiSchema, OpenApiSpec };
 export {
+  isParsedType,
   exampleValues,
   generateMethodDescription,
   getDefaultResponseSchema,

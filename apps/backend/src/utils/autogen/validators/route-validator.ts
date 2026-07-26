@@ -145,14 +145,11 @@ class RouteValidator {
   }
 
   private static getExpectedServiceFileName(serviceClass: string): string {
-    const baseName = serviceClass.replace(/Service$/, '');
+    const baseName = serviceClass.replace(/Service$/u, '');
 
     const kebabCase = baseName
-      .replaceAll(
-        /([A-Z])/g,
-        (_match: string, letter: string): string => `-${letter.toLowerCase()}`,
-      )
-      .replace(/^-/, '');
+      .replaceAll(/[A-Z]/gu, (match: string): string => `-${match.toLowerCase()}`)
+      .replace(/^-/u, '');
 
     return `${kebabCase}.ts`;
   }
@@ -370,7 +367,7 @@ class RouteValidator {
       });
     }
 
-    if (!/^[A-Z][a-zA-Z0-9]*Service$/.test(serviceClass)) {
+    if (!/^[A-Z][a-zA-Z0-9]*Service$/u.test(serviceClass)) {
       this.addError({
         code: 'INVALID_SERVICE_NAMING',
         filePath: route.handlerFilePath,
@@ -384,7 +381,7 @@ class RouteValidator {
     if (
       serviceMethod !== undefined &&
       serviceMethod !== '' &&
-      !/^[a-z][a-zA-Z0-9]*$/.test(serviceMethod) &&
+      !/^[a-z][a-zA-Z0-9]*$/u.test(serviceMethod) &&
       !serviceMethod.startsWith('_')
     ) {
       this.addWarning({

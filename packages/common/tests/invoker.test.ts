@@ -51,7 +51,7 @@ describe('extractParamNamesAndDefaults', () => {
   });
   it('should extract parameter names for objectDestructured', () => {
     const actual = extractParamNamesAndDefaults(objectDestructured).map((p) => ({
-      name: p.name.replaceAll(/\s+/g, ' ').trim(),
+      name: p.name.replaceAll(/\s+/gu, ' ').trim(),
     }));
     expect(actual).toEqual([{ name: '{ prop1, prop2 }' }]);
   });

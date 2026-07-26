@@ -93,7 +93,7 @@ const createTestApp = async () => {
 const startServer = async () => {
   const app = isTest() ? await createTestApp() : await createApp(isLocal());
 
-  const port = Number.parseInt(getEnv('API_PORT') ?? '3000', 10);
+  const port = Math.trunc(Number(getEnv('API_PORT') ?? '3000'));
 
   const emojiPadding = 3;
 

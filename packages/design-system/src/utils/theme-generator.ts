@@ -114,7 +114,7 @@ const makeOklch = (l: number, c: number, h: number): Oklch => ({
 /** Returns the lightness stops record. The `isSurface` param is kept for back-compat. */
 
 const getLightnessStops = () =>
-  Object.keys(lightnessStops).toSorted((a, b) => Number.parseInt(a, 10) - Number.parseInt(b, 10));
+  Object.keys(lightnessStops).toSorted((a, b) => Math.trunc(Number(a)) - Math.trunc(Number(b)));
 
 /**
  * Generate a perceptually uniform OKLCH color scale for a given CSS color.
@@ -132,7 +132,7 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
   const scaleChroma = isSurface ? baseC * 0.15 : baseC;
 
   return Object.entries(lightnessStops)
-    .toSorted(([stopA], [stopB]) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
+    .toSorted(([stopA], [stopB]) => Math.trunc(Number(stopA)) - Math.trunc(Number(stopB)))
     .map(([stop, targetL]) => {
       const lightness = stop === '500' ? baseL : targetL;
       return `  --${classPrefix}-${prefix}-${stop}: ${oklchToRgbTuple(makeOklch(lightness, scaleChroma, baseH))};`;
@@ -145,7 +145,7 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
  */
 const getThemeColors = (prefix: string): Record<string, string> => {
   const colors = Object.keys(lightnessStops)
-    .toSorted((stopA, stopB) => Number.parseInt(stopA, 10) - Number.parseInt(stopB, 10))
+    .toSorted((stopA, stopB) => Math.trunc(Number(stopA)) - Math.trunc(Number(stopB)))
     .reduce<Record<string, string>>((acc, stop) => {
       acc[stop] = `rgb(var(--${classPrefix}-${prefix}-${stop}) / <alpha-value>)`;
       return acc;

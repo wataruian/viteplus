@@ -10,7 +10,7 @@ import { isLocal } from '@lightproject/common/environment';
 import { isRecord } from '@lightproject/common/validators';
 import { trpcRouter } from '../routers/trpc';
 
-const trailingSlashesRegex = /\/+$/;
+const trailingSlashesRegex = /\/+$/u;
 
 const getHttpRouterPaths = (
   router: Record<string, { handler: unknown; method: string }>[],
@@ -65,7 +65,7 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
       ? path
       : `${normalizedApiEndpoint}${path.startsWith('/') ? '' : '/'}${path}`,
   );
-  const httpPathsSet = new Set(httpPathsRaw.map((p) => p.replace(/\/$/, '')));
+  const httpPathsSet = new Set(httpPathsRaw.map((p) => p.replace(/\/$/u, '')));
   const httpPaths: string[] = [];
   for (const path of httpPathsSet) {
     if (path === '') {
@@ -86,7 +86,7 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
   const { pathname } = new globalThis.URL(req.originalUrl, 'http://localhost');
 
   const normalizedHttpPath = pathname.replace(trailingSlashesRegex, '');
-  const normalizedTrpcPath = pathname.replace(/\/batch$/, '').replace(trailingSlashesRegex, '');
+  const normalizedTrpcPath = pathname.replace(/\/batch$/u, '').replace(trailingSlashesRegex, '');
 
   const isHttpEndpoint =
     httpPaths.includes(normalizedHttpPath) || httpPaths.includes(`${normalizedHttpPath}/`);

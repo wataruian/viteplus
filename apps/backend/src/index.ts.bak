@@ -8,7 +8,7 @@ import { logger } from '@lightproject/common/logger';
 
 const env = getEnvName();
 const useViteBackend = (getEnv('USE_VITE_BACKEND') ?? 'false').toLowerCase() === 'true';
-const port = Number.parseInt(getEnv('API_PORT') ?? '3000', 10);
+const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
 const app: express.Application = express();
 
 app.use(helmet());
