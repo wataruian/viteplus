@@ -1,4 +1,5 @@
 import type { HttpMethod, RouteHandler, ServiceContext } from '../types/middlware';
+import { isRecord } from '@lightproject/common/validators';
 
 const publicHttp = {
   delete: (handlerFactory: () => unknown) => ({
@@ -26,8 +27,6 @@ const publicHttp = {
     method: 'put',
   }),
 };
-
-import { isRecord } from '@lightproject/common/validators';
 
 const makeHttp = (method: HttpMethod) => (handlerFactory: () => RouteHandler) => ({
   handler: async (ctx: ServiceContext) => {

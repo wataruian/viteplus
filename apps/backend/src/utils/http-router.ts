@@ -55,4 +55,4 @@ const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void 
   }
 };
 
-export { registerHttpRoutes };
+export { joinPaths, registerHttpRoutes };

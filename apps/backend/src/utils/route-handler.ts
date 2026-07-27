@@ -162,4 +162,11 @@ const createRouteHandlerImpl =
 const createRouteHandler = createRouteHandlerImpl;
 
 export type { RawServiceResult, CreateRouteHandler };
-export { createRouteHandlerImpl, createRouteHandler };
+export {
+  assertIsInputArgs,
+  assertIsServiceMethod,
+  getResponseData,
+  getResponseErrorAndSuccessAndCode,
+  createRouteHandlerImpl,
+  createRouteHandler,
+};

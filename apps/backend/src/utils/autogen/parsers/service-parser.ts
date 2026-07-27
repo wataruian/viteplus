@@ -171,6 +171,9 @@ const getRouteHandlerFilePath = (routerDirectory: string, routeName: string): st
 };
 
 export {
+  isObjectParsedType,
+  getDataProp,
+  wrapOutputProperties,
   extractServiceMetadata,
   toPascalCase,
   getServiceNameFromHandlerFile,

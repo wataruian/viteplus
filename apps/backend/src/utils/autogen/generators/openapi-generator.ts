@@ -740,7 +740,10 @@ const generateOpenApiSpec = (
 export type { OpenApiOperation, OpenApiParameter, OpenApiResponse, OpenApiSchema, OpenApiSpec };
 export {
   isParsedType,
+  parsedTypeToString,
   exampleValues,
+  getActionDescription,
+  getSpecialDescription,
   generateMethodDescription,
   getDefaultResponseSchema,
   generateOperationTags,

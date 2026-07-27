@@ -104,5 +104,7 @@ export * from './generators/openapi-generator';
 export * from './parsers/http-parser';
 export * from './parsers/service-parser';
 export * from './parsers/trpc-parser';
+export * from './utils/cache';
+export * from './utils/performance';
 export type * from './types';
 export * from './validators/route-validator';
