@@ -25,6 +25,10 @@ const swaggerOpenApiMiddleware = (app: Express) => {
           return {};
         }
       })(),
+      {
+        customCss:
+          '.parameter__type, .parameter__in, .parameters input, .parameters select, .parameters .parameter__value, .model-box, .schema-toggle, .parameter-controls, .tab, .model, .model-container, .example { display: none !important; } .swagger-ui code { white-space: pre-wrap !important; } .swagger-ui th.parameters-col_description { font-size: 0 !important; } .swagger-ui th.parameters-col_description::after { content: "Type" !important; font-size: 12px !important; font-weight: bold !important; }',
+      },
     ),
   );
 };

@@ -240,9 +240,10 @@ const parsedTypeToString = (parsed: ParsedType | string | Record<string, unknown
         return types.join(' | ');
       }
       case 'object': {
-        const props = Object.entries(parsedVal.properties ?? {}).map(
-          ([k, v]) => `${k}: ${parsedTypeToString(v)}`,
-        );
+        const props = Object.entries(parsedVal.properties ?? {}).map(([k, v]) => {
+          const isOptional = isParsedType(v) && v.required === false;
+          return `${k}${isOptional ? '?' : ''}: ${parsedTypeToString(v)}`;
+        });
         return `{ ${props.join('; ')} }`;
       }
       default: {
@@ -360,12 +361,70 @@ const convertTypeToSchema = (
   }
 };
 
-const convertToQueryParameter = (param: ParameterMetadata): OpenApiParameter => ({
-  in: 'query',
-  name: param.name,
-  required: param.required ?? false,
-  schema: convertTypeToSchema(param.type, param.defaultValue),
-});
+const formatParsedTypeForDescription = (parsed: unknown, indent = 0): string => {
+  if (isParsedType(parsed)) {
+    switch (parsed.kind) {
+      case 'primitive': {
+        return parsed.base ?? 'unknown';
+      }
+      case 'array': {
+        const item = formatParsedTypeForDescription(parsed.itemType, indent);
+        return `array<${item}>`;
+      }
+      case 'union': {
+        const types = (parsed.types ?? []).map((t) => formatParsedTypeForDescription(t, indent));
+        return types.join(' | ');
+      }
+      case 'object': {
+        const properties = parsed.properties ?? {};
+        const entries = Object.entries(properties);
+        if (entries.length === 0) {
+          return '{}';
+        }
+        const currentIndent = '  '.repeat(indent);
+        const nextIndent = '  '.repeat(indent + 1);
+
+        const props = entries.map(([k, v]) => {
+          const isOptional = isParsedType(v) && v.required === false;
+          const formattedVal = formatParsedTypeForDescription(v, indent + 1);
+          return `${nextIndent}${k}${isOptional ? '?' : ''}: ${formattedVal};`;
+        });
+
+        return `{\n${props.join('\n')}\n${currentIndent}}`;
+      }
+      default: {
+        return 'unknown';
+      }
+    }
+  }
+
+  if (typeof parsed === 'string') {
+    return parsed;
+  }
+
+  return 'unknown';
+};
+
+const getParameterTypeDescription = (
+  type: ParsedType | string | Record<string, unknown>,
+): string => {
+  const formatted = formatParsedTypeForDescription(type);
+  if (formatted.includes('\n')) {
+    return `\`\`\`typescript\n${formatted}\n\`\`\``;
+  }
+  return `\`${formatted}\``;
+};
+
+const convertToQueryParameter = (param: ParameterMetadata): OpenApiParameter => {
+  const result: OpenApiParameter = {
+    description: getParameterTypeDescription(param.type),
+    in: 'query',
+    name: param.name,
+    required: param.required ?? false,
+    schema: { type: 'string' },
+  };
+  return result;
+};
 
 const convertParametersToRequestBodySchema = (params: ParameterMetadata[]): OpenApiSchema => {
   const properties: Record<string, OpenApiSchema> = {};
@@ -550,8 +609,60 @@ const generateEnhancedResponseSchema = (methodName?: string): OpenApiSchema => {
   return getDefaultResponseSchema();
 };
 
+const escapeHtml = (text: string): string =>
+  text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+const formatOpenApiSchemaForDescription = (schema: OpenApiSchema, indent = 0): string => {
+  if (schema.type === 'array' && schema.items !== undefined) {
+    const item = formatOpenApiSchemaForDescription(schema.items, indent);
+    return `array<${item}>`;
+  }
+
+  if (schema.type === 'object') {
+    if (schema.properties !== undefined) {
+      const entries = Object.entries(schema.properties);
+      if (entries.length === 0) {
+        return '{}';
+      }
+      const currentIndent = '  '.repeat(indent);
+      const nextIndent = '  '.repeat(indent + 1);
+
+      const props = entries.map(([k, v]) => {
+        const isRequired = schema.required?.includes(k) ?? false;
+        const formattedVal = formatOpenApiSchemaForDescription(v, indent + 1);
+        return `${nextIndent}${k}${isRequired ? '' : '?'}: ${formattedVal};`;
+      });
+
+      return `{\n${props.join('\n')}\n${currentIndent}}`;
+    }
+    return 'object';
+  }
+
+  return schema.type ?? 'unknown';
+};
+
 const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> => {
-  const successSchema = generateEnhancedResponseSchema(route.serviceMethod);
+  const successSchema =
+    route.output === undefined
+      ? generateEnhancedResponseSchema(route.serviceMethod)
+      : convertTypeToSchema(route.output.type);
+
+  let responseDescription = 'Successful response';
+  if (successSchema.properties !== undefined) {
+    const entries = Object.entries(successSchema.properties);
+    if (entries.length > 0) {
+      const rows = ['| Name | Type |', '| --- | --- |'];
+      for (const [name, propSchema] of entries) {
+        const formatted = formatOpenApiSchemaForDescription(propSchema);
+        const escaped = escapeHtml(formatted);
+        const cellType = formatted.includes('\n')
+          ? `<pre><code>${escaped.replaceAll('\n', '<br>').replaceAll(' ', '&nbsp;')}</code></pre>`
+          : `\`${formatted}\``;
+        rows.push(`| ${name} | ${cellType} |`);
+      }
+      responseDescription = `Successful response\n\n${rows.join('\n')}`;
+    }
+  }
 
   return {
     '200': {
@@ -560,51 +671,7 @@ const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> =>
           schema: successSchema,
         },
       },
-      description: 'Successful response',
-    },
-    '400': {
-      content: {
-        'application/json': {
-          schema: {
-            properties: {
-              error: {
-                description: 'Error message',
-                type: 'string',
-              },
-              statusCode: {
-                description: 'HTTP status code',
-                example: exampleValues.httpStatusBadRequest,
-                type: 'number',
-              },
-            },
-            required: ['error', 'statusCode'],
-            type: 'object',
-          },
-        },
-      },
-      description: 'Bad request - Invalid input parameters',
-    },
-    '500': {
-      content: {
-        'application/json': {
-          schema: {
-            properties: {
-              error: {
-                description: 'Internal error message',
-                type: 'string',
-              },
-              statusCode: {
-                description: 'HTTP status code',
-                example: exampleValues.httpStatusInternalError,
-                type: 'number',
-              },
-            },
-            required: ['error', 'statusCode'],
-            type: 'object',
-          },
-        },
-      },
-      description: 'Internal server error',
+      description: responseDescription,
     },
   };
 };
@@ -636,6 +703,16 @@ const generateOperationDescription = (route: RouteInfo): string => {
   return parts.join(' - ');
 };
 
+const extractPathParameters = (path: string): string[] => {
+  const colonMatches = [...path.matchAll(/:(?<paramName>[a-zA-Z0-9_]+)/gu)].map(
+    (m) => m.groups?.['paramName'] ?? '',
+  );
+  const braceMatches = [...path.matchAll(/\{(?<paramName>[a-zA-Z0-9_]+)\}/gu)].map(
+    (m) => m.groups?.['paramName'] ?? '',
+  );
+  return [...new Set([...colonMatches, ...braceMatches])];
+};
+
 const generateOperation = (route: RouteInfo): OpenApiOperation => {
   const operation: OpenApiOperation = {
     description: generateOperationDescription(route),
@@ -644,21 +721,53 @@ const generateOperation = (route: RouteInfo): OpenApiOperation => {
     tags: generateOperationTags(route),
   };
 
+  const pathParams = route.path ? extractPathParameters(route.path) : [];
+
   if (route.input !== undefined && route.input.length > 0) {
     const method = (route.method ?? 'get').toLowerCase();
+    const pathInputParams = route.input.filter((p) => pathParams.includes(p.name));
+    const otherInputParams = route.input.filter((p) => !pathParams.includes(p.name));
 
-    if (['delete', 'get', 'head'].includes(method)) {
-      operation.parameters = route.input.map((param) => convertToQueryParameter(param));
-    } else {
+    const parameters: OpenApiParameter[] = [];
+
+    for (const param of pathInputParams) {
+      const pathParam: OpenApiParameter = {
+        in: 'path',
+        name: param.name,
+        required: true,
+        schema: convertTypeToSchema(param.type),
+      };
+      if (param.description !== undefined) {
+        pathParam.description = param.description;
+      }
+      parameters.push(pathParam);
+    }
+
+    for (const param of otherInputParams) {
+      parameters.push(convertToQueryParameter(param));
+    }
+
+    if (!['delete', 'get', 'head'].includes(method) && otherInputParams.length > 0) {
       operation.requestBody = {
         content: {
           'application/json': {
-            schema: convertParametersToRequestBodySchema(route.input),
+            schema: convertParametersToRequestBodySchema(otherInputParams),
           },
         },
-        required: route.input.some((p) => p.required !== undefined && p.required),
+        required: otherInputParams.some((p) => p.required !== undefined && p.required),
       };
     }
+
+    if (parameters.length > 0) {
+      operation.parameters = parameters;
+    }
+  } else if (pathParams.length > 0) {
+    operation.parameters = pathParams.map((name) => ({
+      in: 'path',
+      name,
+      required: true,
+      schema: { type: 'string' },
+    }));
   }
 
   return operation;
@@ -677,6 +786,9 @@ const groupRoutesByPath = (routes: RouteInfo[]): Record<string, RouteInfo[]> => 
     if (route.requestType === 'HTTP' && !normalizedPath.startsWith(apiEndpoint)) {
       normalizedPath = normalizedPath === '/' ? apiEndpoint : `${apiEndpoint}${normalizedPath}`;
     }
+
+    // Convert Express colon parameters to OpenAPI curly brace parameters
+    normalizedPath = normalizedPath.replaceAll(/:(?<paramName>[a-zA-Z0-9_]+)/gu, '{$<paramName>}');
 
     groups[normalizedPath] ??= [];
 
