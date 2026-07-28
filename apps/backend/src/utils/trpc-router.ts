@@ -27,6 +27,14 @@ const trpcClient = createTRPCClient<TrpcRouter>({
 
 const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
   try {
+    app.use(rootPath, (req, _res, next) => {
+      const bodyRecord: unknown = req.body;
+      if (req.method === 'POST' && isRecord(bodyRecord) && !('json' in bodyRecord)) {
+        req.body = { json: bodyRecord };
+      }
+      next();
+    });
+
     app.use(
       rootPath,
       createExpressMiddleware({

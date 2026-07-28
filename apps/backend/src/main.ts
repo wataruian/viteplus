@@ -50,6 +50,10 @@ const createApp = async (shouldAutogen = false) => {
 
   //   app.use(cspMiddleware);
 
+  app.get(['', '/'], (_req, res) => {
+    res.json({ message: 'OK' });
+  });
+
   registerHttpRoutes(app, apiEndpoint);
   registerTrpcRoutes(app, trpcEndpoint);
 

@@ -647,7 +647,14 @@ const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> =>
       ? generateEnhancedResponseSchema(route.serviceMethod)
       : convertTypeToSchema(route.output.type);
 
-  let responseDescription = 'Successful response';
+  const hasFailInPath = route.path.toLowerCase().includes('fail');
+  const hasFailInMethod =
+    route.serviceMethod === undefined ? false : route.serviceMethod.toLowerCase().includes('fail');
+  const isFailure = hasFailInPath || hasFailInMethod;
+  const statusCode = isFailure ? '500' : '200';
+  const descriptionLabel = isFailure ? 'Failed response' : 'Successful response';
+
+  let responseDescription = descriptionLabel;
   if (successSchema.properties !== undefined) {
     const entries = Object.entries(successSchema.properties);
     if (entries.length > 0) {
@@ -660,12 +667,12 @@ const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> =>
           : `\`${formatted}\``;
         rows.push(`| ${name} | ${cellType} |`);
       }
-      responseDescription = `Successful response\n\n${rows.join('\n')}`;
+      responseDescription = `${descriptionLabel}\n\n${rows.join('\n')}`;
     }
   }
 
   return {
-    '200': {
+    [statusCode]: {
       content: {
         'application/json': {
           schema: successSchema,
