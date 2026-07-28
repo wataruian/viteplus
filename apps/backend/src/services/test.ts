@@ -169,14 +169,51 @@ class TestService extends BaseService {
     return { message: 'Async success' };
   }
 
-  public static customTypeArray(testUsers: TestUser[]) {
+  public static customTypeArray(
+    testUsers: TestUser[] = [
+      {
+        address: {
+          city: 'Sample City 1',
+          houseNumber: 11,
+          province: 'Sample Province 1',
+          street: 'Sample Street 1',
+        },
+        age: 22,
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      {
+        address: {
+          city: 'Sample City 2',
+          houseNumber: 22,
+          province: 'Sample Province 2',
+          street: 'Sample Street 2',
+        },
+        age: 22,
+        firstName: 'Jane',
+        lastName: 'Doe',
+      },
+    ],
+  ) {
     return {
       message: 'Custom type array processed successfully',
       testUsers,
     };
   }
 
-  public static customTypeSingle(testUser: TestUser) {
+  public static customTypeSingle(
+    testUser: TestUser = {
+      address: {
+        city: 'Sample City',
+        houseNumber: 11,
+        province: 'Sample Province',
+        street: 'Sample Street',
+      },
+      age: 22,
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+  ) {
     return {
       message: 'Custom type single processed successfully',
       testUser,

@@ -265,12 +265,12 @@ describe('Service Parser', () => {
       output: messageOutput,
     },
     {
-      input: [{ name: 'testUsers', required: true }],
+      input: [{ name: 'testUsers', required: false }],
       method: 'customTypeArray',
       output: [{ name: 'data', required: true }, ...messageOutput],
     },
     {
-      input: [{ name: 'testUser', required: true }],
+      input: [{ name: 'testUser', required: false }],
       method: 'customTypeSingle',
       output: [{ name: 'data', required: true }, ...messageOutput],
     },

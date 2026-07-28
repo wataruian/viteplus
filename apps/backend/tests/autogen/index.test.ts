@@ -389,13 +389,13 @@ describe('Autogen Main', () => {
       },
       {
         httpPath: '/test/custom-type-array',
-        input: [{ name: 'testUsers', required: true }],
+        input: [{ name: 'testUsers', required: false }],
         output: [{ name: 'data', required: true }, ...messageOutput],
         trpcPath: '/trpc/test.customTypeArray',
       },
       {
         httpPath: '/test/custom-type-single',
-        input: [{ name: 'testUser', required: true }],
+        input: [{ name: 'testUser', required: false }],
         output: [{ name: 'data', required: true }, ...messageOutput],
         trpcPath: '/trpc/test.customTypeSingle',
       },
