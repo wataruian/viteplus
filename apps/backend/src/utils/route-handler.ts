@@ -136,8 +136,6 @@ const createRouteHandlerImpl =
 
       const response: BaseResponse = {
         code,
-        data: responseData,
-        error,
         message:
           typeof result['message'] === 'string'
             ? result['message']
@@ -148,6 +146,14 @@ const createRouteHandlerImpl =
             : (ctx.req.locals.sessionId ?? undefined),
         success,
       };
+
+      if (responseData !== null && responseData !== undefined) {
+        response.data = responseData;
+      }
+
+      if (error !== null && error !== undefined) {
+        response.error = error;
+      }
 
       return response;
     } catch (error) {

@@ -1,88 +1,84 @@
-import type {
-  // ErrorDetails,
-  Request,
-  Response,
-  ServiceContext,
-} from '../types/middlware';
-// import { type TRPCError, initTRPC } from '@trpc/server';
-// import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
+import type { ErrorDetails, Request, Response, ServiceContext } from '../types/middlware';
+import { type TRPCError, initTRPC } from '@trpc/server';
+import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
 import type { OpenApiMeta } from 'trpc-openapi';
-// import { isProduction } from '@lightproject/common/environment';
-import { initTRPC } from '@trpc/server';
+import { getErrorDetails } from '../middlewares/error-handler';
+import { isProduction } from '@lightproject/common/environment';
+import { logger } from '@lightproject/common/logger';
 import { randomUUID } from 'node:crypto';
 import superjson from 'superjson';
-// import { syncLocals } from '../middlewares/gateway-middleware';
+import { syncLocals } from '../middlewares/gateway-middleware';
 
 const uuidv4 = () => randomUUID();
 const transformer = superjson;
 
-// const errorFormatter = ({
-//   ctx,
-//   error,
-//   shape,
-// }: {
-//   ctx: ServiceContext | undefined;
-//   error: TRPCError;
-//   shape: DefaultErrorShape;
-// }) => {
-//   let errorDetails: ErrorDetails = {
-//     message: shape.message || 'Unknown error occurred',
-//     name: error.name || 'UnknownError',
-//     statusCode: Number(shape.data.httpStatus) || 500,
-//   };
+const errorFormatter = ({
+  ctx,
+  error,
+  shape,
+}: {
+  ctx: ServiceContext | undefined;
+  error: TRPCError;
+  shape: DefaultErrorShape;
+}) => {
+  let errorDetails: ErrorDetails = {
+    message: shape.message || 'Unknown error occurred',
+    name: error.name || 'UnknownError',
+    statusCode: shape.data.httpStatus,
+  };
 
-//   if (ctx) {
-//     ctx.res.locals.originalStatusCode = ctx.res.statusCode;
-//     ctx.res.statusCode = shape.data.httpStatus || 500;
+  if (ctx) {
+    ctx.res.locals.originalStatusCode = ctx.res.statusCode;
+    ctx.res.statusCode = shape.data.httpStatus;
 
-//     errorDetails = {
-//       message: errorDetails.message,
-//       name: errorDetails.name,
-//       statusCode: ctx.res.statusCode || errorDetails.statusCode,
-//     };
+    errorDetails = {
+      message: errorDetails.message,
+      name: errorDetails.name,
+      statusCode: ctx.res.statusCode,
+    };
 
-//     if (shape.data.stack) {
-//       errorDetails.stack = shape.data.stack;
-//     }
+    if (shape.data.stack !== undefined && shape.data.stack !== '') {
+      errorDetails.stack = shape.data.stack;
+    }
 
-//     if (!ctx.req.locals) {
-//       ctx.req.locals = {} as ServiceContext['req']['locals'];
-//     }
+    ctx.req.locals.metadata.error = errorDetails;
 
-//     if (!ctx.req.locals.metadata) {
-//       ctx.req.locals.metadata = {} as ServiceContext['req']['locals']['metadata'];
-//     }
+    syncLocals({
+      locals: {
+        ...ctx.req.locals,
+        ...ctx.res.locals,
+      },
+      req: ctx.req,
+      res: ctx.res,
+      target: 'both',
+    });
+  }
 
-//     ctx.req.locals.metadata.error = errorDetails;
+  const formattedError = {
+    code: errorDetails.statusCode,
+    error: {
+      code: shape.data.code,
+      httpStatus: shape.data.httpStatus,
+      message: error.message || shape.message,
+      name: error.name,
+      path: shape.data.path,
+      stack: error.stack ?? shape.data.stack,
+      statusCode: errorDetails.statusCode,
+    },
+    message: error.message || shape.message,
+    sessionId: ctx?.req.locals.sessionId,
+    success: false,
+  };
 
-//     syncLocals({
-//       locals: {
-//         ...ctx.req.locals,
-//         ...ctx.res.locals,
-//       },
-//       req: ctx.req,
-//       res: ctx.res,
-//       target: 'both',
-//     });
-//   }
+  const enableErrorStack =
+    globalThis.process.env['ENABLE_ERROR_STACK'] === 'true' ? true : !isProduction();
 
-//   const formattedError = {
-//     code: Number(shape.data.code),
-//     data: {
-//       code: shape.data.code,
-//       httpStatus: errorDetails.statusCode,
-//       path: shape.data.path,
-//       stack: error.stack || shape.data.stack,
-//     },
-//     message: error.message || shape.message,
-//   };
+  if (!enableErrorStack) {
+    formattedError.error.stack = undefined;
+  }
 
-//   if (isProduction()) {
-//     formattedError.data.stack = undefined;
-//   }
-
-//   return formattedError;
-// };
+  return formattedError;
+};
 
 const createContext = (req: Request, res: Response): ServiceContext => {
   const sessionId = req.locals.sessionId ?? uuidv4();
@@ -95,28 +91,28 @@ const createContext = (req: Request, res: Response): ServiceContext => {
 };
 
 const t = initTRPC.meta<OpenApiMeta>().context<Awaited<ReturnType<typeof createContext>>>().create({
-  // errorFormatter,
+  errorFormatter,
   transformer,
 });
 
-const trpcRouteWrapper = t.middleware(async ({ next }) => {
+const trpcRouteWrapper = t.middleware(async ({ next, ctx }) => {
   const result = await Promise.resolve(next());
 
-  if (
-    !result.ok
-    // &&
-    // ctx &&
-    // ctx.req &&
-    // ctx.res &&
-    // ctx.req.locals &&
-    // ctx.res.locals &&
-    // ctx.req.locals.metadata &&
-    // ctx.res.locals.metadata
-  ) {
-    // const errorDetails = getErrorDetails(result.error, ctx.res);
-    // ctx.req.locals.metadata.error = errorDetails;
-    // ctx.res.locals.metadata.error = errorDetails;
-    // globalThis.console.log('Error in TRPC route wrapper:', result.error);
+  if (!result.ok) {
+    const errorDetails = getErrorDetails(result.error, ctx.res);
+    ctx.req.locals.metadata.error = errorDetails;
+    ctx.res.locals.metadata.error = errorDetails;
+
+    logger.error('Error in TRPC route wrapper:', {
+      error:
+        result.error instanceof Error
+          ? {
+              message: result.error.message,
+              name: result.error.name,
+              stack: result.error.stack,
+            }
+          : result.error,
+    });
   }
 
   return result;
@@ -131,7 +127,7 @@ const router = tRouter;
 const mergeRouters = tMergeRouters;
 
 export {
-  // errorFormatter,
+  errorFormatter,
   transformer,
   createContext,
   t,

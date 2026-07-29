@@ -1,7 +1,7 @@
 VITE+ - The Unified Toolchain for the Web
 
 ~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts
-[2026-07-28T14:51:52.022Z] INFO : 🚀 Starting autogen build process...
+[2026-07-29T05:39:53.634Z] INFO : 🚀 Starting autogen build process...
 httpReturnValue {
   handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
   input: [],
@@ -2243,16 +2243,16 @@ trpcReturnValue {
   serviceMethod: 'syncSuccess',
   type: 'query'
 }
-[2026-07-28T14:51:53.366Z] WARN : No start time found for operation: Route Extraction
-[2026-07-28T14:51:53.366Z] INFO : 📋 Discovered 30 routes: 15 HTTP, 15 tRPC
-[2026-07-28T14:51:53.366Z] INFO : Validating 30 routes...
-[2026-07-28T14:51:53.367Z] INFO : ✅ All routes passed validation (0 warnings)
-[2026-07-28T14:51:53.367Z] INFO : ✅ All routes passed validation
-[2026-07-28T14:51:53.367Z] INFO : 🔄 Validating routes: [████████████████████] 30/30 (100%)
-[2026-07-28T14:51:53.367Z] WARN : No start time found for operation: Route Validation
-[2026-07-28T14:51:53.370Z] WARN : No start time found for operation: OpenAPI Generation
-[2026-07-28T14:51:53.374Z] WARN : No start time found for operation: File Operations
-[2026-07-28T14:51:53.374Z] INFO : ✅ OpenAPI spec generated with 30 paths
-[2026-07-28T14:51:53.374Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
-[2026-07-28T14:51:53.374Z] INFO : 📊 Performance Summary (Total: 1.35s)
-[2026-07-28T14:51:53.374Z] INFO : 🎉 OpenAPI specification generation completed successfully!
+[2026-07-29T05:39:54.843Z] WARN : No start time found for operation: Route Extraction
+[2026-07-29T05:39:54.843Z] INFO : 📋 Discovered 30 routes: 15 HTTP, 15 tRPC
+[2026-07-29T05:39:54.843Z] INFO : Validating 30 routes...
+[2026-07-29T05:39:54.844Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-07-29T05:39:54.844Z] INFO : ✅ All routes passed validation
+[2026-07-29T05:39:54.844Z] INFO : 🔄 Validating routes: [████████████████████] 30/30 (100%)
+[2026-07-29T05:39:54.844Z] WARN : No start time found for operation: Route Validation
+[2026-07-29T05:39:54.847Z] WARN : No start time found for operation: OpenAPI Generation
+[2026-07-29T05:39:54.851Z] WARN : No start time found for operation: File Operations
+[2026-07-29T05:39:54.851Z] INFO : ✅ OpenAPI spec generated with 30 paths
+[2026-07-29T05:39:54.851Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-07-29T05:39:54.851Z] INFO : 📊 Performance Summary (Total: 1.22s)
+[2026-07-29T05:39:54.851Z] INFO : 🎉 OpenAPI specification generation completed successfully!
