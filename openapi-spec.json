@@ -1,0 +1,3883 @@
+{
+  "components": {
+    "schemas": {}
+  },
+  "info": {
+    "description": "Auto-generated API documentation for Pancake platform",
+    "title": "Pancake API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Default root",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/_check-params": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "booleanArrayOutput": {
+                          "items": {
+                            "type": "boolean"
+                          },
+                          "type": "array"
+                        },
+                        "booleanOutput": {
+                          "type": "boolean"
+                        },
+                        "numberArrayOutput": {
+                          "items": {
+                            "type": "number"
+                          },
+                          "type": "array"
+                        },
+                        "numberOutput": {
+                          "type": "number"
+                        },
+                        "objectBooleanArrayOutput": {
+                          "properties": {
+                            "booleanArray": {
+                              "items": {
+                                "type": "boolean"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["booleanArray"]
+                        },
+                        "objectBooleanOutput": {
+                          "properties": {
+                            "boolean": {
+                              "type": "boolean"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["boolean"]
+                        },
+                        "objectMultipleOutput": {
+                          "properties": {
+                            "boolean": {
+                              "type": "boolean"
+                            },
+                            "booleanArray": {
+                              "items": {
+                                "type": "boolean"
+                              },
+                              "type": "array"
+                            },
+                            "number": {
+                              "type": "number"
+                            },
+                            "numberArray": {
+                              "items": {
+                                "type": "number"
+                              },
+                              "type": "array"
+                            },
+                            "object": {
+                              "properties": {
+                                "boolean": {
+                                  "type": "boolean"
+                                },
+                                "booleanArray": {
+                                  "items": {
+                                    "type": "boolean"
+                                  },
+                                  "type": "array"
+                                },
+                                "number": {
+                                  "type": "number"
+                                },
+                                "numberArray": {
+                                  "items": {
+                                    "type": "number"
+                                  },
+                                  "type": "array"
+                                },
+                                "string": {
+                                  "type": "string"
+                                },
+                                "stringArray": {
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object",
+                              "required": [
+                                "boolean",
+                                "booleanArray",
+                                "number",
+                                "numberArray",
+                                "string",
+                                "stringArray"
+                              ]
+                            },
+                            "objectArray": {
+                              "items": {
+                                "properties": {
+                                  "boolean": {
+                                    "type": "boolean"
+                                  },
+                                  "booleanArray": {
+                                    "items": {
+                                      "type": "boolean"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "number": {
+                                    "type": "number"
+                                  },
+                                  "numberArray": {
+                                    "items": {
+                                      "type": "number"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "string": {
+                                    "type": "string"
+                                  },
+                                  "stringArray": {
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object",
+                                "required": [
+                                  "boolean",
+                                  "booleanArray",
+                                  "number",
+                                  "numberArray",
+                                  "string",
+                                  "stringArray"
+                                ]
+                              },
+                              "type": "array"
+                            },
+                            "string": {
+                              "type": "string"
+                            },
+                            "stringArray": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": [
+                            "boolean",
+                            "booleanArray",
+                            "number",
+                            "numberArray",
+                            "object",
+                            "objectArray",
+                            "string",
+                            "stringArray"
+                          ]
+                        },
+                        "objectNumberArrayOutput": {
+                          "properties": {
+                            "numberArray": {
+                              "items": {
+                                "type": "number"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["numberArray"]
+                        },
+                        "objectNumberOutput": {
+                          "properties": {
+                            "number": {
+                              "type": "number"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["number"]
+                        },
+                        "objectStringArrayOutput": {
+                          "properties": {
+                            "stringArray": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["stringArray"]
+                        },
+                        "objectStringOutput": {
+                          "properties": {
+                            "string": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["string"]
+                        },
+                        "stringArrayOutput": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "stringOutput": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object",
+                      "required": [
+                        "booleanArrayOutput",
+                        "booleanOutput",
+                        "numberArrayOutput",
+                        "numberOutput",
+                        "objectBooleanArrayOutput",
+                        "objectBooleanOutput",
+                        "objectMultipleOutput",
+                        "objectNumberArrayOutput",
+                        "objectNumberOutput",
+                        "objectStringArrayOutput",
+                        "objectStringOutput",
+                        "stringArrayOutput",
+                        "stringOutput"
+                      ]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;booleanArrayOutput:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;booleanOutput:&nbsp;boolean;<br>&nbsp;&nbsp;numberArrayOutput:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;numberOutput:&nbsp;number;<br>&nbsp;&nbsp;objectBooleanArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectBooleanOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectMultipleOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;object:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;objectArray:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;}&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectNumberArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectNumberOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectStringArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectStringOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;stringArrayOutput:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;stringOutput:&nbsp;string;<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test _checkParams",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "_stringInput": {
+                    "default": "ABC",
+                    "type": "string"
+                  },
+                  "_stringArrayInput": {
+                    "default": ["ABC", "DEF"],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "_numberInput": {
+                    "default": 123,
+                    "type": "number"
+                  },
+                  "_numberArrayInput": {
+                    "default": [123, 456],
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  },
+                  "_booleanInput": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "_booleanArrayInput": {
+                    "default": [true, false],
+                    "items": {
+                      "type": "boolean"
+                    },
+                    "type": "array"
+                  },
+                  "_objectStringInput": {
+                    "default": {
+                      "string": "ABC"
+                    },
+                    "properties": {
+                      "string": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["string"]
+                  },
+                  "_objectStringArrayInput": {
+                    "default": {
+                      "stringArray": ["ABC", "DEF"]
+                    },
+                    "properties": {
+                      "stringArray": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["stringArray"]
+                  },
+                  "_objectNumberInput": {
+                    "default": {
+                      "number": 123
+                    },
+                    "properties": {
+                      "number": {
+                        "type": "number"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["number"]
+                  },
+                  "_objectNumberArrayInput": {
+                    "default": {
+                      "numberArray": [123, 456]
+                    },
+                    "properties": {
+                      "numberArray": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["numberArray"]
+                  },
+                  "_objectBooleanInput": {
+                    "default": {
+                      "boolean": true
+                    },
+                    "properties": {
+                      "boolean": {
+                        "type": "boolean"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["boolean"]
+                  },
+                  "_objectBooleanArrayInput": {
+                    "default": {
+                      "booleanArray": [true, false]
+                    },
+                    "properties": {
+                      "booleanArray": {
+                        "items": {
+                          "type": "boolean"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["booleanArray"]
+                  },
+                  "_objectMultipleInput": {
+                    "default": {
+                      "boolean": false,
+                      "booleanArray": [true, false],
+                      "number": 123,
+                      "numberArray": [123, 456],
+                      "object": {
+                        "boolean": true,
+                        "booleanArray": [true, false],
+                        "number": 123,
+                        "numberArray": [123, 456],
+                        "string": "ABC",
+                        "stringArray": ["ABC", "DEF"]
+                      },
+                      "objectArray": [
+                        {
+                          "boolean": true,
+                          "booleanArray": [true, false],
+                          "number": 123,
+                          "numberArray": [123, 456],
+                          "string": "ABC",
+                          "stringArray": ["ABC", "DEF"]
+                        },
+                        {
+                          "boolean": false,
+                          "booleanArray": [false, true],
+                          "number": 456,
+                          "numberArray": [456, 789],
+                          "string": "DEF",
+                          "stringArray": ["DEF", "GHI"]
+                        }
+                      ],
+                      "string": "ABC",
+                      "stringArray": ["ABC", "DEF"]
+                    },
+                    "properties": {
+                      "boolean": {
+                        "type": "boolean"
+                      },
+                      "booleanArray": {
+                        "items": {
+                          "type": "boolean"
+                        },
+                        "type": "array"
+                      },
+                      "number": {
+                        "type": "number"
+                      },
+                      "numberArray": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      },
+                      "object": {
+                        "properties": {
+                          "boolean": {
+                            "type": "boolean"
+                          },
+                          "booleanArray": {
+                            "items": {
+                              "type": "boolean"
+                            },
+                            "type": "array"
+                          },
+                          "number": {
+                            "type": "number"
+                          },
+                          "numberArray": {
+                            "items": {
+                              "type": "number"
+                            },
+                            "type": "array"
+                          },
+                          "string": {
+                            "type": "string"
+                          },
+                          "stringArray": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "boolean",
+                          "booleanArray",
+                          "number",
+                          "numberArray",
+                          "string",
+                          "stringArray"
+                        ]
+                      },
+                      "objectArray": {
+                        "items": {
+                          "properties": {
+                            "boolean": {
+                              "type": "boolean"
+                            },
+                            "booleanArray": {
+                              "items": {
+                                "type": "boolean"
+                              },
+                              "type": "array"
+                            },
+                            "number": {
+                              "type": "number"
+                            },
+                            "numberArray": {
+                              "items": {
+                                "type": "number"
+                              },
+                              "type": "array"
+                            },
+                            "string": {
+                              "type": "string"
+                            },
+                            "stringArray": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": [
+                            "boolean",
+                            "booleanArray",
+                            "number",
+                            "numberArray",
+                            "string",
+                            "stringArray"
+                          ]
+                        },
+                        "type": "array"
+                      },
+                      "string": {
+                        "type": "string"
+                      },
+                      "stringArray": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "boolean",
+                      "booleanArray",
+                      "number",
+                      "numberArray",
+                      "object",
+                      "objectArray",
+                      "string",
+                      "stringArray"
+                    ]
+                  },
+                  "_string": {
+                    "default": "ABC",
+                    "type": "string"
+                  },
+                  "_stringArray": {
+                    "default": ["ABC", "DEF"],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "_stringInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "_stringArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "_numberInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<number>`",
+            "in": "query",
+            "name": "_numberArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`boolean`",
+            "in": "query",
+            "name": "_booleanInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<boolean>`",
+            "in": "query",
+            "name": "_booleanArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  string: string;\n}\n```",
+            "in": "query",
+            "name": "_objectStringInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  stringArray: array<string>;\n}\n```",
+            "in": "query",
+            "name": "_objectStringArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  number: number;\n}\n```",
+            "in": "query",
+            "name": "_objectNumberInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  numberArray: array<number>;\n}\n```",
+            "in": "query",
+            "name": "_objectNumberArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  boolean: boolean;\n}\n```",
+            "in": "query",
+            "name": "_objectBooleanInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  booleanArray: array<boolean>;\n}\n```",
+            "in": "query",
+            "name": "_objectBooleanArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  boolean: boolean;\n  booleanArray: array<boolean>;\n  number: number;\n  numberArray: array<number>;\n  object: {\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  };\n  objectArray: array<{\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  }>;\n  string: string;\n  stringArray: array<string>;\n}\n```",
+            "in": "query",
+            "name": "_objectMultipleInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "_string",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "_stringArray",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/async-fail-reject": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "stack": {
+                          "type": "string"
+                        },
+                        "statusCode": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["message", "name", "stack", "statusCode"]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["error", "message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;stack:&nbsp;string;<br>&nbsp;&nbsp;statusCode:&nbsp;number;<br>}</code></pre> |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test asyncFailReject",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/async-fail-throw": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "stack": {
+                          "type": "string"
+                        },
+                        "statusCode": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["message", "name", "stack", "statusCode"]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["error", "message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;stack:&nbsp;string;<br>&nbsp;&nbsp;statusCode:&nbsp;number;<br>}</code></pre> |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test asyncFailThrow",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/async-success": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test asyncSuccess",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/custom-type-array": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "testUsers": {
+                          "items": {
+                            "properties": {
+                              "firstName": {
+                                "type": "string"
+                              },
+                              "middleName": {
+                                "type": "string"
+                              },
+                              "lastName": {
+                                "type": "string"
+                              },
+                              "age": {
+                                "type": "number"
+                              },
+                              "address": {
+                                "properties": {
+                                  "province": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "street": {
+                                    "type": "string"
+                                  },
+                                  "houseNumber": {
+                                    "type": "number"
+                                  }
+                                },
+                                "type": "object",
+                                "required": ["province", "city", "houseNumber"]
+                              }
+                            },
+                            "type": "object",
+                            "required": ["firstName", "lastName", "age", "address"]
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["testUsers"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;testUsers:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;}&gt;;<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test customTypeArray",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "testUsers": {
+                    "default": [
+                      {
+                        "address": {
+                          "city": "Sample City 1",
+                          "houseNumber": 11,
+                          "province": "Sample Province 1",
+                          "street": "Sample Street 1"
+                        },
+                        "age": 22,
+                        "firstName": "John",
+                        "lastName": "Doe"
+                      },
+                      {
+                        "address": {
+                          "city": "Sample City 2",
+                          "houseNumber": 22,
+                          "province": "Sample Province 2",
+                          "street": "Sample Street 2"
+                        },
+                        "age": 22,
+                        "firstName": "Jane",
+                        "lastName": "Doe"
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "middleName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "age": {
+                          "type": "number"
+                        },
+                        "address": {
+                          "properties": {
+                            "province": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "street": {
+                              "type": "string"
+                            },
+                            "houseNumber": {
+                              "type": "number"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["province", "city", "houseNumber"]
+                        }
+                      },
+                      "type": "object",
+                      "required": ["firstName", "lastName", "age", "address"]
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "```typescript\narray<{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}>\n```",
+            "in": "query",
+            "name": "testUsers",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/custom-type-single": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "testUser": {
+                          "properties": {
+                            "firstName": {
+                              "type": "string"
+                            },
+                            "middleName": {
+                              "type": "string"
+                            },
+                            "lastName": {
+                              "type": "string"
+                            },
+                            "age": {
+                              "type": "number"
+                            },
+                            "address": {
+                              "properties": {
+                                "province": {
+                                  "type": "string"
+                                },
+                                "city": {
+                                  "type": "string"
+                                },
+                                "street": {
+                                  "type": "string"
+                                },
+                                "houseNumber": {
+                                  "type": "number"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["province", "city", "houseNumber"]
+                            }
+                          },
+                          "type": "object",
+                          "required": ["firstName", "lastName", "age", "address"]
+                        }
+                      },
+                      "type": "object",
+                      "required": ["testUser"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;testUser:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test customTypeSingle",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "testUser": {
+                    "default": {
+                      "address": {
+                        "city": "Sample City",
+                        "houseNumber": 11,
+                        "province": "Sample Province",
+                        "street": "Sample Street"
+                      },
+                      "age": 22,
+                      "firstName": "John",
+                      "lastName": "Doe"
+                    },
+                    "properties": {
+                      "firstName": {
+                        "type": "string"
+                      },
+                      "middleName": {
+                        "type": "string"
+                      },
+                      "lastName": {
+                        "type": "string"
+                      },
+                      "age": {
+                        "type": "number"
+                      },
+                      "address": {
+                        "properties": {
+                          "province": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "street": {
+                            "type": "string"
+                          },
+                          "houseNumber": {
+                            "type": "number"
+                          }
+                        },
+                        "type": "object",
+                        "required": ["province", "city", "houseNumber"]
+                      }
+                    },
+                    "type": "object",
+                    "required": ["firstName", "lastName", "age", "address"]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}\n```",
+            "in": "query",
+            "name": "testUser",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/hello": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test hello",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "required": ["firstName"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "firstName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "lastName",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/mixed-params": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "arr": {
+                          "items": {
+                            "type": "number"
+                          },
+                          "type": "array"
+                        },
+                        "b": {
+                          "type": "number"
+                        },
+                        "options": {
+                          "properties": {
+                            "bar": {
+                              "type": "number"
+                            },
+                            "foo": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["a", "arr", "b", "options"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;a:&nbsp;string;<br>&nbsp;&nbsp;arr:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;b:&nbsp;number;<br>&nbsp;&nbsp;options:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;foo?:&nbsp;string;<br>&nbsp;&nbsp;};<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test mixedParams",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "a": {
+                    "type": "string"
+                  },
+                  "b": {
+                    "type": "number"
+                  },
+                  "options": {
+                    "properties": {
+                      "bar": {
+                        "type": "number"
+                      },
+                      "foo": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "arr": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "required": ["a", "b"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "a",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "b",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
+            "in": "query",
+            "name": "options",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<number>`",
+            "in": "query",
+            "name": "arr",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/object-destructured": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "prop1": {
+                          "type": "string"
+                        },
+                        "prop2": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["prop1", "prop2"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;prop1:&nbsp;string;<br>&nbsp;&nbsp;prop2:&nbsp;number;<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test objectDestructured",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "payload": {
+                    "properties": {
+                      "prop1": {
+                        "type": "string"
+                      },
+                      "prop2": {
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "required": ["payload"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  prop1?: string;\n  prop2?: number;\n}\n```",
+            "in": "query",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/object-only": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "options": {
+                          "properties": {
+                            "bar": {
+                              "type": "number"
+                            },
+                            "foo": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["options"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;options:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;foo?:&nbsp;string;<br>&nbsp;&nbsp;};<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test objectOnly",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "options": {
+                    "properties": {
+                      "bar": {
+                        "type": "number"
+                      },
+                      "foo": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "required": ["options"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
+            "in": "query",
+            "name": "options",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/primitives-and-array": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "properties": {
+                        "var1": {
+                          "type": "string"
+                        },
+                        "var2": {
+                          "type": "number"
+                        },
+                        "var3": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["var1", "var2", "var3"]
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "data", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| data | <pre><code>{<br>&nbsp;&nbsp;var1:&nbsp;string;<br>&nbsp;&nbsp;var2:&nbsp;number;<br>&nbsp;&nbsp;var3:&nbsp;array&lt;string&gt;;<br>}</code></pre> |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test primitivesAndArray",
+        "tags": ["HTTP"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "var1": {
+                    "type": "string"
+                  },
+                  "var2": {
+                    "type": "number"
+                  },
+                  "var3": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "required": ["var1", "var2"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "var1",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "var2",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "var3",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/test/sync-fail-reject": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "stack": {
+                          "type": "string"
+                        },
+                        "statusCode": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["message", "name", "stack", "statusCode"]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["error", "message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;stack:&nbsp;string;<br>&nbsp;&nbsp;statusCode:&nbsp;number;<br>}</code></pre> |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test syncFailReject",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/sync-fail-throw": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "stack": {
+                          "type": "string"
+                        },
+                        "statusCode": {
+                          "type": "number"
+                        }
+                      },
+                      "type": "object",
+                      "required": ["message", "name", "stack", "statusCode"]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["error", "message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;stack:&nbsp;string;<br>&nbsp;&nbsp;statusCode:&nbsp;number;<br>}</code></pre> |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test syncFailThrow",
+        "tags": ["HTTP"]
+      }
+    },
+    "/api/test/sync-success": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
+        },
+        "summary": "Test syncSuccess",
+        "tags": ["HTTP"]
+      }
+    },
+    "/trpc/default.root": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Default root (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test._checkParams": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "booleanArrayOutput": {
+                                      "items": {
+                                        "type": "boolean"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "booleanOutput": {
+                                      "type": "boolean"
+                                    },
+                                    "numberArrayOutput": {
+                                      "items": {
+                                        "type": "number"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "numberOutput": {
+                                      "type": "number"
+                                    },
+                                    "objectBooleanArrayOutput": {
+                                      "properties": {
+                                        "booleanArray": {
+                                          "items": {
+                                            "type": "boolean"
+                                          },
+                                          "type": "array"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["booleanArray"]
+                                    },
+                                    "objectBooleanOutput": {
+                                      "properties": {
+                                        "boolean": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["boolean"]
+                                    },
+                                    "objectMultipleOutput": {
+                                      "properties": {
+                                        "boolean": {
+                                          "type": "boolean"
+                                        },
+                                        "booleanArray": {
+                                          "items": {
+                                            "type": "boolean"
+                                          },
+                                          "type": "array"
+                                        },
+                                        "number": {
+                                          "type": "number"
+                                        },
+                                        "numberArray": {
+                                          "items": {
+                                            "type": "number"
+                                          },
+                                          "type": "array"
+                                        },
+                                        "object": {
+                                          "properties": {
+                                            "boolean": {
+                                              "type": "boolean"
+                                            },
+                                            "booleanArray": {
+                                              "items": {
+                                                "type": "boolean"
+                                              },
+                                              "type": "array"
+                                            },
+                                            "number": {
+                                              "type": "number"
+                                            },
+                                            "numberArray": {
+                                              "items": {
+                                                "type": "number"
+                                              },
+                                              "type": "array"
+                                            },
+                                            "string": {
+                                              "type": "string"
+                                            },
+                                            "stringArray": {
+                                              "items": {
+                                                "type": "string"
+                                              },
+                                              "type": "array"
+                                            }
+                                          },
+                                          "type": "object",
+                                          "required": [
+                                            "boolean",
+                                            "booleanArray",
+                                            "number",
+                                            "numberArray",
+                                            "string",
+                                            "stringArray"
+                                          ]
+                                        },
+                                        "objectArray": {
+                                          "items": {
+                                            "properties": {
+                                              "boolean": {
+                                                "type": "boolean"
+                                              },
+                                              "booleanArray": {
+                                                "items": {
+                                                  "type": "boolean"
+                                                },
+                                                "type": "array"
+                                              },
+                                              "number": {
+                                                "type": "number"
+                                              },
+                                              "numberArray": {
+                                                "items": {
+                                                  "type": "number"
+                                                },
+                                                "type": "array"
+                                              },
+                                              "string": {
+                                                "type": "string"
+                                              },
+                                              "stringArray": {
+                                                "items": {
+                                                  "type": "string"
+                                                },
+                                                "type": "array"
+                                              }
+                                            },
+                                            "type": "object",
+                                            "required": [
+                                              "boolean",
+                                              "booleanArray",
+                                              "number",
+                                              "numberArray",
+                                              "string",
+                                              "stringArray"
+                                            ]
+                                          },
+                                          "type": "array"
+                                        },
+                                        "string": {
+                                          "type": "string"
+                                        },
+                                        "stringArray": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": "array"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": [
+                                        "boolean",
+                                        "booleanArray",
+                                        "number",
+                                        "numberArray",
+                                        "object",
+                                        "objectArray",
+                                        "string",
+                                        "stringArray"
+                                      ]
+                                    },
+                                    "objectNumberArrayOutput": {
+                                      "properties": {
+                                        "numberArray": {
+                                          "items": {
+                                            "type": "number"
+                                          },
+                                          "type": "array"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["numberArray"]
+                                    },
+                                    "objectNumberOutput": {
+                                      "properties": {
+                                        "number": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["number"]
+                                    },
+                                    "objectStringArrayOutput": {
+                                      "properties": {
+                                        "stringArray": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": "array"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["stringArray"]
+                                    },
+                                    "objectStringOutput": {
+                                      "properties": {
+                                        "string": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["string"]
+                                    },
+                                    "stringArrayOutput": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "stringOutput": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": [
+                                    "booleanArrayOutput",
+                                    "booleanOutput",
+                                    "numberArrayOutput",
+                                    "numberOutput",
+                                    "objectBooleanArrayOutput",
+                                    "objectBooleanOutput",
+                                    "objectMultipleOutput",
+                                    "objectNumberArrayOutput",
+                                    "objectNumberOutput",
+                                    "objectStringArrayOutput",
+                                    "objectStringOutput",
+                                    "stringArrayOutput",
+                                    "stringOutput"
+                                  ]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArrayOutput:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanOutput:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArrayOutput:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberOutput:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectBooleanArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectBooleanOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectMultipleOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectArray:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectNumberArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectNumberOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectStringArrayOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectStringOutput:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringArrayOutput:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stringOutput:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test _checkParams (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "_stringInput": {
+                    "default": "ABC",
+                    "type": "string"
+                  },
+                  "_stringArrayInput": {
+                    "default": ["ABC", "DEF"],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "_numberInput": {
+                    "default": 123,
+                    "type": "number"
+                  },
+                  "_numberArrayInput": {
+                    "default": [123, 456],
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  },
+                  "_booleanInput": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "_booleanArrayInput": {
+                    "default": [true, false],
+                    "items": {
+                      "type": "boolean"
+                    },
+                    "type": "array"
+                  },
+                  "_objectStringInput": {
+                    "default": {
+                      "string": "ABC"
+                    },
+                    "properties": {
+                      "string": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["string"]
+                  },
+                  "_objectStringArrayInput": {
+                    "default": {
+                      "stringArray": ["ABC", "DEF"]
+                    },
+                    "properties": {
+                      "stringArray": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["stringArray"]
+                  },
+                  "_objectNumberInput": {
+                    "default": {
+                      "number": 123
+                    },
+                    "properties": {
+                      "number": {
+                        "type": "number"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["number"]
+                  },
+                  "_objectNumberArrayInput": {
+                    "default": {
+                      "numberArray": [123, 456]
+                    },
+                    "properties": {
+                      "numberArray": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["numberArray"]
+                  },
+                  "_objectBooleanInput": {
+                    "default": {
+                      "boolean": true
+                    },
+                    "properties": {
+                      "boolean": {
+                        "type": "boolean"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["boolean"]
+                  },
+                  "_objectBooleanArrayInput": {
+                    "default": {
+                      "booleanArray": [true, false]
+                    },
+                    "properties": {
+                      "booleanArray": {
+                        "items": {
+                          "type": "boolean"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": ["booleanArray"]
+                  },
+                  "_objectMultipleInput": {
+                    "default": {
+                      "boolean": false,
+                      "booleanArray": [true, false],
+                      "number": 123,
+                      "numberArray": [123, 456],
+                      "object": {
+                        "boolean": true,
+                        "booleanArray": [true, false],
+                        "number": 123,
+                        "numberArray": [123, 456],
+                        "string": "ABC",
+                        "stringArray": ["ABC", "DEF"]
+                      },
+                      "objectArray": [
+                        {
+                          "boolean": true,
+                          "booleanArray": [true, false],
+                          "number": 123,
+                          "numberArray": [123, 456],
+                          "string": "ABC",
+                          "stringArray": ["ABC", "DEF"]
+                        },
+                        {
+                          "boolean": false,
+                          "booleanArray": [false, true],
+                          "number": 456,
+                          "numberArray": [456, 789],
+                          "string": "DEF",
+                          "stringArray": ["DEF", "GHI"]
+                        }
+                      ],
+                      "string": "ABC",
+                      "stringArray": ["ABC", "DEF"]
+                    },
+                    "properties": {
+                      "boolean": {
+                        "type": "boolean"
+                      },
+                      "booleanArray": {
+                        "items": {
+                          "type": "boolean"
+                        },
+                        "type": "array"
+                      },
+                      "number": {
+                        "type": "number"
+                      },
+                      "numberArray": {
+                        "items": {
+                          "type": "number"
+                        },
+                        "type": "array"
+                      },
+                      "object": {
+                        "properties": {
+                          "boolean": {
+                            "type": "boolean"
+                          },
+                          "booleanArray": {
+                            "items": {
+                              "type": "boolean"
+                            },
+                            "type": "array"
+                          },
+                          "number": {
+                            "type": "number"
+                          },
+                          "numberArray": {
+                            "items": {
+                              "type": "number"
+                            },
+                            "type": "array"
+                          },
+                          "string": {
+                            "type": "string"
+                          },
+                          "stringArray": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object",
+                        "required": [
+                          "boolean",
+                          "booleanArray",
+                          "number",
+                          "numberArray",
+                          "string",
+                          "stringArray"
+                        ]
+                      },
+                      "objectArray": {
+                        "items": {
+                          "properties": {
+                            "boolean": {
+                              "type": "boolean"
+                            },
+                            "booleanArray": {
+                              "items": {
+                                "type": "boolean"
+                              },
+                              "type": "array"
+                            },
+                            "number": {
+                              "type": "number"
+                            },
+                            "numberArray": {
+                              "items": {
+                                "type": "number"
+                              },
+                              "type": "array"
+                            },
+                            "string": {
+                              "type": "string"
+                            },
+                            "stringArray": {
+                              "items": {
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object",
+                          "required": [
+                            "boolean",
+                            "booleanArray",
+                            "number",
+                            "numberArray",
+                            "string",
+                            "stringArray"
+                          ]
+                        },
+                        "type": "array"
+                      },
+                      "string": {
+                        "type": "string"
+                      },
+                      "stringArray": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object",
+                    "required": [
+                      "boolean",
+                      "booleanArray",
+                      "number",
+                      "numberArray",
+                      "object",
+                      "objectArray",
+                      "string",
+                      "stringArray"
+                    ]
+                  },
+                  "_string": {
+                    "default": "ABC",
+                    "type": "string"
+                  },
+                  "_stringArray": {
+                    "default": ["ABC", "DEF"],
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "_stringInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "_stringArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "_numberInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<number>`",
+            "in": "query",
+            "name": "_numberArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`boolean`",
+            "in": "query",
+            "name": "_booleanInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<boolean>`",
+            "in": "query",
+            "name": "_booleanArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  string: string;\n}\n```",
+            "in": "query",
+            "name": "_objectStringInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  stringArray: array<string>;\n}\n```",
+            "in": "query",
+            "name": "_objectStringArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  number: number;\n}\n```",
+            "in": "query",
+            "name": "_objectNumberInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  numberArray: array<number>;\n}\n```",
+            "in": "query",
+            "name": "_objectNumberArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  boolean: boolean;\n}\n```",
+            "in": "query",
+            "name": "_objectBooleanInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  booleanArray: array<boolean>;\n}\n```",
+            "in": "query",
+            "name": "_objectBooleanArrayInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  boolean: boolean;\n  booleanArray: array<boolean>;\n  number: number;\n  numberArray: array<number>;\n  object: {\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  };\n  objectArray: array<{\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  }>;\n  string: string;\n  stringArray: array<string>;\n}\n```",
+            "in": "query",
+            "name": "_objectMultipleInput",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "_string",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "_stringArray",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.asyncFailReject": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "json": {
+                          "properties": {
+                            "code": {
+                              "type": "number"
+                            },
+                            "error": {
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "httpStatus": {
+                                  "type": "number"
+                                },
+                                "message": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "stack": {
+                                  "type": "string"
+                                },
+                                "statusCode": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["code", "httpStatus", "message", "name", "statusCode"],
+                              "type": "object"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "success": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": ["code", "error", "message", "sessionId", "success"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["json"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;error:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpStatus:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statusCode:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test asyncFailReject (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test.asyncFailThrow": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "json": {
+                          "properties": {
+                            "code": {
+                              "type": "number"
+                            },
+                            "error": {
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "httpStatus": {
+                                  "type": "number"
+                                },
+                                "message": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "stack": {
+                                  "type": "string"
+                                },
+                                "statusCode": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["code", "httpStatus", "message", "name", "statusCode"],
+                              "type": "object"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "success": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": ["code", "error", "message", "sessionId", "success"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["json"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;error:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpStatus:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statusCode:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test asyncFailThrow (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test.asyncSuccess": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test asyncSuccess (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test.customTypeArray": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "testUsers": {
+                                      "items": {
+                                        "properties": {
+                                          "firstName": {
+                                            "type": "string"
+                                          },
+                                          "middleName": {
+                                            "type": "string"
+                                          },
+                                          "lastName": {
+                                            "type": "string"
+                                          },
+                                          "age": {
+                                            "type": "number"
+                                          },
+                                          "address": {
+                                            "properties": {
+                                              "province": {
+                                                "type": "string"
+                                              },
+                                              "city": {
+                                                "type": "string"
+                                              },
+                                              "street": {
+                                                "type": "string"
+                                              },
+                                              "houseNumber": {
+                                                "type": "number"
+                                              }
+                                            },
+                                            "type": "object",
+                                            "required": ["province", "city", "houseNumber"]
+                                          }
+                                        },
+                                        "type": "object",
+                                        "required": ["firstName", "lastName", "age", "address"]
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["testUsers"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testUsers:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test customTypeArray (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "testUsers": {
+                    "default": [
+                      {
+                        "address": {
+                          "city": "Sample City 1",
+                          "houseNumber": 11,
+                          "province": "Sample Province 1",
+                          "street": "Sample Street 1"
+                        },
+                        "age": 22,
+                        "firstName": "John",
+                        "lastName": "Doe"
+                      },
+                      {
+                        "address": {
+                          "city": "Sample City 2",
+                          "houseNumber": 22,
+                          "province": "Sample Province 2",
+                          "street": "Sample Street 2"
+                        },
+                        "age": 22,
+                        "firstName": "Jane",
+                        "lastName": "Doe"
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "middleName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "age": {
+                          "type": "number"
+                        },
+                        "address": {
+                          "properties": {
+                            "province": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "street": {
+                              "type": "string"
+                            },
+                            "houseNumber": {
+                              "type": "number"
+                            }
+                          },
+                          "type": "object",
+                          "required": ["province", "city", "houseNumber"]
+                        }
+                      },
+                      "type": "object",
+                      "required": ["firstName", "lastName", "age", "address"]
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "```typescript\narray<{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}>\n```",
+            "in": "query",
+            "name": "testUsers",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.customTypeSingle": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "testUser": {
+                                      "properties": {
+                                        "firstName": {
+                                          "type": "string"
+                                        },
+                                        "middleName": {
+                                          "type": "string"
+                                        },
+                                        "lastName": {
+                                          "type": "string"
+                                        },
+                                        "age": {
+                                          "type": "number"
+                                        },
+                                        "address": {
+                                          "properties": {
+                                            "province": {
+                                              "type": "string"
+                                            },
+                                            "city": {
+                                              "type": "string"
+                                            },
+                                            "street": {
+                                              "type": "string"
+                                            },
+                                            "houseNumber": {
+                                              "type": "number"
+                                            }
+                                          },
+                                          "type": "object",
+                                          "required": ["province", "city", "houseNumber"]
+                                        }
+                                      },
+                                      "type": "object",
+                                      "required": ["firstName", "lastName", "age", "address"]
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["testUser"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testUser:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test customTypeSingle (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "testUser": {
+                    "default": {
+                      "address": {
+                        "city": "Sample City",
+                        "houseNumber": 11,
+                        "province": "Sample Province",
+                        "street": "Sample Street"
+                      },
+                      "age": 22,
+                      "firstName": "John",
+                      "lastName": "Doe"
+                    },
+                    "properties": {
+                      "firstName": {
+                        "type": "string"
+                      },
+                      "middleName": {
+                        "type": "string"
+                      },
+                      "lastName": {
+                        "type": "string"
+                      },
+                      "age": {
+                        "type": "number"
+                      },
+                      "address": {
+                        "properties": {
+                          "province": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "street": {
+                            "type": "string"
+                          },
+                          "houseNumber": {
+                            "type": "number"
+                          }
+                        },
+                        "type": "object",
+                        "required": ["province", "city", "houseNumber"]
+                      }
+                    },
+                    "type": "object",
+                    "required": ["firstName", "lastName", "age", "address"]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": false
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}\n```",
+            "in": "query",
+            "name": "testUser",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.hello": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test hello (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "required": ["firstName"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "firstName",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "lastName",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.mixedParams": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "a": {
+                                      "type": "string"
+                                    },
+                                    "arr": {
+                                      "items": {
+                                        "type": "number"
+                                      },
+                                      "type": "array"
+                                    },
+                                    "b": {
+                                      "type": "number"
+                                    },
+                                    "options": {
+                                      "properties": {
+                                        "bar": {
+                                          "type": "number"
+                                        },
+                                        "foo": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["a", "arr", "b", "options"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arr:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;options:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test mixedParams (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "a": {
+                    "type": "string"
+                  },
+                  "b": {
+                    "type": "number"
+                  },
+                  "options": {
+                    "properties": {
+                      "bar": {
+                        "type": "number"
+                      },
+                      "foo": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "arr": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "required": ["a", "b"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "a",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "b",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
+            "in": "query",
+            "name": "options",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<number>`",
+            "in": "query",
+            "name": "arr",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.objectDestructured": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "prop1": {
+                                      "type": "string"
+                                    },
+                                    "prop2": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["prop1", "prop2"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prop1:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prop2:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test objectDestructured (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "payload": {
+                    "properties": {
+                      "prop1": {
+                        "type": "string"
+                      },
+                      "prop2": {
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "required": ["payload"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  prop1?: string;\n  prop2?: number;\n}\n```",
+            "in": "query",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.objectOnly": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "options": {
+                                      "properties": {
+                                        "bar": {
+                                          "type": "number"
+                                        },
+                                        "foo": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["options"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;options:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foo?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test objectOnly (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "options": {
+                    "properties": {
+                      "bar": {
+                        "type": "number"
+                      },
+                      "foo": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object",
+                "required": ["options"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
+            "in": "query",
+            "name": "options",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.primitivesAndArray": {
+      "post": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "data": {
+                                  "properties": {
+                                    "var1": {
+                                      "type": "string"
+                                    },
+                                    "var2": {
+                                      "type": "number"
+                                    },
+                                    "var3": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object",
+                                  "required": ["var1", "var2", "var3"]
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "data", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var1:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var2:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var3:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test primitivesAndArray (Mutation)",
+        "tags": ["tRPC"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "var1": {
+                    "type": "string"
+                  },
+                  "var2": {
+                    "type": "number"
+                  },
+                  "var3": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object",
+                "required": ["var1", "var2"]
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "var1",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`number`",
+            "in": "query",
+            "name": "var2",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "`array<string>`",
+            "in": "query",
+            "name": "var3",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/trpc/test.syncFailReject": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "json": {
+                          "properties": {
+                            "code": {
+                              "type": "number"
+                            },
+                            "error": {
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "httpStatus": {
+                                  "type": "number"
+                                },
+                                "message": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "stack": {
+                                  "type": "string"
+                                },
+                                "statusCode": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["code", "httpStatus", "message", "name", "statusCode"],
+                              "type": "object"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "success": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": ["code", "error", "message", "sessionId", "success"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["json"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;error:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpStatus:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statusCode:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test syncFailReject (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test.syncFailThrow": {
+      "get": {
+        "responses": {
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "json": {
+                          "properties": {
+                            "code": {
+                              "type": "number"
+                            },
+                            "error": {
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "httpStatus": {
+                                  "type": "number"
+                                },
+                                "message": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "stack": {
+                                  "type": "string"
+                                },
+                                "statusCode": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["code", "httpStatus", "message", "name", "statusCode"],
+                              "type": "object"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "success": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": ["code", "error", "message", "sessionId", "success"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["json"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["error"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Failed response\n\n| Name | Type |\n| --- | --- |\n| error | <pre><code>{<br>&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;error:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;httpStatus:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stack?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statusCode:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test syncFailThrow (Query)",
+        "tags": ["tRPC"]
+      }
+    },
+    "/trpc/test.syncSuccess": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
+        },
+        "summary": "Test syncSuccess (Query)",
+        "tags": ["tRPC"]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Development server",
+      "url": "http://localhost:3000"
+    }
+  ]
+}
