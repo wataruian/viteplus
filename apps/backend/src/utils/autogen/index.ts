@@ -34,7 +34,7 @@ const build = async () => {
 
     performanceTimer.mark('route-extraction');
     const allRoutes = await extractAllRoutes();
-    performanceTimer.measure('Route Extraction');
+    performanceTimer.measure('route-extraction');
 
     const routeTypes: Record<string, number> = {};
     for (const route of allRoutes) {
@@ -51,7 +51,7 @@ const build = async () => {
     const progress = new ProgressIndicator('Validating routes', allRoutes.length);
     const validationResult = validateRoutesWithLogging(allRoutes);
     progress.complete();
-    performanceTimer.measure('Route Validation');
+    performanceTimer.measure('route-validation');
 
     if (!validationResult.isValid) {
       logger.error('Route validation failed. Please fix errors before continuing.');
@@ -65,7 +65,7 @@ const build = async () => {
       title: 'Pancake API',
       version: '1.0.0',
     });
-    performanceTimer.measure('OpenAPI Generation');
+    performanceTimer.measure('openapi-generation');
 
     performanceTimer.mark('file-operations');
     const fs = await import('node:fs/promises');
@@ -76,7 +76,7 @@ const build = async () => {
 
     await Promise.resolve(fs.mkdir(outputDir, { recursive: true }));
     await Promise.resolve(fs.writeFile(outputFile, JSON.stringify(openApiSpec, undefined, 2)));
-    performanceTimer.measure('File Operations');
+    performanceTimer.measure('file-operations');
 
     const pathCount = Object.keys(openApiSpec.paths).length;
     logger.info(`✅ OpenAPI spec generated with ${pathCount} paths`);

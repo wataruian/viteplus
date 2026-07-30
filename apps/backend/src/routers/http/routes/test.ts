@@ -15,6 +15,7 @@ const routes = {
   '/test/custom-type-single': publicHttp.post(() =>
     createRouteHandler(TestService, 'customTypeSingle'),
   ),
+  '/test/get-with-param': publicHttp.get(() => createRouteHandler(TestService, 'getWithParam')),
   '/test/hello': publicHttp.post(() => createRouteHandler(TestService, 'hello')),
   '/test/mixed-params': publicHttp.post(() => createRouteHandler(TestService, 'mixedParams')),
   '/test/object-destructured': publicHttp.post(() =>

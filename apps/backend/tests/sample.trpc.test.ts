@@ -331,6 +331,17 @@ const cases: Record<string, TrpcTestCase[]> = {
       path: 'test.customTypeSingle',
       type: 'mutation',
     },
+    {
+      description: `GET ${trpcEndpoint}/test.getWithParam returns 200`,
+      expected: {
+        code: 200,
+        message: 'Hello, Test World!',
+        success: true,
+      },
+      input: { firstName: 'Test', lastName: 'World' },
+      path: 'test.getWithParam',
+      type: 'query',
+    },
   ],
 };
 

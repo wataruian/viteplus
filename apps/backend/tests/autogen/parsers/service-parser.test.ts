@@ -196,6 +196,14 @@ describe('Service Parser', () => {
     },
     {
       input: [
+        { name: 'firstName', required: true, type: 'string' },
+        { name: 'lastName', required: false, type: 'string | undefined' },
+      ],
+      method: 'getWithParam',
+      output: messageOutput,
+    },
+    {
+      input: [
         { name: 'a', required: true, type: 'string' },
         { name: 'b', required: true, type: 'number' },
         { name: 'options', required: false, type: '{ bar?: number; foo?: string; } | undefined' },

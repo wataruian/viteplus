@@ -311,6 +311,15 @@ describe('Autogen Main', () => {
         trpcPath: '/trpc/test.hello',
       },
       {
+        httpPath: '/test/get-with-param',
+        input: [
+          { name: 'firstName', required: true, type: 'string' },
+          { name: 'lastName', required: false, type: 'string | undefined' },
+        ],
+        output: messageOutput,
+        trpcPath: '/trpc/test.getWithParam',
+      },
+      {
         httpPath: '/test/mixed-params',
         input: [
           { name: 'a', required: true, type: 'string' },

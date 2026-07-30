@@ -602,145 +602,8 @@
               }
             }
           },
-          "required": false
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "_stringInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "_stringArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "_numberInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<number>`",
-            "in": "query",
-            "name": "_numberArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`boolean`",
-            "in": "query",
-            "name": "_booleanInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<boolean>`",
-            "in": "query",
-            "name": "_booleanArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  string: string;\n}\n```",
-            "in": "query",
-            "name": "_objectStringInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  stringArray: array<string>;\n}\n```",
-            "in": "query",
-            "name": "_objectStringArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  number: number;\n}\n```",
-            "in": "query",
-            "name": "_objectNumberInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  numberArray: array<number>;\n}\n```",
-            "in": "query",
-            "name": "_objectNumberArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  boolean: boolean;\n}\n```",
-            "in": "query",
-            "name": "_objectBooleanInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  booleanArray: array<boolean>;\n}\n```",
-            "in": "query",
-            "name": "_objectBooleanArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  boolean: boolean;\n  booleanArray: array<boolean>;\n  number: number;\n  numberArray: array<number>;\n  object: {\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  };\n  objectArray: array<{\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  }>;\n  string: string;\n  stringArray: array<string>;\n}\n```",
-            "in": "query",
-            "name": "_objectMultipleInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "_string",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "_stringArray",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>_stringInput</strong></td><td><code>string</code></td></tr><tr><td><strong>_stringArrayInput</strong></td><td><code>array&lt;string&gt;</code></td></tr><tr><td><strong>_numberInput</strong></td><td><code>number</code></td></tr><tr><td><strong>_numberArrayInput</strong></td><td><code>array&lt;number&gt;</code></td></tr><tr><td><strong>_booleanInput</strong></td><td><code>boolean</code></td></tr><tr><td><strong>_booleanArrayInput</strong></td><td><code>array&lt;boolean&gt;</code></td></tr><tr><td><strong>_objectStringInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;string:&nbsp;string;<br>}</code></pre></td></tr><tr><td><strong>_objectStringArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectNumberInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;number:&nbsp;number;<br>}</code></pre></td></tr><tr><td><strong>_objectNumberArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectBooleanInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;boolean:&nbsp;boolean;<br>}</code></pre></td></tr><tr><td><strong>_objectBooleanArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectMultipleInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;object:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectArray:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;}&gt;;<br>&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>}</code></pre></td></tr><tr><td><strong>_string</strong></td><td><code>string</code></td></tr><tr><td><strong>_stringArray</strong></td><td><code>array&lt;string&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/async-fail-reject": {
@@ -1027,19 +890,8 @@
               }
             }
           },
-          "required": false
-        },
-        "parameters": [
-          {
-            "description": "```typescript\narray<{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}>\n```",
-            "in": "query",
-            "name": "testUsers",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>testUsers</strong></td><td><pre><code>array&lt;{<br>&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;};<br>}&gt;</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/custom-type-single": {
@@ -1172,15 +1024,59 @@
               }
             }
           },
-          "required": false
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>testUser</strong></td><td><pre><code>{<br>&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;};<br>}</code></pre></td></tr></tbody></table></div>"
+        }
+      }
+    },
+    "/api/test/get-with-param": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["message", "code", "sessionId", "success"]
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| message | `string` |\n| code | `number` |\n| sessionId | `string` |\n| success | `boolean` |"
+          }
         },
+        "summary": "Test getWithParam",
+        "tags": ["HTTP"],
         "parameters": [
           {
-            "description": "```typescript\n{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}\n```",
+            "description": "`string`",
             "in": "query",
-            "name": "testUser",
+            "name": "firstName",
+            "required": true,
+            "schema": {
+              "default": "string",
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "lastName",
             "required": false,
             "schema": {
+              "default": "string",
               "type": "string"
             }
           }
@@ -1235,28 +1131,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "firstName",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "lastName",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>firstName</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>lastName</strong></td><td><code>string</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/mixed-params": {
@@ -1353,46 +1229,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "a",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "b",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
-            "in": "query",
-            "name": "options",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<number>`",
-            "in": "query",
-            "name": "arr",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>a</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>b</strong> <font color=\"#f93e3e\">*</font></td><td><code>number</code></td></tr><tr><td><strong>options</strong></td><td><pre><code>{<br>&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;foo?:&nbsp;string;<br>}</code></pre></td></tr><tr><td><strong>arr</strong></td><td><code>array&lt;number&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/object-destructured": {
@@ -1460,19 +1298,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "```typescript\n{\n  prop1?: string;\n  prop2?: number;\n}\n```",
-            "in": "query",
-            "name": "payload",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>payload</strong> <font color=\"#f93e3e\">*</font></td><td><pre><code>{<br>&nbsp;&nbsp;prop1?:&nbsp;string;<br>&nbsp;&nbsp;prop2?:&nbsp;number;<br>}</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/object-only": {
@@ -1545,19 +1372,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
-            "in": "query",
-            "name": "options",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>options</strong> <font color=\"#f93e3e\">*</font></td><td><pre><code>{<br>&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;foo?:&nbsp;string;<br>}</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/primitives-and-array": {
@@ -1632,37 +1448,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "var1",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "var2",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "var3",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>var1</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>var2</strong> <font color=\"#f93e3e\">*</font></td><td><code>number</code></td></tr><tr><td><strong>var3</strong></td><td><code>array&lt;string&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/api/test/sync-fail-reject": {
@@ -2429,145 +2216,8 @@
               }
             }
           },
-          "required": false
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "_stringInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "_stringArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "_numberInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<number>`",
-            "in": "query",
-            "name": "_numberArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`boolean`",
-            "in": "query",
-            "name": "_booleanInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<boolean>`",
-            "in": "query",
-            "name": "_booleanArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  string: string;\n}\n```",
-            "in": "query",
-            "name": "_objectStringInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  stringArray: array<string>;\n}\n```",
-            "in": "query",
-            "name": "_objectStringArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  number: number;\n}\n```",
-            "in": "query",
-            "name": "_objectNumberInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  numberArray: array<number>;\n}\n```",
-            "in": "query",
-            "name": "_objectNumberArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  boolean: boolean;\n}\n```",
-            "in": "query",
-            "name": "_objectBooleanInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  booleanArray: array<boolean>;\n}\n```",
-            "in": "query",
-            "name": "_objectBooleanArrayInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  boolean: boolean;\n  booleanArray: array<boolean>;\n  number: number;\n  numberArray: array<number>;\n  object: {\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  };\n  objectArray: array<{\n    boolean: boolean;\n    booleanArray: array<boolean>;\n    number: number;\n    numberArray: array<number>;\n    string: string;\n    stringArray: array<string>;\n  }>;\n  string: string;\n  stringArray: array<string>;\n}\n```",
-            "in": "query",
-            "name": "_objectMultipleInput",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "_string",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "_stringArray",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>_stringInput</strong></td><td><code>string</code></td></tr><tr><td><strong>_stringArrayInput</strong></td><td><code>array&lt;string&gt;</code></td></tr><tr><td><strong>_numberInput</strong></td><td><code>number</code></td></tr><tr><td><strong>_numberArrayInput</strong></td><td><code>array&lt;number&gt;</code></td></tr><tr><td><strong>_booleanInput</strong></td><td><code>boolean</code></td></tr><tr><td><strong>_booleanArrayInput</strong></td><td><code>array&lt;boolean&gt;</code></td></tr><tr><td><strong>_objectStringInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;string:&nbsp;string;<br>}</code></pre></td></tr><tr><td><strong>_objectStringArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectNumberInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;number:&nbsp;number;<br>}</code></pre></td></tr><tr><td><strong>_objectNumberArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectBooleanInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;boolean:&nbsp;boolean;<br>}</code></pre></td></tr><tr><td><strong>_objectBooleanArrayInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>}</code></pre></td></tr><tr><td><strong>_objectMultipleInput</strong></td><td><pre><code>{<br>&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;object:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;};<br>&nbsp;&nbsp;objectArray:&nbsp;array&lt;{<br>&nbsp;&nbsp;&nbsp;&nbsp;boolean:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;booleanArray:&nbsp;array&lt;boolean&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;number:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;numberArray:&nbsp;array&lt;number&gt;;<br>&nbsp;&nbsp;&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>&nbsp;&nbsp;}&gt;;<br>&nbsp;&nbsp;string:&nbsp;string;<br>&nbsp;&nbsp;stringArray:&nbsp;array&lt;string&gt;;<br>}</code></pre></td></tr><tr><td><strong>_string</strong></td><td><code>string</code></td></tr><tr><td><strong>_stringArray</strong></td><td><code>array&lt;string&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.asyncFailReject": {
@@ -2932,19 +2582,8 @@
               }
             }
           },
-          "required": false
-        },
-        "parameters": [
-          {
-            "description": "```typescript\narray<{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}>\n```",
-            "in": "query",
-            "name": "testUsers",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>testUsers</strong></td><td><pre><code>array&lt;{<br>&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;};<br>}&gt;</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.customTypeSingle": {
@@ -3095,15 +2734,77 @@
               }
             }
           },
-          "required": false
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>testUser</strong></td><td><pre><code>{<br>&nbsp;&nbsp;firstName:&nbsp;string;<br>&nbsp;&nbsp;middleName?:&nbsp;string;<br>&nbsp;&nbsp;lastName:&nbsp;string;<br>&nbsp;&nbsp;age:&nbsp;number;<br>&nbsp;&nbsp;address:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;province:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;city:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;street?:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;houseNumber:&nbsp;number;<br>&nbsp;&nbsp;};<br>}</code></pre></td></tr></tbody></table></div>"
+        }
+      }
+    },
+    "/trpc/test.getWithParam": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "result": {
+                      "properties": {
+                        "data": {
+                          "properties": {
+                            "json": {
+                              "properties": {
+                                "message": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "number"
+                                },
+                                "sessionId": {
+                                  "type": "string"
+                                },
+                                "success": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object",
+                              "required": ["message", "code", "sessionId", "success"]
+                            }
+                          },
+                          "required": ["json"],
+                          "type": "object"
+                        }
+                      },
+                      "required": ["data"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["result"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful response\n\n| Name | Type |\n| --- | --- |\n| result | <pre><code>{<br>&nbsp;&nbsp;data:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;json:&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;code:&nbsp;number;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionId:&nbsp;string;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;success:&nbsp;boolean;<br>&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;};<br>}</code></pre> |"
+          }
         },
+        "summary": "Test getWithParam (Query)",
+        "tags": ["tRPC"],
         "parameters": [
           {
-            "description": "```typescript\n{\n  firstName: string;\n  middleName?: string;\n  lastName: string;\n  age: number;\n  address: {\n    province: string;\n    city: string;\n    street?: string;\n    houseNumber: number;\n  };\n}\n```",
+            "description": "`string`",
             "in": "query",
-            "name": "testUser",
+            "name": "firstName",
+            "required": true,
+            "schema": {
+              "default": "string",
+              "type": "string"
+            }
+          },
+          {
+            "description": "`string`",
+            "in": "query",
+            "name": "lastName",
             "required": false,
             "schema": {
+              "default": "string",
               "type": "string"
             }
           }
@@ -3176,28 +2877,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "firstName",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "lastName",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>firstName</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>lastName</strong></td><td><code>string</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.mixedParams": {
@@ -3312,46 +2993,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "a",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "b",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
-            "in": "query",
-            "name": "options",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<number>`",
-            "in": "query",
-            "name": "arr",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>a</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>b</strong> <font color=\"#f93e3e\">*</font></td><td><code>number</code></td></tr><tr><td><strong>options</strong></td><td><pre><code>{<br>&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;foo?:&nbsp;string;<br>}</code></pre></td></tr><tr><td><strong>arr</strong></td><td><code>array&lt;number&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.objectDestructured": {
@@ -3437,19 +3080,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "```typescript\n{\n  prop1?: string;\n  prop2?: number;\n}\n```",
-            "in": "query",
-            "name": "payload",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>payload</strong> <font color=\"#f93e3e\">*</font></td><td><pre><code>{<br>&nbsp;&nbsp;prop1?:&nbsp;string;<br>&nbsp;&nbsp;prop2?:&nbsp;number;<br>}</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.objectOnly": {
@@ -3540,19 +3172,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "```typescript\n{\n  bar?: number;\n  foo?: string;\n}\n```",
-            "in": "query",
-            "name": "options",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>options</strong> <font color=\"#f93e3e\">*</font></td><td><pre><code>{<br>&nbsp;&nbsp;bar?:&nbsp;number;<br>&nbsp;&nbsp;foo?:&nbsp;string;<br>}</code></pre></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.primitivesAndArray": {
@@ -3645,37 +3266,8 @@
               }
             }
           },
-          "required": true
-        },
-        "parameters": [
-          {
-            "description": "`string`",
-            "in": "query",
-            "name": "var1",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`number`",
-            "in": "query",
-            "name": "var2",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "`array<string>`",
-            "in": "query",
-            "name": "var3",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
+          "description": "<div class=\"body-structure\"><table class=\"model\"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody><tr><td><strong>var1</strong> <font color=\"#f93e3e\">*</font></td><td><code>string</code></td></tr><tr><td><strong>var2</strong> <font color=\"#f93e3e\">*</font></td><td><code>number</code></td></tr><tr><td><strong>var3</strong></td><td><code>array&lt;string&gt;</code></td></tr></tbody></table></div>"
+        }
       }
     },
     "/trpc/test.syncFailReject": {

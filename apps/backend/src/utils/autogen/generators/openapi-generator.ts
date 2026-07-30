@@ -6,8 +6,8 @@ interface OpenApiOperation {
   description?: string;
   parameters?: OpenApiParameter[];
   requestBody?: {
+    description?: string;
     content: Record<string, { schema: OpenApiSchema }>;
-    required?: boolean;
   };
   responses: Record<string, OpenApiResponse>;
   summary?: string;
@@ -304,13 +304,28 @@ const getParameterTypeDescription = (
   return `\`${formatted}\``;
 };
 
+const getPlaceholderForType = (type: ParsedType | string | Record<string, unknown>): unknown => {
+  const typeString = parsedTypeToString(type);
+  if (typeString === 'string') {
+    return 'string';
+  }
+  if (typeString === 'number') {
+    return 0;
+  }
+  if (typeString === 'boolean') {
+    return false;
+  }
+  return undefined;
+};
+
 const convertToQueryParameter = (param: ParameterMetadata): OpenApiParameter => {
+  const fallbackDefault = getPlaceholderForType(param.type);
   const result: OpenApiParameter = {
     description: getParameterTypeDescription(param.type),
     in: 'query',
     name: param.name,
     required: param.required ?? false,
-    schema: { type: 'string' },
+    schema: convertTypeToSchema(param.type, param.defaultValue ?? fallbackDefault),
   };
   return result;
 };
@@ -377,6 +392,7 @@ const formatOpenApiSchemaForDescription = (schema: OpenApiSchema, indent = 0): s
 
   return schema.type ?? 'unknown';
 };
+
 const generateResponses = (route: RouteInfo): Record<string, OpenApiResponse> => {
   const successSchema =
     route.output === undefined ? { type: 'object' } : convertTypeToSchema(route.output.type);
@@ -530,11 +546,12 @@ const generateOperation = (route: RouteInfo): OpenApiOperation => {
     const parameters: OpenApiParameter[] = [];
 
     for (const param of pathInputParams) {
+      const fallbackDefault = getPlaceholderForType(param.type);
       const pathParam: OpenApiParameter = {
         in: 'path',
         name: param.name,
         required: true,
-        schema: convertTypeToSchema(param.type),
+        schema: convertTypeToSchema(param.type, param.defaultValue ?? fallbackDefault),
       };
       if (param.description !== undefined) {
         pathParam.description = param.description;
@@ -543,17 +560,33 @@ const generateOperation = (route: RouteInfo): OpenApiOperation => {
     }
 
     for (const param of otherInputParams) {
-      parameters.push(convertToQueryParameter(param));
+      const converted = convertToQueryParameter(param);
+      if (['delete', 'get', 'head'].includes(method)) {
+        parameters.push(converted);
+      }
     }
 
     if (!['delete', 'get', 'head'].includes(method) && otherInputParams.length > 0) {
+      let html =
+        '<div class="body-structure"><table class="model"><thead><tr><th>Name</th><th>Type</th></tr></thead><tbody>';
+      for (const param of otherInputParams) {
+        const formatted = formatParsedTypeForDescription(param.type);
+        const escaped = escapeHtml(formatted);
+        const cellType = formatted.includes('\n')
+          ? `<pre><code>${escaped.replaceAll('\n', '<br>').replaceAll(' ', '&nbsp;')}</code></pre>`
+          : `<code>${escaped}</code>`;
+        const requiredAsterisk = param.required === true ? ' <font color="#f93e3e">*</font>' : '';
+        html += `<tr><td><strong>${param.name}</strong>${requiredAsterisk}</td><td>${cellType}</td></tr>`;
+      }
+      html += '</tbody></table></div>';
+
       operation.requestBody = {
         content: {
           'application/json': {
             schema: convertParametersToRequestBodySchema(otherInputParams),
           },
         },
-        required: otherInputParams.some((p) => p.required !== undefined && p.required),
+        description: html,
       };
     }
 
@@ -650,6 +683,7 @@ const generateOpenApiSpec = (
 export type { OpenApiOperation, OpenApiParameter, OpenApiResponse, OpenApiSchema, OpenApiSpec };
 export {
   isParsedType,
+  getPlaceholderForType,
   parsedTypeToString,
   generateOperationTags,
   generateOperationSummary,

@@ -318,6 +318,17 @@ const cases: Record<string, HttpTestCase[]> = {
       },
       method: 'post',
     },
+    {
+      description: `GET ${apiEndpoint}/test/get-with-param returns 200`,
+      endpoint: `${apiEndpoint}/test/get-with-param`,
+      expected: {
+        code: 200,
+        message: 'Hello, Test World!',
+        success: true,
+      },
+      input: { firstName: 'Test', lastName: 'World' },
+      method: 'get',
+    },
   ],
 };
 

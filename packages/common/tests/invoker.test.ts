@@ -29,6 +29,7 @@ const mixedParams = (
 
 const customTypeArrayParam = (testUsers: { firstName: string }[]) => [testUsers];
 const customTypeSingleParam = (testUser: { firstName: string }) => [testUser];
+const getWithParam = (firstName: string, lastName?: string) => [firstName, lastName];
 
 describe('extractParamNamesAndDefaults', () => {
   it('should extract parameter names for noParams', () => {
@@ -57,6 +58,12 @@ describe('extractParamNamesAndDefaults', () => {
       name: p.name.replaceAll(/\s+/gu, ' ').trim(),
     }));
     expect(actual).toEqual([{ name: '{ prop1, prop2 }' }]);
+  });
+  it('should extract parameter names for getWithParam', () => {
+    expect(extractParamNamesAndDefaults(getWithParam)).toEqual([
+      { name: 'firstName' },
+      { name: 'lastName' },
+    ]);
   });
 });
 
@@ -141,6 +148,15 @@ describe('normalizeArgs', () => {
     expect(normalizeArgs(customTypeSingleParam, { testUser: { firstName: 'First' } })).toEqual([
       { firstName: 'First' },
     ]);
+  });
+  it('should handle getWithParam with both keys', () => {
+    expect(normalizeArgs(getWithParam, { firstName: 'Test', lastName: 'World' })).toEqual([
+      'Test',
+      'World',
+    ]);
+  });
+  it('should handle getWithParam with missing optional key', () => {
+    expect(normalizeArgs(getWithParam, { firstName: 'Test' })).toEqual(['Test', undefined]);
   });
 });
 
@@ -247,5 +263,14 @@ describe('invokeWithParsedArgs', () => {
     expect(
       invokeWithParsedArgs(customTypeSingleParam, { testUser: { firstName: 'First' } }),
     ).toEqual([{ firstName: 'First' }]);
+  });
+  it('should invoke getWithParam with both keys', () => {
+    expect(invokeWithParsedArgs(getWithParam, { firstName: 'Test', lastName: 'World' })).toEqual([
+      'Test',
+      'World',
+    ]);
+  });
+  it('should invoke getWithParam with missing optional key', () => {
+    expect(invokeWithParsedArgs(getWithParam, { firstName: 'Test' })).toEqual(['Test', undefined]);
   });
 });

@@ -154,6 +154,12 @@ class TestService extends BaseService {
     };
   }
 
+  public static getWithParam(firstName: string, lastName?: string) {
+    const fullName =
+      lastName !== undefined && lastName !== '' ? `${firstName} ${lastName}` : firstName;
+    return { message: `Hello, ${fullName}!` };
+  }
+
   public static async asyncFailReject() {
     await Promise.resolve(sleep(0));
     throw new Error('Async error. Simulated promise rejection');

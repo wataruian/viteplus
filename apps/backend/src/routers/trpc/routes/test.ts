@@ -48,6 +48,7 @@ const checkParamsSchema = z.object({
 });
 
 const helloSchema = z.object({ firstName: z.string(), lastName: z.string().optional() });
+const getWithParamSchema = z.object({ firstName: z.string(), lastName: z.string().optional() });
 
 const mixedParamsOptionsSchema = z.object({
   bar: z.number().optional(),
@@ -113,6 +114,9 @@ const testRouter = router({
   customTypeSingle: publicProcedure
     .input(customTypeSingleSchema)
     .mutation(createRouteHandler(TestService, 'customTypeSingle')),
+  getWithParam: publicProcedure
+    .input(getWithParamSchema)
+    .query(createRouteHandler(TestService, 'getWithParam')),
   hello: publicProcedure.input(helloSchema).mutation(createRouteHandler(TestService, 'hello')),
   mixedParams: publicProcedure
     .input(mixedParamsSchema)
