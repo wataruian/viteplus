@@ -1,9 +1,9 @@
 import { extractServiceMetadata, getServiceNameFromHandlerFile } from '../parsers/service-parser';
+import { getEnv, isTest } from '@lightproject/common/environment';
 import { getProject, projectDir } from '../config';
 import { Node } from 'ts-morph';
 import type { RouteInfo } from '../types';
 import { extractHttpServiceMethod } from '../parsers/http-parser';
-import { getEnv } from '@lightproject/common/environment';
 import { inspect } from 'node:util';
 
 const extractHttpMethod = (initializer: Node | undefined): string => {
@@ -109,10 +109,18 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
     return routes;
   }
 
-  const importedRouteNames = httpRouterFile
+  const rawImportedRouteNames = httpRouterFile
     .getImportDeclarations()
     .map((importDecl) => importDecl.getDefaultImport()?.getText())
     .filter((name): name is string => name !== undefined);
+
+  const importedRouteNames =
+    getEnv('ENABLE_TEST_ROUTES') === 'true' ||
+    isTest() ||
+    getEnv('VITEST') === 'true' ||
+    getEnv('NODE_ENV') === 'test'
+      ? rawImportedRouteNames
+      : rawImportedRouteNames.filter((name) => name !== 'testRoutes');
 
   const discoveryPromises = importedRouteNames.map(async (routeName) => {
     const handlerFilePath = `${projectDir}/src/routers/http/routes/${routeName.replace('Routes', '').toLowerCase()}.ts`;

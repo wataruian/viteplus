@@ -45,7 +45,7 @@ const testCaller = async () => {
   const trpcCaller = createCaller(ctx);
 
   const result = await Promise.resolve(
-    trpcCaller.test.hello({
+    trpcCaller.test?.hello({
       firstName: 'Test',
       lastName: 'World',
     }),

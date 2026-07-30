@@ -1,7 +1,7 @@
+import { getEnv, isTest } from '@lightproject/common/environment';
 import type { RouteInfo } from '../types';
 import { extractServiceMetadata } from '../parsers/service-parser';
 import { extractTrpcRoutesFromFile } from '../parsers/trpc-parser';
-import { getEnv } from '@lightproject/common/environment';
 import { inspect } from 'node:util';
 import path from 'node:path';
 import { projectDir } from '../config';
@@ -11,7 +11,14 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
 
   try {
     const fs = await import('node:fs/promises');
-    const routeFiles = await fs.readdir(trpcRouterDir);
+    const rawRouteFiles = await fs.readdir(trpcRouterDir);
+    const routeFiles =
+      getEnv('ENABLE_TEST_ROUTES') === 'true' ||
+      isTest() ||
+      getEnv('VITEST') === 'true' ||
+      getEnv('NODE_ENV') === 'test'
+        ? rawRouteFiles
+        : rawRouteFiles.filter((file) => file !== 'test.ts');
 
     const filePromises = routeFiles.map(async (file) => {
       if (!file.endsWith('.ts') || file.endsWith('.d.ts')) {

@@ -32,9 +32,9 @@ const build = async () => {
 
     logger.info('🚀 Starting autogen build process...');
 
-    performanceTimer.mark('route-extraction');
+    performanceTimer.mark('Route Extraction');
     const allRoutes = await extractAllRoutes();
-    performanceTimer.measure('route-extraction');
+    performanceTimer.measure('Route Extraction');
 
     const routeTypes: Record<string, number> = {};
     for (const route of allRoutes) {
@@ -47,27 +47,27 @@ const build = async () => {
         .join(', ')}`,
     );
 
-    performanceTimer.mark('route-validation');
+    performanceTimer.mark('Route Validation');
     const progress = new ProgressIndicator('Validating routes', allRoutes.length);
     const validationResult = validateRoutesWithLogging(allRoutes);
     progress.complete();
-    performanceTimer.measure('route-validation');
+    performanceTimer.measure('Route Validation');
 
     if (!validationResult.isValid) {
       logger.error('Route validation failed. Please fix errors before continuing.');
       throw new Error('Route validation failed');
     }
 
-    performanceTimer.mark('openapi-generation');
+    performanceTimer.mark('OpenAPI Generation');
     const openApiSpec = generateOpenApiSpec(allRoutes, {
       description: 'Auto-generated API documentation for Pancake platform',
       serverUrl: 'http://localhost:3000',
       title: 'Pancake API',
       version: '1.0.0',
     });
-    performanceTimer.measure('openapi-generation');
+    performanceTimer.measure('OpenAPI Generation');
 
-    performanceTimer.mark('file-operations');
+    performanceTimer.mark('File Operations');
     const fs = await import('node:fs/promises');
     const { default: path } = await import('node:path');
 
@@ -76,7 +76,7 @@ const build = async () => {
 
     await Promise.resolve(fs.mkdir(outputDir, { recursive: true }));
     await Promise.resolve(fs.writeFile(outputFile, JSON.stringify(openApiSpec, undefined, 2)));
-    performanceTimer.measure('file-operations');
+    performanceTimer.measure('File Operations');
 
     const pathCount = Object.keys(openApiSpec.paths).length;
     logger.info(`✅ OpenAPI spec generated with ${pathCount} paths`);

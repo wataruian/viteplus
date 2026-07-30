@@ -91,11 +91,7 @@ class RouteValidator {
     const { errors, warnings } = result;
     const total = errors.length + warnings.length;
 
-    if (total === 0) {
-      return '✅ All routes passed validation';
-    }
-
-    let summary = `📋 Validation Summary: ${total} issues found\n`;
+    let summary = `📋 Validation Summary: ${total} issues found`;
 
     summary += RouteValidator.formatErrorsSection(errors);
     summary += RouteValidator.formatWarningsSection(warnings);
