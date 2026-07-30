@@ -505,18 +505,27 @@ importers:
       '@iconify-json/ph':
         specifier: 'catalog:'
         version: 1.2.2
+      '@lightproject/backend':
+        specifier: workspace:*
+        version: link:../backend
       '@lightproject/common':
         specifier: workspace:*
         version: link:../../packages/common
       '@lightproject/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
+      '@trpc/client':
+        specifier: 'catalog:'
+        version: 11.17.0(@trpc/server@11.17.0(typescript@6.0.2))(typescript@6.0.2)
       react:
         specifier: 'catalog:'
         version: 19.2.4
       react-dom:
         specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
+      superjson:
+        specifier: 'catalog:'
+        version: 2.2.6
       unocss:
         specifier: 'catalog:'
         version: 66.6.7(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@voidzero-dev/vite-plus-core@0.2.4(@types/node@25.5.2)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.8.3))

@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        '@lightproject/backend': path.resolve(dir, '../../packages/backend/src'),
         '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
         '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
       },

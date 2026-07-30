@@ -63,7 +63,7 @@ const testCaller = async () => {
 };
 
 const testClient = async () => {
-  const localTrpcClient = createTRPCClient<TrpcRouter>({
+  const trpcClient = createTRPCClient<TrpcRouter>({
     links: [
       httpBatchLink({
         transformer,
@@ -72,7 +72,7 @@ const testClient = async () => {
     ],
   });
 
-  const result = await Promise.resolve(localTrpcClient.test.hello.mutate({ firstName: 'Test' }));
+  const result = await Promise.resolve(trpcClient.test.hello.mutate({ firstName: 'Test' }));
 
   globalThis.console.log('tRPC Client Result:', result);
 };

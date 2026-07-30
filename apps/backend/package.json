@@ -3,6 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/client.cjs",
+  "module": "./dist/client.mjs",
+  "types": "./dist/client.d.mts",
+  "exports": {
+    ".": {
+      "typescript": {
+        "types": "./src/client.ts",
+        "default": "./src/client.ts"
+      },
+      "require": {
+        "types": "./dist/client.d.cts",
+        "default": "./dist/client.cjs"
+      },
+      "import": {
+        "types": "./dist/client.d.mts",
+        "default": "./dist/client.mjs"
+      }
+    }
+  },
   "scripts": {
     "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts",
     "test-trpc": "tsx --conditions=typescript ./src/test-trpc.ts"
