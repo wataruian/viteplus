@@ -62,10 +62,34 @@ function installVp() {
   vp --version
 }
 
+function installAntigravity() {
+  local AGY_VERSION="1.1.8"
+  local AGY_TAR_FILE="${tmpLocalBinDir}/agy.tar.gz"
+
+  # curl -fsSL "https://antigravity.google/cli/install.sh" | bash -s -- \
+  #   -d "${tmpLocalBinDir}/agy"
+
+  curl -s -L \
+  -o "${AGY_TAR_FILE}" \
+  "https://github.com/google-antigravity/antigravity-cli/releases/download/${AGY_VERSION}/agy_cli_mac_arm64.tar.gz"
+
+  tar -xzvf "${AGY_TAR_FILE}" -C "${tmpLocalBinDir}"
+
+  rm -f "${AGY_TAR_FILE}"
+
+  mv "${tmpLocalBinDir}/antigravity" "${tmpLocalBinDir}/agy"
+
+  chmod +x "${tmpLocalBinDir}/agy"
+
+  updatePath
+
+  agy --version
+}
+
 binary="${1:-"all"}"
 
-if [[ "${binary}" != "mise" && "${binary}" != "vp" && "${binary}" != "all" ]]; then
-  echo "Usage: ./install.sh [mise|vp|all]"
+if [[ "${binary}" != "mise" && "${binary}" != "vp" && "${binary}" != "agy" && "${binary}" != "all" ]]; then
+  echo "Usage: ./install.sh [mise|vp|agy|all]"
   exit 1
 fi
 
@@ -77,9 +101,12 @@ if [[ "${binary}" == "mise" ]]; then
   installMise
 elif [[ "${binary}" == "vp" ]]; then
   installVp
+elif [[ "${binary}" == "agy" ]]; then
+  installAntigravity
 elif [[ "${binary}" == "all" ]]; then
   installMise
   installVp
+  installAntigravity
 fi
 
 echo ""
