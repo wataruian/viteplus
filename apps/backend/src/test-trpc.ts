@@ -4,9 +4,17 @@ import {
   assertIsCustomRequest,
   assertIsCustomResponse,
 } from './types/middlware';
-import { apiUrl, trpcEndpoint } from '@lightproject/common/configs';
-import { createCaller, trpcClient } from './utils/trpc-router';
+import { apiUrl, trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import MockExpress from 'mock-express';
+import type { Server } from 'node:http';
+import type { TrpcRouter } from './routers/trpc';
+import { URL } from 'node:url';
+import { createApp } from './main';
+import { createCaller } from './utils/trpc-router';
+import { transformer } from './utils/trpc';
+
+globalThis.process.env['ENABLE_TEST_ROUTES'] = 'true';
 
 const testCaller = async () => {
   const app = MockExpress();
@@ -55,14 +63,47 @@ const testCaller = async () => {
 };
 
 const testClient = async () => {
-  const result = await Promise.resolve(trpcClient.test.hello.mutate({ firstName: 'Test' }));
+  const localTrpcClient = createTRPCClient<TrpcRouter>({
+    links: [
+      httpBatchLink({
+        transformer,
+        url: trpcUrl,
+      }),
+    ],
+  });
+
+  const result = await Promise.resolve(localTrpcClient.test.hello.mutate({ firstName: 'Test' }));
 
   globalThis.console.log('tRPC Client Result:', result);
 };
 
 const callTrpc = async () => {
-  await testCaller();
-  await testClient();
+  let server: Server | undefined = undefined;
+
+  try {
+    const urlObj = new URL(trpcUrl);
+    const port = urlObj.port ? Number(urlObj.port) : 3000;
+
+    const appInstance = await createApp();
+    server = await new Promise<Server>((resolve) => {
+      const s = appInstance.listen(port, () => {
+        resolve(s);
+      });
+    });
+
+    await testCaller();
+    await testClient();
+  } catch (error: unknown) {
+    globalThis.console.error('Failed to call tRPC:', error);
+    if (server !== undefined) {
+      server.close();
+    }
+    globalThis.process.exit(1);
+  } finally {
+    if (server !== undefined) {
+      server.close();
+    }
+  }
 };
 
 const start = () => {

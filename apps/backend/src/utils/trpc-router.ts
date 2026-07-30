@@ -30,8 +30,11 @@ const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
   try {
     app.use(rootPath, (req, _res, next) => {
       const bodyRecord: unknown = req.body;
+      const isBatch =
+        req.query['batch'] !== undefined ||
+        (isRecord(bodyRecord) && Object.keys(bodyRecord).every((key) => /^\d+$/u.test(key)));
 
-      if (req.method === 'POST' && isRecord(bodyRecord) && !('json' in bodyRecord)) {
+      if (req.method === 'POST' && isRecord(bodyRecord) && !isBatch && !('json' in bodyRecord)) {
         req.body = { json: bodyRecord };
       }
 
