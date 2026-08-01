@@ -6,4 +6,5 @@ export * from './invoker';
 export * from './param-parser';
 export * from './serialize';
 export * from './text';
+export * from './telemetry';
 export * from './time';

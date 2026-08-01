@@ -79,6 +79,9 @@ type CustomRequest = Omit<ExpressRequest, 'locals'> & {
   locals: Locals;
 };
 
+type RequestWithLocals = ExpressRequest & { locals?: unknown };
+type ResponseWithLocals = ExpressResponse & { locals?: unknown };
+
 type RequestHandler = ExpressRequestHandler;
 
 type CustomResponse = Omit<ExpressResponse, 'locals'> & {
@@ -126,9 +129,9 @@ const isHttpMethod = (value: unknown): value is HttpMethod =>
   typeof value === 'string' &&
   ['get', 'post', 'put', 'delete', 'patch', 'options', 'head'].includes(value.toLowerCase());
 
-const isCustomRequest = (req: ExpressRequest): req is CustomRequest => isLocals(req.locals);
+const isCustomRequest = (req: RequestWithLocals): req is CustomRequest => isLocals(req.locals);
 
-const isCustomResponse = (res: ExpressResponse): res is CustomResponse => isLocals(res.locals);
+const isCustomResponse = (res: ResponseWithLocals): res is CustomResponse => isLocals(res.locals);
 
 const assertIsCustomRequest: (req: unknown) => asserts req is CustomRequest = (_req: unknown) => {};
 
@@ -137,6 +140,8 @@ const assertIsCustomResponse: (res: unknown) => asserts res is CustomResponse = 
 ) => {};
 
 export type {
+  RequestWithLocals,
+  ResponseWithLocals,
   Primitive,
   BaseResponse,
   Body,
