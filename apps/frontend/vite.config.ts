@@ -9,6 +9,7 @@ const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 
 export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;
+
   return {
     ...getPackageViteConfig({
       buildType: 'build',

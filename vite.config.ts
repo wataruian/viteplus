@@ -156,6 +156,7 @@ const getCommonViteConfig = ({
     pack: {
       clean: true,
       dts: {
+        cjsReexport: true,
         sourcemap: isLocal,
         tsgo: true,
       },
