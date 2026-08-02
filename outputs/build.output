@@ -1,78 +1,9 @@
-~/packages/common$ vp pack
-~/packages/design-system$ vp pack
-ℹ [@lightproject/common] entry: src/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/invoker.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts, src/configs/endpoints.ts, src/configs/index.ts
+~/packages/common$ vp pack ◉ cache hit, replaying
+ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/invoker.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts
 ℹ [@lightproject/common] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 213 files
-ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/configs/index.ts, src/configs/unocss.ts, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
-ℹ [@lightproject/design-system] tsconfig: tsconfig.json
-ℹ Build start
-ℹ Cleaning 276 files
 The `tsgo` option is experimental and may change in the future.
-The `tsgo` option is experimental and may change in the future.
-ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs             16.92 kB │ gzip: 4.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.cjs           9.80 kB │ gzip: 2.75 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.cjs                   6.90 kB │ gzip: 0.98 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.cjs            6.00 kB │ gzip: 1.95 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/index.cjs                5.23 kB │ gzip: 1.13 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/index.cjs                     4.76 kB │ gzip: 1.05 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.cjs       4.65 kB │ gzip: 1.49 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs        4.00 kB │ gzip: 1.37 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/index.cjs                    3.70 kB │ gzip: 0.91 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs               3.38 kB │ gzip: 1.23 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs                  3.23 kB │ gzip: 1.19 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs       2.77 kB │ gzip: 1.11 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs               2.42 kB │ gzip: 0.91 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs                2.36 kB │ gzip: 0.97 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs                  2.35 kB │ gzip: 0.90 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs              2.30 kB │ gzip: 1.01 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs                     2.13 kB │ gzip: 0.71 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs                 2.12 kB │ gzip: 0.90 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs                 2.10 kB │ gzip: 0.91 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs               1.98 kB │ gzip: 0.75 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs           1.95 kB │ gzip: 0.82 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/index.cjs                   1.75 kB │ gzip: 0.56 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/input.cjs                1.73 kB │ gzip: 0.80 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.cjs               1.70 kB │ gzip: 0.75 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.cjs                  1.40 kB │ gzip: 0.60 kB
-ℹ [@lightproject/design-system] [CJS] dist/index.cjs                           1.39 kB │ gzip: 0.41 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.cjs          1.36 kB │ gzip: 0.64 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/icon.cjs                 1.31 kB │ gzip: 0.67 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.cjs                   1.29 kB │ gzip: 0.60 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.cjs           1.24 kB │ gzip: 0.61 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.cjs                1.14 kB │ gzip: 0.50 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/index.cjs                   1.02 kB │ gzip: 0.45 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.cjs           0.80 kB │ gzip: 0.43 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.cjs            0.79 kB │ gzip: 0.43 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.cjs              0.59 kB │ gzip: 0.35 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.cjs                    0.53 kB │ gzip: 0.32 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.cjs                 0.50 kB │ gzip: 0.30 kB
-ℹ [@lightproject/design-system] [CJS] dist/types/component.cjs                 0.29 kB │ gzip: 0.17 kB
-ℹ [@lightproject/design-system] [CJS] dist/types/index.cjs                     0.29 kB │ gzip: 0.17 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs.map         25.98 kB │ gzip: 6.47 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.cjs.map      16.86 kB │ gzip: 4.18 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.cjs.map       10.35 kB │ gzip: 3.12 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.cjs.map               9.80 kB │ gzip: 1.08 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.cjs.map   6.60 kB │ gzip: 2.18 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs.map    5.15 kB │ gzip: 1.82 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs.map           4.73 kB │ gzip: 1.67 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs.map   3.81 kB │ gzip: 1.49 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs.map              3.75 kB │ gzip: 1.49 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs.map           3.52 kB │ gzip: 1.05 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs.map          3.38 kB │ gzip: 1.39 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs.map                 2.93 kB │ gzip: 0.85 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs.map            2.91 kB │ gzip: 1.19 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs.map           2.84 kB │ gzip: 1.17 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs.map              2.75 kB │ gzip: 0.92 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs.map             2.69 kB │ gzip: 1.14 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs.map       2.64 kB │ gzip: 1.08 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs.map             2.53 kB │ gzip: 1.10 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.cjs.map           2.27 kB │ gzip: 0.88 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.cjs.map              2.17 kB │ gzip: 0.68 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/input.cjs.map            2.10 kB │ gzip: 0.97 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.cjs.map               1.92 kB │ gzip: 0.81 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/icon.cjs.map             1.68 kB │ gzip: 0.80 kB
-ℹ [@lightproject/design-system] [CJS] dist/_virtual/_rolldown/runtime.cjs      1.63 kB │ gzip: 0.75 kB
 ℹ [@lightproject/common] [CJS] dist/utils/param-parser.cjs          28.79 kB │ gzip:  5.49 kB
 ℹ [@lightproject/common] [CJS] dist/utils/index.cjs                 14.14 kB │ gzip:  2.36 kB
 ℹ [@lightproject/common] [CJS] dist/utils/directory.cjs              7.90 kB │ gzip:  1.97 kB
@@ -161,61 +92,7 @@ The `tsgo` option is experimental and may change in the future.
 ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] 87 files, total: 226.65 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.cjs.map      1.34 kB │ gzip: 0.67 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.cjs.map       1.25 kB │ gzip: 0.64 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.cjs.map            1.11 kB │ gzip: 0.44 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.cjs.map        0.82 kB │ gzip: 0.45 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.cjs.map       0.77 kB │ gzip: 0.42 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/index.cjs.map            0.52 kB │ gzip: 0.22 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.cjs.map          0.36 kB │ gzip: 0.24 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/index.cjs.map                0.35 kB │ gzip: 0.18 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.cjs.map                0.33 kB │ gzip: 0.24 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.cjs.map             0.27 kB │ gzip: 0.19 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/index.cjs.map               0.26 kB │ gzip: 0.16 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/index.cjs.map                 0.25 kB │ gzip: 0.17 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/index.cjs.map               0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.d.cts         0.04 kB │ gzip: 0.07 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.d.cts        0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.d.cts     0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.d.cts          0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.d.cts     0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.d.cts      0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.d.cts         0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.d.cts         0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.d.cts          0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/typography.d.cts         0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.d.cts               0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/types/component.d.cts               0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/marquee.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/preview.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.d.cts                 0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/button.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/header.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/layout.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.d.cts                 0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/index.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/badge.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/input.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/index.d.cts                         0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/types/index.d.cts                   0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/context/index.d.cts                 0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.d.cts                  0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/index.d.cts                 0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/index.d.cts                  0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/index.d.cts                   0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/card.d.cts               0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/logo.d.cts               0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/design-system] [CJS] dist/components/icon.d.cts               0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/design-system] [CJS] 115 files, total: 244.39 kB
-✔ [@lightproject/common] Build complete in 895ms
-✔ [@lightproject/design-system] Build complete in 894ms
+✔ [@lightproject/common] Build complete in 786ms
 ℹ [@lightproject/common] [ESM] dist/utils/param-parser.mjs          27.33 kB │ gzip:  5.33 kB
 ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                  8.46 kB │ gzip:  1.97 kB
 ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs              6.89 kB │ gzip:  1.77 kB
@@ -333,9 +210,131 @@ The `tsgo` option is experimental and may change in the future.
 ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts              0.30 kB │ gzip:  0.19 kB
 ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts              0.22 kB │ gzip:  0.17 kB
 ℹ [@lightproject/common] [ESM] 116 files, total: 249.25 kB
-✔ [@lightproject/common] Build complete in 2379ms
+✔ [@lightproject/common] Build complete in 2021ms
 
-~/apps/backend$ vp pack
+~/packages/design-system$ vp pack ◉ cache hit, replaying
+ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
+ℹ [@lightproject/design-system] tsconfig: tsconfig.json
+ℹ Build start
+ℹ Cleaning 276 files
+The `tsgo` option is experimental and may change in the future.
+ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs             16.92 kB │ gzip: 4.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.cjs           9.80 kB │ gzip: 2.75 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.cjs                   6.90 kB │ gzip: 0.98 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.cjs            6.00 kB │ gzip: 1.95 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/index.cjs                5.23 kB │ gzip: 1.13 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/index.cjs                     4.76 kB │ gzip: 1.05 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.cjs       4.65 kB │ gzip: 1.49 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs        4.00 kB │ gzip: 1.37 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/index.cjs                    3.70 kB │ gzip: 0.91 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs               3.38 kB │ gzip: 1.23 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs                  3.23 kB │ gzip: 1.19 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs       2.77 kB │ gzip: 1.11 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs               2.42 kB │ gzip: 0.91 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs                2.36 kB │ gzip: 0.97 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs                  2.35 kB │ gzip: 0.90 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs              2.30 kB │ gzip: 1.01 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs                     2.13 kB │ gzip: 0.71 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs                 2.12 kB │ gzip: 0.90 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs                 2.10 kB │ gzip: 0.91 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs               1.98 kB │ gzip: 0.75 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs           1.95 kB │ gzip: 0.82 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/index.cjs                   1.75 kB │ gzip: 0.56 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/input.cjs                1.73 kB │ gzip: 0.80 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.cjs               1.70 kB │ gzip: 0.75 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.cjs                  1.40 kB │ gzip: 0.60 kB
+ℹ [@lightproject/design-system] [CJS] dist/index.cjs                           1.39 kB │ gzip: 0.41 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.cjs          1.36 kB │ gzip: 0.64 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/icon.cjs                 1.31 kB │ gzip: 0.67 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.cjs                   1.29 kB │ gzip: 0.60 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.cjs           1.24 kB │ gzip: 0.61 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.cjs                1.14 kB │ gzip: 0.50 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/index.cjs                   1.02 kB │ gzip: 0.45 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.cjs           0.80 kB │ gzip: 0.43 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.cjs            0.79 kB │ gzip: 0.43 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.cjs              0.59 kB │ gzip: 0.35 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.cjs                    0.53 kB │ gzip: 0.32 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.cjs                 0.50 kB │ gzip: 0.30 kB
+ℹ [@lightproject/design-system] [CJS] dist/types/component.cjs                 0.29 kB │ gzip: 0.17 kB
+ℹ [@lightproject/design-system] [CJS] dist/types/index.cjs                     0.29 kB │ gzip: 0.17 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs.map         25.98 kB │ gzip: 6.47 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.cjs.map      16.86 kB │ gzip: 4.18 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.cjs.map       10.35 kB │ gzip: 3.12 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.cjs.map               9.80 kB │ gzip: 1.08 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.cjs.map   6.60 kB │ gzip: 2.18 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs.map    5.15 kB │ gzip: 1.82 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs.map           4.73 kB │ gzip: 1.67 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs.map   3.81 kB │ gzip: 1.49 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs.map              3.75 kB │ gzip: 1.49 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs.map           3.52 kB │ gzip: 1.05 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs.map          3.38 kB │ gzip: 1.39 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs.map                 2.93 kB │ gzip: 0.85 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs.map            2.91 kB │ gzip: 1.19 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs.map           2.84 kB │ gzip: 1.17 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs.map              2.75 kB │ gzip: 0.92 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs.map             2.69 kB │ gzip: 1.14 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs.map       2.64 kB │ gzip: 1.08 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs.map             2.53 kB │ gzip: 1.10 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.cjs.map           2.27 kB │ gzip: 0.88 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.cjs.map              2.17 kB │ gzip: 0.68 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/input.cjs.map            2.10 kB │ gzip: 0.97 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.cjs.map               1.92 kB │ gzip: 0.81 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/icon.cjs.map             1.68 kB │ gzip: 0.80 kB
+ℹ [@lightproject/design-system] [CJS] dist/_virtual/_rolldown/runtime.cjs      1.63 kB │ gzip: 0.75 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.cjs.map      1.34 kB │ gzip: 0.67 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.cjs.map       1.25 kB │ gzip: 0.64 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.cjs.map            1.11 kB │ gzip: 0.44 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.cjs.map        0.82 kB │ gzip: 0.45 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.cjs.map       0.77 kB │ gzip: 0.42 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/index.cjs.map            0.52 kB │ gzip: 0.22 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.cjs.map          0.36 kB │ gzip: 0.24 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/index.cjs.map                0.35 kB │ gzip: 0.18 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.cjs.map                0.33 kB │ gzip: 0.24 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.cjs.map             0.27 kB │ gzip: 0.19 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/index.cjs.map               0.26 kB │ gzip: 0.16 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/index.cjs.map                 0.25 kB │ gzip: 0.17 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/index.cjs.map               0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/theme-generator.d.cts         0.04 kB │ gzip: 0.07 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-provider.d.cts        0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.d.cts     0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/style-compiler.d.cts          0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/error-boundary.d.cts     0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.d.cts      0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/theme-context.d.cts         0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-provider.d.cts         0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/mode-context.d.cts          0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/breakpoints.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/typography.d.cts         0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/shortcuts.d.cts               0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/animation.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/types/component.d.cts               0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/marquee.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/preview.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.d.cts                 0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/button.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/header.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/layout.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/colors.d.cts                 0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/index.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/badge.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/input.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/index.d.cts                         0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/types/index.d.cts                   0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/context/index.d.cts                 0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/icons.d.cts                  0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/index.d.cts                 0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/index.d.cts                  0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/index.d.cts                   0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/card.d.cts               0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/logo.d.cts               0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/design-system] [CJS] dist/components/icon.d.cts               0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/design-system] [CJS] 115 files, total: 244.39 kB
+✔ [@lightproject/design-system] Build complete in 895ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs               14.48 kB │ gzip: 3.90 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs             9.32 kB │ gzip: 2.64 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/colors.mjs                     6.79 kB │ gzip: 0.92 kB
@@ -490,9 +489,10 @@ The `tsgo` option is experimental and may change in the future.
 ℹ [@lightproject/design-system] [ESM] dist/tokens/icons.d.mts                    0.29 kB │ gzip: 0.19 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                 0.28 kB │ gzip: 0.18 kB
 ℹ [@lightproject/design-system] [ESM] 153 files, total: 305.09 kB
-✔ [@lightproject/design-system] Build complete in 2739ms
+✔ [@lightproject/design-system] Build complete in 2294ms
 
-ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/error-handler.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/request-handler.ts, src/middlewares/response-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/types/worker.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/validators/route-validator.ts
+~/apps/backend$ vp pack ◉ cache hit, replaying
+ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/error-handler.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/request-handler.ts, src/middlewares/response-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/types/worker.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/validators/route-validator.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 347 files
@@ -641,7 +641,7 @@ The `tsgo` option is experimental and may change in the future.
 ℹ [@lightproject/backend] [CJS] dist/services/base.d.cts                                  0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/middlewares/csp.d.cts                                0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 143 files, total: 374.65 kB
-✔ [@lightproject/backend] Build complete in 900ms
+✔ [@lightproject/backend] Build complete in 859ms
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/generators/openapi-generator.mjs        14.87 kB │ gzip: 4.02 kB
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/validators/route-validator.mjs          10.63 kB │ gzip: 2.60 kB
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/index.mjs                                6.84 kB │ gzip: 2.17 kB
@@ -830,9 +830,9 @@ The `tsgo` option is experimental and may change in the future.
 ℹ [@lightproject/backend] [ESM] dist/client.d.mts                                           0.17 kB │ gzip: 0.13 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                                            0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 187 files, total: 447.85 kB
-✔ [@lightproject/backend] Build complete in 1880ms
+✔ [@lightproject/backend] Build complete in 2476ms
 
-~/apps/frontend$ vp build
+~/apps/frontend$ vp build ◉ cache hit, replaying
 vite v8.1.3 building client environment for production...
 transforming...[plugin rolldown:vite-resolve] Module "node:path" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/rotation.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
@@ -853,7 +853,7 @@ dist/assets/rotation-DVK_78-T.js                   1.51 kB │ gzip:   0.70 kB �
 dist/assets/esm-BlcBgZqH.js                       17.39 kB │ gzip:   4.71 kB │ map:    35.35 kB
 dist/assets/index-Dmi-ZT6r.js                    720.19 kB │ gzip: 147.36 kB │ map: 1,424.98 kB
 
-✓ built in 2.04s
+✓ built in 2.76s
 
 ---
-vp run: 0/4 cache hit (0%). (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 14s saved. (Run `vp run --last-details` for full details)

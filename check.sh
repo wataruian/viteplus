@@ -42,7 +42,7 @@ function executeCommand() {
     "vp run -r test")
       commandOutputFile="test.output"
       ;;
-    "vp run -r autogen ${debug}")
+    "vp run -r autogen"*)
       isAutogenCommand="true"
       commandOutputFile="autogen.output"
       ;;
@@ -57,19 +57,34 @@ function executeCommand() {
       const { spawn } = require("child_process");
       const fs = require("fs");
       const [outputFile, cmd, ...args] = process.argv.slice(1);
-      const writer = fs.createWriteStream(outputFile);
-      const child = spawn(cmd, args, { env: { ...process.env, FORCE_COLOR: "1", CLICOLOR_FORCE: "1" } });
-      child.stdout.on("data", (data) => {
-        process.stdout.write(data);
-        writer.write(data);
+      const outFd = fs.openSync(outputFile, "w");
+      const child = spawn(cmd, args, {
+        env: { ...process.env, FORCE_COLOR: "1", CLICOLOR_FORCE: "1" },
+        stdio: ["inherit", outFd, outFd]
       });
-      child.stderr.on("data", (data) => {
-        process.stderr.write(data);
-        writer.write(data);
-      });
+      let readOffset = 0;
+      const readFd = fs.openSync(outputFile, "r");
+      const buffer = Buffer.alloc(65536);
+      function streamOutput() {
+        try {
+          const bytesRead = fs.readSync(readFd, buffer, 0, buffer.length, readOffset);
+          if (bytesRead > 0) {
+            process.stdout.write(buffer.subarray(0, bytesRead));
+            readOffset += bytesRead;
+            return true;
+          }
+        } catch (e) {}
+        return false;
+      }
+      const interval = setInterval(() => {
+        while (streamOutput()) {}
+      }, 50);
       child.on("close", (code) => {
-        writer.end();
-        process.exit(code || 0);
+        clearInterval(interval);
+        while (streamOutput()) {}
+        fs.closeSync(outFd);
+        fs.closeSync(readFd);
+        process.exitCode = code === null ? 1 : code;
       });
     ' "${commandOutputPath}" "${arguments[@]}"
     exitStatus="${?}"
