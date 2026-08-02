@@ -15,10 +15,16 @@ catalog:
   '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
   '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
   '@opentelemetry/api': npm:@opentelemetry/api@1.9.1
+  '@opentelemetry/api-logs': npm:@opentelemetry/api-logs@0.221.0
   '@opentelemetry/auto-instrumentations-node': npm:@opentelemetry/auto-instrumentations-node@0.79.0
+  '@opentelemetry/exporter-logs-otlp-http': npm:@opentelemetry/exporter-logs-otlp-http@0.221.0
   '@opentelemetry/exporter-metrics-otlp-http': npm:@opentelemetry/exporter-metrics-otlp-http@0.221.0
   '@opentelemetry/exporter-trace-otlp-http': npm:@opentelemetry/exporter-trace-otlp-http@0.221.0
+  '@opentelemetry/instrumentation-express': npm:@opentelemetry/instrumentation-express@0.69.0
+  '@opentelemetry/instrumentation-fs': npm:@opentelemetry/instrumentation-fs@0.40.0
+  '@opentelemetry/instrumentation-http': npm:@opentelemetry/instrumentation-http@0.221.0
   '@opentelemetry/resources': npm:@opentelemetry/resources@2.10.0
+  '@opentelemetry/sdk-logs': npm:@opentelemetry/sdk-logs@0.221.0
   '@opentelemetry/sdk-metrics': npm:@opentelemetry/sdk-metrics@2.10.0
   '@opentelemetry/sdk-node': npm:@opentelemetry/sdk-node@0.221.0
   '@opentelemetry/semantic-conventions': npm:@opentelemetry/semantic-conventions@1.43.0

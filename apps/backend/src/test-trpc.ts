@@ -16,6 +16,8 @@ import { transformer } from './utils/trpc';
 
 globalThis.process.env['ENABLE_TEST_ROUTES'] = 'true';
 
+const enableServer = globalThis.process.argv[2] === 'true';
+
 const testCaller = async () => {
   const app = MockExpress();
 
@@ -79,30 +81,46 @@ const testClient = async () => {
 
 const callTrpc = async () => {
   let server: Server | undefined = undefined;
+  let success = false;
 
   try {
     const urlObj = new URL(trpcUrl);
     const port = urlObj.port ? Number(urlObj.port) : 3000;
 
-    const appInstance = await createApp();
-    server = await new Promise<Server>((resolve) => {
-      const s = appInstance.listen(port, () => {
-        resolve(s);
-      });
-    });
+    if (enableServer) {
+      try {
+        const appInstance = await createApp();
+
+        globalThis.console.log('Starting server...');
+
+        server = await new Promise<Server>((resolve) => {
+          const s = appInstance.listen(port, () => {
+            resolve(s);
+          });
+        });
+
+        globalThis.console.log('Server started.');
+      } catch (error: unknown) {
+        globalThis.console.error('Failed to start server:', error);
+        if (server !== undefined) {
+          server.close();
+        }
+      }
+    }
 
     await testCaller();
     await testClient();
+    success = true;
   } catch (error: unknown) {
     globalThis.console.error('Failed to call tRPC:', error);
-    if (server !== undefined) {
-      server.close();
-    }
-    globalThis.process.exit(1);
   } finally {
     if (server !== undefined) {
       server.close();
     }
+  }
+
+  if (!success) {
+    globalThis.process.exit(1);
   }
 };
 

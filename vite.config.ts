@@ -1,4 +1,5 @@
 import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
+import fs from 'node:fs';
 import path from 'node:path';
 
 const commonIgnorePatterns = [
@@ -86,6 +87,20 @@ const getCommonViteConfig = ({
   const env = loadEnv(mode, rootDir, '');
   const isLocal = env['ENV'] === 'local';
 
+  const pkgPath = path.resolve(dir, 'package.json');
+  let pkgName: string | undefined = undefined;
+  try {
+    const pkg: unknown = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    if (pkg !== null && typeof pkg === 'object' && 'name' in pkg) {
+      const { name } = pkg;
+      if (typeof name === 'string') {
+        pkgName = name;
+      }
+    }
+  } catch {
+    // Ignore error if package.json does not exist or is invalid
+  }
+
   return {
     build: {
       cssCodeSplit: !isLocal,
@@ -164,6 +179,7 @@ const getCommonViteConfig = ({
       exports: false,
       format: ['esm', 'cjs'],
       minify: !isLocal,
+      name: pkgName ?? '',
       outDir: 'dist',
       shims: true,
       sourcemap: isLocal,

@@ -62,8 +62,8 @@ describe('initializeTelemetry', () => {
     vi.clearAllMocks();
   });
 
-  test('uses caller-supplied service metadata', () => {
-    initializeTelemetry({ serviceName: '@acme/api', serviceVersion: '1.0.0' });
+  test('uses caller-supplied service metadata', async () => {
+    await initializeTelemetry({ serviceName: '@acme/api', serviceVersion: '1.0.0' });
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith(
       expect.objectContaining({

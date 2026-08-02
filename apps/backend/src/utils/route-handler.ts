@@ -6,10 +6,13 @@ import type {
   ServiceContext,
   ServiceMethod,
 } from '../types/middlware';
+import { invokeWithParsedArgs, tracer } from '@lightproject/common/utils';
 import type { BaseService } from '../services/base';
-import { invokeWithParsedArgs } from '@lightproject/common/utils';
 import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
+import { randomUUID } from 'node:crypto';
+
+const uuidv4 = () => randomUUID();
 
 const assertIsInputArgs: (val: unknown) => asserts val is InputArgs = (_val: unknown) => {};
 const assertIsServiceMethod: (val: unknown) => asserts val is ServiceMethod = (_val: unknown) => {};
@@ -105,8 +108,24 @@ const createRouteHandlerImpl =
   ): RouteHandler =>
   async (params: RouteHandlerParams) => {
     const { ctx, input } = params as { ctx: ServiceContext; input?: unknown };
+
+    const sessionId = ctx.req.locals.sessionId ?? uuidv4();
+    const { requestType } = ctx.req.locals.metadata;
+
+    const span = tracer.startSpan(`${requestType.toLowerCase()}.start`, {
+      attributes: {
+        class: serviceClass.name,
+        function: String(method),
+        method: ctx.req.method,
+        path: ctx.req.locals.metadata.url,
+        requestType,
+        sessionId,
+      },
+    });
+
     try {
       const serviceMethod = Reflect.get(serviceClass, String(method));
+
       if (typeof serviceMethod !== 'function') {
         throw new TypeError(`Method ${String(method)} not found on service ${serviceClass.name}`);
       }
@@ -155,12 +174,18 @@ const createRouteHandlerImpl =
         response.error = error;
       }
 
+      span.setAttribute('success', true).end();
+
       return response;
     } catch (error) {
+      span.recordException(error instanceof Error ? error : new Error(String(error)));
+      span.setAttribute('success', false).end();
+
       logger.error(
         `Error in route handler for ${serviceClass.name}.${String(method)}:`,
         isRecord(error) ? error : { error: String(error) },
       );
+
       throw error;
     }
   };

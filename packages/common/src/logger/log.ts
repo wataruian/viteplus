@@ -1,3 +1,4 @@
+import { type AnyValueMap, SeverityNumber, logs } from '@opentelemetry/api-logs';
 import type { LogEntry, LogLevel, LogStream, LoggerOptions } from '../types/log';
 import { formatJSON, formatPretty } from './formatters';
 import { getLogFormat, isBrowser, isLocal } from '../environment/env';
@@ -11,9 +12,20 @@ const logLevelPriority: Record<LogLevel, number> = {
   warn: 2,
 };
 
+const otelSeverity: Record<LogLevel, SeverityNumber> = {
+  debug: SeverityNumber.DEBUG,
+  error: SeverityNumber.ERROR,
+  info: SeverityNumber.INFO,
+  warn: SeverityNumber.WARN,
+};
+
+const isAnyValueMap = (value: unknown): value is AnyValueMap =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 class Logger {
   private readonly options: LoggerOptions;
   private stream: LogStream | undefined;
+  private readonly otelLogger = logs.getLogger('application');
 
   public constructor(options: Partial<LoggerOptions> = {}) {
     this.options = {
@@ -84,7 +96,28 @@ class Logger {
     this.writeToOutputs(entry);
   }
 
+  private writeToOtel(entry: LogEntry): void {
+    const metadata = entry.metadata ?? {};
+
+    this.otelLogger.emit({
+      attributes: {
+        logger: 'application',
+        metadata: isAnyValueMap(metadata) ? metadata : {},
+        timestamp: entry.timestamp,
+      },
+      body: JSON.stringify(entry),
+      severityNumber: otelSeverity[entry.level],
+      severityText: entry.level.toUpperCase(),
+    });
+  }
+
   private writeToOutputs(entry: LogEntry): void {
+    try {
+      this.writeToOtel(entry);
+    } catch {
+      // Skip OpenTelemetry logging if it fails`
+    }
+
     if (this.options.mode === 'pretty') {
       globalThis.console.log(formatPretty(entry, this.options.color));
     } else {
@@ -107,4 +140,4 @@ class Logger {
 
 const logger = new Logger();
 
-export { logLevelPriority, Logger, logger };
+export { isAnyValueMap, logLevelPriority, Logger, logger };
