@@ -1,12 +1,9 @@
+import { generateUuid, getRandomColor } from '@lightproject/common/utils';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import type { Locals } from '../types/middlware';
 import type express from 'express';
-import { getRandomColor } from '@lightproject/common/utils';
 import { getRequestType } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
-import { randomUUID } from 'node:crypto';
-
-const uuidv4 = () => randomUUID();
 
 const asyncLocalStorage = new AsyncLocalStorage();
 
@@ -16,7 +13,7 @@ const initializeRequest = (
   next: express.NextFunction,
 ) => {
   try {
-    const sessionId = uuidv4();
+    const sessionId = generateUuid();
 
     const initialLocals: Locals = {
       color: getRandomColor(sessionId),

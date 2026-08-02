@@ -226,6 +226,10 @@ const getPackageViteConfig = ({
         command: `vp ${buildType}`,
         input: commonRunInputs,
       },
+      check: {
+        command: 'vp check',
+        input: commonRunInputs,
+      },
       format: {
         command: 'vp fmt',
         input: commonRunInputs,

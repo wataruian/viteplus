@@ -23,8 +23,7 @@
     }
   },
   "scripts": {
-    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts",
-    "test-trpc": "tsx --conditions=typescript ./src/test-trpc.ts"
+    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts"
   },
   "dependencies": {
     "@lightproject/common": "workspace:*",
@@ -55,7 +54,6 @@
     "@types/node": "catalog:",
     "@types/supertest": "catalog:",
     "@types/swagger-ui-express": "catalog:",
-    "mock-express": "catalog:",
     "supertest": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:"

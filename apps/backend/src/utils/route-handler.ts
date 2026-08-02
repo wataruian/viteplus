@@ -6,13 +6,10 @@ import type {
   ServiceContext,
   ServiceMethod,
 } from '../types/middlware';
-import { invokeWithParsedArgs, tracer } from '@lightproject/common/utils';
+import { generateUuid, invokeWithParsedArgs, tracer } from '@lightproject/common/utils';
 import type { BaseService } from '../services/base';
 import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
-import { randomUUID } from 'node:crypto';
-
-const uuidv4 = () => randomUUID();
 
 const assertIsInputArgs: (val: unknown) => asserts val is InputArgs = (_val: unknown) => {};
 const assertIsServiceMethod: (val: unknown) => asserts val is ServiceMethod = (_val: unknown) => {};
@@ -109,7 +106,7 @@ const createRouteHandlerImpl =
   async (params: RouteHandlerParams) => {
     const { ctx, input } = params as { ctx: ServiceContext; input?: unknown };
 
-    const sessionId = ctx.req.locals.sessionId ?? uuidv4();
+    const sessionId = ctx.req.locals.sessionId ?? generateUuid();
     const { requestType } = ctx.req.locals.metadata;
 
     const span = tracer.startSpan(`${requestType.toLowerCase()}.start`, {

@@ -2,14 +2,13 @@ import type { ErrorDetails, Request, Response, ServiceContext } from '../types/m
 import { type TRPCError, initTRPC } from '@trpc/server';
 import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
 import type { OpenApiMeta } from 'trpc-openapi';
+import { generateUuid } from '@lightproject/common/utils';
 import { getErrorDetails } from '../middlewares/error-handler';
 import { isProduction } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
-import { randomUUID } from 'node:crypto';
 import superjson from 'superjson';
 import { syncLocals } from '../middlewares/gateway-middleware';
 
-const uuidv4 = () => randomUUID();
 const transformer = superjson;
 
 const errorFormatter = ({
@@ -81,7 +80,7 @@ const errorFormatter = ({
 };
 
 const createContext = (req: Request, res: Response): ServiceContext => {
-  const sessionId = req.locals.sessionId ?? uuidv4();
+  const sessionId = req.locals.sessionId ?? generateUuid();
   req.locals.sessionId ??= sessionId;
 
   return {

@@ -38,8 +38,10 @@ const safeToString = (value: unknown): string => {
   }
 };
 
+const generateUuid = () => uuidv4();
+
 const generateShortUuid = (length = 7) => {
-  const uuid = uuidv4();
+  const uuid = generateUuid();
   const hash = crypto.createHash('sha1').update(uuid).digest('hex');
   return hash.slice(0, Math.max(0, length));
 };
@@ -75,6 +77,7 @@ const uppercasePerWord = (str: string): string => str.replaceAll(/\b\w/gu, (c) =
 
 export {
   generateShortUuid,
+  generateUuid,
   getRandomText,
   padEmoji,
   safeToString,

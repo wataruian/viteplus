@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
     pack: {
       ...basePack,
       deps: {
-        neverBundle: ['express-serve-static-core', 'extend', 'mock-express'],
+        neverBundle: ['express-serve-static-core', 'extend'],
       },
     },
   };

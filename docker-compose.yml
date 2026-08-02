@@ -1,42 +1,6 @@
 version: '3.9'
 
 services:
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.131.0
-    container_name: otel-collector
-    ports:
-      - '4317:4317'
-      - '4318:4318'
-    depends_on:
-      - tempo
-      - mimir
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
-    command:
-      - --config=/etc/otelcol/config.yaml
-
-  tempo:
-    image: grafana/tempo:2.8.1
-    container_name: tempo
-    ports:
-      - '3200:3200'
-    command:
-      - -config.file=/etc/tempo.yaml
-    volumes:
-      - ./tempo.yaml:/etc/tempo.yaml
-
-  mimir:
-    image: grafana/mimir:2.17.0
-    container_name: mimir
-    ports:
-      - '9009:9009'
-      - '9095:9095'
-    command:
-      - -config.file=/etc/mimir.yaml
-    volumes:
-      - ./mimir.yaml:/etc/mimir.yaml
-      - mimir-storage:/data/mimir
-
   loki:
     image: grafana/loki:3.5.3
     container_name: loki
@@ -45,7 +9,7 @@ services:
     command:
       - -config.file=/etc/loki.yaml
     volumes:
-      - ./loki.yaml:/etc/loki.yaml
+      - ./configs/loki.yaml:/etc/loki.yaml
 
   grafana:
     image: grafana/grafana:12.1.1
@@ -56,10 +20,48 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
       - grafana-storage:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - loki
+      - tempo
+      - mimir
+
+  tempo:
+    image: grafana/tempo:2.8.1
+    container_name: tempo
+    ports:
+      - '3200:3200'
+    command:
+      - -config.file=/etc/tempo.yaml
+    volumes:
+      - ./configs/tempo.yaml:/etc/tempo.yaml
+
+  mimir:
+    image: grafana/mimir:2.17.0
+    container_name: mimir
+    ports:
+      - '9009:9009'
+      - '9095:9095'
+    command:
+      - -config.file=/etc/mimir.yaml
+    volumes:
+      - ./configs/mimir.yaml:/etc/mimir.yaml
+      - mimir-storage:/data/mimir
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.131.0
+    container_name: otel-collector
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+    command:
+      - --config=/etc/otelcol/config.yaml
+    volumes:
+      - ./configs/otel-collector-config.yaml:/etc/otelcol/config.yaml
+    depends_on:
+      - loki
+      - grafana
       - tempo
       - mimir
 
