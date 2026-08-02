@@ -10,11 +10,14 @@ const swaggerRoutesFile = path.resolve(autogenDir, 'swagger-routes.ts');
 const swaggerJsonOutputFile = path.resolve(autogenDir, 'swagger-output.json');
 const templateFile = path.resolve(autogenDir, 'template.json');
 const openApiSpecFile = path.resolve(autogenDir, 'openapi.json');
+const routesFile = path.resolve(autogenDir, 'routes.json');
+
 const swaggerEndpointFiles = [swaggerRoutesFile];
 
 const getProject = () => projectCache.getProject();
 
 export {
+  routesFile,
   projectDir,
   servicesDir,
   autogenDir,

@@ -1,0 +1,859 @@
+[34m~/packages/common$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
+[34mℹ[39m [33m[@lightproject/common][39m entry: [33msrc/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/invoker.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts[39m
+[34mℹ[39m [33m[@lightproject/common][39m tsconfig: [33mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m Cleaning 213 files
+The `tsgo` option is experimental and may change in the future.
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/param-parser.cjs[22m          [2m30.57 kB[22m [2m│ gzip:  5.87 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/index.cjs[22m                 [2m14.30 kB[22m [2m│ gzip:  2.39 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/directory.cjs[22m             [2m 7.90 kB[22m [2m│ gzip:  1.97 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/invoker.cjs[22m               [2m 4.96 kB[22m [2m│ gzip:  1.69 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mlogger/log.cjs[22m                  [2m 4.15 kB[22m [2m│ gzip:  1.47 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/telemetry.cjs[22m             [2m 3.92 kB[22m [2m│ gzip:  1.33 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/color.cjs[22m                 [2m 3.23 kB[22m [2m│ gzip:  1.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mconfigs/index.cjs[22m               [2m 2.85 kB[22m [2m│ gzip:  0.70 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/text.cjs[22m                  [2m 2.67 kB[22m [2m│ gzip:  1.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1menvironment/index.cjs[22m           [2m 2.65 kB[22m [2m│ gzip:  0.69 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1menvironment/env.cjs[22m             [2m 2.45 kB[22m [2m│ gzip:  0.81 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mconfigs/endpoints.cjs[22m           [2m 2.28 kB[22m [2m│ gzip:  0.74 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mlogger/index.cjs[22m                [2m 2.25 kB[22m [2m│ gzip:  0.68 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mvalidators/validate.cjs[22m         [2m 2.08 kB[22m [2m│ gzip:  0.80 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mlogger/redactor.cjs[22m             [2m 2.04 kB[22m [2m│ gzip:  0.85 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/date.cjs[22m                  [2m 2.04 kB[22m [2m│ gzip:  0.76 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mindex.cjs[22m                       [2m 1.82 kB[22m [2m│ gzip:  0.46 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/serialize.cjs[22m             [2m 1.72 kB[22m [2m│ gzip:  0.76 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mvalidators/index.cjs[22m            [2m 1.60 kB[22m [2m│ gzip:  0.54 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mlogger/formatters.cjs[22m           [2m 1.48 kB[22m [2m│ gzip:  0.68 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mlogger/rotation.cjs[22m             [2m 1.44 kB[22m [2m│ gzip:  0.67 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mtypecast/tc.cjs[22m                 [2m 1.42 kB[22m [2m│ gzip:  0.63 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/time.cjs[22m                  [2m 1.35 kB[22m [2m│ gzip:  0.65 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mtypecast/index.cjs[22m              [2m 1.09 kB[22m [2m│ gzip:  0.47 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mutils/base.cjs[22m                  [2m 1.08 kB[22m [2m│ gzip:  0.55 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1msamples/index.cjs[22m               [2m 0.85 kB[22m [2m│ gzip:  0.42 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1msamples/hello.cjs[22m               [2m 0.50 kB[22m [2m│ gzip:  0.31 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mtypes/index.cjs[22m                 [2m 0.29 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mtypes/log.cjs[22m                   [2m 0.29 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[1mtypes/parameter.cjs[22m             [2m 0.29 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/param-parser.cjs.map      [2m56.61 kB[22m [2m│ gzip: 11.24 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/directory.cjs.map         [2m12.68 kB[22m [2m│ gzip:  3.07 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/invoker.cjs.map           [2m 8.06 kB[22m [2m│ gzip:  2.59 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mlogger/log.cjs.map              [2m 6.82 kB[22m [2m│ gzip:  2.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/telemetry.cjs.map         [2m 5.04 kB[22m [2m│ gzip:  1.81 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/color.cjs.map             [2m 3.88 kB[22m [2m│ gzip:  1.43 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/text.cjs.map              [2m 3.62 kB[22m [2m│ gzip:  1.42 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mvalidators/validate.cjs.map     [2m 3.23 kB[22m [2m│ gzip:  1.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/date.cjs.map              [2m 3.11 kB[22m [2m│ gzip:  1.01 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22menvironment/env.cjs.map         [2m 3.00 kB[22m [2m│ gzip:  1.04 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mlogger/redactor.cjs.map         [2m 2.47 kB[22m [2m│ gzip:  1.01 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/serialize.cjs.map         [2m 2.47 kB[22m [2m│ gzip:  1.04 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mconfigs/endpoints.cjs.map       [2m 2.46 kB[22m [2m│ gzip:  0.87 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mtypecast/tc.cjs.map             [2m 2.00 kB[22m [2m│ gzip:  0.85 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mlogger/rotation.cjs.map         [2m 1.83 kB[22m [2m│ gzip:  0.84 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/time.cjs.map              [2m 1.78 kB[22m [2m│ gzip:  0.84 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m_virtual/_rolldown/runtime.cjs  [2m 1.63 kB[22m [2m│ gzip:  0.75 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mlogger/formatters.cjs.map       [2m 1.59 kB[22m [2m│ gzip:  0.73 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/base.cjs.map              [2m 1.32 kB[22m [2m│ gzip:  0.66 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mutils/index.cjs.map             [2m 0.40 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mlogger/index.cjs.map            [2m 0.27 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22msamples/hello.cjs.map           [2m 0.21 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mvalidators/index.cjs.map        [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mconfigs/index.cjs.map           [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22menvironment/index.cjs.map       [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22msamples/index.cjs.map           [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22mtypecast/index.cjs.map          [2m 0.14 kB[22m [2m│ gzip:  0.13 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/param-parser.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mlogger/formatters.d.cts[39m         [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/telemetry.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypes/parameter.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/serialize.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/directory.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mconfigs/endpoints.d.cts[39m         [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mlogger/rotation.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mvalidators/validate.d.cts[39m       [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mlogger/redactor.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/invoker.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/color.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mindex.d.cts[39m                     [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32msamples/hello.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypes/index.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mlogger/index.d.cts[39m              [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mvalidators/index.d.cts[39m          [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32msamples/index.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32menvironment/index.d.cts[39m         [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mconfigs/index.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/index.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypecast/index.d.cts[39m            [2m 0.04 kB[22m [2m│ gzip:  0.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/text.d.cts[39m                [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/time.d.cts[39m                [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/date.d.cts[39m                [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mutils/base.d.cts[39m                [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypes/log.d.cts[39m                 [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mlogger/log.d.cts[39m                [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32menvironment/env.d.cts[39m           [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypecast/tc.d.cts[39m               [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m 87 files, total: 231.83 kB
+[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m606ms[39m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/param-parser.mjs[22m          [2m28.99 kB[22m [2m│ gzip:  5.71 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/index.mjs[22m                 [2m 8.55 kB[22m [2m│ gzip:  1.99 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/directory.mjs[22m             [2m 6.89 kB[22m [2m│ gzip:  1.77 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/invoker.mjs[22m               [2m 4.63 kB[22m [2m│ gzip:  1.61 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mlogger/log.mjs[22m                  [2m 3.59 kB[22m [2m│ gzip:  1.36 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/telemetry.mjs[22m             [2m 3.16 kB[22m [2m│ gzip:  1.20 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/color.mjs[22m                 [2m 2.49 kB[22m [2m│ gzip:  0.95 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/text.mjs[22m                  [2m 2.21 kB[22m [2m│ gzip:  0.96 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1menvironment/env.mjs[22m             [2m 2.03 kB[22m [2m│ gzip:  0.72 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/date.mjs[22m                  [2m 1.90 kB[22m [2m│ gzip:  0.70 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mvalidators/validate.mjs[22m         [2m 1.87 kB[22m [2m│ gzip:  0.74 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mconfigs/endpoints.mjs[22m           [2m 1.74 kB[22m [2m│ gzip:  0.64 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mlogger/redactor.mjs[22m             [2m 1.64 kB[22m [2m│ gzip:  0.73 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mconfigs/index.mjs[22m               [2m 1.61 kB[22m [2m│ gzip:  0.53 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/serialize.mjs[22m             [2m 1.53 kB[22m [2m│ gzip:  0.69 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1menvironment/index.mjs[22m           [2m 1.51 kB[22m [2m│ gzip:  0.52 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mlogger/index.mjs[22m                [2m 1.32 kB[22m [2m│ gzip:  0.51 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mlogger/rotation.mjs[22m             [2m 1.27 kB[22m [2m│ gzip:  0.60 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mtypecast/tc.mjs[22m                 [2m 1.19 kB[22m [2m│ gzip:  0.56 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/time.mjs[22m                  [2m 1.19 kB[22m [2m│ gzip:  0.58 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mlogger/formatters.mjs[22m           [2m 1.12 kB[22m [2m│ gzip:  0.56 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mvalidators/index.mjs[22m            [2m 0.98 kB[22m [2m│ gzip:  0.40 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/base.mjs[22m                  [2m 0.95 kB[22m [2m│ gzip:  0.49 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mindex.mjs[22m                       [2m 0.90 kB[22m [2m│ gzip:  0.32 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mtypecast/index.mjs[22m              [2m 0.73 kB[22m [2m│ gzip:  0.35 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1msamples/index.mjs[22m               [2m 0.58 kB[22m [2m│ gzip:  0.31 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1msamples/hello.mjs[22m               [2m 0.42 kB[22m [2m│ gzip:  0.26 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mtypes/index.mjs[22m                 [2m 0.30 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mtypes/log.mjs[22m                   [2m 0.30 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mtypes/parameter.mjs[22m             [2m 0.30 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/param-parser.mjs.map      [2m56.48 kB[22m [2m│ gzip: 11.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/directory.mjs.map         [2m12.68 kB[22m [2m│ gzip:  3.06 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/invoker.mjs.map           [2m 8.04 kB[22m [2m│ gzip:  2.58 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/log.mjs.map              [2m 6.69 kB[22m [2m│ gzip:  2.23 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/telemetry.mjs.map         [2m 4.80 kB[22m [2m│ gzip:  1.73 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/color.mjs.map             [2m 3.87 kB[22m [2m│ gzip:  1.42 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/text.mjs.map              [2m 3.62 kB[22m [2m│ gzip:  1.41 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mvalidators/validate.mjs.map     [2m 3.23 kB[22m [2m│ gzip:  1.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/date.mjs.map              [2m 3.11 kB[22m [2m│ gzip:  1.01 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22menvironment/env.mjs.map         [2m 3.00 kB[22m [2m│ gzip:  1.04 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/serialize.mjs.map         [2m 2.46 kB[22m [2m│ gzip:  1.03 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/param-parser.d.mts.map    [2m 2.45 kB[22m [2m│ gzip:  0.77 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/redactor.mjs.map         [2m 2.44 kB[22m [2m│ gzip:  1.00 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mconfigs/endpoints.mjs.map       [2m 2.44 kB[22m [2m│ gzip:  0.86 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypecast/tc.mjs.map             [2m 1.98 kB[22m [2m│ gzip:  0.85 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/rotation.mjs.map         [2m 1.82 kB[22m [2m│ gzip:  0.84 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/time.mjs.map              [2m 1.78 kB[22m [2m│ gzip:  0.84 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/formatters.mjs.map       [2m 1.57 kB[22m [2m│ gzip:  0.72 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/base.mjs.map              [2m 1.31 kB[22m [2m│ gzip:  0.66 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/directory.d.mts.map       [2m 1.17 kB[22m [2m│ gzip:  0.33 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m_virtual/_rolldown/runtime.mjs  [2m 0.66 kB[22m [2m│ gzip:  0.38 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/log.d.mts.map            [2m 0.63 kB[22m [2m│ gzip:  0.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypes/log.d.mts.map             [2m 0.56 kB[22m [2m│ gzip:  0.27 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypes/parameter.d.mts.map       [2m 0.53 kB[22m [2m│ gzip:  0.28 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mconfigs/endpoints.d.mts.map     [2m 0.49 kB[22m [2m│ gzip:  0.24 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/color.d.mts.map           [2m 0.43 kB[22m [2m│ gzip:  0.25 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mvalidators/validate.d.mts.map   [2m 0.40 kB[22m [2m│ gzip:  0.22 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/index.mjs.map             [2m 0.40 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22menvironment/env.d.mts.map       [2m 0.37 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/invoker.d.mts.map         [2m 0.34 kB[22m [2m│ gzip:  0.21 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypecast/tc.d.mts.map           [2m 0.34 kB[22m [2m│ gzip:  0.22 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/text.d.mts.map            [2m 0.30 kB[22m [2m│ gzip:  0.20 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/formatters.d.mts.map     [2m 0.29 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/time.d.mts.map            [2m 0.27 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/redactor.d.mts.map       [2m 0.27 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/index.mjs.map            [2m 0.27 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/base.d.mts.map            [2m 0.25 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/telemetry.d.mts.map       [2m 0.24 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/rotation.d.mts.map       [2m 0.22 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22msamples/hello.mjs.map           [2m 0.21 kB[22m [2m│ gzip:  0.18 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/serialize.d.mts.map       [2m 0.20 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/date.d.mts.map            [2m 0.18 kB[22m [2m│ gzip:  0.15 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mvalidators/index.mjs.map        [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mconfigs/index.mjs.map           [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22menvironment/index.mjs.map       [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22msamples/index.mjs.map           [2m 0.15 kB[22m [2m│ gzip:  0.14 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypecast/index.mjs.map          [2m 0.14 kB[22m [2m│ gzip:  0.13 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22msamples/hello.d.mts.map         [2m 0.11 kB[22m [2m│ gzip:  0.12 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22menvironment/index.d.mts.map     [2m 0.10 kB[22m [2m│ gzip:  0.11 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mvalidators/index.d.mts.map      [2m 0.10 kB[22m [2m│ gzip:  0.11 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypecast/index.d.mts.map        [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mconfigs/index.d.mts.map         [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22msamples/index.d.mts.map         [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mlogger/index.d.mts.map          [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mtypes/index.d.mts.map           [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22mutils/index.d.mts.map           [2m 0.10 kB[22m [2m│ gzip:  0.10 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/index.d.mts[22m[39m               [2m 6.02 kB[22m [2m│ gzip:  1.16 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/param-parser.d.mts[22m[39m        [2m 5.02 kB[22m [2m│ gzip:  1.15 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/directory.d.mts[22m[39m           [2m 2.57 kB[22m [2m│ gzip:  0.57 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/color.d.mts[22m[39m               [2m 1.32 kB[22m [2m│ gzip:  0.47 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mconfigs/endpoints.d.mts[22m[39m         [2m 1.30 kB[22m [2m│ gzip:  0.44 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/parameter.d.mts[22m[39m           [2m 1.20 kB[22m [2m│ gzip:  0.51 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1menvironment/env.d.mts[22m[39m           [2m 1.15 kB[22m [2m│ gzip:  0.39 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mlogger/log.d.mts[22m[39m                [2m 1.11 kB[22m [2m│ gzip:  0.47 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/log.d.mts[22m[39m                 [2m 1.10 kB[22m [2m│ gzip:  0.51 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mconfigs/index.d.mts[22m[39m             [2m 1.04 kB[22m [2m│ gzip:  0.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/index.d.mts[22m[39m               [2m 1.02 kB[22m [2m│ gzip:  0.38 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m                     [2m 0.93 kB[22m [2m│ gzip:  0.24 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1menvironment/index.d.mts[22m[39m         [2m 0.91 kB[22m [2m│ gzip:  0.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/invoker.d.mts[22m[39m             [2m 0.86 kB[22m [2m│ gzip:  0.36 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mvalidators/validate.d.mts[22m[39m       [2m 0.85 kB[22m [2m│ gzip:  0.35 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mlogger/index.d.mts[22m[39m              [2m 0.82 kB[22m [2m│ gzip:  0.32 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/text.d.mts[22m[39m                [2m 0.74 kB[22m [2m│ gzip:  0.34 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mlogger/formatters.d.mts[22m[39m         [2m 0.63 kB[22m [2m│ gzip:  0.29 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mlogger/redactor.d.mts[22m[39m           [2m 0.61 kB[22m [2m│ gzip:  0.32 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mvalidators/index.d.mts[22m[39m          [2m 0.57 kB[22m [2m│ gzip:  0.25 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypecast/tc.d.mts[22m[39m               [2m 0.56 kB[22m [2m│ gzip:  0.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/telemetry.d.mts[22m[39m           [2m 0.54 kB[22m [2m│ gzip:  0.30 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/time.d.mts[22m[39m                [2m 0.53 kB[22m [2m│ gzip:  0.28 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mlogger/rotation.d.mts[22m[39m           [2m 0.49 kB[22m [2m│ gzip:  0.28 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/base.d.mts[22m[39m                [2m 0.46 kB[22m [2m│ gzip:  0.28 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/date.d.mts[22m[39m                [2m 0.42 kB[22m [2m│ gzip:  0.23 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/serialize.d.mts[22m[39m           [2m 0.42 kB[22m [2m│ gzip:  0.24 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypecast/index.d.mts[22m[39m            [2m 0.40 kB[22m [2m│ gzip:  0.22 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1msamples/index.d.mts[22m[39m             [2m 0.30 kB[22m [2m│ gzip:  0.19 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1msamples/hello.d.mts[22m[39m             [2m 0.22 kB[22m [2m│ gzip:  0.17 kB[22m
+[34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m 116 files, total: 254.45 kB
+[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m1423ms[39m
+
+[34m~/packages/design-system$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
+[34mℹ[39m [31m[@lightproject/design-system][39m entry: [31msrc/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts[39m
+[34mℹ[39m [31m[@lightproject/design-system][39m tsconfig: [31mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m Cleaning 276 files
+The `tsgo` option is experimental and may change in the future.
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/preview.cjs[22m             [2m16.92 kB[22m [2m│ gzip: 4.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mutils/theme-generator.cjs[22m          [2m 9.80 kB[22m [2m│ gzip: 2.75 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/colors.cjs[22m                  [2m 6.90 kB[22m [2m│ gzip: 0.98 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mutils/style-compiler.cjs[22m           [2m 6.00 kB[22m [2m│ gzip: 1.95 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/index.cjs[22m               [2m 5.23 kB[22m [2m│ gzip: 1.13 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mutils/index.cjs[22m                    [2m 4.76 kB[22m [2m│ gzip: 1.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/error-boundary.cjs[22m      [2m 4.65 kB[22m [2m│ gzip: 1.49 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/mode-switcher.cjs[22m       [2m 4.00 kB[22m [2m│ gzip: 1.37 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/index.cjs[22m                   [2m 3.70 kB[22m [2m│ gzip: 0.91 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/button.cjs[22m              [2m 3.38 kB[22m [2m│ gzip: 1.23 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mconfigs/unocss.cjs[22m                 [2m 3.23 kB[22m [2m│ gzip: 1.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/theme-switcher.cjs[22m      [2m 2.77 kB[22m [2m│ gzip: 1.11 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/header.cjs[22m              [2m 2.42 kB[22m [2m│ gzip: 0.91 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/badge.cjs[22m               [2m 2.36 kB[22m [2m│ gzip: 0.97 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/effects.cjs[22m                 [2m 2.35 kB[22m [2m│ gzip: 0.90 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/marquee.cjs[22m             [2m 2.30 kB[22m [2m│ gzip: 1.01 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/base.cjs[22m                    [2m 2.13 kB[22m [2m│ gzip: 0.71 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/logo.cjs[22m                [2m 2.12 kB[22m [2m│ gzip: 0.90 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/card.cjs[22m                [2m 2.10 kB[22m [2m│ gzip: 0.91 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/layout.cjs[22m              [2m 1.98 kB[22m [2m│ gzip: 0.75 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/typography.cjs[22m          [2m 1.95 kB[22m [2m│ gzip: 0.82 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcontext/index.cjs[22m                  [2m 1.75 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/input.cjs[22m               [2m 1.73 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/typography.cjs[22m              [2m 1.70 kB[22m [2m│ gzip: 0.75 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/spacing.cjs[22m                 [2m 1.40 kB[22m [2m│ gzip: 0.60 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mindex.cjs[22m                          [2m 1.39 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcontext/theme-provider.cjs[22m         [2m 1.36 kB[22m [2m│ gzip: 0.64 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcomponents/icon.cjs[22m                [2m 1.31 kB[22m [2m│ gzip: 0.67 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mutils/helpers.cjs[22m                  [2m 1.29 kB[22m [2m│ gzip: 0.60 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcontext/mode-provider.cjs[22m          [2m 1.24 kB[22m [2m│ gzip: 0.61 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/animation.cjs[22m               [2m 1.14 kB[22m [2m│ gzip: 0.50 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mconfigs/index.cjs[22m                  [2m 1.02 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcontext/theme-context.cjs[22m          [2m 0.80 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mcontext/mode-context.cjs[22m           [2m 0.79 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/breakpoints.cjs[22m             [2m 0.59 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtokens/icons.cjs[22m                   [2m 0.53 kB[22m [2m│ gzip: 0.32 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mutils/shortcuts.cjs[22m                [2m 0.50 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtypes/component.cjs[22m                [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[1mtypes/index.cjs[22m                    [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/preview.cjs.map         [2m25.98 kB[22m [2m│ gzip: 6.47 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mutils/theme-generator.cjs.map      [2m16.86 kB[22m [2m│ gzip: 4.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mutils/style-compiler.cjs.map       [2m10.35 kB[22m [2m│ gzip: 3.12 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/colors.cjs.map              [2m 9.80 kB[22m [2m│ gzip: 1.08 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/error-boundary.cjs.map  [2m 6.60 kB[22m [2m│ gzip: 2.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/mode-switcher.cjs.map   [2m 5.15 kB[22m [2m│ gzip: 1.82 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/button.cjs.map          [2m 4.73 kB[22m [2m│ gzip: 1.67 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/theme-switcher.cjs.map  [2m 3.81 kB[22m [2m│ gzip: 1.49 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mconfigs/unocss.cjs.map             [2m 3.75 kB[22m [2m│ gzip: 1.49 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/layout.cjs.map          [2m 3.52 kB[22m [2m│ gzip: 1.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/marquee.cjs.map         [2m 3.38 kB[22m [2m│ gzip: 1.39 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/base.cjs.map                [2m 2.93 kB[22m [2m│ gzip: 0.85 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/badge.cjs.map           [2m 2.91 kB[22m [2m│ gzip: 1.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/header.cjs.map          [2m 2.84 kB[22m [2m│ gzip: 1.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/effects.cjs.map             [2m 2.75 kB[22m [2m│ gzip: 0.92 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/logo.cjs.map            [2m 2.69 kB[22m [2m│ gzip: 1.14 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/typography.cjs.map      [2m 2.64 kB[22m [2m│ gzip: 1.08 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/card.cjs.map            [2m 2.53 kB[22m [2m│ gzip: 1.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/typography.cjs.map          [2m 2.27 kB[22m [2m│ gzip: 0.88 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/spacing.cjs.map             [2m 2.17 kB[22m [2m│ gzip: 0.68 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/input.cjs.map           [2m 2.10 kB[22m [2m│ gzip: 0.97 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mutils/helpers.cjs.map              [2m 1.92 kB[22m [2m│ gzip: 0.81 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/icon.cjs.map            [2m 1.68 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m_virtual/_rolldown/runtime.cjs     [2m 1.63 kB[22m [2m│ gzip: 0.75 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcontext/theme-provider.cjs.map     [2m 1.34 kB[22m [2m│ gzip: 0.67 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcontext/mode-provider.cjs.map      [2m 1.25 kB[22m [2m│ gzip: 0.64 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/animation.cjs.map           [2m 1.11 kB[22m [2m│ gzip: 0.44 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcontext/mode-context.cjs.map       [2m 0.82 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcontext/theme-context.cjs.map      [2m 0.77 kB[22m [2m│ gzip: 0.42 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcomponents/index.cjs.map           [2m 0.52 kB[22m [2m│ gzip: 0.22 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/breakpoints.cjs.map         [2m 0.36 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/index.cjs.map               [2m 0.35 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mtokens/icons.cjs.map               [2m 0.33 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mutils/shortcuts.cjs.map            [2m 0.27 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mcontext/index.cjs.map              [2m 0.26 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mutils/index.cjs.map                [2m 0.25 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22mconfigs/index.cjs.map              [2m 0.15 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mutils/theme-generator.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcontext/theme-provider.d.cts[39m       [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/theme-switcher.d.cts[39m    [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mutils/style-compiler.d.cts[39m         [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/error-boundary.d.cts[39m    [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/mode-switcher.d.cts[39m     [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcontext/theme-context.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcontext/mode-provider.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcontext/mode-context.d.cts[39m         [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/breakpoints.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/typography.d.cts[39m            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/typography.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mutils/shortcuts.d.cts[39m              [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/animation.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtypes/component.d.cts[39m              [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/marquee.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/preview.d.cts[39m           [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/effects.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/spacing.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mutils/helpers.d.cts[39m                [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/button.d.cts[39m            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/header.d.cts[39m            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/layout.d.cts[39m            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/colors.d.cts[39m                [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mconfigs/unocss.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/index.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/badge.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/input.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mindex.d.cts[39m                        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtypes/index.d.cts[39m                  [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcontext/index.d.cts[39m                [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/icons.d.cts[39m                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mconfigs/index.d.cts[39m                [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/index.d.cts[39m                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mutils/index.d.cts[39m                  [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/card.d.cts[39m              [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/logo.d.cts[39m              [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/icon.d.cts[39m              [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/base.d.cts[39m                  [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m 115 files, total: 244.39 kB
+[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m670ms[39m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/preview.mjs[22m               [2m14.48 kB[22m [2m│ gzip: 3.90 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/theme-generator.mjs[22m            [2m 9.32 kB[22m [2m│ gzip: 2.64 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/colors.mjs[22m                    [2m 6.79 kB[22m [2m│ gzip: 0.92 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/style-compiler.mjs[22m             [2m 5.12 kB[22m [2m│ gzip: 1.81 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/error-boundary.mjs[22m        [2m 3.95 kB[22m [2m│ gzip: 1.37 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/mode-switcher.mjs[22m         [2m 3.27 kB[22m [2m│ gzip: 1.25 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/button.mjs[22m                [2m 2.80 kB[22m [2m│ gzip: 1.13 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/index.mjs[22m                 [2m 2.69 kB[22m [2m│ gzip: 0.82 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mconfigs/unocss.mjs[22m                   [2m 2.52 kB[22m [2m│ gzip: 1.04 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/index.mjs[22m                      [2m 2.43 kB[22m [2m│ gzip: 0.81 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/theme-switcher.mjs[22m        [2m 2.33 kB[22m [2m│ gzip: 0.99 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/effects.mjs[22m                   [2m 2.20 kB[22m [2m│ gzip: 0.83 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/marquee.mjs[22m               [2m 2.06 kB[22m [2m│ gzip: 0.92 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/index.mjs[22m                     [2m 2.03 kB[22m [2m│ gzip: 0.70 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/base.mjs[22m                      [2m 1.95 kB[22m [2m│ gzip: 0.65 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/badge.mjs[22m                 [2m 1.93 kB[22m [2m│ gzip: 0.87 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/header.mjs[22m                [2m 1.92 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/logo.mjs[22m                  [2m 1.80 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/card.mjs[22m                  [2m 1.76 kB[22m [2m│ gzip: 0.82 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/layout.mjs[22m                [2m 1.70 kB[22m [2m│ gzip: 0.66 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/typography.mjs[22m            [2m 1.68 kB[22m [2m│ gzip: 0.74 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/typography.mjs[22m                [2m 1.50 kB[22m [2m│ gzip: 0.68 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/input.mjs[22m                 [2m 1.44 kB[22m [2m│ gzip: 0.71 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/spacing.mjs[22m                   [2m 1.30 kB[22m [2m│ gzip: 0.54 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/helpers.mjs[22m                    [2m 1.14 kB[22m [2m│ gzip: 0.54 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcontext/theme-provider.mjs[22m           [2m 1.13 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/icon.mjs[22m                  [2m 1.13 kB[22m [2m│ gzip: 0.59 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcontext/mode-provider.mjs[22m            [2m 1.06 kB[22m [2m│ gzip: 0.54 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/animation.mjs[22m                 [2m 1.06 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcontext/index.mjs[22m                    [2m 1.01 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mindex.mjs[22m                            [2m 0.72 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcontext/theme-context.mjs[22m            [2m 0.69 kB[22m [2m│ gzip: 0.36 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mconfigs/index.mjs[22m                    [2m 0.69 kB[22m [2m│ gzip: 0.33 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcontext/mode-context.mjs[22m             [2m 0.69 kB[22m [2m│ gzip: 0.36 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/breakpoints.mjs[22m               [2m 0.50 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/icons.mjs[22m                     [2m 0.44 kB[22m [2m│ gzip: 0.27 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/shortcuts.mjs[22m                  [2m 0.42 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtypes/component.mjs[22m                  [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtypes/index.mjs[22m                      [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/preview.mjs.map           [2m25.84 kB[22m [2m│ gzip: 6.41 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/theme-generator.mjs.map        [2m16.87 kB[22m [2m│ gzip: 4.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/style-compiler.mjs.map         [2m10.30 kB[22m [2m│ gzip: 3.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/colors.mjs.map                [2m 9.80 kB[22m [2m│ gzip: 1.08 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/error-boundary.mjs.map    [2m 6.53 kB[22m [2m│ gzip: 2.15 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/mode-switcher.mjs.map     [2m 5.06 kB[22m [2m│ gzip: 1.79 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/button.mjs.map            [2m 4.67 kB[22m [2m│ gzip: 1.65 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/theme-switcher.mjs.map    [2m 3.77 kB[22m [2m│ gzip: 1.46 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mconfigs/unocss.mjs.map               [2m 3.60 kB[22m [2m│ gzip: 1.42 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/layout.mjs.map            [2m 3.54 kB[22m [2m│ gzip: 1.05 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/marquee.mjs.map           [2m 3.37 kB[22m [2m│ gzip: 1.39 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/base.mjs.map                  [2m 2.93 kB[22m [2m│ gzip: 0.85 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/badge.mjs.map             [2m 2.87 kB[22m [2m│ gzip: 1.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/header.mjs.map            [2m 2.79 kB[22m [2m│ gzip: 1.15 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/effects.mjs.map               [2m 2.75 kB[22m [2m│ gzip: 0.92 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/logo.mjs.map              [2m 2.67 kB[22m [2m│ gzip: 1.13 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/typography.mjs.map        [2m 2.63 kB[22m [2m│ gzip: 1.07 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/card.mjs.map              [2m 2.51 kB[22m [2m│ gzip: 1.09 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/typography.mjs.map            [2m 2.26 kB[22m [2m│ gzip: 0.88 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/spacing.mjs.map               [2m 2.17 kB[22m [2m│ gzip: 0.68 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/input.mjs.map             [2m 2.07 kB[22m [2m│ gzip: 0.96 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/helpers.mjs.map                [2m 1.92 kB[22m [2m│ gzip: 0.82 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/colors.d.mts.map              [2m 1.83 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/icon.mjs.map              [2m 1.69 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/theme-provider.mjs.map       [2m 1.31 kB[22m [2m│ gzip: 0.66 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/mode-provider.mjs.map        [2m 1.24 kB[22m [2m│ gzip: 0.63 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/animation.mjs.map             [2m 1.11 kB[22m [2m│ gzip: 0.44 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/theme-generator.d.mts.map      [2m 1.07 kB[22m [2m│ gzip: 0.40 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/error-boundary.d.mts.map  [2m 1.04 kB[22m [2m│ gzip: 0.42 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/preview.d.mts.map         [2m 1.04 kB[22m [2m│ gzip: 0.33 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/base.d.mts.map                [2m 1.01 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/effects.d.mts.map             [2m 0.91 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/spacing.d.mts.map             [2m 0.89 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/typography.d.mts.map          [2m 0.85 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/style-compiler.d.mts.map       [2m 0.83 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/mode-context.mjs.map         [2m 0.82 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/theme-context.mjs.map        [2m 0.78 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/mode-switcher.d.mts.map   [2m 0.77 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/button.d.mts.map          [2m 0.72 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/marquee.d.mts.map         [2m 0.67 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m_virtual/_rolldown/runtime.mjs       [2m 0.66 kB[22m [2m│ gzip: 0.38 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/layout.d.mts.map          [2m 0.63 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/theme-switcher.d.mts.map  [2m 0.61 kB[22m [2m│ gzip: 0.29 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/badge.d.mts.map           [2m 0.60 kB[22m [2m│ gzip: 0.27 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/index.mjs.map             [2m 0.52 kB[22m [2m│ gzip: 0.22 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/typography.d.mts.map      [2m 0.50 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/logo.d.mts.map            [2m 0.48 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/header.d.mts.map          [2m 0.47 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/icon.d.mts.map            [2m 0.47 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/card.d.mts.map            [2m 0.45 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/input.d.mts.map           [2m 0.44 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/breakpoints.mjs.map           [2m 0.36 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/index.mjs.map                 [2m 0.35 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/icons.mjs.map                 [2m 0.33 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/animation.d.mts.map           [2m 0.31 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/mode-context.d.mts.map       [2m 0.27 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/shortcuts.mjs.map              [2m 0.27 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/index.mjs.map                [2m 0.26 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/index.mjs.map                  [2m 0.25 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/theme-context.d.mts.map      [2m 0.23 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/breakpoints.d.mts.map         [2m 0.20 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/helpers.d.mts.map              [2m 0.20 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtypes/component.d.mts.map            [2m 0.20 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/theme-provider.d.mts.map     [2m 0.19 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/mode-provider.d.mts.map      [2m 0.19 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mconfigs/unocss.d.mts.map             [2m 0.16 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mconfigs/index.mjs.map                [2m 0.15 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/shortcuts.d.mts.map            [2m 0.13 kB[22m [2m│ gzip: 0.13 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/icons.d.mts.map               [2m 0.12 kB[22m [2m│ gzip: 0.13 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcomponents/index.d.mts.map           [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mconfigs/index.d.mts.map              [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mcontext/index.d.mts.map              [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtokens/index.d.mts.map               [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mtypes/index.d.mts.map                [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22mutils/index.d.mts.map                [2m 0.10 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/colors.d.mts[22m[39m                  [2m 7.29 kB[22m [2m│ gzip: 0.84 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/base.d.mts[22m[39m                    [2m 6.98 kB[22m [2m│ gzip: 1.03 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/preview.d.mts[22m[39m             [2m 3.96 kB[22m [2m│ gzip: 1.35 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/index.d.mts[22m[39m               [2m 3.54 kB[22m [2m│ gzip: 0.73 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/error-boundary.d.mts[22m[39m      [2m 2.70 kB[22m [2m│ gzip: 0.93 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/mode-switcher.d.mts[22m[39m       [2m 2.54 kB[22m [2m│ gzip: 0.95 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/button.d.mts[22m[39m              [2m 2.53 kB[22m [2m│ gzip: 0.98 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/effects.d.mts[22m[39m                 [2m 2.52 kB[22m [2m│ gzip: 0.76 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/theme-generator.d.mts[22m[39m          [2m 2.37 kB[22m [2m│ gzip: 0.74 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/marquee.d.mts[22m[39m             [2m 1.92 kB[22m [2m│ gzip: 0.76 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/badge.d.mts[22m[39m               [2m 1.89 kB[22m [2m│ gzip: 0.77 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/layout.d.mts[22m[39m              [2m 1.80 kB[22m [2m│ gzip: 0.63 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/theme-switcher.d.mts[22m[39m      [2m 1.77 kB[22m [2m│ gzip: 0.72 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/typography.d.mts[22m[39m              [2m 1.73 kB[22m [2m│ gzip: 0.61 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/index.d.mts[22m[39m                    [2m 1.70 kB[22m [2m│ gzip: 0.51 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/typography.d.mts[22m[39m          [2m 1.69 kB[22m [2m│ gzip: 0.70 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/spacing.d.mts[22m[39m                 [2m 1.62 kB[22m [2m│ gzip: 0.47 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/card.d.mts[22m[39m                [2m 1.61 kB[22m [2m│ gzip: 0.72 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/index.d.mts[22m[39m                   [2m 1.41 kB[22m [2m│ gzip: 0.44 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/style-compiler.d.mts[22m[39m           [2m 1.38 kB[22m [2m│ gzip: 0.53 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/input.d.mts[22m[39m               [2m 1.34 kB[22m [2m│ gzip: 0.61 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/header.d.mts[22m[39m              [2m 1.30 kB[22m [2m│ gzip: 0.60 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/logo.d.mts[22m[39m                [2m 1.29 kB[22m [2m│ gzip: 0.59 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcomponents/icon.d.mts[22m[39m                [2m 1.17 kB[22m [2m│ gzip: 0.54 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcontext/index.d.mts[22m[39m                  [2m 0.77 kB[22m [2m│ gzip: 0.29 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m                          [2m 0.71 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/animation.d.mts[22m[39m               [2m 0.60 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcontext/mode-context.d.mts[22m[39m           [2m 0.51 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/helpers.d.mts[22m[39m                  [2m 0.48 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcontext/theme-context.d.mts[22m[39m          [2m 0.46 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/component.d.mts[22m[39m                [2m 0.40 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mconfigs/index.d.mts[22m[39m                  [2m 0.38 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcontext/theme-provider.d.mts[22m[39m         [2m 0.37 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mcontext/mode-provider.d.mts[22m[39m          [2m 0.36 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/breakpoints.d.mts[22m[39m             [2m 0.36 kB[22m [2m│ gzip: 0.22 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/index.d.mts[22m[39m                    [2m 0.35 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mconfigs/unocss.d.mts[22m[39m                 [2m 0.34 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/icons.d.mts[22m[39m                   [2m 0.29 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/shortcuts.d.mts[22m[39m                [2m 0.28 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m 153 files, total: 305.09 kB
+[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m1492ms[39m
+
+[34m~/apps/backend$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
+[34mℹ[39m [36m[@lightproject/backend][39m entry: [36msrc/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/error-handler.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/request-handler.ts, src/middlewares/response-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/types/worker.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/validators/route-validator.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts[39m
+[34mℹ[39m [36m[@lightproject/backend][39m tsconfig: [36mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m Cleaning 347 files
+The `tsgo` option is experimental and may change in the future.
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/generators/openapi-generator.cjs[22m      [2m15.62 kB[22m [2m│ gzip: 4.13 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/index.cjs[22m                             [2m11.90 kB[22m [2m│ gzip: 2.58 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/validators/route-validator.cjs[22m        [2m10.91 kB[22m [2m│ gzip: 2.68 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen.cjs[22m                                   [2m 8.95 kB[22m [2m│ gzip: 1.81 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/trpc/routes/test.cjs[22m                        [2m 7.29 kB[22m [2m│ gzip: 1.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/parsers/trpc-parser.cjs[22m               [2m 7.13 kB[22m [2m│ gzip: 1.84 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mservices/test.cjs[22m                                   [2m 5.59 kB[22m [2m│ gzip: 1.42 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/route-handler.cjs[22m                             [2m 5.13 kB[22m [2m│ gzip: 1.64 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/parsers/service-parser.cjs[22m            [2m 5.08 kB[22m [2m│ gzip: 1.63 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/error-handler.cjs[22m                       [2m 4.80 kB[22m [2m│ gzip: 1.50 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmain.cjs[22m                                            [2m 4.77 kB[22m [2m│ gzip: 1.52 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/discovery/http-discovery.cjs[22m          [2m 4.53 kB[22m [2m│ gzip: 1.45 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/not-found-handler.cjs[22m                   [2m 3.97 kB[22m [2m│ gzip: 1.29 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/trpc.cjs[22m                                      [2m 3.81 kB[22m [2m│ gzip: 1.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/swagger-openapi.cjs[22m                     [2m 3.58 kB[22m [2m│ gzip: 1.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/utils/performance.cjs[22m                 [2m 3.54 kB[22m [2m│ gzip: 1.27 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/trpc-router.cjs[22m                               [2m 3.37 kB[22m [2m│ gzip: 1.24 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/trust-proxy.cjs[22m                         [2m 3.26 kB[22m [2m│ gzip: 1.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/http/routes/test.cjs[22m                        [2m 3.14 kB[22m [2m│ gzip: 0.59 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/parsers/http-parser.cjs[22m               [2m 2.89 kB[22m [2m│ gzip: 1.00 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/discovery/trpc-discovery.cjs[22m          [2m 2.85 kB[22m [2m│ gzip: 1.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/gateway-middleware.cjs[22m                  [2m 2.61 kB[22m [2m│ gzip: 0.98 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/capture-response.cjs[22m                    [2m 2.52 kB[22m [2m│ gzip: 0.87 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/initialize-request.cjs[22m                  [2m 2.48 kB[22m [2m│ gzip: 0.84 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/response-handler.cjs[22m                    [2m 2.44 kB[22m [2m│ gzip: 0.86 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/http-router.cjs[22m                               [2m 2.30 kB[22m [2m│ gzip: 0.98 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/utils/cache.cjs[22m                       [2m 2.23 kB[22m [2m│ gzip: 0.90 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/request-handler.cjs[22m                     [2m 2.11 kB[22m [2m│ gzip: 0.75 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/config.cjs[22m                            [2m 1.92 kB[22m [2m│ gzip: 0.65 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mservices/base.cjs[22m                                   [2m 1.90 kB[22m [2m│ gzip: 0.74 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/cors.cjs[22m                                      [2m 1.66 kB[22m [2m│ gzip: 0.68 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mtypes/middlware.cjs[22m                                 [2m 1.42 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/trpc/index.cjs[22m                              [2m 1.31 kB[22m [2m│ gzip: 0.52 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/trpc-playground.cjs[22m                     [2m 1.13 kB[22m [2m│ gzip: 0.52 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/http/index.cjs[22m                              [2m 1.09 kB[22m [2m│ gzip: 0.47 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mindex.cjs[22m                                           [2m 1.02 kB[22m [2m│ gzip: 0.50 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/http.cjs[22m                                      [2m 0.99 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/http/routes/default.cjs[22m                     [2m 0.94 kB[22m [2m│ gzip: 0.37 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mmiddlewares/csp.cjs[22m                                 [2m 0.89 kB[22m [2m│ gzip: 0.49 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/openapi.cjs[22m                                   [2m 0.86 kB[22m [2m│ gzip: 0.44 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mrouters/trpc/routes/default.cjs[22m                     [2m 0.83 kB[22m [2m│ gzip: 0.37 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mservices/default.cjs[22m                                [2m 0.73 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/filters.cjs[22m                                   [2m 0.66 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1msample.cjs[22m                                          [2m 0.52 kB[22m [2m│ gzip: 0.31 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mclient.cjs[22m                                          [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mtypes/testing.cjs[22m                                   [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mtypes/worker.cjs[22m                                    [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[1mutils/autogen/types.cjs[22m                             [2m 0.29 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/generators/openapi-generator.cjs.map  [2m30.13 kB[22m [2m│ gzip: 7.44 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/validators/route-validator.cjs.map    [2m19.53 kB[22m [2m│ gzip: 4.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/parsers/trpc-parser.cjs.map           [2m11.95 kB[22m [2m│ gzip: 3.11 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mservices/test.cjs.map                               [2m10.99 kB[22m [2m│ gzip: 2.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/trpc/routes/test.cjs.map                    [2m 9.38 kB[22m [2m│ gzip: 1.78 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/route-handler.cjs.map                         [2m 8.64 kB[22m [2m│ gzip: 2.74 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/parsers/service-parser.cjs.map        [2m 8.20 kB[22m [2m│ gzip: 2.60 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/error-handler.cjs.map                   [2m 6.71 kB[22m [2m│ gzip: 2.29 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/index.cjs.map                         [2m 6.63 kB[22m [2m│ gzip: 2.36 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/discovery/http-discovery.cjs.map      [2m 6.54 kB[22m [2m│ gzip: 2.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/not-found-handler.cjs.map               [2m 5.74 kB[22m [2m│ gzip: 1.94 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mservices/base.cjs.map                               [2m 5.68 kB[22m [2m│ gzip: 1.59 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mtypes/middlware.cjs.map                             [2m 5.63 kB[22m [2m│ gzip: 1.65 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/utils/performance.cjs.map             [2m 5.49 kB[22m [2m│ gzip: 1.91 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/trpc-router.cjs.map                           [2m 5.48 kB[22m [2m│ gzip: 1.98 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/trpc.cjs.map                                  [2m 5.40 kB[22m [2m│ gzip: 1.89 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmain.cjs.map                                        [2m 5.11 kB[22m [2m│ gzip: 1.92 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/trust-proxy.cjs.map                     [2m 4.35 kB[22m [2m│ gzip: 1.59 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/parsers/http-parser.cjs.map           [2m 4.25 kB[22m [2m│ gzip: 1.44 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/capture-response.cjs.map                [2m 4.00 kB[22m [2m│ gzip: 1.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/discovery/trpc-discovery.cjs.map      [2m 3.88 kB[22m [2m│ gzip: 1.44 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/gateway-middleware.cjs.map              [2m 3.60 kB[22m [2m│ gzip: 1.33 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/utils/cache.cjs.map                   [2m 3.57 kB[22m [2m│ gzip: 1.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/swagger-openapi.cjs.map                 [2m 3.50 kB[22m [2m│ gzip: 1.11 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/http-router.cjs.map                           [2m 3.15 kB[22m [2m│ gzip: 1.31 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/initialize-request.cjs.map              [2m 3.03 kB[22m [2m│ gzip: 1.10 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/response-handler.cjs.map                [2m 2.89 kB[22m [2m│ gzip: 1.12 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/http/routes/test.cjs.map                    [2m 2.76 kB[22m [2m│ gzip: 0.73 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/request-handler.cjs.map                 [2m 2.10 kB[22m [2m│ gzip: 0.90 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/cors.cjs.map                                  [2m 1.68 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen.cjs.map                               [2m 1.53 kB[22m [2m│ gzip: 0.78 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/autogen/config.cjs.map                        [2m 1.48 kB[22m [2m│ gzip: 0.57 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m_virtual/_rolldown/runtime.cjs                      [2m 1.33 kB[22m [2m│ gzip: 0.64 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/trpc/index.cjs.map                          [2m 1.25 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/http.cjs.map                                  [2m 1.14 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mindex.cjs.map                                       [2m 1.13 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/openapi.cjs.map                               [2m 0.97 kB[22m [2m│ gzip: 0.44 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/trpc/routes/default.cjs.map                 [2m 0.96 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/trpc-playground.cjs.map                 [2m 0.93 kB[22m [2m│ gzip: 0.46 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mmiddlewares/csp.cjs.map                             [2m 0.92 kB[22m [2m│ gzip: 0.51 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/http/index.cjs.map                          [2m 0.85 kB[22m [2m│ gzip: 0.47 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mrouters/http/routes/default.cjs.map                 [2m 0.70 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mservices/default.cjs.map                            [2m 0.65 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mpackage.cjs                                         [2m 0.64 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mutils/filters.cjs.map                               [2m 0.56 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22msample.cjs.map                                      [2m 0.23 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22mpackage.cjs.map                                     [2m 0.11 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/initialize-request.d.cts[39m                [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/gateway-middleware.d.cts[39m                [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/not-found-handler.d.cts[39m                 [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/generators/openapi-generator.d.cts[39m    [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/response-handler.d.cts[39m                  [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/capture-response.d.cts[39m                  [2m 0.05 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/swagger-openapi.d.cts[39m                   [2m 0.04 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/validators/route-validator.d.cts[39m      [2m 0.04 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/request-handler.d.cts[39m                   [2m 0.04 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/trpc-playground.d.cts[39m                   [2m 0.04 kB[22m [2m│ gzip: 0.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/discovery/trpc-discovery.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/discovery/http-discovery.d.cts[39m        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/parsers/service-parser.d.cts[39m          [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/route-handler.d.cts[39m                           [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/error-handler.d.cts[39m                     [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/http-router.d.cts[39m                             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/parsers/trpc-parser.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/utils/performance.d.cts[39m               [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/parsers/http-parser.d.cts[39m             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/trpc-router.d.cts[39m                             [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/trust-proxy.d.cts[39m                       [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mtypes/middlware.d.cts[39m                               [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/openapi.d.cts[39m                                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen.d.cts[39m                                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/http/routes/default.d.cts[39m                   [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/filters.d.cts[39m                                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mservices/default.d.cts[39m                              [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mtypes/testing.d.cts[39m                                 [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/trpc/routes/default.d.cts[39m                   [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mtypes/worker.d.cts[39m                                  [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mclient.d.cts[39m                                        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32msample.d.cts[39m                                        [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/config.d.cts[39m                          [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/types.d.cts[39m                           [2m 0.04 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mindex.d.cts[39m                                         [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/index.d.cts[39m                           [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/trpc/index.d.cts[39m                            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/http/index.d.cts[39m                            [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/autogen/utils/cache.d.cts[39m                     [2m 0.04 kB[22m [2m│ gzip: 0.06 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmain.d.cts[39m                                          [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/http.d.cts[39m                                    [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/trpc.d.cts[39m                                    [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/http/routes/test.d.cts[39m                      [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mutils/cors.d.cts[39m                                    [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mrouters/trpc/routes/test.d.cts[39m                      [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mservices/test.d.cts[39m                                 [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mservices/base.d.cts[39m                                 [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/csp.d.cts[39m                               [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m 143 files, total: 375.10 kB
+[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m596ms[39m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/generators/openapi-generator.mjs[22m        [2m14.87 kB[22m [2m│ gzip: 4.02 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/validators/route-validator.mjs[22m          [2m10.63 kB[22m [2m│ gzip: 2.60 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/index.mjs[22m                               [2m 6.84 kB[22m [2m│ gzip: 2.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/parsers/trpc-parser.mjs[22m                 [2m 6.46 kB[22m [2m│ gzip: 1.74 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mservices/test.mjs[22m                                     [2m 5.35 kB[22m [2m│ gzip: 1.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/trpc/routes/test.mjs[22m                          [2m 5.26 kB[22m [2m│ gzip: 1.07 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen.mjs[22m                                     [2m 4.60 kB[22m [2m│ gzip: 1.36 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/parsers/service-parser.mjs[22m              [2m 4.58 kB[22m [2m│ gzip: 1.53 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/route-handler.mjs[22m                               [2m 4.48 kB[22m [2m│ gzip: 1.54 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/error-handler.mjs[22m                         [2m 3.93 kB[22m [2m│ gzip: 1.38 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/discovery/http-discovery.mjs[22m            [2m 3.91 kB[22m [2m│ gzip: 1.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/not-found-handler.mjs[22m                     [2m 3.42 kB[22m [2m│ gzip: 1.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmain.mjs[22m                                              [2m 3.37 kB[22m [2m│ gzip: 1.29 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/utils/performance.mjs[22m                   [2m 3.16 kB[22m [2m│ gzip: 1.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/trpc.mjs[22m                                        [2m 3.15 kB[22m [2m│ gzip: 1.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/swagger-openapi.mjs[22m                       [2m 3.10 kB[22m [2m│ gzip: 0.94 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/trpc-router.mjs[22m                                 [2m 2.73 kB[22m [2m│ gzip: 1.12 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/trust-proxy.mjs[22m                           [2m 2.69 kB[22m [2m│ gzip: 1.08 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/parsers/http-parser.mjs[22m                 [2m 2.58 kB[22m [2m│ gzip: 0.92 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/discovery/trpc-discovery.mjs[22m            [2m 2.24 kB[22m [2m│ gzip: 0.91 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/capture-response.mjs[22m                      [2m 2.24 kB[22m [2m│ gzip: 0.80 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/gateway-middleware.mjs[22m                    [2m 2.22 kB[22m [2m│ gzip: 0.88 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/http/routes/test.mjs[22m                          [2m 2.08 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/utils/cache.mjs[22m                         [2m 2.06 kB[22m [2m│ gzip: 0.82 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/initialize-request.mjs[22m                    [2m 2.03 kB[22m [2m│ gzip: 0.75 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/http-router.mjs[22m                                 [2m 1.95 kB[22m [2m│ gzip: 0.89 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/response-handler.mjs[22m                      [2m 1.91 kB[22m [2m│ gzip: 0.77 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mservices/base.mjs[22m                                     [2m 1.78 kB[22m [2m│ gzip: 0.69 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/request-handler.mjs[22m                       [2m 1.51 kB[22m [2m│ gzip: 0.64 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/cors.mjs[22m                                        [2m 1.29 kB[22m [2m│ gzip: 0.60 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/config.mjs[22m                              [2m 1.28 kB[22m [2m│ gzip: 0.49 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mtypes/middlware.mjs[22m                                   [2m 1.15 kB[22m [2m│ gzip: 0.49 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mindex.mjs[22m                                             [2m 0.93 kB[22m [2m│ gzip: 0.46 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/http.mjs[22m                                        [2m 0.91 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/trpc/index.mjs[22m                                [2m 0.87 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/trpc-playground.mjs[22m                       [2m 0.87 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/http/routes/default.mjs[22m                       [2m 0.77 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mmiddlewares/csp.mjs[22m                                   [2m 0.76 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/trpc/routes/default.mjs[22m                       [2m 0.73 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mrouters/http/index.mjs[22m                                [2m 0.73 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/openapi.mjs[22m                                     [2m 0.69 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mservices/default.mjs[22m                                  [2m 0.61 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/filters.mjs[22m                                     [2m 0.58 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1msample.mjs[22m                                            [2m 0.43 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mclient.mjs[22m                                            [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mtypes/testing.mjs[22m                                     [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mtypes/worker.mjs[22m                                      [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/types.mjs[22m                               [2m 0.30 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/generators/openapi-generator.mjs.map    [2m30.11 kB[22m [2m│ gzip: 7.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/validators/route-validator.mjs.map      [2m19.52 kB[22m [2m│ gzip: 4.38 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/trpc-parser.mjs.map             [2m11.92 kB[22m [2m│ gzip: 3.09 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/test.mjs.map                                 [2m10.98 kB[22m [2m│ gzip: 2.40 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/routes/test.mjs.map                      [2m 9.17 kB[22m [2m│ gzip: 1.74 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/route-handler.mjs.map                           [2m 8.67 kB[22m [2m│ gzip: 2.73 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/service-parser.mjs.map          [2m 8.19 kB[22m [2m│ gzip: 2.59 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/error-handler.mjs.map                     [2m 6.72 kB[22m [2m│ gzip: 2.27 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/index.mjs.map                           [2m 6.47 kB[22m [2m│ gzip: 2.29 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/discovery/http-discovery.mjs.map        [2m 6.43 kB[22m [2m│ gzip: 2.14 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/base.mjs.map                                 [2m 5.67 kB[22m [2m│ gzip: 1.59 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/not-found-handler.mjs.map                 [2m 5.65 kB[22m [2m│ gzip: 1.90 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mtypes/middlware.mjs.map                               [2m 5.63 kB[22m [2m│ gzip: 1.65 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/utils/performance.mjs.map               [2m 5.46 kB[22m [2m│ gzip: 1.90 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/trpc-router.mjs.map                             [2m 5.44 kB[22m [2m│ gzip: 1.94 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/trpc.mjs.map                                    [2m 5.37 kB[22m [2m│ gzip: 1.88 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmain.mjs.map                                          [2m 4.95 kB[22m [2m│ gzip: 1.81 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/trust-proxy.mjs.map                       [2m 4.36 kB[22m [2m│ gzip: 1.57 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/http-parser.mjs.map             [2m 4.22 kB[22m [2m│ gzip: 1.42 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/capture-response.mjs.map                  [2m 3.98 kB[22m [2m│ gzip: 1.30 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/discovery/trpc-discovery.mjs.map        [2m 3.81 kB[22m [2m│ gzip: 1.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/gateway-middleware.mjs.map                [2m 3.60 kB[22m [2m│ gzip: 1.33 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/utils/cache.mjs.map                     [2m 3.56 kB[22m [2m│ gzip: 1.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/swagger-openapi.mjs.map                   [2m 3.45 kB[22m [2m│ gzip: 1.09 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/http-router.mjs.map                             [2m 3.08 kB[22m [2m│ gzip: 1.28 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/initialize-request.mjs.map                [2m 3.03 kB[22m [2m│ gzip: 1.09 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/response-handler.mjs.map                  [2m 2.88 kB[22m [2m│ gzip: 1.10 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/routes/test.mjs.map                      [2m 2.63 kB[22m [2m│ gzip: 0.71 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mtypes/middlware.d.mts.map                             [2m 2.13 kB[22m [2m│ gzip: 0.72 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/request-handler.mjs.map                   [2m 2.07 kB[22m [2m│ gzip: 0.88 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/generators/openapi-generator.d.mts.map  [2m 1.78 kB[22m [2m│ gzip: 0.63 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/cors.mjs.map                                    [2m 1.64 kB[22m [2m│ gzip: 0.77 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/test.d.mts.map                               [2m 1.56 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen.mjs.map                                 [2m 1.54 kB[22m [2m│ gzip: 0.77 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/config.mjs.map                          [2m 1.44 kB[22m [2m│ gzip: 0.55 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/index.mjs.map                            [2m 1.26 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mindex.mjs.map                                         [2m 1.19 kB[22m [2m│ gzip: 0.56 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/http.mjs.map                                    [2m 1.14 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/trpc-router.d.mts.map                           [2m 1.05 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/validators/route-validator.d.mts.map    [2m 0.95 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/openapi.mjs.map                                 [2m 0.94 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/csp.mjs.map                               [2m 0.91 kB[22m [2m│ gzip: 0.51 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/routes/default.mjs.map                   [2m 0.89 kB[22m [2m│ gzip: 0.38 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/trpc-playground.mjs.map                   [2m 0.88 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/index.mjs.map                            [2m 0.86 kB[22m [2m│ gzip: 0.48 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/trpc.d.mts.map                                  [2m 0.84 kB[22m [2m│ gzip: 0.37 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/base.d.mts.map                               [2m 0.84 kB[22m [2m│ gzip: 0.36 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/route-handler.d.mts.map                         [2m 0.79 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/trpc-parser.d.mts.map           [2m 0.73 kB[22m [2m│ gzip: 0.36 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mtypes/testing.d.mts.map                               [2m 0.71 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/error-handler.d.mts.map                   [2m 0.70 kB[22m [2m│ gzip: 0.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/index.d.mts.map                          [2m 0.68 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/routes/default.mjs.map                   [2m 0.64 kB[22m [2m│ gzip: 0.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/default.mjs.map                              [2m 0.64 kB[22m [2m│ gzip: 0.39 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/service-parser.d.mts.map        [2m 0.59 kB[22m [2m│ gzip: 0.32 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/filters.mjs.map                                 [2m 0.56 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/utils/performance.d.mts.map             [2m 0.52 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/utils/cache.d.mts.map                   [2m 0.50 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mpackage.mjs                                           [2m 0.45 kB[22m [2m│ gzip: 0.27 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/routes/test.d.mts.map                    [2m 0.43 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/gateway-middleware.d.mts.map              [2m 0.41 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/types.d.mts.map                         [2m 0.40 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/http.d.mts.map                                  [2m 0.38 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/trust-proxy.d.mts.map                     [2m 0.34 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/routes/test.d.mts.map                    [2m 0.33 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/discovery/http-discovery.d.mts.map      [2m 0.33 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/not-found-handler.d.mts.map               [2m 0.31 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/initialize-request.d.mts.map              [2m 0.30 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/trpc/routes/default.d.mts.map                 [2m 0.28 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/config.d.mts.map                        [2m 0.27 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/parsers/http-parser.d.mts.map           [2m 0.26 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22msample.mjs.map                                        [2m 0.23 kB[22m [2m│ gzip: 0.19 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mtypes/worker.d.mts.map                                [2m 0.23 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mservices/default.d.mts.map                            [2m 0.22 kB[22m [2m│ gzip: 0.17 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/response-handler.d.mts.map                [2m 0.20 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/request-handler.d.mts.map                 [2m 0.20 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmain.d.mts.map                                        [2m 0.19 kB[22m [2m│ gzip: 0.15 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/http-router.d.mts.map                           [2m 0.19 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/csp.d.mts.map                             [2m 0.19 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/index.d.mts.map                          [2m 0.18 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/index.d.mts.map                         [2m 0.18 kB[22m [2m│ gzip: 0.16 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/autogen/discovery/trpc-discovery.d.mts.map      [2m 0.17 kB[22m [2m│ gzip: 0.15 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/capture-response.d.mts.map                [2m 0.17 kB[22m [2m│ gzip: 0.15 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/trpc-playground.d.mts.map                 [2m 0.17 kB[22m [2m│ gzip: 0.15 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mmiddlewares/swagger-openapi.d.mts.map                 [2m 0.16 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mrouters/http/routes/default.d.mts.map                 [2m 0.16 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/cors.d.mts.map                                  [2m 0.15 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/openapi.d.mts.map                               [2m 0.15 kB[22m [2m│ gzip: 0.14 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mutils/filters.d.mts.map                               [2m 0.14 kB[22m [2m│ gzip: 0.13 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22msample.d.mts.map                                      [2m 0.12 kB[22m [2m│ gzip: 0.12 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22mpackage.mjs.map                                       [2m 0.11 kB[22m [2m│ gzip: 0.10 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/trpc-router.d.mts[22m[39m                               [2m13.60 kB[22m [2m│ gzip: 1.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/trpc/index.d.mts[22m[39m                              [2m13.10 kB[22m [2m│ gzip: 1.11 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/trpc/routes/test.d.mts[22m[39m                        [2m 5.78 kB[22m [2m│ gzip: 0.96 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/middlware.d.mts[22m[39m                                 [2m 4.75 kB[22m [2m│ gzip: 1.33 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mservices/test.d.mts[22m[39m                                   [2m 4.34 kB[22m [2m│ gzip: 0.98 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/index.d.mts[22m[39m                             [2m 4.05 kB[22m [2m│ gzip: 1.08 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen.d.mts[22m[39m                                   [2m 4.01 kB[22m [2m│ gzip: 1.00 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/generators/openapi-generator.d.mts[22m[39m      [2m 3.74 kB[22m [2m│ gzip: 1.04 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/trpc.d.mts[22m[39m                                      [2m 3.39 kB[22m [2m│ gzip: 1.02 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/parsers/trpc-parser.d.mts[22m[39m               [2m 2.00 kB[22m [2m│ gzip: 0.61 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/validators/route-validator.d.mts[22m[39m        [2m 1.87 kB[22m [2m│ gzip: 0.67 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/route-handler.d.mts[22m[39m                             [2m 1.57 kB[22m [2m│ gzip: 0.53 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/testing.d.mts[22m[39m                                   [2m 1.51 kB[22m [2m│ gzip: 0.52 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/parsers/service-parser.d.mts[22m[39m            [2m 1.44 kB[22m [2m│ gzip: 0.55 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/http/routes/test.d.mts[22m[39m                        [2m 1.37 kB[22m [2m│ gzip: 0.33 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/error-handler.d.mts[22m[39m                       [2m 1.31 kB[22m [2m│ gzip: 0.49 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mservices/base.d.mts[22m[39m                                   [2m 1.27 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/trpc/routes/default.d.mts[22m[39m                     [2m 1.04 kB[22m [2m│ gzip: 0.45 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/types.d.mts[22m[39m                             [2m 1.02 kB[22m [2m│ gzip: 0.38 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/utils/cache.d.mts[22m[39m                       [2m 0.99 kB[22m [2m│ gzip: 0.43 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/utils/performance.d.mts[22m[39m                 [2m 0.96 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/gateway-middleware.d.mts[22m[39m                  [2m 0.84 kB[22m [2m│ gzip: 0.41 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/http.d.mts[22m[39m                                      [2m 0.78 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/config.d.mts[22m[39m                            [2m 0.75 kB[22m [2m│ gzip: 0.30 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/trust-proxy.d.mts[22m[39m                         [2m 0.73 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/discovery/http-discovery.d.mts[22m[39m          [2m 0.69 kB[22m [2m│ gzip: 0.36 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/initialize-request.d.mts[22m[39m                  [2m 0.69 kB[22m [2m│ gzip: 0.34 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/not-found-handler.d.mts[22m[39m                   [2m 0.67 kB[22m [2m│ gzip: 0.35 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/parsers/http-parser.d.mts[22m[39m               [2m 0.66 kB[22m [2m│ gzip: 0.31 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mservices/default.d.mts[22m[39m                                [2m 0.47 kB[22m [2m│ gzip: 0.28 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmain.d.mts[22m[39m                                            [2m 0.46 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/csp.d.mts[22m[39m                                 [2m 0.45 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mtypes/worker.d.mts[22m[39m                                    [2m 0.44 kB[22m [2m│ gzip: 0.26 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/response-handler.d.mts[22m[39m                    [2m 0.44 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/request-handler.d.mts[22m[39m                     [2m 0.43 kB[22m [2m│ gzip: 0.25 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/http-router.d.mts[22m[39m                               [2m 0.39 kB[22m [2m│ gzip: 0.24 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/cors.d.mts[22m[39m                                      [2m 0.38 kB[22m [2m│ gzip: 0.22 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/http/routes/default.d.mts[22m[39m                     [2m 0.35 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mrouters/http/index.d.mts[22m[39m                              [2m 0.34 kB[22m [2m│ gzip: 0.23 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/swagger-openapi.d.mts[22m[39m                     [2m 0.33 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/autogen/discovery/trpc-discovery.d.mts[22m[39m          [2m 0.33 kB[22m [2m│ gzip: 0.22 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/capture-response.d.mts[22m[39m                    [2m 0.32 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mmiddlewares/trpc-playground.d.mts[22m[39m                     [2m 0.32 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/openapi.d.mts[22m[39m                                   [2m 0.30 kB[22m [2m│ gzip: 0.20 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/filters.d.mts[22m[39m                                   [2m 0.28 kB[22m [2m│ gzip: 0.21 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1msample.d.mts[22m[39m                                          [2m 0.24 kB[22m [2m│ gzip: 0.18 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mclient.d.mts[22m[39m                                          [2m 0.17 kB[22m [2m│ gzip: 0.13 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m                                           [2m 0.09 kB[22m [2m│ gzip: 0.08 kB[22m
+[34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m 187 files, total: 448.30 kB
+[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m1402ms[39m
+
+[34m~/apps/frontend$ vp build[0m [32m◉[0m [90mcache hit, replaying[0m
+[36mvite v8.1.3 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...[33m[plugin rolldown:vite-resolve] Module "node:path" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/rotation.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "util" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "zlib" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "fs" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "fs/promises" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "path" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "timers" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[33m[plugin rolldown:vite-resolve] Module "child_process" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.[39m
+[32m✓[0m 295 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[0m[32mindex.html                                  [0m[1;2m  0.45 kB[0m[2m │ gzip:   0.29 kB[0m
+[2mdist/[0m[2massets/[0m[35mstyle-DQ5udR4U.css                   [0m[1;2m 72.96 kB[0m[2m │ gzip:   9.51 kB[0m
+[2mdist/[0m[2massets/[0m[36m__vite-browser-external-Di0qzNVG.js  [0m[1;2m  0.38 kB[0m[2m │ gzip:   0.24 kB[0m[2m │ map:     0.19 kB[0m
+[2mdist/[0m[2massets/[0m[36mrotation-DVK_78-T.js                 [0m[1;2m  1.51 kB[0m[2m │ gzip:   0.70 kB[0m[2m │ map:     1.87 kB[0m
+[2mdist/[0m[2massets/[0m[36mesm-BlcBgZqH.js                      [0m[1;2m 17.39 kB[0m[2m │ gzip:   4.71 kB[0m[2m │ map:    35.35 kB[0m
+[2mdist/[0m[2massets/[0m[36mindex-Dmi-ZT6r.js                    [0m[33;1m720.19 kB[0m[2m │ gzip: 147.36 kB[0m[2m │ map: 1,424.98 kB[0m
+
+[32m✓ built in 1.87s[39m
+
+[90m---[0m
+[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m9.97s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m

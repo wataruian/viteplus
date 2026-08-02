@@ -1,0 +1,3624 @@
+[
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/",
+    "requestType": "HTTP",
+    "serviceClass": "DefaultService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts",
+    "serviceMethod": "root"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": "ABC",
+        "name": "_stringInput",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": ["ABC", "DEF"],
+        "name": "_stringArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": 123,
+        "name": "_numberInput",
+        "required": false,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": [123, 456],
+        "name": "_numberArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": true,
+        "name": "_booleanInput",
+        "required": false,
+        "type": {
+          "base": "boolean",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": [true, false],
+        "name": "_booleanArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "boolean",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": {
+          "string": "ABC"
+        },
+        "name": "_objectStringInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "stringArray": ["ABC", "DEF"]
+        },
+        "name": "_objectStringArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "number": 123
+        },
+        "name": "_objectNumberInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "numberArray": [123, 456]
+        },
+        "name": "_objectNumberArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "boolean": true
+        },
+        "name": "_objectBooleanInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "boolean": {
+              "base": "boolean",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "booleanArray": [true, false]
+        },
+        "name": "_objectBooleanArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "booleanArray": {
+              "itemType": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "boolean": false,
+          "booleanArray": [true, false],
+          "number": 123,
+          "numberArray": [123, 456],
+          "object": {
+            "boolean": true,
+            "booleanArray": [true, false],
+            "number": 123,
+            "numberArray": [123, 456],
+            "string": "ABC",
+            "stringArray": ["ABC", "DEF"]
+          },
+          "objectArray": [
+            {
+              "boolean": true,
+              "booleanArray": [true, false],
+              "number": 123,
+              "numberArray": [123, 456],
+              "string": "ABC",
+              "stringArray": ["ABC", "DEF"]
+            },
+            {
+              "boolean": false,
+              "booleanArray": [false, true],
+              "number": 456,
+              "numberArray": [456, 789],
+              "string": "DEF",
+              "stringArray": ["DEF", "GHI"]
+            }
+          ],
+          "string": "ABC",
+          "stringArray": ["ABC", "DEF"]
+        },
+        "name": "_objectMultipleInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "boolean": {
+              "base": "boolean",
+              "kind": "primitive",
+              "required": true
+            },
+            "booleanArray": {
+              "itemType": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            },
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            },
+            "object": {
+              "kind": "object",
+              "properties": {
+                "boolean": {
+                  "base": "boolean",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "booleanArray": {
+                  "itemType": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                },
+                "number": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "numberArray": {
+                  "itemType": {
+                    "base": "number",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                },
+                "string": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "stringArray": {
+                  "itemType": {
+                    "base": "string",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                }
+              },
+              "required": true
+            },
+            "objectArray": {
+              "itemType": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  },
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  },
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  }
+                }
+              },
+              "kind": "array",
+              "required": true
+            },
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": "ABC",
+        "name": "_string",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": ["ABC", "DEF"],
+        "name": "_stringArray",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "booleanArrayOutput": {
+                "itemType": {
+                  "base": "boolean",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "booleanOutput": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "numberArrayOutput": {
+                "itemType": {
+                  "base": "number",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "numberOutput": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "objectBooleanArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectBooleanOutput": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "objectMultipleOutput": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  },
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  },
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive"
+                  },
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  },
+                  "object": {
+                    "kind": "object",
+                    "properties": {
+                      "boolean": {
+                        "base": "boolean",
+                        "kind": "primitive"
+                      },
+                      "booleanArray": {
+                        "itemType": {
+                          "base": "boolean",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      },
+                      "number": {
+                        "base": "number",
+                        "kind": "primitive"
+                      },
+                      "numberArray": {
+                        "itemType": {
+                          "base": "number",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      },
+                      "string": {
+                        "base": "string",
+                        "kind": "primitive"
+                      },
+                      "stringArray": {
+                        "itemType": {
+                          "base": "string",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      }
+                    }
+                  },
+                  "objectArray": {
+                    "itemType": {
+                      "kind": "object",
+                      "properties": {
+                        "boolean": {
+                          "base": "boolean",
+                          "kind": "primitive"
+                        },
+                        "booleanArray": {
+                          "itemType": {
+                            "base": "boolean",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        },
+                        "number": {
+                          "base": "number",
+                          "kind": "primitive"
+                        },
+                        "numberArray": {
+                          "itemType": {
+                            "base": "number",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        },
+                        "string": {
+                          "base": "string",
+                          "kind": "primitive"
+                        },
+                        "stringArray": {
+                          "itemType": {
+                            "base": "string",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        }
+                      }
+                    },
+                    "kind": "array"
+                  },
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive"
+                  },
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectNumberArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectNumberOutput": {
+                "kind": "object",
+                "properties": {
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "objectStringArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectStringOutput": {
+                "kind": "object",
+                "properties": {
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "stringArrayOutput": {
+                "itemType": {
+                  "base": "string",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "stringOutput": {
+                "base": "string",
+                "kind": "primitive"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/_check-params",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "_checkParams"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/async-fail-reject",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailReject"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/async-fail-throw",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailThrow"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/async-success",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncSuccess"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": [
+          {
+            "address": {
+              "city": "Sample City 1",
+              "houseNumber": 11,
+              "province": "Sample Province 1",
+              "street": "Sample Street 1"
+            },
+            "age": 22,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          {
+            "address": {
+              "city": "Sample City 2",
+              "houseNumber": 22,
+              "province": "Sample Province 2",
+              "street": "Sample Street 2"
+            },
+            "age": 22,
+            "firstName": "Jane",
+            "lastName": "Doe"
+          }
+        ],
+        "name": "testUsers",
+        "required": false,
+        "type": {
+          "itemType": {
+            "kind": "object",
+            "properties": {
+              "firstName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "middleName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "lastName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "age": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "address": {
+                "kind": "object",
+                "properties": {
+                  "province": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "city": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "street": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "houseNumber": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
+              }
+            }
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "testUsers": {
+                "itemType": {
+                  "kind": "object",
+                  "properties": {
+                    "firstName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "middleName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": false
+                    },
+                    "lastName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "age": {
+                      "base": "number",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "address": {
+                      "kind": "object",
+                      "properties": {
+                        "province": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "city": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "street": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": false
+                        },
+                        "houseNumber": {
+                          "base": "number",
+                          "kind": "primitive",
+                          "required": true
+                        }
+                      },
+                      "required": true
+                    }
+                  }
+                },
+                "kind": "array"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/custom-type-array",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "customTypeArray"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": {
+          "address": {
+            "city": "Sample City",
+            "houseNumber": 11,
+            "province": "Sample Province",
+            "street": "Sample Street"
+          },
+          "age": 22,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "name": "testUser",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "firstName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "middleName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            },
+            "lastName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "age": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "address": {
+              "kind": "object",
+              "properties": {
+                "province": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "city": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "street": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": false
+                },
+                "houseNumber": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                }
+              },
+              "required": true
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "testUser": {
+                "kind": "object",
+                "properties": {
+                  "firstName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "middleName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "lastName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "age": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "address": {
+                    "kind": "object",
+                    "properties": {
+                      "province": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "city": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "street": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": false
+                      },
+                      "houseNumber": {
+                        "base": "number",
+                        "kind": "primitive",
+                        "required": true
+                      }
+                    },
+                    "required": true
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/custom-type-single",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "customTypeSingle"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "firstName",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "lastName",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      }
+    ],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/get-with-param",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "getWithParam"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "firstName",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "lastName",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/hello",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "hello"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "a",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "b",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "options",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "bar": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            },
+            "foo": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      },
+      {
+        "name": "arr",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "a": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "arr": {
+                "itemType": {
+                  "base": "number",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "b": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "options": {
+                "kind": "object",
+                "properties": {
+                  "bar": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "foo": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/mixed-params",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "mixedParams"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "payload",
+        "required": true,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "prop1": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            },
+            "prop2": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "prop1": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "prop2": {
+                "base": "number",
+                "kind": "primitive"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/object-destructured",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "objectDestructured"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "options",
+        "required": true,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "bar": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            },
+            "foo": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "options": {
+                "kind": "object",
+                "properties": {
+                  "bar": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "foo": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/object-only",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "objectOnly"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [
+      {
+        "name": "var1",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "var2",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "var3",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "var1": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "var2": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "var3": {
+                "itemType": {
+                  "base": "string",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/primitives-and-array",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "primitivesAndArray"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/sync-fail-reject",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncFailReject"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/sync-fail-throw",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncFailThrow"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/test/sync-success",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncSuccess"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/default.root",
+    "requestType": "tRPC",
+    "serviceClass": "DefaultService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts",
+    "serviceMethod": "root",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": "ABC",
+        "name": "_stringInput",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": ["ABC", "DEF"],
+        "name": "_stringArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": 123,
+        "name": "_numberInput",
+        "required": false,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": [123, 456],
+        "name": "_numberArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": true,
+        "name": "_booleanInput",
+        "required": false,
+        "type": {
+          "base": "boolean",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": [true, false],
+        "name": "_booleanArrayInput",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "boolean",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      },
+      {
+        "defaultValue": {
+          "string": "ABC"
+        },
+        "name": "_objectStringInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "stringArray": ["ABC", "DEF"]
+        },
+        "name": "_objectStringArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "number": 123
+        },
+        "name": "_objectNumberInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "numberArray": [123, 456]
+        },
+        "name": "_objectNumberArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "boolean": true
+        },
+        "name": "_objectBooleanInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "boolean": {
+              "base": "boolean",
+              "kind": "primitive",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "booleanArray": [true, false]
+        },
+        "name": "_objectBooleanArrayInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "booleanArray": {
+              "itemType": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": {
+          "boolean": false,
+          "booleanArray": [true, false],
+          "number": 123,
+          "numberArray": [123, 456],
+          "object": {
+            "boolean": true,
+            "booleanArray": [true, false],
+            "number": 123,
+            "numberArray": [123, 456],
+            "string": "ABC",
+            "stringArray": ["ABC", "DEF"]
+          },
+          "objectArray": [
+            {
+              "boolean": true,
+              "booleanArray": [true, false],
+              "number": 123,
+              "numberArray": [123, 456],
+              "string": "ABC",
+              "stringArray": ["ABC", "DEF"]
+            },
+            {
+              "boolean": false,
+              "booleanArray": [false, true],
+              "number": 456,
+              "numberArray": [456, 789],
+              "string": "DEF",
+              "stringArray": ["DEF", "GHI"]
+            }
+          ],
+          "string": "ABC",
+          "stringArray": ["ABC", "DEF"]
+        },
+        "name": "_objectMultipleInput",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "boolean": {
+              "base": "boolean",
+              "kind": "primitive",
+              "required": true
+            },
+            "booleanArray": {
+              "itemType": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            },
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            },
+            "object": {
+              "kind": "object",
+              "properties": {
+                "boolean": {
+                  "base": "boolean",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "booleanArray": {
+                  "itemType": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                },
+                "number": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "numberArray": {
+                  "itemType": {
+                    "base": "number",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                },
+                "string": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "stringArray": {
+                  "itemType": {
+                    "base": "string",
+                    "kind": "primitive"
+                  },
+                  "kind": "array",
+                  "required": true
+                }
+              },
+              "required": true
+            },
+            "objectArray": {
+              "itemType": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  },
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  },
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array",
+                    "required": true
+                  }
+                }
+              },
+              "kind": "array",
+              "required": true
+            },
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "kind": "array",
+              "required": true
+            }
+          }
+        }
+      },
+      {
+        "defaultValue": "ABC",
+        "name": "_string",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "defaultValue": ["ABC", "DEF"],
+        "name": "_stringArray",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "booleanArrayOutput": {
+                "itemType": {
+                  "base": "boolean",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "booleanOutput": {
+                "base": "boolean",
+                "kind": "primitive"
+              },
+              "numberArrayOutput": {
+                "itemType": {
+                  "base": "number",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "numberOutput": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "objectBooleanArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectBooleanOutput": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "objectMultipleOutput": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive"
+                  },
+                  "booleanArray": {
+                    "itemType": {
+                      "base": "boolean",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  },
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive"
+                  },
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  },
+                  "object": {
+                    "kind": "object",
+                    "properties": {
+                      "boolean": {
+                        "base": "boolean",
+                        "kind": "primitive"
+                      },
+                      "booleanArray": {
+                        "itemType": {
+                          "base": "boolean",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      },
+                      "number": {
+                        "base": "number",
+                        "kind": "primitive"
+                      },
+                      "numberArray": {
+                        "itemType": {
+                          "base": "number",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      },
+                      "string": {
+                        "base": "string",
+                        "kind": "primitive"
+                      },
+                      "stringArray": {
+                        "itemType": {
+                          "base": "string",
+                          "kind": "primitive"
+                        },
+                        "kind": "array"
+                      }
+                    }
+                  },
+                  "objectArray": {
+                    "itemType": {
+                      "kind": "object",
+                      "properties": {
+                        "boolean": {
+                          "base": "boolean",
+                          "kind": "primitive"
+                        },
+                        "booleanArray": {
+                          "itemType": {
+                            "base": "boolean",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        },
+                        "number": {
+                          "base": "number",
+                          "kind": "primitive"
+                        },
+                        "numberArray": {
+                          "itemType": {
+                            "base": "number",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        },
+                        "string": {
+                          "base": "string",
+                          "kind": "primitive"
+                        },
+                        "stringArray": {
+                          "itemType": {
+                            "base": "string",
+                            "kind": "primitive"
+                          },
+                          "kind": "array"
+                        }
+                      }
+                    },
+                    "kind": "array"
+                  },
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive"
+                  },
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectNumberArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "numberArray": {
+                    "itemType": {
+                      "base": "number",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectNumberOutput": {
+                "kind": "object",
+                "properties": {
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "objectStringArrayOutput": {
+                "kind": "object",
+                "properties": {
+                  "stringArray": {
+                    "itemType": {
+                      "base": "string",
+                      "kind": "primitive"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              "objectStringOutput": {
+                "kind": "object",
+                "properties": {
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive"
+                  }
+                }
+              },
+              "stringArrayOutput": {
+                "itemType": {
+                  "base": "string",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "stringOutput": {
+                "base": "string",
+                "kind": "primitive"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test._checkParams",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "_checkParams",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.asyncFailReject",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailReject",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.asyncFailThrow",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailThrow",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.asyncSuccess",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncSuccess",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": [
+          {
+            "address": {
+              "city": "Sample City 1",
+              "houseNumber": 11,
+              "province": "Sample Province 1",
+              "street": "Sample Street 1"
+            },
+            "age": 22,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          {
+            "address": {
+              "city": "Sample City 2",
+              "houseNumber": 22,
+              "province": "Sample Province 2",
+              "street": "Sample Street 2"
+            },
+            "age": 22,
+            "firstName": "Jane",
+            "lastName": "Doe"
+          }
+        ],
+        "name": "testUsers",
+        "required": false,
+        "type": {
+          "itemType": {
+            "kind": "object",
+            "properties": {
+              "firstName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "middleName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "lastName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "age": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "address": {
+                "kind": "object",
+                "properties": {
+                  "province": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "city": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "street": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "houseNumber": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
+              }
+            }
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "testUsers": {
+                "itemType": {
+                  "kind": "object",
+                  "properties": {
+                    "firstName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "middleName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": false
+                    },
+                    "lastName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "age": {
+                      "base": "number",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "address": {
+                      "kind": "object",
+                      "properties": {
+                        "province": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "city": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "street": {
+                          "base": "string",
+                          "kind": "primitive",
+                          "required": false
+                        },
+                        "houseNumber": {
+                          "base": "number",
+                          "kind": "primitive",
+                          "required": true
+                        }
+                      },
+                      "required": true
+                    }
+                  }
+                },
+                "kind": "array"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.customTypeArray",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "customTypeArray",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "defaultValue": {
+          "address": {
+            "city": "Sample City",
+            "houseNumber": 11,
+            "province": "Sample Province",
+            "street": "Sample Street"
+          },
+          "age": 22,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "name": "testUser",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "firstName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "middleName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            },
+            "lastName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "age": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "address": {
+              "kind": "object",
+              "properties": {
+                "province": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "city": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "street": {
+                  "base": "string",
+                  "kind": "primitive",
+                  "required": false
+                },
+                "houseNumber": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                }
+              },
+              "required": true
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "testUser": {
+                "kind": "object",
+                "properties": {
+                  "firstName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "middleName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "lastName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "age": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "address": {
+                    "kind": "object",
+                    "properties": {
+                      "province": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "city": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "street": {
+                        "base": "string",
+                        "kind": "primitive",
+                        "required": false
+                      },
+                      "houseNumber": {
+                        "base": "number",
+                        "kind": "primitive",
+                        "required": true
+                      }
+                    },
+                    "required": true
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.customTypeSingle",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "customTypeSingle",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "firstName",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "lastName",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      }
+    ],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.getWithParam",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "getWithParam",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "firstName",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "lastName",
+        "required": false,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.hello",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "hello",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "a",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "b",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "options",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "bar": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            },
+            "foo": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      },
+      {
+        "name": "arr",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "a": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "arr": {
+                "itemType": {
+                  "base": "number",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              },
+              "b": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "options": {
+                "kind": "object",
+                "properties": {
+                  "bar": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "foo": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.mixedParams",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "mixedParams",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "payload",
+        "required": true,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "prop1": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            },
+            "prop2": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "prop1": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "prop2": {
+                "base": "number",
+                "kind": "primitive"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.objectDestructured",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "objectDestructured",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "options",
+        "required": true,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "bar": {
+              "base": "number",
+              "kind": "primitive",
+              "required": false
+            },
+            "foo": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
+            }
+          }
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "options": {
+                "kind": "object",
+                "properties": {
+                  "bar": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": false
+                  },
+                  "foo": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
+                  }
+                }
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.objectOnly",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "objectOnly",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [
+      {
+        "name": "var1",
+        "required": true,
+        "type": {
+          "base": "string",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "var2",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive"
+        }
+      },
+      {
+        "name": "var3",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "kind": "array"
+        }
+      }
+    ],
+    "method": "post",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "var1": {
+                "base": "string",
+                "kind": "primitive"
+              },
+              "var2": {
+                "base": "number",
+                "kind": "primitive"
+              },
+              "var3": {
+                "itemType": {
+                  "base": "string",
+                  "kind": "primitive"
+                },
+                "kind": "array"
+              }
+            }
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.primitivesAndArray",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "primitivesAndArray",
+    "type": "mutation"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.syncFailReject",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncFailReject",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            }
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.syncFailThrow",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncFailThrow",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "name": "output",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "message": {
+            "base": "string",
+            "kind": "primitive"
+          },
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        }
+      }
+    },
+    "path": "/trpc/test.syncSuccess",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "syncSuccess",
+    "type": "query"
+  }
+]

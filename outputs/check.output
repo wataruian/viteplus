@@ -1,0 +1,18 @@
+[34m~/packages/common$ vp check[0m [32m◉[0m [90mcache hit, replaying[0m
+[1m[94mpass:[39m[0m All 39 files are correctly formatted [2m(353ms, 8 threads)[0m
+[1m[94mpass:[39m[0m Found no warnings, lint errors, or type errors in 37 files [2m(859ms, 8 threads)[0m
+
+[34m~/packages/design-system$ vp check[0m [32m◉[0m [90mcache hit, replaying[0m
+[1m[94mpass:[39m[0m All 44 files are correctly formatted [2m(343ms, 8 threads)[0m
+[1m[94mpass:[39m[0m Found no warnings, lint errors, or type errors in 42 files [2m(813ms, 8 threads)[0m
+
+[34m~/apps/backend$ vp check[0m [32m◉[0m [90mcache hit, replaying[0m
+[1m[94mpass:[39m[0m All 62 files are correctly formatted [2m(259ms, 8 threads)[0m
+[1m[94mpass:[39m[0m Found no warnings, lint errors, or type errors in 60 files [2m(731ms, 8 threads)[0m
+
+[34m~/apps/frontend$ vp check[0m [32m◉[0m [90mcache hit, replaying[0m
+[1m[94mpass:[39m[0m All 9 files are correctly formatted [2m(369ms, 8 threads)[0m
+[1m[94mpass:[39m[0m Found no warnings, lint errors, or type errors in 6 files [2m(597ms, 8 threads)[0m
+
+[90m---[0m
+[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m6.85s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m

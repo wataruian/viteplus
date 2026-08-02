@@ -2,7 +2,7 @@ import { getEnv, isTest } from '@lightproject/common/environment';
 import type { RouteInfo } from '../types';
 import { extractServiceMetadata } from '../parsers/service-parser';
 import { extractTrpcRoutesFromFile } from '../parsers/trpc-parser';
-import { inspect } from 'node:util';
+
 import path from 'node:path';
 import { projectDir } from '../config';
 
@@ -62,17 +62,6 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             serviceMethod: route.serviceMethod,
             type,
           } as RouteInfo;
-
-          if (getEnv('AUTOGEN_DEBUG') === 'true' || getEnv('AUTOGEN_DEBUG') === '1') {
-            globalThis.console.log(
-              'trpcReturnValue',
-              inspect(returnValue, {
-                colors: true,
-                depth: null,
-              }),
-            );
-          }
-
           return returnValue;
         });
 

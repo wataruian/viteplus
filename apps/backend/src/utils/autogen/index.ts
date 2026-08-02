@@ -1,9 +1,11 @@
 import { ProgressIndicator, performanceTimer } from './utils/performance';
+import { autogenDir, routesFile } from './config';
 import type { RouteInfo } from './types';
-import { autogenDir } from './config';
 import { generateOpenApiSpec } from './generators/openapi-generator';
+import { getEnv } from '@lightproject/common/environment';
 import { getHttpRoutes } from './discovery/http-discovery';
 import { getTrpcRoutes } from './discovery/trpc-discovery';
+import { inspect } from 'node:util';
 import { logger } from '@lightproject/common/logger';
 import { validateRoutesWithLogging } from './validators/route-validator';
 
@@ -14,6 +16,21 @@ const extractAllRoutes = async (): Promise<RouteInfo[]> => {
   const trpcRoutes = await getTrpcRoutes();
 
   allRoutes.push(...httpRoutes, ...trpcRoutes);
+
+  const fs = await import('node:fs/promises');
+
+  await Promise.resolve(fs.mkdir(autogenDir, { recursive: true }));
+  await Promise.resolve(fs.writeFile(routesFile, JSON.stringify(allRoutes, undefined, 2)));
+
+  if (getEnv('AUTOGEN_DEBUG') === 'true') {
+    globalThis.console.log(
+      'allRoutes',
+      inspect(allRoutes, {
+        colors: true,
+        depth: null,
+      }),
+    );
+  }
 
   return allRoutes;
 };

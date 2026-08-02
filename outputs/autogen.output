@@ -1,0 +1,1609 @@
+[34m~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true[0m [32m◉[0m [90mcache hit, replaying[0m
+[[90m2026-08-02T04:36:32.969Z[39m] [34mINFO [39m: 🚀 Starting autogen build process...
+allRoutes [
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'DefaultService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts'[39m,
+    serviceMethod: [32m'root'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [32m'ABC'[39m,
+        description: [90mundefined[39m,
+        name: [32m'_stringInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_stringArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: [33m123[39m,
+        description: [90mundefined[39m,
+        name: [32m'_numberInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [33m123[39m, [33m456[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_numberArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: [33mtrue[39m,
+        description: [90mundefined[39m,
+        name: [32m'_booleanInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [33mtrue[39m, [33mfalse[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_booleanArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: { string: [32m'ABC'[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectStringInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectStringArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            stringArray: {
+              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: { number: [33m123[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectNumberInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { numberArray: [ [33m123[39m, [33m456[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectNumberArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            numberArray: {
+              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: { boolean: [33mtrue[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectBooleanInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { booleanArray: [ [33mtrue[39m, [33mfalse[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectBooleanArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            booleanArray: {
+              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: {
+          boolean: [33mfalse[39m,
+          booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+          number: [33m123[39m,
+          numberArray: [ [33m123[39m, [33m456[39m ],
+          object: {
+            boolean: [33mtrue[39m,
+            booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+            number: [33m123[39m,
+            numberArray: [ [33m123[39m, [33m456[39m ],
+            string: [32m'ABC'[39m,
+            stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+          },
+          objectArray: [
+            {
+              boolean: [33mtrue[39m,
+              booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+              number: [33m123[39m,
+              numberArray: [ [33m123[39m, [33m456[39m ],
+              string: [32m'ABC'[39m,
+              stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+            },
+            {
+              boolean: [33mfalse[39m,
+              booleanArray: [ [33mfalse[39m, [33mtrue[39m ],
+              number: [33m456[39m,
+              numberArray: [ [33m456[39m, [33m789[39m ],
+              string: [32m'DEF'[39m,
+              stringArray: [ [32m'DEF'[39m, [32m'GHI'[39m ]
+            }
+          ],
+          string: [32m'ABC'[39m,
+          stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+        },
+        description: [90mundefined[39m,
+        name: [32m'_objectMultipleInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            booleanArray: {
+              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            numberArray: {
+              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            object: {
+              kind: [32m'object'[39m,
+              properties: {
+                boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                booleanArray: {
+                  itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                },
+                number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                numberArray: {
+                  itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                },
+                string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                stringArray: {
+                  itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                }
+              },
+              required: [33mtrue[39m
+            },
+            objectArray: {
+              itemType: {
+                kind: [32m'object'[39m,
+                properties: {
+                  boolean: {
+                    base: [32m'boolean'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mtrue[39m
+                  },
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  },
+                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  },
+                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  stringArray: {
+                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  }
+                }
+              },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            stringArray: {
+              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: [32m'ABC'[39m,
+        description: [90mundefined[39m,
+        name: [32m'_string'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_stringArray'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              booleanArrayOutput: {
+                itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              booleanOutput: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              numberArrayOutput: {
+                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              numberOutput: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              objectBooleanArrayOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectBooleanOutput: {
+                kind: [32m'object'[39m,
+                properties: { boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m } }
+              },
+              objectMultipleOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  },
+                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  },
+                  object: {
+                    kind: [32m'object'[39m,
+                    properties: {
+                      boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                      booleanArray: {
+                        itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      },
+                      number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                      numberArray: {
+                        itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      },
+                      string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                      stringArray: {
+                        itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      }
+                    }
+                  },
+                  objectArray: {
+                    itemType: {
+                      kind: [32m'object'[39m,
+                      properties: {
+                        boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        booleanArray: {
+                          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        },
+                        number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        numberArray: {
+                          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        },
+                        string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        stringArray: {
+                          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        }
+                      }
+                    },
+                    kind: [32m'array'[39m
+                  },
+                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  stringArray: {
+                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectNumberArrayOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectNumberOutput: {
+                kind: [32m'object'[39m,
+                properties: { number: { base: [32m'number'[39m, kind: [32m'primitive'[39m } }
+              },
+              objectStringArrayOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  stringArray: {
+                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectStringOutput: {
+                kind: [32m'object'[39m,
+                properties: { string: { base: [32m'string'[39m, kind: [32m'primitive'[39m } }
+              },
+              stringArrayOutput: {
+                itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              stringOutput: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/_check-params'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'_checkParams'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          error: {
+            kind: [32m'object'[39m,
+            properties: {
+              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            }
+          },
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/async-fail-reject'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'asyncFailReject'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          error: {
+            kind: [32m'object'[39m,
+            properties: {
+              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            }
+          },
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/async-fail-throw'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'asyncFailThrow'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/async-success'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'asyncSuccess'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [
+          {
+            address: {
+              city: [32m'Sample City 1'[39m,
+              houseNumber: [33m11[39m,
+              province: [32m'Sample Province 1'[39m,
+              street: [32m'Sample Street 1'[39m
+            },
+            age: [33m22[39m,
+            firstName: [32m'John'[39m,
+            lastName: [32m'Doe'[39m
+          },
+          {
+            address: {
+              city: [32m'Sample City 2'[39m,
+              houseNumber: [33m22[39m,
+              province: [32m'Sample Province 2'[39m,
+              street: [32m'Sample Street 2'[39m
+            },
+            age: [33m22[39m,
+            firstName: [32m'Jane'[39m,
+            lastName: [32m'Doe'[39m
+          }
+        ],
+        description: [90mundefined[39m,
+        name: [32m'testUsers'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: {
+            kind: [32m'object'[39m,
+            properties: {
+              firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              middleName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+              lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              address: {
+                kind: [32m'object'[39m,
+                properties: {
+                  province: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  city: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  street: {
+                    base: [32m'string'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  },
+                  houseNumber: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+                },
+                required: [33mtrue[39m
+              }
+            }
+          },
+          kind: [32m'array'[39m
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              testUsers: {
+                itemType: {
+                  kind: [32m'object'[39m,
+                  properties: {
+                    firstName: {
+                      base: [32m'string'[39m,
+                      kind: [32m'primitive'[39m,
+                      required: [33mtrue[39m
+                    },
+                    middleName: {
+                      base: [32m'string'[39m,
+                      kind: [32m'primitive'[39m,
+                      required: [33mfalse[39m
+                    },
+                    lastName: {
+                      base: [32m'string'[39m,
+                      kind: [32m'primitive'[39m,
+                      required: [33mtrue[39m
+                    },
+                    age: {
+                      base: [32m'number'[39m,
+                      kind: [32m'primitive'[39m,
+                      required: [33mtrue[39m
+                    },
+                    address: {
+                      kind: [32m'object'[39m,
+                      properties: {
+                        province: {
+                          base: [32m'string'[39m,
+                          kind: [32m'primitive'[39m,
+                          required: [33mtrue[39m
+                        },
+                        city: {
+                          base: [32m'string'[39m,
+                          kind: [32m'primitive'[39m,
+                          required: [33mtrue[39m
+                        },
+                        street: {
+                          base: [32m'string'[39m,
+                          kind: [32m'primitive'[39m,
+                          required: [33mfalse[39m
+                        },
+                        houseNumber: {
+                          base: [32m'number'[39m,
+                          kind: [32m'primitive'[39m,
+                          required: [33mtrue[39m
+                        }
+                      },
+                      required: [33mtrue[39m
+                    }
+                  }
+                },
+                kind: [32m'array'[39m
+              }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/custom-type-array'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'customTypeArray'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: {
+          address: {
+            city: [32m'Sample City'[39m,
+            houseNumber: [33m11[39m,
+            province: [32m'Sample Province'[39m,
+            street: [32m'Sample Street'[39m
+          },
+          age: [33m22[39m,
+          firstName: [32m'John'[39m,
+          lastName: [32m'Doe'[39m
+        },
+        description: [90mundefined[39m,
+        name: [32m'testUser'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            middleName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+            lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            address: {
+              kind: [32m'object'[39m,
+              properties: {
+                province: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                city: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                street: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+                houseNumber: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+              },
+              required: [33mtrue[39m
+            }
+          }
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              testUser: {
+                kind: [32m'object'[39m,
+                properties: {
+                  firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  middleName: {
+                    base: [32m'string'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  },
+                  lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  address: {
+                    kind: [32m'object'[39m,
+                    properties: {
+                      province: {
+                        base: [32m'string'[39m,
+                        kind: [32m'primitive'[39m,
+                        required: [33mtrue[39m
+                      },
+                      city: {
+                        base: [32m'string'[39m,
+                        kind: [32m'primitive'[39m,
+                        required: [33mtrue[39m
+                      },
+                      street: {
+                        base: [32m'string'[39m,
+                        kind: [32m'primitive'[39m,
+                        required: [33mfalse[39m
+                      },
+                      houseNumber: {
+                        base: [32m'number'[39m,
+                        kind: [32m'primitive'[39m,
+                        required: [33mtrue[39m
+                      }
+                    },
+                    required: [33mtrue[39m
+                  }
+                }
+              }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/custom-type-single'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'customTypeSingle'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'firstName'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'lastName'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      }
+    ],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/get-with-param'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'getWithParam'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'firstName'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'lastName'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/hello'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'hello'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'a'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'b'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'options'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            bar: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+            foo: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+          }
+        }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'arr'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              a: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              arr: {
+                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              b: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              options: {
+                kind: [32m'object'[39m,
+                properties: {
+                  bar: {
+                    base: [32m'number'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  },
+                  foo: {
+                    base: [32m'string'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  }
+                }
+              }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/mixed-params'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'mixedParams'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'payload'[39m,
+        required: [33mtrue[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            prop1: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+            prop2: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+          }
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              prop1: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              prop2: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/object-destructured'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'objectDestructured'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'options'[39m,
+        required: [33mtrue[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            bar: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
+            foo: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+          }
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              options: {
+                kind: [32m'object'[39m,
+                properties: {
+                  bar: {
+                    base: [32m'number'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  },
+                  foo: {
+                    base: [32m'string'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mfalse[39m
+                  }
+                }
+              }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/object-only'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'objectOnly'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'var1'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'var2'[39m,
+        required: [33mtrue[39m,
+        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [90mundefined[39m,
+        description: [90mundefined[39m,
+        name: [32m'var3'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              var1: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              var2: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              var3: {
+                itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              }
+            }
+          },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/primitives-and-array'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'primitivesAndArray'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          error: {
+            kind: [32m'object'[39m,
+            properties: {
+              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            }
+          },
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/sync-fail-reject'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'syncFailReject'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          error: {
+            kind: [32m'object'[39m,
+            properties: {
+              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            }
+          },
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/sync-fail-throw'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'syncFailThrow'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/test/sync-success'[39m,
+    requestType: [32m'HTTP'[39m,
+    serviceClass: [32m'TestService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
+    serviceMethod: [32m'syncSuccess'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts'[39m,
+    input: [],
+    method: [32m'get'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+        }
+      }
+    },
+    path: [32m'/trpc/default.root'[39m,
+    requestType: [32m'tRPC'[39m,
+    serviceClass: [32m'DefaultService'[39m,
+    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts'[39m,
+    serviceMethod: [32m'root'[39m,
+    type: [32m'query'[39m
+  },
+  {
+    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts'[39m,
+    input: [
+      {
+        defaultValue: [32m'ABC'[39m,
+        description: [90mundefined[39m,
+        name: [32m'_stringInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_stringArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: [33m123[39m,
+        description: [90mundefined[39m,
+        name: [32m'_numberInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [33m123[39m, [33m456[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_numberArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: [33mtrue[39m,
+        description: [90mundefined[39m,
+        name: [32m'_booleanInput'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [33mtrue[39m, [33mfalse[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_booleanArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      },
+      {
+        defaultValue: { string: [32m'ABC'[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectStringInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectStringArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            stringArray: {
+              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: { number: [33m123[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectNumberInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { numberArray: [ [33m123[39m, [33m456[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectNumberArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            numberArray: {
+              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: { boolean: [33mtrue[39m },
+        description: [90mundefined[39m,
+        name: [32m'_objectBooleanInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          }
+        }
+      },
+      {
+        defaultValue: { booleanArray: [ [33mtrue[39m, [33mfalse[39m ] },
+        description: [90mundefined[39m,
+        name: [32m'_objectBooleanArrayInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            booleanArray: {
+              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: {
+          boolean: [33mfalse[39m,
+          booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+          number: [33m123[39m,
+          numberArray: [ [33m123[39m, [33m456[39m ],
+          object: {
+            boolean: [33mtrue[39m,
+            booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+            number: [33m123[39m,
+            numberArray: [ [33m123[39m, [33m456[39m ],
+            string: [32m'ABC'[39m,
+            stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+          },
+          objectArray: [
+            {
+              boolean: [33mtrue[39m,
+              booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
+              number: [33m123[39m,
+              numberArray: [ [33m123[39m, [33m456[39m ],
+              string: [32m'ABC'[39m,
+              stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+            },
+            {
+              boolean: [33mfalse[39m,
+              booleanArray: [ [33mfalse[39m, [33mtrue[39m ],
+              number: [33m456[39m,
+              numberArray: [ [33m456[39m, [33m789[39m ],
+              string: [32m'DEF'[39m,
+              stringArray: [ [32m'DEF'[39m, [32m'GHI'[39m ]
+            }
+          ],
+          string: [32m'ABC'[39m,
+          stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+        },
+        description: [90mundefined[39m,
+        name: [32m'_objectMultipleInput'[39m,
+        required: [33mfalse[39m,
+        type: {
+          kind: [32m'object'[39m,
+          properties: {
+            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            booleanArray: {
+              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            numberArray: {
+              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            object: {
+              kind: [32m'object'[39m,
+              properties: {
+                boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                booleanArray: {
+                  itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                },
+                number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                numberArray: {
+                  itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                },
+                string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                stringArray: {
+                  itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  kind: [32m'array'[39m,
+                  required: [33mtrue[39m
+                }
+              },
+              required: [33mtrue[39m
+            },
+            objectArray: {
+              itemType: {
+                kind: [32m'object'[39m,
+                properties: {
+                  boolean: {
+                    base: [32m'boolean'[39m,
+                    kind: [32m'primitive'[39m,
+                    required: [33mtrue[39m
+                  },
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  },
+                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  },
+                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  stringArray: {
+                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m,
+                    required: [33mtrue[39m
+                  }
+                }
+              },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            },
+            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            stringArray: {
+              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              kind: [32m'array'[39m,
+              required: [33mtrue[39m
+            }
+          }
+        }
+      },
+      {
+        defaultValue: [32m'ABC'[39m,
+        description: [90mundefined[39m,
+        name: [32m'_string'[39m,
+        required: [33mfalse[39m,
+        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+      },
+      {
+        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
+        description: [90mundefined[39m,
+        name: [32m'_stringArray'[39m,
+        required: [33mfalse[39m,
+        type: {
+          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          kind: [32m'array'[39m
+        }
+      }
+    ],
+    method: [32m'post'[39m,
+    output: {
+      description: [90mundefined[39m,
+      name: [32m'output'[39m,
+      required: [33mtrue[39m,
+      type: {
+        kind: [32m'object'[39m,
+        properties: {
+          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          data: {
+            kind: [32m'object'[39m,
+            properties: {
+              booleanArrayOutput: {
+                itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              booleanOutput: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              numberArrayOutput: {
+                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                kind: [32m'array'[39m
+              },
+              numberOutput: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              objectBooleanArrayOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectBooleanOutput: {
+                kind: [32m'object'[39m,
+                properties: { boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m } }
+              },
+              objectMultipleOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  booleanArray: {
+                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  },
+                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  },
+                  object: {
+                    kind: [32m'object'[39m,
+                    properties: {
+                      boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                      booleanArray: {
+                        itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      },
+                      number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                      numberArray: {
+                        itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      },
+                      string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                      stringArray: {
+                        itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        kind: [32m'array'[39m
+                      }
+                    }
+                  },
+                  objectArray: {
+                    itemType: {
+                      kind: [32m'object'[39m,
+                      properties: {
+                        boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        booleanArray: {
+                          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        },
+                        number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        numberArray: {
+                          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        },
+                        string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        stringArray: {
+                          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                          kind: [32m'array'[39m
+                        }
+                      }
+                    },
+                    kind: [32m'array'[39m
+                  },
+                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  stringArray: {
+                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectNumberArrayOutput: {
+                kind: [32m'object'[39m,
+                properties: {
+                  numberArray: {
+                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                    kind: [32m'array'[39m
+                  }
+                }
+              },
+              objectNumberOutput: {
+                kind: [32m'object'[39m,
+                properties: { number: { base: [32m'number'[39m, kind: [32m'primitive'[39m } }
+              },
+              objectStringArrayOutput: {
+                kind: [32m'object'[39m,
+    
+[90m---[0m
+[34;1mvp run:[0m cache hit, [32;1m4.29s[0m saved.
