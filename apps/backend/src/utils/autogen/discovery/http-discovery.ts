@@ -48,16 +48,18 @@ const processRouteProperties = async (
     return;
   }
 
-  const routePromises = expression.getProperties().map(async (property) => {
+  await expression.getProperties().reduce(async (promise, property) => {
+    await promise;
+
     if (!Node.isPropertyAssignment(property)) {
-      return null;
+      return;
     }
 
     const nameNode = property.getNameNode();
     const routePath = extractRoutePath(nameNode);
 
     if (routePath === null || routePath === '') {
-      return null;
+      return;
     }
 
     const method = extractHttpMethod(property.getInitializer());
@@ -69,7 +71,7 @@ const processRouteProperties = async (
       serviceMethod,
     );
 
-    const returnValue = {
+    routes.push({
       handlerFilePath,
       input,
       method,
@@ -79,12 +81,8 @@ const processRouteProperties = async (
       serviceClass,
       serviceFilePath,
       serviceMethod,
-    } as RouteInfo;
-    return returnValue;
-  });
-
-  const discoveredRoutes = await Promise.all(routePromises);
-  routes.push(...discoveredRoutes.filter((route): route is RouteInfo => route !== null));
+    });
+  }, Promise.resolve());
 };
 
 const getHttpRoutes = async (): Promise<RouteInfo[]> => {
@@ -110,7 +108,9 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
       ? rawImportedRouteNames
       : rawImportedRouteNames.filter((name) => name !== 'testRoutes');
 
-  const discoveryPromises = importedRouteNames.map(async (routeName) => {
+  await importedRouteNames.reduce(async (promise, routeName) => {
+    await promise;
+
     const handlerFilePath = `${projectDir}/src/routers/http/routes/${routeName.replace('Routes', '').toLowerCase()}.ts`;
     const handlerFile = project.getSourceFile(handlerFilePath);
 
@@ -138,9 +138,7 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
     }
 
     await processRouteProperties(expression, handlerFilePath, routes);
-  });
-
-  await Promise.all(discoveryPromises);
+  }, Promise.resolve());
 
   return routes;
 };

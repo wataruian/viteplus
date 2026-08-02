@@ -1,14 +1,14 @@
 ~/packages/common$ vp fmt
 ~/packages/design-system$ vp fmt
-Finished in 596ms on 39 files using 8 threads.
-Finished in 689ms on 44 files using 8 threads.
+Finished in 657ms on 39 files using 8 threads.
+Finished in 748ms on 44 files using 8 threads.
 
 ~/apps/backend$ vp fmt
 
-Finished in 415ms on 62 files using 8 threads.
+Finished in 421ms on 62 files using 8 threads.
 
 ~/apps/frontend$ vp fmt
-Finished in 596ms on 9 files using 8 threads.
+Finished in 708ms on 9 files using 8 threads.
 
 ---
 vp run: 0/4 cache hit (0%). (Run `vp run --last-details` for full details)

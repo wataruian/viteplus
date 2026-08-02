@@ -50,11 +50,29 @@ function executeCommand() {
 
   local commandOutputPath="${outputsDir}/${commandOutputFile}"
   local commandSuccess="false"
+  local exitStatus=""
   
-  local exitStatus=0
   if [[ "${debug}" == "true" ]]; then
-    FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" 2>&1 | tee "${commandOutputPath}"
-    exitStatus="${PIPESTATUS[0]}"
+    node -e '
+      const { spawn } = require("child_process");
+      const fs = require("fs");
+      const [outputFile, cmd, ...args] = process.argv.slice(1);
+      const writer = fs.createWriteStream(outputFile);
+      const child = spawn(cmd, args, { env: { ...process.env, FORCE_COLOR: "1", CLICOLOR_FORCE: "1" } });
+      child.stdout.on("data", (data) => {
+        process.stdout.write(data);
+        writer.write(data);
+      });
+      child.stderr.on("data", (data) => {
+        process.stderr.write(data);
+        writer.write(data);
+      });
+      child.on("close", (code) => {
+        writer.end();
+        process.exit(code || 0);
+      });
+    ' "${commandOutputPath}" "${arguments[@]}"
+    exitStatus="${?}"
   else
     FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" > "${commandOutputPath}" 2>&1
     exitStatus="${?}"
@@ -103,14 +121,14 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
-# executeCommand vp run -r root
+executeCommand vp run -r root
 
-# executeCommand vp run -r check
-# executeCommand vp run -r format
-# executeCommand vp run -r lint
-# executeCommand vp run -r type-check
-# executeCommand vp run -r build
-# executeCommand vp run -r test
+executeCommand vp run -r check
+executeCommand vp run -r format
+executeCommand vp run -r lint
+executeCommand vp run -r type-check
+executeCommand vp run -r build
+executeCommand vp run -r test
 
 executeCommand vp run -r autogen "${debug}"
 

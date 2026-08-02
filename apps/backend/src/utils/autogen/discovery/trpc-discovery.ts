@@ -20,9 +20,13 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
         ? rawRouteFiles
         : rawRouteFiles.filter((file) => file !== 'test.ts');
 
-    const filePromises = routeFiles.map(async (file) => {
+    const allRoutes: RouteInfo[] = [];
+
+    await routeFiles.reduce(async (filePromise, file) => {
+      await filePromise;
+
       if (!file.endsWith('.ts') || file.endsWith('.d.ts')) {
-        return [];
+        return;
       }
 
       const filePath = path.join(trpcRouterDir, file);
@@ -31,14 +35,16 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
         const routerPrefix = path.basename(file, '.ts');
         const fileRoutes = extractTrpcRoutesFromFile(filePath, routerPrefix);
 
-        const routePromises = fileRoutes.map(async (route) => {
+        await fileRoutes.reduce(async (routePromise, route) => {
+          await routePromise;
+
           if (
             route.serviceClass === undefined ||
             route.serviceMethod === undefined ||
             route.serviceClass === '' ||
             route.serviceMethod === ''
           ) {
-            return null;
+            return;
           }
 
           const {
@@ -50,7 +56,7 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
           const type: 'mutation' | 'query' = route.procedureType ?? 'query';
           const method = type === 'mutation' ? 'post' : 'get';
 
-          const returnValue = {
+          allRoutes.push({
             handlerFilePath: filePath,
             input: serviceInput,
             method,
@@ -61,19 +67,14 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
             serviceFilePath,
             serviceMethod: route.serviceMethod,
             type,
-          } as RouteInfo;
-          return returnValue;
-        });
-
-        const discoveredRoutes = await Promise.all(routePromises);
-        return discoveredRoutes.filter((r): r is RouteInfo => r !== null);
+          });
+        }, Promise.resolve());
       } catch {
-        return [];
+        // Ignore file parsing/loading error and continue
       }
-    });
+    }, Promise.resolve());
 
-    const allFileRoutes = await Promise.all(filePromises);
-    return allFileRoutes.flat();
+    return allRoutes;
   } catch {
     return [];
   }

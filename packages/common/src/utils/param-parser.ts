@@ -6,9 +6,7 @@ import {
   SyntaxKind,
   type Type,
 } from 'ts-morph';
-import type { ParameterInfo, ParameterMetadata, ServiceConstructor } from '../types/parameter';
-import { isCallable, isRecord } from '../validators/validate';
-import { extractParamNamesAndDefaults } from './invoker';
+import type { ParameterMetadata } from '../types/parameter';
 
 interface ParsedType {
   base?: string;
@@ -1282,78 +1280,12 @@ const fallbackToAstOnly = (methodDecl: MethodDeclaration): ParameterMetadata[] =
     };
   });
 
-const isServiceConstructor = (val: unknown): val is ServiceConstructor => typeof val === 'function';
-
-const extractParameterMetadata = async (
+const extractParameterMetadata = (
   methodDecl: MethodDeclaration,
-  serviceFilePath: string,
-  serviceClassName: string,
-  methodName: string,
-): Promise<ParameterMetadata[]> => {
-  try {
-    const serviceModule: unknown = await import(serviceFilePath);
-
-    if (!isRecord(serviceModule)) {
-      return fallbackToAstOnly(methodDecl);
-    }
-
-    const ServiceClass = serviceModule[serviceClassName];
-
-    if (!isServiceConstructor(ServiceClass)) {
-      return fallbackToAstOnly(methodDecl);
-    }
-
-    const dummyContext = {
-      req: {},
-      res: {},
-    };
-    const instance: Record<string, unknown> = new ServiceClass(dummyContext, {});
-    const runtimeMethod = instance[methodName];
-
-    if (!isCallable(runtimeMethod)) {
-      return fallbackToAstOnly(methodDecl);
-    }
-
-    const invokerParams: ParameterInfo[] = extractParamNamesAndDefaults(runtimeMethod);
-
-    const astParams = methodDecl.getParameters();
-
-    const mergedParams: ParameterMetadata[] = invokerParams.map((invokerParam, i) => {
-      const astParam = astParams[i];
-
-      let paramName = invokerParam.name;
-
-      if (paramName.trim().startsWith('{') && paramName.trim().endsWith('}')) {
-        paramName = i === 0 ? 'payload' : `payload${i + 1}`;
-      }
-
-      if (i >= astParams.length) {
-        return {
-          name: paramName,
-          required: true,
-          type: 'unknown',
-        };
-      }
-
-      const typeText = astParam.getTypeNode()?.getText() ?? astParam.getType().getText();
-      const parsed = parseTypeString(typeText);
-      const normalized =
-        typeof parsed === 'string' ? { base: parsed, kind: 'primitive' as const } : parsed;
-
-      return {
-        defaultValue: extractDefaultValue(astParam.getInitializer()),
-        description: extractJsDocDescription(methodDecl, paramName),
-        name: paramName,
-        required: !astParam.isOptional(),
-        type: parsedTypeToSerializedType(normalized, astParam),
-      };
-    });
-
-    return mergedParams;
-  } catch {
-    return fallbackToAstOnly(methodDecl);
-  }
-};
+  _serviceFilePath: string,
+  _serviceClassName: string,
+  _methodName: string,
+): ParameterMetadata[] => fallbackToAstOnly(methodDecl);
 
 export type { ParsedType, SerializedType };
 export {
@@ -1391,6 +1323,5 @@ export {
   createOutputMetadata,
   extractReturnTypeMetadata,
   fallbackToAstOnly,
-  isServiceConstructor,
   parseTypeString,
 };
