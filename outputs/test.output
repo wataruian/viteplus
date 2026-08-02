@@ -3,26 +3,26 @@
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/Users/wataru/lightproject/viteplus/packages/common[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32m✓[39m tests/env.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 29[2mms[22m[39m
- [32m✓[39m tests/invoker.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 18[2mms[22m[39m
- [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
- [32m✓[39m tests/logger.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/env.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/invoker.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/logger.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 17[2mms[22m[39m
 [90mstdout[2m | tests/telemetry.test.ts[2m > [22m[2minitializeTelemetry[2m > [22m[2muses caller-supplied service metadata
-[22m[39m[[90m2026-08-02T04:35:42.597Z[39m] [34mINFO [39m: OpenTelemetry initialized
+[22m[39m[[90m2026-08-02T04:41:47.514Z[39m] [34mINFO [39m: OpenTelemetry initialized
 [90m{
      "endpoint": "http://localhost:4318"
 }[39m
 
  [32m✓[39m tests/telemetry.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
- [32m✓[39m tests/param-parser.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5367[2mms[22m[39m
-   [33m[2m✓[22m[39m returns an object-shaped output schema for object returns [33m 1908[2mms[22m[39m
-   [33m[2m✓[22m[39m serializes nested object values from identifiers as object schemas [33m 1810[2mms[22m[39m
-   [33m[2m✓[22m[39m serializes optional array parameters referenced in returned objects as arrays [33m 1643[2mms[22m[39m
+ [32m✓[39m tests/param-parser.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4278[2mms[22m[39m
+   [33m[2m✓[22m[39m returns an object-shaped output schema for object returns [33m 1580[2mms[22m[39m
+   [33m[2m✓[22m[39m serializes nested object values from identifiers as object schemas [33m 1373[2mms[22m[39m
+   [33m[2m✓[22m[39m serializes optional array parameters referenced in returned objects as arrays [33m 1319[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
 [2m      Tests [22m [1m[32m84 passed[39m[22m[90m (84)[39m
-[2m   Start at [22m 12:35:41
-[2m   Duration [22m 7.17s[2m (transform 1.45s, setup 0ms, import 2.80s, tests 5.47s, environment 9ms)[22m
+[2m   Start at [22m 12:41:46
+[2m   Duration [22m 5.53s[2m (transform 835ms, setup 0ms, import 1.84s, tests 4.34s, environment 5ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 ------------------|---------|----------|---------|---------|--------------------
@@ -75,12 +75,12 @@ File              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/Users/wataru/lightproject/viteplus/packages/design-system[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32m✓[39m tests/button.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/button.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
-[2m   Start at [22m 12:35:41
-[2m   Duration [22m 1.31s[2m (transform 95ms, setup 0ms, import 175ms, tests 12ms, environment 0ms)[22m
+[2m   Start at [22m 12:41:46
+[2m   Duration [22m 785ms[2m (transform 56ms, setup 0ms, import 90ms, tests 4ms, environment 0ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
@@ -140,77 +140,130 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/Users/wataru/lightproject/viteplus/apps/backend[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32m✓[39m tests/autogen/config.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 1213[2mms[22m[39m
-       [33m[2m✓[22m[39m should create project instance [33m 1202[2mms[22m[39m
+ [32m✓[39m tests/autogen/config.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 947[2mms[22m[39m
+       [33m[2m✓[22m[39m should create project instance [33m 941[2mms[22m[39m
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.354Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.360Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-reject
-[22m[39m[[90m2026-08-02T04:35:54.781Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:54.806Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.372Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.393Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
-[22m[39m[[90m2026-08-02T04:35:54.829Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:54.879Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.444Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785645717439,
+          "url": "/trpc/test.asyncFailReject"
+     },
+     "sessionId": "2f56d564-06a4-43b0-ad2d-3c477065d02f"
+}[39m
+[[90m2026-08-02T04:41:57.445Z[39m] [34mINFO [39m: Registering response data
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717439,
+          "url": "/trpc/test.asyncFailReject"
+     },
+     "sessionId": "2f56d564-06a4-43b0-ad2d-3c477065d02f"
+}[39m
+[[90m2026-08-02T04:41:57.445Z[39m] [34mINFO [39m: Incoming [GET] request
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717439,
+          "url": "/trpc/test.asyncFailReject"
+     },
+     "sessionId": "2f56d564-06a4-43b0-ad2d-3c477065d02f",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785645717439,
+     "url": "/trpc/test.asyncFailReject"
+}[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-reject
-[22m[39m[[90m2026-08-02T04:35:54.871Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.466Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645354870,
+          "startTime": 1785645717465,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "3c1c721e-2860-4ff6-ac3d-f4aed3e97cba"
+     "sessionId": "ab2138c9-f6bb-4e6e-b6a6-95b784e827b9"
 }[39m
-[[90m2026-08-02T04:35:54.879Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.466Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645354870,
+          "startTime": 1785645717465,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "3c1c721e-2860-4ff6-ac3d-f4aed3e97cba"
+     "sessionId": "ab2138c9-f6bb-4e6e-b6a6-95b784e827b9"
 }[39m
-[[90m2026-08-02T04:35:54.879Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.467Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645354870,
+          "startTime": 1785645717465,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "3c1c721e-2860-4ff6-ac3d-f4aed3e97cba",
+     "sessionId": "ab2138c9-f6bb-4e6e-b6a6-95b784e827b9",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645354870,
+     "startTime": 1785645717465,
      "url": "/api/test/async-fail-reject"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-reject
-[22m[39m[[90m2026-08-02T04:35:54.902Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailReject:
+[22m[39m[[90m2026-08-02T04:41:57.480Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailReject:
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.483Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailReject:
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.483Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
+[90m{
+     "error": {
+          "message": "Async error. Simulated promise rejection",
+          "name": "TRPCError",
+          "stack": "Error: Async error. Simulated promise rejection\n    at asyncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:165:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:34\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:17)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:18\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:18)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:18\n    at resolveResponse (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1998:28)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/node-http-gyWQuCv2.mjs:208:22"
+     }
+}[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-reject
-[22m[39m[[90m2026-08-02T04:35:54.904Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[22m[39m[[90m2026-08-02T04:41:57.482Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645354870,
+          "startTime": 1785645717465,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "3c1c721e-2860-4ff6-ac3d-f4aed3e97cba",
+     "sessionId": "ab2138c9-f6bb-4e6e-b6a6-95b784e827b9",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645354870,
+     "startTime": 1785645717465,
      "url": "/api/test/async-fail-reject",
-     "duration": 33,
-     "endTime": 1785645354903,
+     "duration": 17,
+     "endTime": 1785645717482,
      "error": {
           "message": "Async error. Simulated promise rejection",
           "name": "Error",
@@ -221,123 +274,70 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-throw
-[22m[39m[[90m2026-08-02T04:35:54.941Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:54.964Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
-[22m[39m[[90m2026-08-02T04:35:54.943Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785645354943,
-          "url": "/trpc/test.asyncFailReject"
-     },
-     "sessionId": "5b647a45-6a29-423f-8a46-e8ce8cfdbc49"
-}[39m
-[[90m2026-08-02T04:35:54.945Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645354943,
-          "url": "/trpc/test.asyncFailReject"
-     },
-     "sessionId": "5b647a45-6a29-423f-8a46-e8ce8cfdbc49"
-}[39m
-[[90m2026-08-02T04:35:54.946Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645354943,
-          "url": "/trpc/test.asyncFailReject"
-     },
-     "sessionId": "5b647a45-6a29-423f-8a46-e8ce8cfdbc49",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785645354943,
-     "url": "/trpc/test.asyncFailReject"
-}[39m
+[22m[39m[[90m2026-08-02T04:41:57.507Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.509Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.002Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.510Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355002,
+          "startTime": 1785645717510,
           "url": "/api/test/async-fail-throw"
      },
-     "sessionId": "3af425d3-e6eb-41bb-9443-da50d8939dc8"
+     "sessionId": "4ed02959-f7d2-4746-9e10-8d40775fcf23"
 }[39m
-[[90m2026-08-02T04:35:55.002Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.510Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355002,
+          "startTime": 1785645717510,
           "url": "/api/test/async-fail-throw"
      },
-     "sessionId": "3af425d3-e6eb-41bb-9443-da50d8939dc8"
+     "sessionId": "4ed02959-f7d2-4746-9e10-8d40775fcf23"
 }[39m
-[[90m2026-08-02T04:35:55.014Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.510Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355002,
+          "startTime": 1785645717510,
           "url": "/api/test/async-fail-throw"
      },
-     "sessionId": "3af425d3-e6eb-41bb-9443-da50d8939dc8",
+     "sessionId": "4ed02959-f7d2-4746-9e10-8d40775fcf23",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355002,
+     "startTime": 1785645717510,
      "url": "/api/test/async-fail-throw"
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.015Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailReject:
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.016Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
-[90m{
-     "error": {
-          "message": "Async error. Simulated promise rejection",
-          "name": "TRPCError",
-          "stack": "Error: Async error. Simulated promise rejection\n    at asyncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:165:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:34\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:17)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:18\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:18)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:18\n    at resolveResponse (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1998:28)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/node-http-gyWQuCv2.mjs:208:22"
-     }
-}[39m
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-throw
+[22m[39m[[90m2026-08-02T04:41:57.515Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailThrow:
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.023Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailThrow:
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.024Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[22m[39m[[90m2026-08-02T04:41:57.516Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355002,
+          "startTime": 1785645717510,
           "url": "/api/test/async-fail-throw"
      },
-     "sessionId": "3af425d3-e6eb-41bb-9443-da50d8939dc8",
+     "sessionId": "4ed02959-f7d2-4746-9e10-8d40775fcf23",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645355002,
+     "startTime": 1785645717510,
      "url": "/api/test/async-fail-throw",
-     "duration": 22,
-     "endTime": 1785645355024,
+     "duration": 5,
+     "endTime": 1785645717515,
      "error": {
           "message": "Async error. Simulated throwing exception",
           "name": "Error",
@@ -348,133 +348,255 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-success
-[22m[39m[[90m2026-08-02T04:35:55.029Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.031Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.531Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.534Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
+[22m[39m[[90m2026-08-02T04:41:57.549Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.551Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
+[22m[39m[[90m2026-08-02T04:41:57.556Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785645717556,
+          "url": "/trpc/test.asyncFailThrow"
+     },
+     "sessionId": "4e920e9b-e825-4054-a424-6194b336d5b5"
+}[39m
+[[90m2026-08-02T04:41:57.556Z[39m] [34mINFO [39m: Registering response data
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717556,
+          "url": "/trpc/test.asyncFailThrow"
+     },
+     "sessionId": "4e920e9b-e825-4054-a424-6194b336d5b5"
+}[39m
+[[90m2026-08-02T04:41:57.556Z[39m] [34mINFO [39m: Incoming [GET] request
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717556,
+          "url": "/trpc/test.asyncFailThrow"
+     },
+     "sessionId": "4e920e9b-e825-4054-a424-6194b336d5b5",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785645717556,
+     "url": "/trpc/test.asyncFailThrow"
+}[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-success
-[22m[39m[[90m2026-08-02T04:35:55.033Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.552Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355033,
+          "startTime": 1785645717552,
           "url": "/api/test/async-success"
      },
-     "sessionId": "ead5d4c1-5102-44a6-9330-68bd83bbb73d"
+     "sessionId": "2fe6331d-6568-449b-8001-52b38198575e"
 }[39m
-[[90m2026-08-02T04:35:55.034Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.552Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355033,
+          "startTime": 1785645717552,
           "url": "/api/test/async-success"
      },
-     "sessionId": "ead5d4c1-5102-44a6-9330-68bd83bbb73d"
+     "sessionId": "2fe6331d-6568-449b-8001-52b38198575e"
 }[39m
-[[90m2026-08-02T04:35:55.034Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.552Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355033,
+          "startTime": 1785645717552,
           "url": "/api/test/async-success"
      },
-     "sessionId": "ead5d4c1-5102-44a6-9330-68bd83bbb73d",
+     "sessionId": "2fe6331d-6568-449b-8001-52b38198575e",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355033,
+     "startTime": 1785645717552,
      "url": "/api/test/async-success"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/async-success
-[22m[39m[[90m2026-08-02T04:35:55.036Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.566Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355033,
+          "startTime": 1785645717552,
           "url": "/api/test/async-success"
      },
-     "sessionId": "ead5d4c1-5102-44a6-9330-68bd83bbb73d",
+     "sessionId": "2fe6331d-6568-449b-8001-52b38198575e",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355033,
+     "startTime": 1785645717552,
      "url": "/api/test/async-success",
-     "duration": 3,
-     "endTime": 1785645355036,
+     "duration": 14,
+     "endTime": 1785645717566,
+     "statusCode": 200
+}[39m
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
+[22m[39m[[90m2026-08-02T04:41:57.583Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailThrow:
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
+[22m[39m[[90m2026-08-02T04:41:57.584Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
+[90m{
+     "error": {
+          "message": "Async error. Simulated throwing exception",
+          "name": "TRPCError",
+          "stack": "Error: Async error. Simulated throwing exception\n    at asyncFailThrow (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:170:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:34\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:17)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:18\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:18)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:18\n    at resolveResponse (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1998:28)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/node-http-gyWQuCv2.mjs:208:22"
+     }
+}[39m
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-reject
+[22m[39m[[90m2026-08-02T04:41:57.583Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.587Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
+[22m[39m[[90m2026-08-02T04:41:57.592Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.594Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
+[22m[39m[[90m2026-08-02T04:41:57.596Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785645717595,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "89b9c4b4-a90c-4779-978d-35c008f43f6b"
+}[39m
+[[90m2026-08-02T04:41:57.596Z[39m] [34mINFO [39m: Registering response data
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717595,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "89b9c4b4-a90c-4779-978d-35c008f43f6b"
+}[39m
+[[90m2026-08-02T04:41:57.596Z[39m] [34mINFO [39m: Incoming [GET] request
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717595,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "89b9c4b4-a90c-4779-978d-35c008f43f6b",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785645717595,
+     "url": "/trpc/test.asyncSuccess"
+}[39m
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
+[22m[39m[[90m2026-08-02T04:41:57.599Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717595,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "89b9c4b4-a90c-4779-978d-35c008f43f6b",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "responseHandler",
+     "startTime": 1785645717595,
+     "url": "/trpc/test.asyncSuccess",
+     "duration": 4,
+     "endTime": 1785645717599,
      "statusCode": 200
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-reject
-[22m[39m[[90m2026-08-02T04:35:55.040Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.042Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-reject
-[22m[39m[[90m2026-08-02T04:35:55.044Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.588Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355044,
+          "startTime": 1785645717588,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "2f866143-3a5c-4c16-96e4-74be6741862b"
+     "sessionId": "eb36fcdb-bf6f-4e7e-a4c3-7389e83ca96b"
 }[39m
-[[90m2026-08-02T04:35:55.044Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.588Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355044,
+          "startTime": 1785645717588,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "2f866143-3a5c-4c16-96e4-74be6741862b"
+     "sessionId": "eb36fcdb-bf6f-4e7e-a4c3-7389e83ca96b"
 }[39m
-[[90m2026-08-02T04:35:55.063Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.597Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355044,
+          "startTime": 1785645717588,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "2f866143-3a5c-4c16-96e4-74be6741862b",
+     "sessionId": "eb36fcdb-bf6f-4e7e-a4c3-7389e83ca96b",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355044,
+     "startTime": 1785645717588,
      "url": "/api/test/sync-fail-reject"
 }[39m
-[[90m2026-08-02T04:35:55.065Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailReject:
+[[90m2026-08-02T04:41:57.600Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailReject:
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-reject
-[22m[39m[[90m2026-08-02T04:35:55.066Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[22m[39m[[90m2026-08-02T04:41:57.603Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355044,
+          "startTime": 1785645717588,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "2f866143-3a5c-4c16-96e4-74be6741862b",
+     "sessionId": "eb36fcdb-bf6f-4e7e-a4c3-7389e83ca96b",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645355044,
+     "startTime": 1785645717588,
      "url": "/api/test/sync-fail-reject",
-     "duration": 21,
-     "endTime": 1785645355065,
+     "duration": 15,
+     "endTime": 1785645717603,
      "error": {
           "message": "Sync error. Simulated promise rejection",
           "name": "Error",
@@ -484,126 +606,126 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
      "statusCode": 500
 }[39m
 
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.078Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.093Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.605Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.607Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.097Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.099Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.096Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785645355096,
-          "url": "/api/test/sync-fail-throw"
-     },
-     "sessionId": "b2491676-6b41-4802-b409-524f89287f90"
-}[39m
-[[90m2026-08-02T04:35:55.098Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785645355096,
-          "url": "/api/test/sync-fail-throw"
-     },
-     "sessionId": "b2491676-6b41-4802-b409-524f89287f90"
-}[39m
-[[90m2026-08-02T04:35:55.098Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785645355096,
-          "url": "/api/test/sync-fail-throw"
-     },
-     "sessionId": "b2491676-6b41-4802-b409-524f89287f90",
-     "method": "GET",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785645355096,
-     "url": "/api/test/sync-fail-throw"
-}[39m
-[[90m2026-08-02T04:35:55.099Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailThrow:
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.101Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.610Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785645355101,
-          "url": "/trpc/test.asyncFailThrow"
+          "startTime": 1785645717610,
+          "url": "/trpc/test.syncFailReject"
      },
-     "sessionId": "bac301fc-ad8b-4d59-b023-29e23cc86594"
+     "sessionId": "70783acd-0d26-48ad-ba45-8e880b519506"
 }[39m
-[[90m2026-08-02T04:35:55.101Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.610Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355101,
-          "url": "/trpc/test.asyncFailThrow"
+          "startTime": 1785645717610,
+          "url": "/trpc/test.syncFailReject"
      },
-     "sessionId": "bac301fc-ad8b-4d59-b023-29e23cc86594"
+     "sessionId": "70783acd-0d26-48ad-ba45-8e880b519506"
 }[39m
-[[90m2026-08-02T04:35:55.102Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.610Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355101,
-          "url": "/trpc/test.asyncFailThrow"
+          "startTime": 1785645717610,
+          "url": "/trpc/test.syncFailReject"
      },
-     "sessionId": "bac301fc-ad8b-4d59-b023-29e23cc86594",
+     "sessionId": "70783acd-0d26-48ad-ba45-8e880b519506",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785645355101,
-     "url": "/trpc/test.asyncFailThrow"
+     "startTime": 1785645717610,
+     "url": "/trpc/test.syncFailReject"
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.104Z[39m] [31mERROR[39m: Error in route handler for TestService.asyncFailThrow:
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.612Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailReject:
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.105Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
+[22m[39m[[90m2026-08-02T04:41:57.613Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
 [90m{
      "error": {
-          "message": "Async error. Simulated throwing exception",
+          "message": "Sync error. Simulated promise rejection",
           "name": "TRPCError",
-          "stack": "Error: Async error. Simulated throwing exception\n    at asyncFailThrow (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:170:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:34\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:17)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:18\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:18)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:18)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:18\n    at resolveResponse (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1998:28)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/node-http-gyWQuCv2.mjs:208:22"
+          "stack": "Error: Sync error. Simulated promise rejection\n    at syncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:275:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
      }
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-throw
-[22m[39m[[90m2026-08-02T04:35:55.100Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[22m[39m[[90m2026-08-02T04:41:57.615Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.617Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-throw
+[22m[39m[[90m2026-08-02T04:41:57.619Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785645717619,
+          "url": "/api/test/sync-fail-throw"
+     },
+     "sessionId": "e1312e49-6cbd-4aeb-9ea3-28e654367f01"
+}[39m
+[[90m2026-08-02T04:41:57.619Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355096,
+          "startTime": 1785645717619,
           "url": "/api/test/sync-fail-throw"
      },
-     "sessionId": "b2491676-6b41-4802-b409-524f89287f90",
+     "sessionId": "e1312e49-6cbd-4aeb-9ea3-28e654367f01"
+}[39m
+[[90m2026-08-02T04:41:57.619Z[39m] [34mINFO [39m: Incoming [GET] request
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785645717619,
+          "url": "/api/test/sync-fail-throw"
+     },
+     "sessionId": "e1312e49-6cbd-4aeb-9ea3-28e654367f01",
+     "method": "GET",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785645717619,
+     "url": "/api/test/sync-fail-throw"
+}[39m
+[[90m2026-08-02T04:41:57.619Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailThrow:
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-fail-throw
+[22m[39m[[90m2026-08-02T04:41:57.620Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785645717619,
+          "url": "/api/test/sync-fail-throw"
+     },
+     "sessionId": "e1312e49-6cbd-4aeb-9ea3-28e654367f01",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645355096,
+     "startTime": 1785645717619,
      "url": "/api/test/sync-fail-throw",
-     "duration": 4,
-     "endTime": 1785645355100,
+     "duration": 1,
+     "endTime": 1785645717620,
      "error": {
           "message": "Sync error. Simulated throwing exception",
           "name": "Error",
@@ -614,317 +736,195 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-success
-[22m[39m[[90m2026-08-02T04:35:55.110Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.113Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.110Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.113Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.623Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.625Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-success
-[22m[39m[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.628Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355115,
+          "startTime": 1785645717628,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "6c4f5c1a-ab89-4275-81d8-0867e229d4aa"
+     "sessionId": "5ffa9910-f7bf-449b-b0c7-110210cd8182"
 }[39m
-[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.628Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355115,
+          "startTime": 1785645717628,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "6c4f5c1a-ab89-4275-81d8-0867e229d4aa"
+     "sessionId": "5ffa9910-f7bf-449b-b0c7-110210cd8182"
 }[39m
-[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.628Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355115,
+          "startTime": 1785645717628,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "6c4f5c1a-ab89-4275-81d8-0867e229d4aa",
+     "sessionId": "5ffa9910-f7bf-449b-b0c7-110210cd8182",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355115,
+     "startTime": 1785645717628,
      "url": "/api/test/sync-success"
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785645355115,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "5245380d-639c-4977-8532-9ceafea439fe"
-}[39m
-[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355115,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "5245380d-639c-4977-8532-9ceafea439fe"
-}[39m
-[[90m2026-08-02T04:35:55.115Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355115,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "5245380d-639c-4977-8532-9ceafea439fe",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785645355115,
-     "url": "/trpc/test.asyncSuccess"
-}[39m
-
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/sync-success
-[22m[39m[[90m2026-08-02T04:35:55.116Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.629Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355115,
+          "startTime": 1785645717628,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "6c4f5c1a-ab89-4275-81d8-0867e229d4aa",
+     "sessionId": "5ffa9910-f7bf-449b-b0c7-110210cd8182",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355115,
+     "startTime": 1785645717628,
      "url": "/api/test/sync-success",
      "duration": 1,
-     "endTime": 1785645355116,
+     "endTime": 1785645717629,
      "statusCode": 200
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.asyncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.118Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355115,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "5245380d-639c-4977-8532-9ceafea439fe",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "responseHandler",
-     "startTime": 1785645355115,
-     "url": "/trpc/test.asyncSuccess",
-     "duration": 3,
-     "endTime": 1785645355118,
-     "statusCode": 200
-}[39m
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.126Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.129Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.130Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785645355130,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "9b1ed1db-399d-401f-b026-7ac2b47b866c"
-}[39m
-[[90m2026-08-02T04:35:55.131Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355130,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "9b1ed1db-399d-401f-b026-7ac2b47b866c"
-}[39m
-[[90m2026-08-02T04:35:55.131Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355130,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "9b1ed1db-399d-401f-b026-7ac2b47b866c",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785645355130,
-     "url": "/trpc/test.syncFailReject"
-}[39m
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.133Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailReject:
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailReject
-[22m[39m[[90m2026-08-02T04:35:55.133Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
-[90m{
-     "error": {
-          "message": "Sync error. Simulated promise rejection",
-          "name": "TRPCError",
-          "stack": "Error: Sync error. Simulated promise rejection\n    at syncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:275:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
-     }
-}[39m
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/
+[22m[39m[[90m2026-08-02T04:41:57.632Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.634Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/
-[22m[39m[[90m2026-08-02T04:35:55.137Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.140Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/
-[22m[39m[[90m2026-08-02T04:35:55.142Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.635Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355142,
+          "startTime": 1785645717635,
           "url": "/api/"
      },
-     "sessionId": "de00eb77-6eb8-4543-a0fe-9a6b42656315"
+     "sessionId": "50c18591-d3ec-4774-b912-317c204b3f33"
 }[39m
-[[90m2026-08-02T04:35:55.142Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.635Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355142,
+          "startTime": 1785645717635,
           "url": "/api/"
      },
-     "sessionId": "de00eb77-6eb8-4543-a0fe-9a6b42656315"
+     "sessionId": "50c18591-d3ec-4774-b912-317c204b3f33"
 }[39m
-[[90m2026-08-02T04:35:55.142Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.636Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355142,
+          "startTime": 1785645717635,
           "url": "/api/"
      },
-     "sessionId": "de00eb77-6eb8-4543-a0fe-9a6b42656315",
+     "sessionId": "50c18591-d3ec-4774-b912-317c204b3f33",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355142,
+     "startTime": 1785645717635,
      "url": "/api/"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/
-[22m[39m[[90m2026-08-02T04:35:55.143Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.636Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355142,
+          "startTime": 1785645717635,
           "url": "/api/"
      },
-     "sessionId": "de00eb77-6eb8-4543-a0fe-9a6b42656315",
+     "sessionId": "50c18591-d3ec-4774-b912-317c204b3f33",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355142,
+     "startTime": 1785645717635,
      "url": "/api/",
      "duration": 1,
-     "endTime": 1785645355143,
+     "endTime": 1785645717636,
      "statusCode": 200
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/unknown
-[22m[39m[[90m2026-08-02T04:35:55.150Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.153Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.640Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.642Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /api/test/unknown
-[22m[39m[[90m2026-08-02T04:35:55.155Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.644Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355154,
+          "startTime": 1785645717643,
           "url": "/api/test/unknown"
      },
-     "sessionId": "7bb69c05-fa32-4415-8607-d2d0979e9e60"
+     "sessionId": "24244429-4048-457d-a4f7-9d8b6ab76232"
 }[39m
-[[90m2026-08-02T04:35:55.155Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.644Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355154,
+          "startTime": 1785645717643,
           "url": "/api/test/unknown"
      },
-     "sessionId": "7bb69c05-fa32-4415-8607-d2d0979e9e60"
+     "sessionId": "24244429-4048-457d-a4f7-9d8b6ab76232"
 }[39m
-[[90m2026-08-02T04:35:55.155Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.644Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355154,
+          "startTime": 1785645717643,
           "url": "/api/test/unknown"
      },
-     "sessionId": "7bb69c05-fa32-4415-8607-d2d0979e9e60",
+     "sessionId": "24244429-4048-457d-a4f7-9d8b6ab76232",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355154,
+     "startTime": 1785645717643,
      "url": "/api/test/unknown"
 }[39m
-[[90m2026-08-02T04:35:55.156Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[[90m2026-08-02T04:41:57.645Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355154,
+          "startTime": 1785645717643,
           "url": "/api/test/unknown"
      },
-     "sessionId": "7bb69c05-fa32-4415-8607-d2d0979e9e60",
+     "sessionId": "24244429-4048-457d-a4f7-9d8b6ab76232",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645355154,
+     "startTime": 1785645717643,
      "url": "/api/test/unknown",
      "duration": 2,
-     "endTime": 1785645355156,
+     "endTime": 1785645717645,
      "error": {
           "message": "Not Found",
           "name": "NotFoundError",
@@ -935,65 +935,65 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mno access[2m > [22m[2mshould handle GET /api/test/sync-success
-[22m[39m[[90m2026-08-02T04:35:55.161Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.164Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.655Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.657Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mno access[2m > [22m[2mshould handle GET /api/test/sync-success
-[22m[39m[[90m2026-08-02T04:35:55.166Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.659Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355166,
+          "startTime": 1785645717659,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "94168291-ee15-48d7-b94b-c1fe0e4084db"
+     "sessionId": "40816e51-ee41-42cf-b02e-f08b275a4bdb"
 }[39m
-[[90m2026-08-02T04:35:55.166Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.659Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355166,
+          "startTime": 1785645717659,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "94168291-ee15-48d7-b94b-c1fe0e4084db"
+     "sessionId": "40816e51-ee41-42cf-b02e-f08b275a4bdb"
 }[39m
-[[90m2026-08-02T04:35:55.166Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.659Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355166,
+          "startTime": 1785645717659,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "94168291-ee15-48d7-b94b-c1fe0e4084db",
+     "sessionId": "40816e51-ee41-42cf-b02e-f08b275a4bdb",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355166,
+     "startTime": 1785645717659,
      "url": "/api/test/sync-success"
 }[39m
-[[90m2026-08-02T04:35:55.168Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
+[[90m2026-08-02T04:41:57.659Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355166,
+          "startTime": 1785645717659,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "94168291-ee15-48d7-b94b-c1fe0e4084db",
+     "sessionId": "40816e51-ee41-42cf-b02e-f08b275a4bdb",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785645355166,
+     "startTime": 1785645717659,
      "url": "/api/test/sync-success",
-     "duration": 2,
-     "endTime": 1785645355168,
+     "duration": 0,
+     "endTime": 1785645717659,
      "error": {
           "message": "Access denied",
           "name": "AccessDeniedError",
@@ -1004,58 +1004,58 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/_check-params
-[22m[39m[[90m2026-08-02T04:35:55.174Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.177Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.663Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.666Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.217Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.221Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.665Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.670Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.223Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.673Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785645355223,
+          "startTime": 1785645717673,
           "url": "/trpc/test.syncFailThrow"
      },
-     "sessionId": "b8736468-3769-4fdf-a8f9-f06da4169576"
+     "sessionId": "93385022-1cd2-40e6-8c3f-101ede089913"
 }[39m
-[[90m2026-08-02T04:35:55.223Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.673Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355223,
+          "startTime": 1785645717673,
           "url": "/trpc/test.syncFailThrow"
      },
-     "sessionId": "b8736468-3769-4fdf-a8f9-f06da4169576"
+     "sessionId": "93385022-1cd2-40e6-8c3f-101ede089913"
 }[39m
-[[90m2026-08-02T04:35:55.223Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.673Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355223,
+          "startTime": 1785645717673,
           "url": "/trpc/test.syncFailThrow"
      },
-     "sessionId": "b8736468-3769-4fdf-a8f9-f06da4169576",
+     "sessionId": "93385022-1cd2-40e6-8c3f-101ede089913",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785645355223,
+     "startTime": 1785645717673,
      "url": "/trpc/test.syncFailThrow"
 }[39m
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.225Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailThrow:
+[22m[39m[[90m2026-08-02T04:41:57.675Z[39m] [31mERROR[39m: Error in route handler for TestService.syncFailThrow:
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncFailThrow
-[22m[39m[[90m2026-08-02T04:35:55.225Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
+[22m[39m[[90m2026-08-02T04:41:57.676Z[39m] [31mERROR[39m: Error in TRPC route wrapper:
 [90m{
      "error": {
           "message": "Sync error. Simulated throwing exception",
@@ -1065,509 +1065,503 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 }[39m
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.231Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.234Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.682Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.684Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.235Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.686Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785645355235,
+          "startTime": 1785645717686,
           "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "3b1e314c-a48d-44eb-bb18-03b0dd10b9ff"
+     "sessionId": "22bccda8-1300-4d50-acc2-e649512a6286"
 }[39m
-[[90m2026-08-02T04:35:55.235Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.686Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355235,
+          "startTime": 1785645717686,
           "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "3b1e314c-a48d-44eb-bb18-03b0dd10b9ff"
+     "sessionId": "22bccda8-1300-4d50-acc2-e649512a6286"
 }[39m
-[[90m2026-08-02T04:35:55.235Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.687Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355235,
+          "startTime": 1785645717686,
           "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "3b1e314c-a48d-44eb-bb18-03b0dd10b9ff",
+     "sessionId": "22bccda8-1300-4d50-acc2-e649512a6286",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785645355235,
+     "startTime": 1785645717686,
      "url": "/trpc/test.syncSuccess"
 }[39m
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.syncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.237Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.688Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355235,
+          "startTime": 1785645717686,
           "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "3b1e314c-a48d-44eb-bb18-03b0dd10b9ff",
+     "sessionId": "22bccda8-1300-4d50-acc2-e649512a6286",
      "method": "GET",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785645355235,
+     "startTime": 1785645717686,
      "url": "/trpc/test.syncSuccess",
      "duration": 2,
-     "endTime": 1785645355237,
+     "endTime": 1785645717688,
      "statusCode": 200
 }[39m
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/default.root
-[22m[39m[[90m2026-08-02T04:35:55.240Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.243Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.702Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.704Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/default.root
-[22m[39m[[90m2026-08-02T04:35:55.244Z[39m] [34mINFO [39m: Initializing [GET] request session
+[22m[39m[[90m2026-08-02T04:41:57.706Z[39m] [34mINFO [39m: Initializing [GET] request session
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785645355244,
+          "startTime": 1785645717706,
           "url": "/trpc/default.root"
      },
-     "sessionId": "fc80133e-b887-4db3-914b-f56f2c1c847f"
+     "sessionId": "f141a489-61dc-4780-b7bc-ad037d4b89c2"
 }[39m
-[[90m2026-08-02T04:35:55.244Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.706Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355244,
+          "startTime": 1785645717706,
           "url": "/trpc/default.root"
      },
-     "sessionId": "fc80133e-b887-4db3-914b-f56f2c1c847f"
+     "sessionId": "f141a489-61dc-4780-b7bc-ad037d4b89c2"
 }[39m
-[[90m2026-08-02T04:35:55.245Z[39m] [34mINFO [39m: Incoming [GET] request
+[[90m2026-08-02T04:41:57.706Z[39m] [34mINFO [39m: Incoming [GET] request
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355244,
+          "startTime": 1785645717706,
           "url": "/trpc/default.root"
      },
-     "sessionId": "fc80133e-b887-4db3-914b-f56f2c1c847f",
+     "sessionId": "f141a489-61dc-4780-b7bc-ad037d4b89c2",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785645355244,
+     "startTime": 1785645717706,
      "url": "/trpc/default.root"
 }[39m
 
 [90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/default.root
-[22m[39m[[90m2026-08-02T04:35:55.246Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.708Z[39m] [34mINFO [39m: Response completed for [GET] request with status: 200
 [90m{
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785645355244,
+          "startTime": 1785645717706,
           "url": "/trpc/default.root"
      },
-     "sessionId": "fc80133e-b887-4db3-914b-f56f2c1c847f",
+     "sessionId": "f141a489-61dc-4780-b7bc-ad037d4b89c2",
      "method": "GET",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785645355244,
+     "startTime": 1785645717706,
      "url": "/trpc/default.root",
      "duration": 2,
-     "endTime": 1785645355246,
+     "endTime": 1785645717708,
      "statusCode": 200
 }[39m
 
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.unknown
+[22m[39m[[90m2026-08-02T04:41:57.721Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.723Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.unknown
+[22m[39m[[90m2026-08-02T04:41:57.725Z[39m] [34mINFO [39m: Initializing [GET] request session
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785645717725,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "f2c3abb3-e4f1-4e94-8ea3-9381bffe4acb"
+}[39m
+[[90m2026-08-02T04:41:57.725Z[39m] [34mINFO [39m: Registering response data
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717725,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "f2c3abb3-e4f1-4e94-8ea3-9381bffe4acb"
+}[39m
+[[90m2026-08-02T04:41:57.725Z[39m] [34mINFO [39m: Incoming [GET] request
+[90m{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785645717725,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "f2c3abb3-e4f1-4e94-8ea3-9381bffe4acb",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785645717725,
+     "url": "/trpc/test.unknown"
+}[39m
+
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/_check-params
-[22m[39m[[90m2026-08-02T04:35:55.195Z[39m] [34mINFO [39m: Initializing [POST] request session
+[22m[39m[[90m2026-08-02T04:41:57.757Z[39m] [34mINFO [39m: Initializing [POST] request session
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355195,
+          "startTime": 1785645717756,
           "url": "/api/test/_check-params"
      },
-     "sessionId": "64a01789-775e-40d0-bda2-1de319dbacd1"
+     "sessionId": "2b654035-346e-4cd9-8165-65574cd7c4bf"
 }[39m
-[[90m2026-08-02T04:35:55.195Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.757Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355195,
+          "startTime": 1785645717756,
           "url": "/api/test/_check-params"
      },
-     "sessionId": "64a01789-775e-40d0-bda2-1de319dbacd1"
+     "sessionId": "2b654035-346e-4cd9-8165-65574cd7c4bf"
 }[39m
-[[90m2026-08-02T04:35:55.195Z[39m] [34mINFO [39m: Incoming [POST] request
+[[90m2026-08-02T04:41:57.757Z[39m] [34mINFO [39m: Incoming [POST] request
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355195,
+          "startTime": 1785645717756,
           "url": "/api/test/_check-params"
      },
-     "sessionId": "64a01789-775e-40d0-bda2-1de319dbacd1",
+     "sessionId": "2b654035-346e-4cd9-8165-65574cd7c4bf",
      "method": "POST",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355195,
+     "startTime": 1785645717756,
      "url": "/api/test/_check-params"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/_check-params
-[22m[39m[[90m2026-08-02T04:35:55.244Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.758Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355195,
+          "startTime": 1785645717756,
           "url": "/api/test/_check-params"
      },
-     "sessionId": "64a01789-775e-40d0-bda2-1de319dbacd1",
+     "sessionId": "2b654035-346e-4cd9-8165-65574cd7c4bf",
      "method": "POST",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355195,
+     "startTime": 1785645717756,
      "url": "/api/test/_check-params",
-     "duration": 48,
-     "endTime": 1785645355243,
+     "duration": 2,
+     "endTime": 1785645717758,
      "statusCode": 200
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.unknown
-[22m[39m[[90m2026-08-02T04:35:55.250Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.253Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mhas access[2m > [22m[2mshould handle GET /trpc/test.unknown
-[22m[39m[[90m2026-08-02T04:35:55.254Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785645355254,
-          "url": "/trpc/test.unknown"
-     },
-     "sessionId": "a55c2210-bd49-4d5d-a694-46a4f88f5cbc"
-}[39m
-[[90m2026-08-02T04:35:55.254Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355254,
-          "url": "/trpc/test.unknown"
-     },
-     "sessionId": "a55c2210-bd49-4d5d-a694-46a4f88f5cbc"
-}[39m
-[[90m2026-08-02T04:35:55.255Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355254,
-          "url": "/trpc/test.unknown"
-     },
-     "sessionId": "a55c2210-bd49-4d5d-a694-46a4f88f5cbc",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785645355254,
-     "url": "/trpc/test.unknown"
-}[39m
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/hello
+[22m[39m[[90m2026-08-02T04:41:57.766Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.769Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/hello
-[22m[39m[[90m2026-08-02T04:35:55.253Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.276Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/hello
-[22m[39m[[90m2026-08-02T04:35:55.297Z[39m] [34mINFO [39m: Initializing [POST] request session
+[22m[39m[[90m2026-08-02T04:41:57.772Z[39m] [34mINFO [39m: Initializing [POST] request session
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355297,
+          "startTime": 1785645717772,
           "url": "/api/test/hello"
      },
-     "sessionId": "f1f9a8b7-cc80-40c0-b4fb-1f984fef0eba"
+     "sessionId": "67f0a45d-176e-4bca-be80-a249a83c5d3c"
 }[39m
-[[90m2026-08-02T04:35:55.297Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.772Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355297,
+          "startTime": 1785645717772,
           "url": "/api/test/hello"
      },
-     "sessionId": "f1f9a8b7-cc80-40c0-b4fb-1f984fef0eba"
+     "sessionId": "67f0a45d-176e-4bca-be80-a249a83c5d3c"
 }[39m
-[[90m2026-08-02T04:35:55.297Z[39m] [34mINFO [39m: Incoming [POST] request
+[[90m2026-08-02T04:41:57.772Z[39m] [34mINFO [39m: Incoming [POST] request
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355297,
+          "startTime": 1785645717772,
           "url": "/api/test/hello"
      },
-     "sessionId": "f1f9a8b7-cc80-40c0-b4fb-1f984fef0eba",
+     "sessionId": "67f0a45d-176e-4bca-be80-a249a83c5d3c",
      "method": "POST",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355297,
+     "startTime": 1785645717772,
      "url": "/api/test/hello"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/hello
-[22m[39m[[90m2026-08-02T04:35:55.300Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.773Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355297,
+          "startTime": 1785645717772,
           "url": "/api/test/hello"
      },
-     "sessionId": "f1f9a8b7-cc80-40c0-b4fb-1f984fef0eba",
+     "sessionId": "67f0a45d-176e-4bca-be80-a249a83c5d3c",
      "method": "POST",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355297,
+     "startTime": 1785645717772,
      "url": "/api/test/hello",
-     "duration": 2,
-     "endTime": 1785645355299,
+     "duration": 1,
+     "endTime": 1785645717773,
      "statusCode": 200
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/mixed-params
-[22m[39m[[90m2026-08-02T04:35:55.304Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.307Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+[22m[39m[[90m2026-08-02T04:41:57.782Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.785Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/mixed-params
-[22m[39m[[90m2026-08-02T04:35:55.311Z[39m] [34mINFO [39m: Initializing [POST] request session
+[22m[39m[[90m2026-08-02T04:41:57.787Z[39m] [34mINFO [39m: Initializing [POST] request session
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355310,
+          "startTime": 1785645717787,
           "url": "/api/test/mixed-params"
      },
-     "sessionId": "75fb27b5-261a-4ced-b1ee-2cf2150be846"
+     "sessionId": "5b8ac465-6e15-4884-8d71-3404dcdbbfe2"
 }[39m
-[[90m2026-08-02T04:35:55.311Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.787Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355310,
+          "startTime": 1785645717787,
           "url": "/api/test/mixed-params"
      },
-     "sessionId": "75fb27b5-261a-4ced-b1ee-2cf2150be846"
+     "sessionId": "5b8ac465-6e15-4884-8d71-3404dcdbbfe2"
 }[39m
-[[90m2026-08-02T04:35:55.311Z[39m] [34mINFO [39m: Incoming [POST] request
+[[90m2026-08-02T04:41:57.788Z[39m] [34mINFO [39m: Incoming [POST] request
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355310,
+          "startTime": 1785645717787,
           "url": "/api/test/mixed-params"
      },
-     "sessionId": "75fb27b5-261a-4ced-b1ee-2cf2150be846",
+     "sessionId": "5b8ac465-6e15-4884-8d71-3404dcdbbfe2",
      "method": "POST",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355310,
+     "startTime": 1785645717787,
      "url": "/api/test/mixed-params"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/mixed-params
-[22m[39m[[90m2026-08-02T04:35:55.312Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.788Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355310,
+          "startTime": 1785645717787,
           "url": "/api/test/mixed-params"
      },
-     "sessionId": "75fb27b5-261a-4ced-b1ee-2cf2150be846",
+     "sessionId": "5b8ac465-6e15-4884-8d71-3404dcdbbfe2",
      "method": "POST",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785645355310,
+     "startTime": 1785645717787,
      "url": "/api/test/mixed-params",
-     "duration": 2,
-     "endTime": 1785645355312,
+     "duration": 1,
+     "endTime": 1785645717788,
      "statusCode": 200
 }[39m
 
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mno access[2m > [22m[2mshould handle GET /trpc/test.syncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.307Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.314Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.trpc.test.ts[2m > [22m[2mtRPC[2m > [22m[2mno access[2m > [22m[2mshould handle GET /trpc/test.syncSuccess
-[22m[39m[[90m2026-08-02T04:35:55.315Z[39m] [34mINFO [39m: Initializing [GET] request session
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785645355315,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "3cb53afd-b4af-4370-8b99-180f86c38829"
-}[39m
-[[90m2026-08-02T04:35:55.315Z[39m] [34mINFO [39m: Registering response data
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355315,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "3cb53afd-b4af-4370-8b99-180f86c38829"
-}[39m
-[[90m2026-08-02T04:35:55.316Z[39m] [34mINFO [39m: Incoming [GET] request
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355315,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "3cb53afd-b4af-4370-8b99-180f86c38829",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785645355315,
-     "url": "/trpc/test.syncSuccess"
-}[39m
-[[90m2026-08-02T04:35:55.318Z[39m] [31mERROR[39m: Error [GET]: Error Response [GET]
-[90m{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785645355315,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "3cb53afd-b4af-4370-8b99-180f86c38829",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "errorHandler",
-     "startTime": 1785645355315,
-     "url": "/trpc/test.syncSuccess",
-     "duration": 3,
-     "endTime": 1785645355318,
-     "error": {
-          "message": "Access denied",
-          "name": "AccessDeniedError",
-          "stack": "No stack trace available",
-          "statusCode": 403
-     },
-     "statusCode": 403
-}[39m
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-destructured
+[22m[39m[[90m2026-08-02T04:41:57.791Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.794Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-destructured
-[22m[39m[[90m2026-08-02T04:35:55.319Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[[90m2026-08-02T04:35:55.322Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
-
-[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-destructured
-[22m[39m[[90m2026-08-02T04:35:55.324Z[39m] [34mINFO [39m: Initializing [POST] request session
+[22m[39m[[90m2026-08-02T04:41:57.796Z[39m] [34mINFO [39m: Initializing [POST] request session
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785645355324,
+          "startTime": 1785645717795,
           "url": "/api/test/object-destructured"
      },
-     "sessionId": "4090cb2a-42f6-4eb7-aaba-a695eb7b5b89"
+     "sessionId": "f54048f7-49c2-46c1-a0d2-26faf0370273"
 }[39m
-[[90m2026-08-02T04:35:55.324Z[39m] [34mINFO [39m: Registering response data
+[[90m2026-08-02T04:41:57.796Z[39m] [34mINFO [39m: Registering response data
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355324,
+          "startTime": 1785645717795,
           "url": "/api/test/object-destructured"
      },
-     "sessionId": "4090cb2a-42f6-4eb7-aaba-a695eb7b5b89"
+     "sessionId": "f54048f7-49c2-46c1-a0d2-26faf0370273"
 }[39m
-[[90m2026-08-02T04:35:55.324Z[39m] [34mINFO [39m: Incoming [POST] request
+[[90m2026-08-02T04:41:57.796Z[39m] [34mINFO [39m: Incoming [POST] request
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355324,
+          "startTime": 1785645717795,
           "url": "/api/test/object-destructured"
      },
-     "sessionId": "4090cb2a-42f6-4eb7-aaba-a695eb7b5b89",
+     "sessionId": "f54048f7-49c2-46c1-a0d2-26faf0370273",
      "method": "POST",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785645355324,
+     "startTime": 1785645717795,
      "url": "/api/test/object-destructured"
 }[39m
 
 [90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-destructured
-[22m[39m[[90m2026-08-02T04:35:55.325Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
+[22m[39m[[90m2026-08-02T04:41:57.796Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
 [90m{
      "metadata": {
           "method": "POST",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785645355324,
+          "startTime": 1785645717795,
           "url": "/api/test/object-destructured"
      },
-     "sessionId": "4090cb2a-42f6-4eb7-aaba-a695eb7b5b89",
+     "sessionId": "f54048f7-49c2-46c1-a0d2-26faf0370273",
      "method": "POST",
      "requestType": "HTTP",
      "source": "responseHandler",
-     
+     "startTime": 1785645717795,
+     "url": "/api/test/object-destructured",
+     "duration": 1,
+     "endTime": 1785645717796,
+     "statusCode": 200
+}[39m
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-only
+[22m[39m[[90m2026-08-02T04:41:57.799Z[39m] [34mINFO [39m: 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[[90m2026-08-02T04:41:57.801Z[39m] [34mINFO [39m: 📚 Swagger UI: http://localhost:3000/docs
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-only
+[22m[39m[[90m2026-08-02T04:41:57.802Z[39m] [34mINFO [39m: Initializing [POST] request session
+[90m{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785645717802,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "198f5aee-05ac-4d42-a8d7-0d632a0b8184"
+}[39m
+[[90m2026-08-02T04:41:57.802Z[39m] [34mINFO [39m: Registering response data
+[90m{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785645717802,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "198f5aee-05ac-4d42-a8d7-0d632a0b8184"
+}[39m
+[[90m2026-08-02T04:41:57.802Z[39m] [34mINFO [39m: Incoming [POST] request
+[90m{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785645717802,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "198f5aee-05ac-4d42-a8d7-0d632a0b8184",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785645717802,
+     "url": "/api/test/object-only"
+}[39m
+
+[90mstdout[2m | tests/sample.http.test.ts[2m > [22m[2mHTTP[2m > [22m[2mtest param endpoints[2m > [22m[2mshould handle POST /api/test/object-only
+[22m[39m[[90m2026-08-02T04:41:57.803Z[39m] [34mINFO [39m: Response completed for [POST] request with status: 200
+[90m{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785645717802,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "198f5aee-05ac-4d42-a8d7-0d632a0b8184",
+     "method": "POST",
+     "requestType": "HT
 [34m~/apps/frontend$ vp test[0m [32m◉[0m [90mcache hit, replaying[0m
 
 [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/Users/wataru/lightproject/viteplus/apps/frontend[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
 [2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
-[2m   Start at [22m 12:36:27
-[2m   Duration [22m 438ms[2m (transform 77ms, setup 0ms, import 112ms, tests 3ms, environment 0ms)[22m
+[2m   Start at [22m 12:42:25
+[2m   Duration [22m 467ms[2m (transform 77ms, setup 0ms, import 118ms, tests 4ms, environment 0ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 ------------|---------|----------|---------|---------|-------------------
@@ -1580,4 +1574,4 @@ File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ------------|---------|----------|---------|---------|-------------------
 
 [90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m49.79s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m42.50s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m

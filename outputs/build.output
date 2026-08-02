@@ -1,5 +1,5 @@
 [34m~/packages/common$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
-[34mℹ[39m [33m[@lightproject/common][39m entry: [33msrc/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/invoker.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts[39m
+[34mℹ[39m [33m[@lightproject/common][39m entry: [33msrc/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/validators/index.ts, src/validators/validate.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/invoker.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts[39m
 [34mℹ[39m [33m[@lightproject/common][39m tsconfig: [33mtsconfig.json[39m
 [34mℹ[39m Build start
 [34mℹ[39m Cleaning 213 files
@@ -92,7 +92,7 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32menvironment/env.d.cts[39m           [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m [2mdist/[22m[32mtypecast/tc.d.cts[39m               [2m 0.03 kB[22m [2m│ gzip:  0.05 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [33m[CJS][39m 87 files, total: 231.83 kB
-[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m606ms[39m
+[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m555ms[39m
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/param-parser.mjs[22m          [2m28.99 kB[22m [2m│ gzip:  5.71 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/index.mjs[22m                 [2m 8.55 kB[22m [2m│ gzip:  1.99 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[1mutils/directory.mjs[22m             [2m 6.89 kB[22m [2m│ gzip:  1.77 kB[22m
@@ -210,7 +210,7 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1msamples/index.d.mts[22m[39m             [2m 0.30 kB[22m [2m│ gzip:  0.19 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m [2mdist/[22m[32m[1msamples/hello.d.mts[22m[39m             [2m 0.22 kB[22m [2m│ gzip:  0.17 kB[22m
 [34mℹ[39m [33m[@lightproject/common][39m [34m[ESM][39m 116 files, total: 254.45 kB
-[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m1423ms[39m
+[32m✔[39m [33m[@lightproject/common][39m Build complete in [32m1202ms[39m
 
 [34m~/packages/design-system$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
 [34mℹ[39m [31m[@lightproject/design-system][39m entry: [31msrc/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts[39m
@@ -334,7 +334,7 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mcomponents/icon.d.cts[39m              [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m [2mdist/[22m[32mtokens/base.d.cts[39m                  [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [33m[CJS][39m 115 files, total: 244.39 kB
-[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m670ms[39m
+[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m525ms[39m
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mcomponents/preview.mjs[22m               [2m14.48 kB[22m [2m│ gzip: 3.90 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mutils/theme-generator.mjs[22m            [2m 9.32 kB[22m [2m│ gzip: 2.64 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[1mtokens/colors.mjs[22m                    [2m 6.79 kB[22m [2m│ gzip: 0.92 kB[22m
@@ -489,10 +489,10 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mtokens/icons.d.mts[22m[39m                   [2m 0.29 kB[22m [2m│ gzip: 0.19 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m [2mdist/[22m[32m[1mutils/shortcuts.d.mts[22m[39m                [2m 0.28 kB[22m [2m│ gzip: 0.18 kB[22m
 [34mℹ[39m [31m[@lightproject/design-system][39m [34m[ESM][39m 153 files, total: 305.09 kB
-[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m1492ms[39m
+[32m✔[39m [31m[@lightproject/design-system][39m Build complete in [32m1228ms[39m
 
 [34m~/apps/backend$ vp pack[0m [32m◉[0m [90mcache hit, replaying[0m
-[34mℹ[39m [36m[@lightproject/backend][39m entry: [36msrc/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/error-handler.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/request-handler.ts, src/middlewares/response-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/types/worker.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/validators/route-validator.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts[39m
+[34mℹ[39m [36m[@lightproject/backend][39m entry: [36msrc/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/error-handler.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/request-handler.ts, src/middlewares/response-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/types/worker.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/validators/route-validator.ts[39m
 [34mℹ[39m [36m[@lightproject/backend][39m tsconfig: [36mtsconfig.json[39m
 [34mℹ[39m Build start
 [34mℹ[39m Cleaning 347 files
@@ -641,7 +641,7 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mservices/base.d.cts[39m                                 [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m [2mdist/[22m[32mmiddlewares/csp.d.cts[39m                               [2m 0.03 kB[22m [2m│ gzip: 0.05 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [33m[CJS][39m 143 files, total: 375.10 kB
-[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m596ms[39m
+[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m299ms[39m
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/generators/openapi-generator.mjs[22m        [2m14.87 kB[22m [2m│ gzip: 4.02 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/validators/route-validator.mjs[22m          [2m10.63 kB[22m [2m│ gzip: 2.60 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[1mutils/autogen/index.mjs[22m                               [2m 6.84 kB[22m [2m│ gzip: 2.17 kB[22m
@@ -830,7 +830,7 @@ The `tsgo` option is experimental and may change in the future.
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mclient.d.mts[22m[39m                                          [2m 0.17 kB[22m [2m│ gzip: 0.13 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m                                           [2m 0.09 kB[22m [2m│ gzip: 0.08 kB[22m
 [34mℹ[39m [36m[@lightproject/backend][39m [34m[ESM][39m 187 files, total: 448.30 kB
-[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m1402ms[39m
+[32m✔[39m [36m[@lightproject/backend][39m Build complete in [32m1138ms[39m
 
 [34m~/apps/frontend$ vp build[0m [32m◉[0m [90mcache hit, replaying[0m
 [36mvite v8.1.3 [32mbuilding client environment for production...[36m[39m
@@ -853,7 +853,7 @@ computing gzip size...
 [2mdist/[0m[2massets/[0m[36mesm-BlcBgZqH.js                      [0m[1;2m 17.39 kB[0m[2m │ gzip:   4.71 kB[0m[2m │ map:    35.35 kB[0m
 [2mdist/[0m[2massets/[0m[36mindex-Dmi-ZT6r.js                    [0m[33;1m720.19 kB[0m[2m │ gzip: 147.36 kB[0m[2m │ map: 1,424.98 kB[0m
 
-[32m✓ built in 1.87s[39m
+[32m✓ built in 1.50s[39m
 
 [90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m9.97s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m8.75s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m

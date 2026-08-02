@@ -1,5 +1,5 @@
 [34m~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true[0m [32m◉[0m [90mcache hit, replaying[0m
-[[90m2026-08-02T04:36:32.969Z[39m] [34mINFO [39m: 🚀 Starting autogen build process...
+[[90m2026-08-02T04:42:31.613Z[39m] [34mINFO [39m: 🚀 Starting autogen build process...
 allRoutes [
   {
     handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts'[39m,
@@ -1606,4 +1606,4 @@ allRoutes [
                 kind: [32m'object'[39m,
     
 [90m---[0m
-[34;1mvp run:[0m cache hit, [32;1m4.29s[0m saved.
+[34;1mvp run:[0m cache hit, [32;1m4.15s[0m saved.
