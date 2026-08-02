@@ -3,26 +3,26 @@
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/env.test.ts (17 tests) 22ms
- ✓ tests/index.test.ts (1 test) 4ms
- ✓ tests/invoker.test.ts (42 tests) 31ms
- ✓ tests/logger.test.ts (19 tests) 28ms
+ ✓ tests/env.test.ts (17 tests) 32ms
+ ✓ tests/index.test.ts (1 test) 3ms
+ ✓ tests/invoker.test.ts (42 tests) 23ms
+ ✓ tests/logger.test.ts (19 tests) 51ms
 stdout | tests/telemetry.test.ts > initializeTelemetry > uses caller-supplied service metadata
-[2026-08-02T08:18:44.012Z] INFO : OpenTelemetry initialized
+[2026-08-02T08:27:18.950Z] INFO : OpenTelemetry initialized
 {
      "endpoint": "http://localhost:4318"
 }
 
- ✓ tests/telemetry.test.ts (1 test) 26ms
- ✓ tests/param-parser.test.ts (4 tests) 6064ms
-   ✓ returns an object-shaped output schema for object returns  2096ms
-   ✓ serializes nested object values from identifiers as object schemas  1929ms
-   ✓ serializes optional array parameters referenced in returned objects as arrays  2031ms
+ ✓ tests/telemetry.test.ts (1 test) 23ms
+ ✓ tests/param-parser.test.ts (4 tests) 6018ms
+   ✓ returns an object-shaped output schema for object returns  2405ms
+   ✓ serializes nested object values from identifiers as object schemas  1915ms
+   ✓ serializes optional array parameters referenced in returned objects as arrays  1690ms
 
  Test Files  6 passed (6)
       Tests  84 passed (84)
-   Start at  16:18:42
-   Duration  8.05s (transform 1.33s, setup 0ms, import 2.74s, tests 6.17s, environment 1ms)
+   Start at  16:27:17
+   Duration  7.81s (transform 1.18s, setup 0ms, import 2.55s, tests 6.15s, environment 1ms)
 
  % Coverage report from v8
 ------------------|---------|----------|---------|---------|--------------------
@@ -75,12 +75,12 @@ All files         |   34.03 |    27.27 |   37.35 |   33.58 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
- ✓ tests/button.test.ts (1 test) 3ms
+ ✓ tests/button.test.ts (1 test) 10ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  16:18:42
-   Duration  1.73s (transform 80ms, setup 0ms, import 170ms, tests 3ms, environment 0ms)
+   Start at  16:27:17
+   Duration  1.22s (transform 91ms, setup 0ms, import 144ms, tests 10ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -140,61 +140,61 @@ All files          |    2.21 |        0 |    2.08 |    2.25 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/autogen/config.test.ts (10 tests) 2134ms
-       ✓ should create project instance  2101ms
+ ✓ tests/autogen/config.test.ts (10 tests) 1641ms
+       ✓ should create project instance  1577ms
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailReject
-[2026-08-02T08:18:59.796Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:18:59.830Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:34.222Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.237Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-reject
-[2026-08-02T08:18:59.855Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:18:59.911Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:34.292Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.309Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailReject
-[2026-08-02T08:19:00.039Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.381Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658740038,
+          "startTime": 1785659254380,
           "url": "/trpc/test.asyncFailReject"
      },
-     "sessionId": "abb29144-0253-4bf7-8515-fd0e2c72feaf"
+     "sessionId": "34729e9a-3e67-4af4-ae12-e80bf3855c07"
 }
-[2026-08-02T08:19:00.061Z] INFO : Registering response data
+[2026-08-02T08:27:34.381Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740038,
+          "startTime": 1785659254380,
           "url": "/trpc/test.asyncFailReject"
      },
-     "sessionId": "abb29144-0253-4bf7-8515-fd0e2c72feaf"
+     "sessionId": "34729e9a-3e67-4af4-ae12-e80bf3855c07"
 }
-[2026-08-02T08:19:00.077Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.382Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740038,
+          "startTime": 1785659254380,
           "url": "/trpc/test.asyncFailReject"
      },
-     "sessionId": "abb29144-0253-4bf7-8515-fd0e2c72feaf",
+     "sessionId": "34729e9a-3e67-4af4-ae12-e80bf3855c07",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658740038,
+     "startTime": 1785659254380,
      "url": "/trpc/test.asyncFailReject"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailReject
-[2026-08-02T08:19:00.142Z] ERROR: Error in route handler for TestService.asyncFailReject:
+[2026-08-02T08:27:34.403Z] ERROR: Error in route handler for TestService.asyncFailReject:
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailReject
-[2026-08-02T08:19:00.142Z] ERROR: Error in TRPC route wrapper:
+[2026-08-02T08:27:34.404Z] ERROR: Error in TRPC route wrapper:
 {
      "error": {
           "message": "Async error. Simulated promise rejection",
@@ -204,66 +204,66 @@ stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-reject
-[2026-08-02T08:19:00.158Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.441Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740157,
+          "startTime": 1785659254432,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "52256a44-67d0-4922-bb71-844a6149d927"
+     "sessionId": "08619542-33a8-4358-ae0d-254f2db5babb"
 }
-[2026-08-02T08:19:00.159Z] INFO : Registering response data
+[2026-08-02T08:27:34.441Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740157,
+          "startTime": 1785659254432,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "52256a44-67d0-4922-bb71-844a6149d927"
+     "sessionId": "08619542-33a8-4358-ae0d-254f2db5babb"
 }
-[2026-08-02T08:19:00.159Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.442Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740157,
+          "startTime": 1785659254432,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "52256a44-67d0-4922-bb71-844a6149d927",
+     "sessionId": "08619542-33a8-4358-ae0d-254f2db5babb",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740157,
+     "startTime": 1785659254432,
      "url": "/api/test/async-fail-reject"
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-reject
-[2026-08-02T08:19:00.238Z] ERROR: Error in route handler for TestService.asyncFailReject:
+[2026-08-02T08:27:34.458Z] ERROR: Error in route handler for TestService.asyncFailReject:
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-reject
-[2026-08-02T08:19:00.240Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:34.460Z] ERROR: Error [GET]: Error Response [GET]
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740157,
+          "startTime": 1785659254432,
           "url": "/api/test/async-fail-reject"
      },
-     "sessionId": "52256a44-67d0-4922-bb71-844a6149d927",
+     "sessionId": "08619542-33a8-4358-ae0d-254f2db5babb",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740157,
+     "startTime": 1785659254432,
      "url": "/api/test/async-fail-reject",
-     "duration": 83,
-     "endTime": 1785658740240,
+     "duration": 28,
+     "endTime": 1785659254460,
      "error": {
           "message": "Async error. Simulated promise rejection",
           "name": "Error",
@@ -274,98 +274,54 @@ stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailThrow
-[2026-08-02T08:19:00.300Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.302Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:34.473Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.476Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailThrow
-[2026-08-02T08:19:00.321Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.483Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658740321,
+          "startTime": 1785659254483,
           "url": "/trpc/test.asyncFailThrow"
      },
-     "sessionId": "4166985e-c01c-408b-9766-0807c3ba38a7"
+     "sessionId": "d1cbd5cd-d80b-4adc-bdeb-e3a9a3e8b21e"
 }
-[2026-08-02T08:19:00.322Z] INFO : Registering response data
+[2026-08-02T08:27:34.483Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740321,
+          "startTime": 1785659254483,
           "url": "/trpc/test.asyncFailThrow"
      },
-     "sessionId": "4166985e-c01c-408b-9766-0807c3ba38a7"
+     "sessionId": "d1cbd5cd-d80b-4adc-bdeb-e3a9a3e8b21e"
 }
-[2026-08-02T08:19:00.322Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.483Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740321,
+          "startTime": 1785659254483,
           "url": "/trpc/test.asyncFailThrow"
      },
-     "sessionId": "4166985e-c01c-408b-9766-0807c3ba38a7",
+     "sessionId": "d1cbd5cd-d80b-4adc-bdeb-e3a9a3e8b21e",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658740321,
+     "startTime": 1785659254483,
      "url": "/trpc/test.asyncFailThrow"
 }
 
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
-[2026-08-02T08:19:00.339Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.341Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
-[2026-08-02T08:19:00.342Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740342,
-          "url": "/api/test/async-fail-throw"
-     },
-     "sessionId": "c3cebea9-a909-48ec-94b7-61f03416b3b7"
-}
-[2026-08-02T08:19:00.343Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740342,
-          "url": "/api/test/async-fail-throw"
-     },
-     "sessionId": "c3cebea9-a909-48ec-94b7-61f03416b3b7"
-}
-[2026-08-02T08:19:00.343Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740342,
-          "url": "/api/test/async-fail-throw"
-     },
-     "sessionId": "c3cebea9-a909-48ec-94b7-61f03416b3b7",
-     "method": "GET",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740342,
-     "url": "/api/test/async-fail-throw"
-}
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailThrow
+[2026-08-02T08:27:34.485Z] ERROR: Error in route handler for TestService.asyncFailThrow:
 
 stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailThrow
-[2026-08-02T08:19:00.350Z] ERROR: Error in route handler for TestService.asyncFailThrow:
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncFailThrow
-[2026-08-02T08:19:00.351Z] ERROR: Error in TRPC route wrapper:
+[2026-08-02T08:27:34.485Z] ERROR: Error in TRPC route wrapper:
 {
      "error": {
           "message": "Async error. Simulated throwing exception",
@@ -374,27 +330,193 @@ stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc
      }
 }
 
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
-[2026-08-02T08:19:00.363Z] ERROR: Error in route handler for TestService.asyncFailThrow:
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
+[2026-08-02T08:27:34.488Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.495Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
+[2026-08-02T08:27:34.500Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254499,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "474062fb-246a-45c7-8f37-1949c2b4ba65"
+}
+[2026-08-02T08:27:34.500Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254499,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "474062fb-246a-45c7-8f37-1949c2b4ba65"
+}
+[2026-08-02T08:27:34.500Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254499,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "474062fb-246a-45c7-8f37-1949c2b4ba65",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254499,
+     "url": "/trpc/test.asyncSuccess"
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
+[2026-08-02T08:27:34.513Z] INFO : Response completed for [GET] request with status: 200
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254499,
+          "url": "/trpc/test.asyncSuccess"
+     },
+     "sessionId": "474062fb-246a-45c7-8f37-1949c2b4ba65",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "responseHandler",
+     "startTime": 1785659254499,
+     "url": "/trpc/test.asyncSuccess",
+     "duration": 14,
+     "endTime": 1785659254513,
+     "statusCode": 200
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
+[2026-08-02T08:27:34.518Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.522Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
-[2026-08-02T08:19:00.363Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:34.550Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.552Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
+[2026-08-02T08:27:34.532Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254532,
+          "url": "/trpc/test.syncFailReject"
+     },
+     "sessionId": "84995f58-4ea9-4363-8b43-24d82b9b43f2"
+}
+[2026-08-02T08:27:34.532Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254532,
+          "url": "/trpc/test.syncFailReject"
+     },
+     "sessionId": "84995f58-4ea9-4363-8b43-24d82b9b43f2"
+}
+[2026-08-02T08:27:34.532Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254532,
+          "url": "/trpc/test.syncFailReject"
+     },
+     "sessionId": "84995f58-4ea9-4363-8b43-24d82b9b43f2",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254532,
+     "url": "/trpc/test.syncFailReject"
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
+[2026-08-02T08:27:34.560Z] ERROR: Error in route handler for TestService.syncFailReject:
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
+[2026-08-02T08:27:34.561Z] ERROR: Error in TRPC route wrapper:
+{
+     "error": {
+          "message": "Sync error. Simulated promise rejection",
+          "name": "TRPCError",
+          "stack": "Error: Sync error. Simulated promise rejection\n    at syncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:275:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
+     }
+}
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
+[2026-08-02T08:27:34.577Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659254576,
+          "url": "/api/test/async-fail-throw"
+     },
+     "sessionId": "7fbbffe7-3f39-4ae6-8d84-74d68ba2c839"
+}
+[2026-08-02T08:27:34.577Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740342,
+          "startTime": 1785659254576,
           "url": "/api/test/async-fail-throw"
      },
-     "sessionId": "c3cebea9-a909-48ec-94b7-61f03416b3b7",
+     "sessionId": "7fbbffe7-3f39-4ae6-8d84-74d68ba2c839"
+}
+[2026-08-02T08:27:34.577Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659254576,
+          "url": "/api/test/async-fail-throw"
+     },
+     "sessionId": "7fbbffe7-3f39-4ae6-8d84-74d68ba2c839",
+     "method": "GET",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659254576,
+     "url": "/api/test/async-fail-throw"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
+[2026-08-02T08:27:34.578Z] ERROR: Error in route handler for TestService.asyncFailThrow:
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-fail-throw
+[2026-08-02T08:27:34.579Z] ERROR: Error [GET]: Error Response [GET]
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659254576,
+          "url": "/api/test/async-fail-throw"
+     },
+     "sessionId": "7fbbffe7-3f39-4ae6-8d84-74d68ba2c839",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740342,
+     "startTime": 1785659254576,
      "url": "/api/test/async-fail-throw",
-     "duration": 21,
-     "endTime": 1785658740363,
+     "duration": 2,
+     "endTime": 1785659254578,
      "error": {
           "message": "Async error. Simulated throwing exception",
           "name": "Error",
@@ -404,443 +526,138 @@ stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
      "statusCode": 500
 }
 
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
-[2026-08-02T08:19:00.370Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.374Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
-[2026-08-02T08:19:00.376Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740376,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "8869ba08-bab1-4ff3-9d4e-39b1d38bd443"
-}
-[2026-08-02T08:19:00.376Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740376,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "8869ba08-bab1-4ff3-9d4e-39b1d38bd443"
-}
-[2026-08-02T08:19:00.376Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740376,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "8869ba08-bab1-4ff3-9d4e-39b1d38bd443",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740376,
-     "url": "/trpc/test.asyncSuccess"
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.asyncSuccess
-[2026-08-02T08:19:00.380Z] INFO : Response completed for [GET] request with status: 200
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740376,
-          "url": "/trpc/test.asyncSuccess"
-     },
-     "sessionId": "8869ba08-bab1-4ff3-9d4e-39b1d38bd443",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "responseHandler",
-     "startTime": 1785658740376,
-     "url": "/trpc/test.asyncSuccess",
-     "duration": 4,
-     "endTime": 1785658740380,
-     "statusCode": 200
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
-[2026-08-02T08:19:00.390Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.392Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
-[2026-08-02T08:19:00.393Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740393,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "019b1d0d-fe6c-4e2d-8649-b8a79c4746ca"
-}
-[2026-08-02T08:19:00.393Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740393,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "019b1d0d-fe6c-4e2d-8649-b8a79c4746ca"
-}
-[2026-08-02T08:19:00.393Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740393,
-          "url": "/trpc/test.syncFailReject"
-     },
-     "sessionId": "019b1d0d-fe6c-4e2d-8649-b8a79c4746ca",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740393,
-     "url": "/trpc/test.syncFailReject"
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
-[2026-08-02T08:19:00.395Z] ERROR: Error in route handler for TestService.syncFailReject:
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailReject
-[2026-08-02T08:19:00.395Z] ERROR: Error in TRPC route wrapper:
-{
-     "error": {
-          "message": "Sync error. Simulated promise rejection",
-          "name": "TRPCError",
-          "stack": "Error: Sync error. Simulated promise rejection\n    at syncFailReject (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:275:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
-     }
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
-[2026-08-02T08:19:00.402Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.405Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
-[2026-08-02T08:19:00.412Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740411,
-          "url": "/trpc/test.syncFailThrow"
-     },
-     "sessionId": "2f3b42cd-083b-49f9-a16f-bfa13df56b92"
-}
-[2026-08-02T08:19:00.412Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740411,
-          "url": "/trpc/test.syncFailThrow"
-     },
-     "sessionId": "2f3b42cd-083b-49f9-a16f-bfa13df56b92"
-}
-[2026-08-02T08:19:00.412Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740411,
-          "url": "/trpc/test.syncFailThrow"
-     },
-     "sessionId": "2f3b42cd-083b-49f9-a16f-bfa13df56b92",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740411,
-     "url": "/trpc/test.syncFailThrow"
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
-[2026-08-02T08:19:00.413Z] ERROR: Error in route handler for TestService.syncFailThrow:
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
-[2026-08-02T08:19:00.413Z] ERROR: Error in TRPC route wrapper:
-{
-     "error": {
-          "message": "Sync error. Simulated throwing exception",
-          "name": "TRPCError",
-          "stack": "Error: Sync error. Simulated throwing exception\n    at syncFailThrow (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:279:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
-     }
-}
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-success
+[2026-08-02T08:27:34.601Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.617Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-success
-[2026-08-02T08:19:00.404Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.413Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-success
-[2026-08-02T08:19:00.415Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.618Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740415,
+          "startTime": 1785659254618,
           "url": "/api/test/async-success"
      },
-     "sessionId": "799d462b-4c37-44ee-b806-4b67ad1361ea"
+     "sessionId": "35ebbd84-e03a-4242-80d8-a3564fe5e953"
 }
-[2026-08-02T08:19:00.415Z] INFO : Registering response data
+[2026-08-02T08:27:34.618Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740415,
+          "startTime": 1785659254618,
           "url": "/api/test/async-success"
      },
-     "sessionId": "799d462b-4c37-44ee-b806-4b67ad1361ea"
+     "sessionId": "35ebbd84-e03a-4242-80d8-a3564fe5e953"
 }
-[2026-08-02T08:19:00.415Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.619Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740415,
+          "startTime": 1785659254618,
           "url": "/api/test/async-success"
      },
-     "sessionId": "799d462b-4c37-44ee-b806-4b67ad1361ea",
+     "sessionId": "35ebbd84-e03a-4242-80d8-a3564fe5e953",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740415,
+     "startTime": 1785659254618,
      "url": "/api/test/async-success"
 }
 
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
-[2026-08-02T08:19:00.423Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.426Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
-[2026-08-02T08:19:00.427Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740427,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "19a52ab3-205e-47ce-9082-ca5c852e6cd4"
-}
-[2026-08-02T08:19:00.427Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740427,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "19a52ab3-205e-47ce-9082-ca5c852e6cd4"
-}
-[2026-08-02T08:19:00.427Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740427,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "19a52ab3-205e-47ce-9082-ca5c852e6cd4",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740427,
-     "url": "/trpc/test.syncSuccess"
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
-[2026-08-02T08:19:00.429Z] INFO : Response completed for [GET] request with status: 200
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740427,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "19a52ab3-205e-47ce-9082-ca5c852e6cd4",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "responseHandler",
-     "startTime": 1785658740427,
-     "url": "/trpc/test.syncSuccess",
-     "duration": 2,
-     "endTime": 1785658740429,
-     "statusCode": 200
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
-[2026-08-02T08:19:00.448Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.452Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/async-success
-[2026-08-02T08:19:00.446Z] INFO : Response completed for [GET] request with status: 200
+[2026-08-02T08:27:34.625Z] INFO : Response completed for [GET] request with status: 200
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740415,
+          "startTime": 1785659254618,
           "url": "/api/test/async-success"
      },
-     "sessionId": "799d462b-4c37-44ee-b806-4b67ad1361ea",
+     "sessionId": "35ebbd84-e03a-4242-80d8-a3564fe5e953",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785658740415,
+     "startTime": 1785659254618,
      "url": "/api/test/async-success",
-     "duration": 31,
-     "endTime": 1785658740446,
+     "duration": 7,
+     "endTime": 1785659254625,
      "statusCode": 200
 }
 
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
-[2026-08-02T08:19:00.481Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740481,
-          "url": "/trpc/default.root"
-     },
-     "sessionId": "24d32062-12d0-441e-95f3-74a434c30a39"
-}
-[2026-08-02T08:19:00.482Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740481,
-          "url": "/trpc/default.root"
-     },
-     "sessionId": "24d32062-12d0-441e-95f3-74a434c30a39"
-}
-[2026-08-02T08:19:00.482Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740481,
-          "url": "/trpc/default.root"
-     },
-     "sessionId": "24d32062-12d0-441e-95f3-74a434c30a39",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740481,
-     "url": "/trpc/default.root"
-}
-
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
-[2026-08-02T08:19:00.484Z] INFO : Response completed for [GET] request with status: 200
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740481,
-          "url": "/trpc/default.root"
-     },
-     "sessionId": "24d32062-12d0-441e-95f3-74a434c30a39",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "responseHandler",
-     "startTime": 1785658740481,
-     "url": "/trpc/default.root",
-     "duration": 3,
-     "endTime": 1785658740484,
-     "statusCode": 200
-}
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
+[2026-08-02T08:27:34.624Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.628Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-reject
-[2026-08-02T08:19:00.474Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.488Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:34.652Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.666Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-reject
-[2026-08-02T08:19:00.489Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.677Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740489,
+          "startTime": 1785659254677,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "ed8ac095-1771-42f6-a26e-7bec9d90cdef"
+     "sessionId": "0550a19c-1d9e-487f-8e19-0d5a228a4ce3"
 }
-[2026-08-02T08:19:00.489Z] INFO : Registering response data
+[2026-08-02T08:27:34.677Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740489,
+          "startTime": 1785659254677,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "ed8ac095-1771-42f6-a26e-7bec9d90cdef"
+     "sessionId": "0550a19c-1d9e-487f-8e19-0d5a228a4ce3"
 }
-[2026-08-02T08:19:00.489Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.677Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740489,
+          "startTime": 1785659254677,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "ed8ac095-1771-42f6-a26e-7bec9d90cdef",
+     "sessionId": "0550a19c-1d9e-487f-8e19-0d5a228a4ce3",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740489,
+     "startTime": 1785659254677,
      "url": "/api/test/sync-fail-reject"
 }
-[2026-08-02T08:19:00.491Z] ERROR: Error in route handler for TestService.syncFailReject:
+[2026-08-02T08:27:34.678Z] ERROR: Error in route handler for TestService.syncFailReject:
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-reject
-[2026-08-02T08:19:00.491Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:34.678Z] ERROR: Error [GET]: Error Response [GET]
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740489,
+          "startTime": 1785659254677,
           "url": "/api/test/sync-fail-reject"
      },
-     "sessionId": "ed8ac095-1771-42f6-a26e-7bec9d90cdef",
+     "sessionId": "0550a19c-1d9e-487f-8e19-0d5a228a4ce3",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740489,
+     "startTime": 1785659254677,
      "url": "/api/test/sync-fail-reject",
-     "duration": 2,
-     "endTime": 1785658740491,
+     "duration": 1,
+     "endTime": 1785659254678,
      "error": {
           "message": "Sync error. Simulated promise rejection",
           "name": "Error",
@@ -850,73 +667,126 @@ stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
      "statusCode": 500
 }
 
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-throw
-[2026-08-02T08:19:00.524Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.527Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
+[2026-08-02T08:27:34.686Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254686,
+          "url": "/trpc/test.syncFailThrow"
+     },
+     "sessionId": "f57bd402-efc3-4c3f-a40b-3e362145dc25"
+}
+[2026-08-02T08:27:34.686Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254686,
+          "url": "/trpc/test.syncFailThrow"
+     },
+     "sessionId": "f57bd402-efc3-4c3f-a40b-3e362145dc25"
+}
+[2026-08-02T08:27:34.686Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254686,
+          "url": "/trpc/test.syncFailThrow"
+     },
+     "sessionId": "f57bd402-efc3-4c3f-a40b-3e362145dc25",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254686,
+     "url": "/trpc/test.syncFailThrow"
+}
 
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.unknown
-[2026-08-02T08:19:00.541Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.544Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
+[2026-08-02T08:27:34.687Z] ERROR: Error in route handler for TestService.syncFailThrow:
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncFailThrow
+[2026-08-02T08:27:34.687Z] ERROR: Error in TRPC route wrapper:
+{
+     "error": {
+          "message": "Sync error. Simulated throwing exception",
+          "name": "TRPCError",
+          "stack": "Error: Sync error. Simulated throwing exception\n    at syncFailThrow (/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts:279:11)\n    at invokeWithParsedArgs (/Users/wataru/lightproject/viteplus/packages/common/src/utils/invoker.ts:194:11)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/route-handler.ts:137:40\n    at resolveMiddleware (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:221:23)\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at next (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:262:12)\n    at /Users/wataru/lightproject/viteplus/apps/backend/src/utils/trpc.ts:98:40\n    at callRecursive (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:256:24)\n    at procedure (file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/initTRPC-BRf4imah.mjs:281:24)\n    at file:///Users/wataru/lightproject/viteplus/node_modules/.pnpm/@trpc+server@11.17.0_typescript@6.0.2/node_modules/@trpc/server/dist/resolveResponse-CdASWfAV.mjs:1969:24"
+     }
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
+[2026-08-02T08:27:34.697Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.699Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-throw
-[2026-08-02T08:19:00.554Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.705Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.709Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-throw
+[2026-08-02T08:27:34.716Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740554,
+          "startTime": 1785659254716,
           "url": "/api/test/sync-fail-throw"
      },
-     "sessionId": "508b0533-19f4-4daa-bf38-9096fa454a73"
+     "sessionId": "0342715f-d886-4ec6-97c9-d125112759a2"
 }
-[2026-08-02T08:19:00.554Z] INFO : Registering response data
+[2026-08-02T08:27:34.716Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740554,
+          "startTime": 1785659254716,
           "url": "/api/test/sync-fail-throw"
      },
-     "sessionId": "508b0533-19f4-4daa-bf38-9096fa454a73"
+     "sessionId": "0342715f-d886-4ec6-97c9-d125112759a2"
 }
-[2026-08-02T08:19:00.555Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.716Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740554,
+          "startTime": 1785659254716,
           "url": "/api/test/sync-fail-throw"
      },
-     "sessionId": "508b0533-19f4-4daa-bf38-9096fa454a73",
+     "sessionId": "0342715f-d886-4ec6-97c9-d125112759a2",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740554,
+     "startTime": 1785659254716,
      "url": "/api/test/sync-fail-throw"
 }
-[2026-08-02T08:19:00.555Z] ERROR: Error in route handler for TestService.syncFailThrow:
+[2026-08-02T08:27:34.717Z] ERROR: Error in route handler for TestService.syncFailThrow:
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-fail-throw
-[2026-08-02T08:19:00.556Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:34.717Z] ERROR: Error [GET]: Error Response [GET]
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740554,
+          "startTime": 1785659254716,
           "url": "/api/test/sync-fail-throw"
      },
-     "sessionId": "508b0533-19f4-4daa-bf38-9096fa454a73",
+     "sessionId": "0342715f-d886-4ec6-97c9-d125112759a2",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740554,
+     "startTime": 1785659254716,
      "url": "/api/test/sync-fail-throw",
      "duration": 1,
-     "endTime": 1785658740555,
+     "endTime": 1785659254717,
      "error": {
           "message": "Sync error. Simulated throwing exception",
           "name": "Error",
@@ -926,236 +796,435 @@ stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
      "statusCode": 500
 }
 
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-success
-[2026-08-02T08:19:00.563Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.566Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
+[2026-08-02T08:27:34.725Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254724,
+          "url": "/trpc/test.syncSuccess"
+     },
+     "sessionId": "c6a163e5-1514-46c4-bfa4-feb3fd11633c"
+}
+[2026-08-02T08:27:34.725Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254724,
+          "url": "/trpc/test.syncSuccess"
+     },
+     "sessionId": "c6a163e5-1514-46c4-bfa4-feb3fd11633c"
+}
+[2026-08-02T08:27:34.725Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254724,
+          "url": "/trpc/test.syncSuccess"
+     },
+     "sessionId": "c6a163e5-1514-46c4-bfa4-feb3fd11633c",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254724,
+     "url": "/trpc/test.syncSuccess"
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.syncSuccess
+[2026-08-02T08:27:34.726Z] INFO : Response completed for [GET] request with status: 200
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254724,
+          "url": "/trpc/test.syncSuccess"
+     },
+     "sessionId": "c6a163e5-1514-46c4-bfa4-feb3fd11633c",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "responseHandler",
+     "startTime": 1785659254724,
+     "url": "/trpc/test.syncSuccess",
+     "duration": 2,
+     "endTime": 1785659254726,
+     "statusCode": 200
+}
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-success
-[2026-08-02T08:19:00.567Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.728Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.730Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
+[2026-08-02T08:27:34.732Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.734Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
+[2026-08-02T08:27:34.743Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254743,
+          "url": "/trpc/default.root"
+     },
+     "sessionId": "80134ca7-9adb-4556-a03c-79aeb9553da3"
+}
+[2026-08-02T08:27:34.743Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254743,
+          "url": "/trpc/default.root"
+     },
+     "sessionId": "80134ca7-9adb-4556-a03c-79aeb9553da3"
+}
+[2026-08-02T08:27:34.743Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254743,
+          "url": "/trpc/default.root"
+     },
+     "sessionId": "80134ca7-9adb-4556-a03c-79aeb9553da3",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254743,
+     "url": "/trpc/default.root"
+}
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/default.root
+[2026-08-02T08:27:34.744Z] INFO : Response completed for [GET] request with status: 200
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254743,
+          "url": "/trpc/default.root"
+     },
+     "sessionId": "80134ca7-9adb-4556-a03c-79aeb9553da3",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "responseHandler",
+     "startTime": 1785659254743,
+     "url": "/trpc/default.root",
+     "duration": 1,
+     "endTime": 1785659254744,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-success
+[2026-08-02T08:27:34.748Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740567,
+          "startTime": 1785659254748,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "b69ad085-8e6b-4ef9-9265-89db5209cc72"
+     "sessionId": "9e9678b0-046d-40da-8df2-fbdce09d62b0"
 }
-[2026-08-02T08:19:00.568Z] INFO : Registering response data
+[2026-08-02T08:27:34.748Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740567,
+          "startTime": 1785659254748,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "b69ad085-8e6b-4ef9-9265-89db5209cc72"
+     "sessionId": "9e9678b0-046d-40da-8df2-fbdce09d62b0"
 }
-[2026-08-02T08:19:00.568Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.748Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740567,
+          "startTime": 1785659254748,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "b69ad085-8e6b-4ef9-9265-89db5209cc72",
+     "sessionId": "9e9678b0-046d-40da-8df2-fbdce09d62b0",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740567,
+     "startTime": 1785659254748,
      "url": "/api/test/sync-success"
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/sync-success
-[2026-08-02T08:19:00.568Z] INFO : Response completed for [GET] request with status: 200
+[2026-08-02T08:27:34.757Z] INFO : Response completed for [GET] request with status: 200
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740567,
+          "startTime": 1785659254748,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "b69ad085-8e6b-4ef9-9265-89db5209cc72",
+     "sessionId": "9e9678b0-046d-40da-8df2-fbdce09d62b0",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785658740567,
+     "startTime": 1785659254748,
      "url": "/api/test/sync-success",
-     "duration": 1,
-     "endTime": 1785658740568,
+     "duration": 4,
+     "endTime": 1785659254752,
      "statusCode": 200
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
-[2026-08-02T08:19:00.586Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.593Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:34.783Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.804Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.unknown
+[2026-08-02T08:27:34.819Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.822Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.unknown
+[2026-08-02T08:27:34.838Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "initializeRequest",
+          "startTime": 1785659254838,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "b4b15079-87b2-453e-a6fd-8a097b5e1db0"
+}
+[2026-08-02T08:27:34.838Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254838,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "b4b15079-87b2-453e-a6fd-8a097b5e1db0"
+}
+[2026-08-02T08:27:34.838Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254838,
+          "url": "/trpc/test.unknown"
+     },
+     "sessionId": "b4b15079-87b2-453e-a6fd-8a097b5e1db0",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "requestHandler",
+     "startTime": 1785659254838,
+     "url": "/trpc/test.unknown"
+}
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
-[2026-08-02T08:19:00.600Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.877Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740600,
+          "startTime": 1785659254877,
           "url": "/api/"
      },
-     "sessionId": "b16530dc-67f7-4cee-8b79-16e6f132e27c"
+     "sessionId": "b76402d4-2562-4681-b540-97c012e60e00"
 }
-[2026-08-02T08:19:00.600Z] INFO : Registering response data
+[2026-08-02T08:27:34.877Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740600,
+          "startTime": 1785659254877,
           "url": "/api/"
      },
-     "sessionId": "b16530dc-67f7-4cee-8b79-16e6f132e27c"
+     "sessionId": "b76402d4-2562-4681-b540-97c012e60e00"
 }
-[2026-08-02T08:19:00.600Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.877Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740600,
+          "startTime": 1785659254877,
           "url": "/api/"
      },
-     "sessionId": "b16530dc-67f7-4cee-8b79-16e6f132e27c",
+     "sessionId": "b76402d4-2562-4681-b540-97c012e60e00",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740600,
+     "startTime": 1785659254877,
      "url": "/api/"
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
-[2026-08-02T08:19:00.601Z] INFO : Response completed for [GET] request with status: 200
+[2026-08-02T08:27:34.878Z] INFO : Response completed for [GET] request with status: 200
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740600,
+          "startTime": 1785659254877,
           "url": "/api/"
      },
-     "sessionId": "b16530dc-67f7-4cee-8b79-16e6f132e27c",
+     "sessionId": "b76402d4-2562-4681-b540-97c012e60e00",
      "method": "GET",
      "requestType": "HTTP",
      "source": "responseHandler",
-     "startTime": 1785658740600,
+     "startTime": 1785659254877,
      "url": "/api/",
      "duration": 1,
-     "endTime": 1785658740601,
+     "endTime": 1785659254878,
      "statusCode": 200
 }
 
-stdout | tests/sample.trpc.test.ts > tRPC > has access > should handle GET /trpc/test.unknown
-[2026-08-02T08:19:00.603Z] INFO : Initializing [GET] request session
+stdout | tests/sample.trpc.test.ts > tRPC > no access > should handle GET /trpc/test.syncSuccess
+[2026-08-02T08:27:34.895Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.898Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/unknown
+[2026-08-02T08:27:34.931Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:34.947Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > no access > should handle GET /trpc/test.syncSuccess
+[2026-08-02T08:27:34.916Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658740603,
-          "url": "/trpc/test.unknown"
+          "startTime": 1785659254915,
+          "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "76df236f-e63e-4198-92e7-cf60339f26f7"
+     "sessionId": "171515a6-acde-4342-93bf-74d4e6d2f6aa"
 }
-[2026-08-02T08:19:00.604Z] INFO : Registering response data
+[2026-08-02T08:27:34.916Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740603,
-          "url": "/trpc/test.unknown"
+          "startTime": 1785659254915,
+          "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "76df236f-e63e-4198-92e7-cf60339f26f7"
+     "sessionId": "171515a6-acde-4342-93bf-74d4e6d2f6aa"
 }
-[2026-08-02T08:19:00.604Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.916Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740603,
-          "url": "/trpc/test.unknown"
+          "startTime": 1785659254915,
+          "url": "/trpc/test.syncSuccess"
      },
-     "sessionId": "76df236f-e63e-4198-92e7-cf60339f26f7",
+     "sessionId": "171515a6-acde-4342-93bf-74d4e6d2f6aa",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658740603,
-     "url": "/trpc/test.unknown"
+     "startTime": 1785659254915,
+     "url": "/trpc/test.syncSuccess"
+}
+[2026-08-02T08:27:34.931Z] ERROR: Error [GET]: Error Response [GET]
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "tRPC",
+          "source": "captureResponse",
+          "startTime": 1785659254915,
+          "url": "/trpc/test.syncSuccess"
+     },
+     "sessionId": "171515a6-acde-4342-93bf-74d4e6d2f6aa",
+     "method": "GET",
+     "requestType": "tRPC",
+     "source": "errorHandler",
+     "startTime": 1785659254915,
+     "url": "/trpc/test.syncSuccess",
+     "duration": 16,
+     "endTime": 1785659254931,
+     "error": {
+          "message": "Access denied",
+          "name": "AccessDeniedError",
+          "stack": "No stack trace available",
+          "statusCode": 403
+     },
+     "statusCode": 403
 }
 
 stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/unknown
-[2026-08-02T08:19:00.614Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.617Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/test/unknown
-[2026-08-02T08:19:00.619Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:34.961Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740619,
+          "startTime": 1785659254961,
           "url": "/api/test/unknown"
      },
-     "sessionId": "b38ff2c0-3e1e-48a0-8ef7-f9c7218a7217"
+     "sessionId": "b08854f1-7cf8-4ac5-82a8-17696b6eaffa"
 }
-[2026-08-02T08:19:00.619Z] INFO : Registering response data
+[2026-08-02T08:27:34.961Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740619,
+          "startTime": 1785659254961,
           "url": "/api/test/unknown"
      },
-     "sessionId": "b38ff2c0-3e1e-48a0-8ef7-f9c7218a7217"
+     "sessionId": "b08854f1-7cf8-4ac5-82a8-17696b6eaffa"
 }
-[2026-08-02T08:19:00.619Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:34.961Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740619,
+          "startTime": 1785659254961,
           "url": "/api/test/unknown"
      },
-     "sessionId": "b38ff2c0-3e1e-48a0-8ef7-f9c7218a7217",
+     "sessionId": "b08854f1-7cf8-4ac5-82a8-17696b6eaffa",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740619,
+     "startTime": 1785659254961,
      "url": "/api/test/unknown"
 }
-[2026-08-02T08:19:00.621Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:34.962Z] ERROR: Error [GET]: Error Response [GET]
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740619,
+          "startTime": 1785659254961,
           "url": "/api/test/unknown"
      },
-     "sessionId": "b38ff2c0-3e1e-48a0-8ef7-f9c7218a7217",
+     "sessionId": "b08854f1-7cf8-4ac5-82a8-17696b6eaffa",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740619,
+     "startTime": 1785659254961,
      "url": "/api/test/unknown",
      "duration": 1,
-     "endTime": 1785658740620,
+     "endTime": 1785659254962,
      "error": {
           "message": "Not Found",
           "name": "NotFoundError",
@@ -1165,139 +1234,70 @@ stdout | tests/sample.http.test.ts > HTTP > has access > should handle GET /api/
      "statusCode": 404
 }
 
-stdout | tests/sample.http.test.ts > HTTP > no access > should handle GET /api/test/sync-success
-[2026-08-02T08:19:00.669Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.690Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test._checkParams
+[2026-08-02T08:27:35.000Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.002Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.http.test.ts > HTTP > no access > should handle GET /api/test/sync-success
-[2026-08-02T08:19:00.693Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:35.001Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.003Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > no access > should handle GET /api/test/sync-success
+[2026-08-02T08:27:35.078Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "initializeRequest",
-          "startTime": 1785658740693,
+          "startTime": 1785659255078,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "e39efb28-97f6-4e0b-8843-c591f1377850"
+     "sessionId": "fcbe0d16-7d3d-4a1a-972a-cb30ab2538ad"
 }
-[2026-08-02T08:19:00.693Z] INFO : Registering response data
+[2026-08-02T08:27:35.079Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740693,
+          "startTime": 1785659255078,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "e39efb28-97f6-4e0b-8843-c591f1377850"
+     "sessionId": "fcbe0d16-7d3d-4a1a-972a-cb30ab2538ad"
 }
-[2026-08-02T08:19:00.693Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:35.079Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740693,
+          "startTime": 1785659255078,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "e39efb28-97f6-4e0b-8843-c591f1377850",
+     "sessionId": "fcbe0d16-7d3d-4a1a-972a-cb30ab2538ad",
      "method": "GET",
      "requestType": "HTTP",
      "source": "requestHandler",
-     "startTime": 1785658740693,
+     "startTime": 1785659255078,
      "url": "/api/test/sync-success"
 }
-[2026-08-02T08:19:00.712Z] ERROR: Error [GET]: Error Response [GET]
+[2026-08-02T08:27:35.079Z] ERROR: Error [GET]: Error Response [GET]
 {
      "metadata": {
           "method": "GET",
           "requestType": "HTTP",
           "source": "captureResponse",
-          "startTime": 1785658740693,
+          "startTime": 1785659255078,
           "url": "/api/test/sync-success"
      },
-     "sessionId": "e39efb28-97f6-4e0b-8843-c591f1377850",
+     "sessionId": "fcbe0d16-7d3d-4a1a-972a-cb30ab2538ad",
      "method": "GET",
      "requestType": "HTTP",
      "source": "errorHandler",
-     "startTime": 1785658740693,
+     "startTime": 1785659255078,
      "url": "/api/test/sync-success",
-     "duration": 19,
-     "endTime": 1785658740712,
-     "error": {
-          "message": "Access denied",
-          "name": "AccessDeniedError",
-          "stack": "No stack trace available",
-          "statusCode": 403
-     },
-     "statusCode": 403
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
-[2026-08-02T08:19:00.732Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.734Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > no access > should handle GET /trpc/test.syncSuccess
-[2026-08-02T08:19:00.701Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.741Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > no access > should handle GET /trpc/test.syncSuccess
-[2026-08-02T08:19:00.746Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "initializeRequest",
-          "startTime": 1785658740746,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "2efa4947-99dd-4e37-a04c-fcdb2fa0b98d"
-}
-[2026-08-02T08:19:00.746Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740746,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "2efa4947-99dd-4e37-a04c-fcdb2fa0b98d"
-}
-[2026-08-02T08:19:00.746Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740746,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "2efa4947-99dd-4e37-a04c-fcdb2fa0b98d",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "requestHandler",
-     "startTime": 1785658740746,
-     "url": "/trpc/test.syncSuccess"
-}
-[2026-08-02T08:19:00.754Z] ERROR: Error [GET]: Error Response [GET]
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "tRPC",
-          "source": "captureResponse",
-          "startTime": 1785658740746,
-          "url": "/trpc/test.syncSuccess"
-     },
-     "sessionId": "2efa4947-99dd-4e37-a04c-fcdb2fa0b98d",
-     "method": "GET",
-     "requestType": "tRPC",
-     "source": "errorHandler",
-     "startTime": 1785658740746,
-     "url": "/trpc/test.syncSuccess",
-     "duration": 8,
-     "endTime": 1785658740754,
+     "duration": 1,
+     "endTime": 1785659255079,
      "error": {
           "message": "Access denied",
           "name": "AccessDeniedError",
@@ -1308,1406 +1308,1396 @@ stdout | tests/sample.trpc.test.ts > tRPC > no access > should handle GET /trpc/
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test._checkParams
-[2026-08-02T08:19:00.796Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.798Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
-[2026-08-02T08:19:00.799Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740799,
-          "url": "/api/test/_check-params"
-     },
-     "sessionId": "7c595b54-83ce-4b77-87f1-2be123f519b6"
-}
-[2026-08-02T08:19:00.799Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740799,
-          "url": "/api/test/_check-params"
-     },
-     "sessionId": "7c595b54-83ce-4b77-87f1-2be123f519b6"
-}
-[2026-08-02T08:19:00.799Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740799,
-          "url": "/api/test/_check-params"
-     },
-     "sessionId": "7c595b54-83ce-4b77-87f1-2be123f519b6",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740799,
-     "url": "/api/test/_check-params"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
-[2026-08-02T08:19:00.801Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740799,
-          "url": "/api/test/_check-params"
-     },
-     "sessionId": "7c595b54-83ce-4b77-87f1-2be123f519b6",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740799,
-     "url": "/api/test/_check-params",
-     "duration": 2,
-     "endTime": 1785658740801,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
-[2026-08-02T08:19:00.806Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.808Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test._checkParams
-[2026-08-02T08:19:00.808Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.096Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658740808,
+          "startTime": 1785659255096,
           "url": "/trpc/test._checkParams"
      },
-     "sessionId": "7e140d59-e433-4ab7-846b-33089e0dd53d"
+     "sessionId": "3b2ca089-83d9-4def-83f2-45994acfb385"
 }
-[2026-08-02T08:19:00.808Z] INFO : Registering response data
+[2026-08-02T08:27:35.096Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740808,
+          "startTime": 1785659255096,
           "url": "/trpc/test._checkParams"
      },
-     "sessionId": "7e140d59-e433-4ab7-846b-33089e0dd53d"
+     "sessionId": "3b2ca089-83d9-4def-83f2-45994acfb385"
 }
-[2026-08-02T08:19:00.808Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.096Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740808,
+          "startTime": 1785659255096,
           "url": "/trpc/test._checkParams"
      },
-     "sessionId": "7e140d59-e433-4ab7-846b-33089e0dd53d",
+     "sessionId": "3b2ca089-83d9-4def-83f2-45994acfb385",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658740808,
+     "startTime": 1785659255096,
      "url": "/trpc/test._checkParams"
 }
 
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
-[2026-08-02T08:19:00.813Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740813,
-          "url": "/api/test/hello"
-     },
-     "sessionId": "59e5c4a9-7634-4a9f-a32c-d3c86b56f478"
-}
-[2026-08-02T08:19:00.813Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740813,
-          "url": "/api/test/hello"
-     },
-     "sessionId": "59e5c4a9-7634-4a9f-a32c-d3c86b56f478"
-}
-[2026-08-02T08:19:00.813Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740813,
-          "url": "/api/test/hello"
-     },
-     "sessionId": "59e5c4a9-7634-4a9f-a32c-d3c86b56f478",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740813,
-     "url": "/api/test/hello"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
-[2026-08-02T08:19:00.823Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740813,
-          "url": "/api/test/hello"
-     },
-     "sessionId": "59e5c4a9-7634-4a9f-a32c-d3c86b56f478",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740813,
-     "url": "/api/test/hello",
-     "duration": 9,
-     "endTime": 1785658740822,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
-[2026-08-02T08:19:00.838Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.840Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
-[2026-08-02T08:19:00.842Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740842,
-          "url": "/api/test/mixed-params"
-     },
-     "sessionId": "6bdbf84d-5bdf-4b2b-80a8-e6516520bb42"
-}
-[2026-08-02T08:19:00.842Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740842,
-          "url": "/api/test/mixed-params"
-     },
-     "sessionId": "6bdbf84d-5bdf-4b2b-80a8-e6516520bb42"
-}
-[2026-08-02T08:19:00.842Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740842,
-          "url": "/api/test/mixed-params"
-     },
-     "sessionId": "6bdbf84d-5bdf-4b2b-80a8-e6516520bb42",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740842,
-     "url": "/api/test/mixed-params"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
-[2026-08-02T08:19:00.843Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740842,
-          "url": "/api/test/mixed-params"
-     },
-     "sessionId": "6bdbf84d-5bdf-4b2b-80a8-e6516520bb42",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740842,
-     "url": "/api/test/mixed-params",
-     "duration": 1,
-     "endTime": 1785658740843,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
-[2026-08-02T08:19:00.851Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.854Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
-[2026-08-02T08:19:00.866Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740866,
-          "url": "/api/test/object-destructured"
-     },
-     "sessionId": "26fbb395-7307-41db-8073-8497294360d2"
-}
-[2026-08-02T08:19:00.866Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740866,
-          "url": "/api/test/object-destructured"
-     },
-     "sessionId": "26fbb395-7307-41db-8073-8497294360d2"
-}
-[2026-08-02T08:19:00.866Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740866,
-          "url": "/api/test/object-destructured"
-     },
-     "sessionId": "26fbb395-7307-41db-8073-8497294360d2",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740866,
-     "url": "/api/test/object-destructured"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
-[2026-08-02T08:19:00.869Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740866,
-          "url": "/api/test/object-destructured"
-     },
-     "sessionId": "26fbb395-7307-41db-8073-8497294360d2",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740866,
-     "url": "/api/test/object-destructured",
-     "duration": 3,
-     "endTime": 1785658740869,
-     "statusCode": 200
-}
-
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test._checkParams
-[2026-08-02T08:19:00.881Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.126Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740808,
+          "startTime": 1785659255096,
           "url": "/trpc/test._checkParams"
      },
-     "sessionId": "7e140d59-e433-4ab7-846b-33089e0dd53d",
+     "sessionId": "3b2ca089-83d9-4def-83f2-45994acfb385",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658740808,
+     "startTime": 1785659255096,
      "url": "/trpc/test._checkParams",
-     "duration": 72,
-     "endTime": 1785658740880,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
-[2026-08-02T08:19:00.873Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.884Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
-[2026-08-02T08:19:00.887Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740887,
-          "url": "/api/test/object-only"
-     },
-     "sessionId": "71cad9aa-dcdb-4c4d-9ba7-37236d2bf4fb"
-}
-[2026-08-02T08:19:00.887Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740887,
-          "url": "/api/test/object-only"
-     },
-     "sessionId": "71cad9aa-dcdb-4c4d-9ba7-37236d2bf4fb"
-}
-[2026-08-02T08:19:00.888Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740887,
-          "url": "/api/test/object-only"
-     },
-     "sessionId": "71cad9aa-dcdb-4c4d-9ba7-37236d2bf4fb",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740887,
-     "url": "/api/test/object-only"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
-[2026-08-02T08:19:00.888Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740887,
-          "url": "/api/test/object-only"
-     },
-     "sessionId": "71cad9aa-dcdb-4c4d-9ba7-37236d2bf4fb",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740887,
-     "url": "/api/test/object-only",
-     "duration": 1,
-     "endTime": 1785658740888,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
-[2026-08-02T08:19:00.891Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.894Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
-[2026-08-02T08:19:00.895Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740895,
-          "url": "/api/test/primitives-and-array"
-     },
-     "sessionId": "1a05c154-91ac-47fa-bf4d-937feae03a31"
-}
-[2026-08-02T08:19:00.895Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740895,
-          "url": "/api/test/primitives-and-array"
-     },
-     "sessionId": "1a05c154-91ac-47fa-bf4d-937feae03a31"
-}
-[2026-08-02T08:19:00.895Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740895,
-          "url": "/api/test/primitives-and-array"
-     },
-     "sessionId": "1a05c154-91ac-47fa-bf4d-937feae03a31",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740895,
-     "url": "/api/test/primitives-and-array"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
-[2026-08-02T08:19:00.896Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740895,
-          "url": "/api/test/primitives-and-array"
-     },
-     "sessionId": "1a05c154-91ac-47fa-bf4d-937feae03a31",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740895,
-     "url": "/api/test/primitives-and-array",
-     "duration": 1,
-     "endTime": 1785658740896,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
-[2026-08-02T08:19:00.905Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.907Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
-[2026-08-02T08:19:00.909Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740909,
-          "url": "/api/test/custom-type-array"
-     },
-     "sessionId": "fa45392a-2a05-4886-bb58-61b8ff411e96"
-}
-[2026-08-02T08:19:00.909Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740909,
-          "url": "/api/test/custom-type-array"
-     },
-     "sessionId": "fa45392a-2a05-4886-bb58-61b8ff411e96"
-}
-[2026-08-02T08:19:00.909Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740909,
-          "url": "/api/test/custom-type-array"
-     },
-     "sessionId": "fa45392a-2a05-4886-bb58-61b8ff411e96",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740909,
-     "url": "/api/test/custom-type-array"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
-[2026-08-02T08:19:00.910Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740909,
-          "url": "/api/test/custom-type-array"
-     },
-     "sessionId": "fa45392a-2a05-4886-bb58-61b8ff411e96",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740909,
-     "url": "/api/test/custom-type-array",
-     "duration": 1,
-     "endTime": 1785658740910,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
-[2026-08-02T08:19:00.913Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.915Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
-[2026-08-02T08:19:00.916Z] INFO : Initializing [POST] request session
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740916,
-          "url": "/api/test/custom-type-single"
-     },
-     "sessionId": "cecfac64-35ad-42f7-9a05-b0ecbea836c0"
-}
-[2026-08-02T08:19:00.917Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740916,
-          "url": "/api/test/custom-type-single"
-     },
-     "sessionId": "cecfac64-35ad-42f7-9a05-b0ecbea836c0"
-}
-[2026-08-02T08:19:00.917Z] INFO : Incoming [POST] request
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740916,
-          "url": "/api/test/custom-type-single"
-     },
-     "sessionId": "cecfac64-35ad-42f7-9a05-b0ecbea836c0",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740916,
-     "url": "/api/test/custom-type-single"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
-[2026-08-02T08:19:00.917Z] INFO : Response completed for [POST] request with status: 200
-{
-     "metadata": {
-          "method": "POST",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740916,
-          "url": "/api/test/custom-type-single"
-     },
-     "sessionId": "cecfac64-35ad-42f7-9a05-b0ecbea836c0",
-     "method": "POST",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740916,
-     "url": "/api/test/custom-type-single",
-     "duration": 1,
-     "endTime": 1785658740917,
-     "statusCode": 200
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
-[2026-08-02T08:19:00.930Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.932Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
-[2026-08-02T08:19:00.934Z] INFO : Initializing [GET] request session
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "initializeRequest",
-          "startTime": 1785658740934,
-          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
-     },
-     "sessionId": "dcc0fc5c-5dd9-4936-ab73-c03875de5744"
-}
-[2026-08-02T08:19:00.934Z] INFO : Registering response data
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740934,
-          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
-     },
-     "sessionId": "dcc0fc5c-5dd9-4936-ab73-c03875de5744"
-}
-[2026-08-02T08:19:00.934Z] INFO : Incoming [GET] request
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740934,
-          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
-     },
-     "sessionId": "dcc0fc5c-5dd9-4936-ab73-c03875de5744",
-     "method": "GET",
-     "requestType": "HTTP",
-     "source": "requestHandler",
-     "startTime": 1785658740934,
-     "url": "/api/test/get-with-param?firstName=Test&lastName=World"
-}
-
-stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
-[2026-08-02T08:19:00.935Z] INFO : Response completed for [GET] request with status: 200
-{
-     "metadata": {
-          "method": "GET",
-          "requestType": "HTTP",
-          "source": "captureResponse",
-          "startTime": 1785658740934,
-          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
-     },
-     "sessionId": "dcc0fc5c-5dd9-4936-ab73-c03875de5744",
-     "method": "GET",
-     "requestType": "HTTP",
-     "source": "responseHandler",
-     "startTime": 1785658740934,
-     "url": "/api/test/get-with-param?firstName=Test&lastName=World",
-     "duration": 1,
-     "endTime": 1785658740935,
+     "duration": 30,
+     "endTime": 1785659255126,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.hello
-[2026-08-02T08:19:00.944Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:00.956Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.132Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.134Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.hello
-[2026-08-02T08:19:00.970Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.138Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658740970,
+          "startTime": 1785659255138,
           "url": "/trpc/test.hello"
      },
-     "sessionId": "a1f14728-3849-4efb-90ab-9c94b169fe1a"
+     "sessionId": "48650a34-8952-44a1-92f6-b7ba36ac0d1c"
 }
-[2026-08-02T08:19:00.970Z] INFO : Registering response data
+[2026-08-02T08:27:35.138Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740970,
+          "startTime": 1785659255138,
           "url": "/trpc/test.hello"
      },
-     "sessionId": "a1f14728-3849-4efb-90ab-9c94b169fe1a"
+     "sessionId": "48650a34-8952-44a1-92f6-b7ba36ac0d1c"
 }
-[2026-08-02T08:19:00.970Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.138Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740970,
+          "startTime": 1785659255138,
           "url": "/trpc/test.hello"
      },
-     "sessionId": "a1f14728-3849-4efb-90ab-9c94b169fe1a",
+     "sessionId": "48650a34-8952-44a1-92f6-b7ba36ac0d1c",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658740970,
+     "startTime": 1785659255138,
      "url": "/trpc/test.hello"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.hello
-[2026-08-02T08:19:00.972Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.150Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658740970,
+          "startTime": 1785659255138,
           "url": "/trpc/test.hello"
      },
-     "sessionId": "a1f14728-3849-4efb-90ab-9c94b169fe1a",
+     "sessionId": "48650a34-8952-44a1-92f6-b7ba36ac0d1c",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658740970,
+     "startTime": 1785659255138,
      "url": "/trpc/test.hello",
-     "duration": 2,
-     "endTime": 1785658740972,
+     "duration": 12,
+     "endTime": 1785659255150,
      "statusCode": 200
 }
 
-stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.mixedParams
-[2026-08-02T08:19:01.020Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.028Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
+[2026-08-02T08:27:35.111Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.160Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.mixedParams
-[2026-08-02T08:19:01.030Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.175Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.177Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.mixedParams
+[2026-08-02T08:27:35.178Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741030,
+          "startTime": 1785659255178,
           "url": "/trpc/test.mixedParams"
      },
-     "sessionId": "5af19188-37e1-4825-aef8-f44a2ed2648c"
+     "sessionId": "cddec80c-1d2d-43d0-950b-385ed0e46392"
 }
-[2026-08-02T08:19:01.031Z] INFO : Registering response data
+[2026-08-02T08:27:35.178Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741030,
+          "startTime": 1785659255178,
           "url": "/trpc/test.mixedParams"
      },
-     "sessionId": "5af19188-37e1-4825-aef8-f44a2ed2648c"
+     "sessionId": "cddec80c-1d2d-43d0-950b-385ed0e46392"
 }
-[2026-08-02T08:19:01.031Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.178Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741030,
+          "startTime": 1785659255178,
           "url": "/trpc/test.mixedParams"
      },
-     "sessionId": "5af19188-37e1-4825-aef8-f44a2ed2648c",
+     "sessionId": "cddec80c-1d2d-43d0-950b-385ed0e46392",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741030,
+     "startTime": 1785659255178,
      "url": "/trpc/test.mixedParams"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.mixedParams
-[2026-08-02T08:19:01.032Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.180Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741030,
+          "startTime": 1785659255178,
           "url": "/trpc/test.mixedParams"
      },
-     "sessionId": "5af19188-37e1-4825-aef8-f44a2ed2648c",
+     "sessionId": "cddec80c-1d2d-43d0-950b-385ed0e46392",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741030,
+     "startTime": 1785659255178,
      "url": "/trpc/test.mixedParams",
      "duration": 2,
-     "endTime": 1785658741032,
+     "endTime": 1785659255180,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectDestructured
-[2026-08-02T08:19:01.065Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.068Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.184Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.191Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectDestructured
-[2026-08-02T08:19:01.075Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.217Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741075,
+          "startTime": 1785659255217,
           "url": "/trpc/test.objectDestructured"
      },
-     "sessionId": "4876fce0-38c5-4936-a37d-9474a80345c4"
+     "sessionId": "220531df-c7ce-4e1b-aff8-6765e811a81b"
 }
-[2026-08-02T08:19:01.075Z] INFO : Registering response data
+[2026-08-02T08:27:35.217Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741075,
+          "startTime": 1785659255217,
           "url": "/trpc/test.objectDestructured"
      },
-     "sessionId": "4876fce0-38c5-4936-a37d-9474a80345c4"
+     "sessionId": "220531df-c7ce-4e1b-aff8-6765e811a81b"
 }
-[2026-08-02T08:19:01.075Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.217Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741075,
+          "startTime": 1785659255217,
           "url": "/trpc/test.objectDestructured"
      },
-     "sessionId": "4876fce0-38c5-4936-a37d-9474a80345c4",
+     "sessionId": "220531df-c7ce-4e1b-aff8-6765e811a81b",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741075,
+     "startTime": 1785659255217,
      "url": "/trpc/test.objectDestructured"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectDestructured
-[2026-08-02T08:19:01.077Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.230Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741075,
+          "startTime": 1785659255217,
           "url": "/trpc/test.objectDestructured"
      },
-     "sessionId": "4876fce0-38c5-4936-a37d-9474a80345c4",
+     "sessionId": "220531df-c7ce-4e1b-aff8-6765e811a81b",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741075,
+     "startTime": 1785659255217,
      "url": "/trpc/test.objectDestructured",
+     "duration": 12,
+     "endTime": 1785659255229,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
+[2026-08-02T08:27:35.252Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255252,
+          "url": "/api/test/_check-params"
+     },
+     "sessionId": "64e174ac-efeb-4443-8100-2979339639fd"
+}
+[2026-08-02T08:27:35.252Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255252,
+          "url": "/api/test/_check-params"
+     },
+     "sessionId": "64e174ac-efeb-4443-8100-2979339639fd"
+}
+[2026-08-02T08:27:35.252Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255252,
+          "url": "/api/test/_check-params"
+     },
+     "sessionId": "64e174ac-efeb-4443-8100-2979339639fd",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255252,
+     "url": "/api/test/_check-params"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/_check-params
+[2026-08-02T08:27:35.254Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255252,
+          "url": "/api/test/_check-params"
+     },
+     "sessionId": "64e174ac-efeb-4443-8100-2979339639fd",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255252,
+     "url": "/api/test/_check-params",
      "duration": 2,
-     "endTime": 1785658741077,
+     "endTime": 1785659255254,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
+[2026-08-02T08:27:35.267Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.269Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
+[2026-08-02T08:27:35.271Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255271,
+          "url": "/api/test/hello"
+     },
+     "sessionId": "6213b2e0-233c-484f-aed5-b15139c169cf"
+}
+[2026-08-02T08:27:35.271Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255271,
+          "url": "/api/test/hello"
+     },
+     "sessionId": "6213b2e0-233c-484f-aed5-b15139c169cf"
+}
+[2026-08-02T08:27:35.271Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255271,
+          "url": "/api/test/hello"
+     },
+     "sessionId": "6213b2e0-233c-484f-aed5-b15139c169cf",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255271,
+     "url": "/api/test/hello"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/hello
+[2026-08-02T08:27:35.272Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255271,
+          "url": "/api/test/hello"
+     },
+     "sessionId": "6213b2e0-233c-484f-aed5-b15139c169cf",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255271,
+     "url": "/api/test/hello",
+     "duration": 1,
+     "endTime": 1785659255272,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
+[2026-08-02T08:27:35.280Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.282Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
+[2026-08-02T08:27:35.284Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255284,
+          "url": "/api/test/mixed-params"
+     },
+     "sessionId": "7c2565e8-a25e-4f3d-a938-19973c9e36bd"
+}
+[2026-08-02T08:27:35.284Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255284,
+          "url": "/api/test/mixed-params"
+     },
+     "sessionId": "7c2565e8-a25e-4f3d-a938-19973c9e36bd"
+}
+[2026-08-02T08:27:35.284Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255284,
+          "url": "/api/test/mixed-params"
+     },
+     "sessionId": "7c2565e8-a25e-4f3d-a938-19973c9e36bd",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255284,
+     "url": "/api/test/mixed-params"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/mixed-params
+[2026-08-02T08:27:35.285Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255284,
+          "url": "/api/test/mixed-params"
+     },
+     "sessionId": "7c2565e8-a25e-4f3d-a938-19973c9e36bd",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255284,
+     "url": "/api/test/mixed-params",
+     "duration": 1,
+     "endTime": 1785659255285,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
+[2026-08-02T08:27:35.300Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.302Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
+[2026-08-02T08:27:35.305Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255304,
+          "url": "/api/test/object-destructured"
+     },
+     "sessionId": "1552644d-9a5d-430a-b521-2daf04f42028"
+}
+[2026-08-02T08:27:35.305Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255304,
+          "url": "/api/test/object-destructured"
+     },
+     "sessionId": "1552644d-9a5d-430a-b521-2daf04f42028"
+}
+[2026-08-02T08:27:35.305Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255304,
+          "url": "/api/test/object-destructured"
+     },
+     "sessionId": "1552644d-9a5d-430a-b521-2daf04f42028",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255304,
+     "url": "/api/test/object-destructured"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-destructured
+[2026-08-02T08:27:35.305Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255304,
+          "url": "/api/test/object-destructured"
+     },
+     "sessionId": "1552644d-9a5d-430a-b521-2daf04f42028",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255304,
+     "url": "/api/test/object-destructured",
+     "duration": 1,
+     "endTime": 1785659255305,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
+[2026-08-02T08:27:35.307Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.309Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
+[2026-08-02T08:27:35.311Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255311,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "9012e302-e461-4810-9282-6f449f92083f"
+}
+[2026-08-02T08:27:35.311Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255311,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "9012e302-e461-4810-9282-6f449f92083f"
+}
+[2026-08-02T08:27:35.311Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255311,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "9012e302-e461-4810-9282-6f449f92083f",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255311,
+     "url": "/api/test/object-only"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/object-only
+[2026-08-02T08:27:35.312Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255311,
+          "url": "/api/test/object-only"
+     },
+     "sessionId": "9012e302-e461-4810-9282-6f449f92083f",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255311,
+     "url": "/api/test/object-only",
+     "duration": 1,
+     "endTime": 1785659255312,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
+[2026-08-02T08:27:35.321Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.322Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
+[2026-08-02T08:27:35.324Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255324,
+          "url": "/api/test/primitives-and-array"
+     },
+     "sessionId": "5f2f44c7-679d-43df-a8b2-74dc8541497d"
+}
+[2026-08-02T08:27:35.324Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255324,
+          "url": "/api/test/primitives-and-array"
+     },
+     "sessionId": "5f2f44c7-679d-43df-a8b2-74dc8541497d"
+}
+[2026-08-02T08:27:35.324Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255324,
+          "url": "/api/test/primitives-and-array"
+     },
+     "sessionId": "5f2f44c7-679d-43df-a8b2-74dc8541497d",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255324,
+     "url": "/api/test/primitives-and-array"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/primitives-and-array
+[2026-08-02T08:27:35.325Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255324,
+          "url": "/api/test/primitives-and-array"
+     },
+     "sessionId": "5f2f44c7-679d-43df-a8b2-74dc8541497d",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255324,
+     "url": "/api/test/primitives-and-array",
+     "duration": 1,
+     "endTime": 1785659255325,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectOnly
-[2026-08-02T08:19:01.089Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.091Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.375Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.396Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectOnly
-[2026-08-02T08:19:01.097Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.402Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741097,
+          "startTime": 1785659255402,
           "url": "/trpc/test.objectOnly"
      },
-     "sessionId": "d010d720-8f3c-4399-989d-2e49ac778430"
+     "sessionId": "d9f71eb1-927d-4044-9058-19d82d7fda0c"
 }
-[2026-08-02T08:19:01.097Z] INFO : Registering response data
+[2026-08-02T08:27:35.402Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741097,
+          "startTime": 1785659255402,
           "url": "/trpc/test.objectOnly"
      },
-     "sessionId": "d010d720-8f3c-4399-989d-2e49ac778430"
+     "sessionId": "d9f71eb1-927d-4044-9058-19d82d7fda0c"
 }
-[2026-08-02T08:19:01.097Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.402Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741097,
+          "startTime": 1785659255402,
           "url": "/trpc/test.objectOnly"
      },
-     "sessionId": "d010d720-8f3c-4399-989d-2e49ac778430",
+     "sessionId": "d9f71eb1-927d-4044-9058-19d82d7fda0c",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741097,
+     "startTime": 1785659255402,
      "url": "/trpc/test.objectOnly"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.objectOnly
-[2026-08-02T08:19:01.099Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.418Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741097,
+          "startTime": 1785659255402,
           "url": "/trpc/test.objectOnly"
      },
-     "sessionId": "d010d720-8f3c-4399-989d-2e49ac778430",
+     "sessionId": "d9f71eb1-927d-4044-9058-19d82d7fda0c",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741097,
+     "startTime": 1785659255402,
      "url": "/trpc/test.objectOnly",
-     "duration": 2,
-     "endTime": 1785658741099,
+     "duration": 15,
+     "endTime": 1785659255417,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.primitivesAndArray
-[2026-08-02T08:19:01.104Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.106Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.434Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.436Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.primitivesAndArray
-[2026-08-02T08:19:01.112Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.442Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741112,
+          "startTime": 1785659255442,
           "url": "/trpc/test.primitivesAndArray"
      },
-     "sessionId": "76717a81-6bd4-4eaf-95bf-032cf42a419f"
+     "sessionId": "e1df3788-1bde-43fe-9983-35b1b3542b2e"
 }
-[2026-08-02T08:19:01.112Z] INFO : Registering response data
+[2026-08-02T08:27:35.442Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741112,
+          "startTime": 1785659255442,
           "url": "/trpc/test.primitivesAndArray"
      },
-     "sessionId": "76717a81-6bd4-4eaf-95bf-032cf42a419f"
+     "sessionId": "e1df3788-1bde-43fe-9983-35b1b3542b2e"
 }
-[2026-08-02T08:19:01.113Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.442Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741112,
+          "startTime": 1785659255442,
           "url": "/trpc/test.primitivesAndArray"
      },
-     "sessionId": "76717a81-6bd4-4eaf-95bf-032cf42a419f",
+     "sessionId": "e1df3788-1bde-43fe-9983-35b1b3542b2e",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741112,
+     "startTime": 1785659255442,
      "url": "/trpc/test.primitivesAndArray"
 }
 
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
+[2026-08-02T08:27:35.380Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.442Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.primitivesAndArray
-[2026-08-02T08:19:01.114Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.446Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741112,
+          "startTime": 1785659255442,
           "url": "/trpc/test.primitivesAndArray"
      },
-     "sessionId": "76717a81-6bd4-4eaf-95bf-032cf42a419f",
+     "sessionId": "e1df3788-1bde-43fe-9983-35b1b3542b2e",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741112,
+     "startTime": 1785659255442,
      "url": "/trpc/test.primitivesAndArray",
-     "duration": 2,
-     "endTime": 1785658741114,
+     "duration": 4,
+     "endTime": 1785659255446,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeArray
-[2026-08-02T08:19:01.121Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.123Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.450Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.452Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeArray
-[2026-08-02T08:19:01.148Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.453Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741148,
+          "startTime": 1785659255453,
           "url": "/trpc/test.customTypeArray"
      },
-     "sessionId": "a77558cc-ce47-4f13-8422-4923d0c80b87"
+     "sessionId": "827d88d8-f2a9-439f-b664-fb851ba47c02"
 }
-[2026-08-02T08:19:01.148Z] INFO : Registering response data
+[2026-08-02T08:27:35.453Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741148,
+          "startTime": 1785659255453,
           "url": "/trpc/test.customTypeArray"
      },
-     "sessionId": "a77558cc-ce47-4f13-8422-4923d0c80b87"
+     "sessionId": "827d88d8-f2a9-439f-b664-fb851ba47c02"
 }
-[2026-08-02T08:19:01.149Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.453Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741148,
+          "startTime": 1785659255453,
           "url": "/trpc/test.customTypeArray"
      },
-     "sessionId": "a77558cc-ce47-4f13-8422-4923d0c80b87",
+     "sessionId": "827d88d8-f2a9-439f-b664-fb851ba47c02",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741148,
+     "startTime": 1785659255453,
      "url": "/trpc/test.customTypeArray"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeArray
-[2026-08-02T08:19:01.150Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.455Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741148,
+          "startTime": 1785659255453,
           "url": "/trpc/test.customTypeArray"
      },
-     "sessionId": "a77558cc-ce47-4f13-8422-4923d0c80b87",
+     "sessionId": "827d88d8-f2a9-439f-b664-fb851ba47c02",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741148,
+     "startTime": 1785659255453,
      "url": "/trpc/test.customTypeArray",
      "duration": 2,
-     "endTime": 1785658741150,
+     "endTime": 1785659255455,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
+[2026-08-02T08:27:35.455Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255455,
+          "url": "/api/test/custom-type-array"
+     },
+     "sessionId": "be2ca49b-06c6-4b99-a053-43aebc5990f5"
+}
+[2026-08-02T08:27:35.456Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255455,
+          "url": "/api/test/custom-type-array"
+     },
+     "sessionId": "be2ca49b-06c6-4b99-a053-43aebc5990f5"
+}
+[2026-08-02T08:27:35.456Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255455,
+          "url": "/api/test/custom-type-array"
+     },
+     "sessionId": "be2ca49b-06c6-4b99-a053-43aebc5990f5",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255455,
+     "url": "/api/test/custom-type-array"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-array
+[2026-08-02T08:27:35.457Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255455,
+          "url": "/api/test/custom-type-array"
+     },
+     "sessionId": "be2ca49b-06c6-4b99-a053-43aebc5990f5",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255455,
+     "url": "/api/test/custom-type-array",
+     "duration": 2,
+     "endTime": 1785659255457,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeSingle
-[2026-08-02T08:19:01.165Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.174Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:35.469Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.471Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeSingle
-[2026-08-02T08:19:01.187Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:35.484Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741187,
+          "startTime": 1785659255484,
           "url": "/trpc/test.customTypeSingle"
      },
-     "sessionId": "a54cfdc1-a9af-4d54-be39-321f96ba6e68"
+     "sessionId": "801654dc-c188-4d01-ac71-4c78214c0c4a"
 }
-[2026-08-02T08:19:01.187Z] INFO : Registering response data
+[2026-08-02T08:27:35.484Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741187,
+          "startTime": 1785659255484,
           "url": "/trpc/test.customTypeSingle"
      },
-     "sessionId": "a54cfdc1-a9af-4d54-be39-321f96ba6e68"
+     "sessionId": "801654dc-c188-4d01-ac71-4c78214c0c4a"
 }
-[2026-08-02T08:19:01.188Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:35.484Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741187,
+          "startTime": 1785659255484,
           "url": "/trpc/test.customTypeSingle"
      },
-     "sessionId": "a54cfdc1-a9af-4d54-be39-321f96ba6e68",
+     "sessionId": "801654dc-c188-4d01-ac71-4c78214c0c4a",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741187,
+     "startTime": 1785659255484,
      "url": "/trpc/test.customTypeSingle"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle POST /trpc/test.customTypeSingle
-[2026-08-02T08:19:01.189Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:35.485Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741187,
+          "startTime": 1785659255484,
           "url": "/trpc/test.customTypeSingle"
      },
-     "sessionId": "a54cfdc1-a9af-4d54-be39-321f96ba6e68",
+     "sessionId": "801654dc-c188-4d01-ac71-4c78214c0c4a",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741187,
+     "startTime": 1785659255484,
      "url": "/trpc/test.customTypeSingle",
-     "duration": 2,
-     "endTime": 1785658741189,
+     "duration": 1,
+     "endTime": 1785659255485,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
+[2026-08-02T08:27:35.492Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.494Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle GET /trpc/test.getWithParam
+[2026-08-02T08:27:35.501Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.503Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
+[2026-08-02T08:27:35.512Z] INFO : Initializing [POST] request session
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255512,
+          "url": "/api/test/custom-type-single"
+     },
+     "sessionId": "c5762aff-1097-468e-91a2-bdd6dbe50587"
+}
+[2026-08-02T08:27:35.512Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255512,
+          "url": "/api/test/custom-type-single"
+     },
+     "sessionId": "c5762aff-1097-468e-91a2-bdd6dbe50587"
+}
+[2026-08-02T08:27:35.518Z] INFO : Incoming [POST] request
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255512,
+          "url": "/api/test/custom-type-single"
+     },
+     "sessionId": "c5762aff-1097-468e-91a2-bdd6dbe50587",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255512,
+     "url": "/api/test/custom-type-single"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle POST /api/test/custom-type-single
+[2026-08-02T08:27:35.519Z] INFO : Response completed for [POST] request with status: 200
+{
+     "metadata": {
+          "method": "POST",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255512,
+          "url": "/api/test/custom-type-single"
+     },
+     "sessionId": "c5762aff-1097-468e-91a2-bdd6dbe50587",
+     "method": "POST",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255512,
+     "url": "/api/test/custom-type-single",
+     "duration": 7,
+     "endTime": 1785659255519,
      "statusCode": 200
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle GET /trpc/test.getWithParam
-[2026-08-02T08:19:01.278Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:01.293Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
-
-stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle GET /trpc/test.getWithParam
-[2026-08-02T08:19:01.306Z] INFO : Initializing [GET] request session
+[2026-08-02T08:27:35.519Z] INFO : Initializing [GET] request session
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658741306,
+          "startTime": 1785659255519,
           "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D"
      },
-     "sessionId": "97c9c1c4-2290-4c86-a565-834ec6a33825"
+     "sessionId": "d4c7813b-8c29-4749-a803-d4d1bbbade52"
 }
-[2026-08-02T08:19:01.306Z] INFO : Registering response data
+[2026-08-02T08:27:35.519Z] INFO : Registering response data
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741306,
+          "startTime": 1785659255519,
           "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D"
      },
-     "sessionId": "97c9c1c4-2290-4c86-a565-834ec6a33825"
+     "sessionId": "d4c7813b-8c29-4749-a803-d4d1bbbade52"
 }
-[2026-08-02T08:19:01.306Z] INFO : Incoming [GET] request
+[2026-08-02T08:27:35.533Z] INFO : Incoming [GET] request
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741306,
+          "startTime": 1785659255519,
           "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D"
      },
-     "sessionId": "97c9c1c4-2290-4c86-a565-834ec6a33825",
+     "sessionId": "d4c7813b-8c29-4749-a803-d4d1bbbade52",
      "method": "GET",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658741306,
+     "startTime": 1785659255519,
      "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D"
 }
 
 stdout | tests/sample.trpc.test.ts > tRPC > test param endpoints > should handle GET /trpc/test.getWithParam
-[2026-08-02T08:19:01.308Z] INFO : Response completed for [GET] request with status: 200
+[2026-08-02T08:27:35.538Z] INFO : Response completed for [GET] request with status: 200
 {
      "metadata": {
           "method": "GET",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658741306,
+          "startTime": 1785659255519,
           "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D"
      },
-     "sessionId": "97c9c1c4-2290-4c86-a565-834ec6a33825",
+     "sessionId": "d4c7813b-8c29-4749-a803-d4d1bbbade52",
      "method": "GET",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658741306,
+     "startTime": 1785659255519,
      "url": "/trpc/test.getWithParam?input=%7B%22json%22%3A%7B%22firstName%22%3A%22Test%22%2C%22lastName%22%3A%22World%22%7D%7D",
-     "duration": 2,
-     "endTime": 1785658741308,
+     "duration": 19,
+     "endTime": 1785659255538,
+     "statusCode": 200
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
+[2026-08-02T08:27:35.551Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:35.553Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
+[2026-08-02T08:27:35.555Z] INFO : Initializing [GET] request session
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "initializeRequest",
+          "startTime": 1785659255555,
+          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
+     },
+     "sessionId": "05e6675c-4040-4bc0-8b12-63954aa65c23"
+}
+[2026-08-02T08:27:35.555Z] INFO : Registering response data
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255555,
+          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
+     },
+     "sessionId": "05e6675c-4040-4bc0-8b12-63954aa65c23"
+}
+[2026-08-02T08:27:35.555Z] INFO : Incoming [GET] request
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255555,
+          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
+     },
+     "sessionId": "05e6675c-4040-4bc0-8b12-63954aa65c23",
+     "method": "GET",
+     "requestType": "HTTP",
+     "source": "requestHandler",
+     "startTime": 1785659255555,
+     "url": "/api/test/get-with-param?firstName=Test&lastName=World"
+}
+
+stdout | tests/sample.http.test.ts > HTTP > test param endpoints > should handle GET /api/test/get-with-param
+[2026-08-02T08:27:35.555Z] INFO : Response completed for [GET] request with status: 200
+{
+     "metadata": {
+          "method": "GET",
+          "requestType": "HTTP",
+          "source": "captureResponse",
+          "startTime": 1785659255555,
+          "url": "/api/test/get-with-param?firstName=Test&lastName=World"
+     },
+     "sessionId": "05e6675c-4040-4bc0-8b12-63954aa65c23",
+     "method": "GET",
+     "requestType": "HTTP",
+     "source": "responseHandler",
+     "startTime": 1785659255555,
+     "url": "/api/test/get-with-param?firstName=Test&lastName=World",
+     "duration": 0,
+     "endTime": 1785659255555,
      "statusCode": 200
 }
 
 stdout | tests/trpc.caller.test.ts > tRPC Integration Tests
-[2026-08-02T08:19:07.857Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
-[2026-08-02T08:19:07.905Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
+[2026-08-02T08:27:40.421Z] INFO : 🧪 tRPC Playground: http://localhost:3000/trpc-playground
+[2026-08-02T08:27:40.468Z] INFO : 📚 Swagger UI: http://localhost:3000/docs
 
 stdout | tests/trpc.caller.test.ts > tRPC Integration Tests > should call tRPC using HTTP client (createTRPCClient)
-[2026-08-02T08:19:08.238Z] INFO : Initializing [POST] request session
+[2026-08-02T08:27:41.111Z] INFO : Initializing [POST] request session
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "initializeRequest",
-          "startTime": 1785658748237,
+          "startTime": 1785659261021,
           "url": "/trpc/test.hello?batch=1"
      },
-     "sessionId": "9fee5248-e85a-4f44-bea7-a48ac084e1e8"
+     "sessionId": "1b02744f-9500-437b-b2b9-b9e2f8ba14a2"
 }
-[2026-08-02T08:19:08.254Z] INFO : Registering response data
+[2026-08-02T08:27:41.162Z] INFO : Registering response data
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658748237,
+          "startTime": 1785659261021,
           "url": "/trpc/test.hello?batch=1"
      },
-     "sessionId": "9fee5248-e85a-4f44-bea7-a48ac084e1e8"
+     "sessionId": "1b02744f-9500-437b-b2b9-b9e2f8ba14a2"
 }
-[2026-08-02T08:19:08.254Z] INFO : Incoming [POST] request
+[2026-08-02T08:27:41.163Z] INFO : Incoming [POST] request
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658748237,
+          "startTime": 1785659261021,
           "url": "/trpc/test.hello?batch=1"
      },
-     "sessionId": "9fee5248-e85a-4f44-bea7-a48ac084e1e8",
+     "sessionId": "1b02744f-9500-437b-b2b9-b9e2f8ba14a2",
      "method": "POST",
      "requestType": "tRPC",
      "source": "requestHandler",
-     "startTime": 1785658748237,
+     "startTime": 1785659261021,
      "url": "/trpc/test.hello?batch=1"
 }
 
 stdout | tests/trpc.caller.test.ts > tRPC Integration Tests > should call tRPC using HTTP client (createTRPCClient)
-[2026-08-02T08:19:08.366Z] INFO : Response completed for [POST] request with status: 200
+[2026-08-02T08:27:41.277Z] INFO : Response completed for [POST] request with status: 200
 {
      "metadata": {
           "method": "POST",
           "requestType": "tRPC",
           "source": "captureResponse",
-          "startTime": 1785658748237,
+          "startTime": 1785659261021,
           "url": "/trpc/test.hello?batch=1"
      },
-     "sessionId": "9fee5248-e85a-4f44-bea7-a48ac084e1e8",
+     "sessionId": "1b02744f-9500-437b-b2b9-b9e2f8ba14a2",
      "method": "POST",
      "requestType": "tRPC",
      "source": "responseHandler",
-     "startTime": 1785658748237,
+     "startTime": 1785659261021,
      "url": "/trpc/test.hello?batch=1",
-     "duration": 129,
-     "endTime": 1785658748366,
+     "duration": 256,
+     "endTime": 1785659261277,
      "statusCode": 200
 }
 
- ✓ tests/trpc.caller.test.ts (2 tests) 582ms
-     ✓ should call tRPC using HTTP client (createTRPCClient)  456ms
- ✓ tests/autogen/types.test.ts (9 tests) 8ms
+ ✓ tests/trpc.caller.test.ts (2 tests) 1094ms
+     ✓ should call tRPC using HTTP client (createTRPCClient)  886ms
+ ✓ tests/index.test.ts (1 test) 6ms
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Basic validation > should pass validation for well-formed routes
-[2026-08-02T08:19:10.983Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.022Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T08:27:45.128Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.285Z] INFO : ✅ All routes passed validation (0 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Basic validation > should report errors for missing required fields
-[2026-08-02T08:19:11.025Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.025Z] WARN : Validation found 3 errors and 1 warnings
+[2026-08-02T08:27:45.316Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.317Z] WARN : Validation found 3 errors and 1 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Service naming validation > should validate service class naming conventions
-[2026-08-02T08:19:11.025Z] INFO : Validating 3 routes...
-[2026-08-02T08:19:11.025Z] WARN : Validation found 2 errors and 3 warnings
+[2026-08-02T08:27:45.320Z] INFO : Validating 3 routes...
+[2026-08-02T08:27:45.320Z] WARN : Validation found 2 errors and 3 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Service naming validation > should accept valid service class names
-[2026-08-02T08:19:11.026Z] INFO : Validating 3 routes...
-[2026-08-02T08:19:11.026Z] INFO : ✅ All routes passed validation (2 warnings)
+[2026-08-02T08:27:45.320Z] INFO : Validating 3 routes...
+[2026-08-02T08:27:45.320Z] INFO : ✅ All routes passed validation (2 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Service naming validation > should validate service method naming conventions
-[2026-08-02T08:19:11.026Z] INFO : Validating 3 routes...
-[2026-08-02T08:19:11.026Z] INFO : ✅ All routes passed validation (2 warnings)
+[2026-08-02T08:27:45.320Z] INFO : Validating 3 routes...
+[2026-08-02T08:27:45.320Z] INFO : ✅ All routes passed validation (2 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Path format validation > should validate HTTP path formats
-[2026-08-02T08:19:11.026Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.027Z] WARN : Validation found 1 errors and 0 warnings
+[2026-08-02T08:27:45.321Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.321Z] WARN : Validation found 1 errors and 0 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Path format validation > should validate tRPC path formats
-[2026-08-02T08:19:11.027Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.027Z] WARN : Validation found 1 errors and 1 warnings
+[2026-08-02T08:27:45.321Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.321Z] WARN : Validation found 1 errors and 1 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Path format validation > should accept valid path formats
-[2026-08-02T08:19:11.027Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.027Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T08:27:45.321Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.321Z] INFO : ✅ All routes passed validation (0 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > File structure validation > should validate service file locations
-[2026-08-02T08:19:11.027Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.027Z] WARN : Validation found 1 errors and 0 warnings
+[2026-08-02T08:27:45.328Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.328Z] WARN : Validation found 1 errors and 0 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > File structure validation > should warn about mismatched service filenames
-[2026-08-02T08:19:11.028Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.028Z] INFO : ✅ All routes passed validation (1 warnings)
+[2026-08-02T08:27:45.332Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.332Z] INFO : ✅ All routes passed validation (1 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Convention validation > should validate createRouteHandler pattern usage
-[2026-08-02T08:19:11.028Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.028Z] WARN : Validation found 1 errors and 1 warnings
+[2026-08-02T08:27:45.333Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.333Z] WARN : Validation found 1 errors and 1 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Convention validation > should validate HTTP method consistency
-[2026-08-02T08:19:11.028Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.028Z] INFO : ✅ All routes passed validation (2 warnings)
+[2026-08-02T08:27:45.333Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.333Z] INFO : ✅ All routes passed validation (2 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Convention validation > should validate tRPC procedure type consistency
-[2026-08-02T08:19:11.029Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.029Z] INFO : ✅ All routes passed validation (4 warnings)
+[2026-08-02T08:27:45.333Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.333Z] INFO : ✅ All routes passed validation (4 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Configuration options > should respect enforceServiceNaming option
-[2026-08-02T08:19:11.029Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.029Z] INFO : ✅ All routes passed validation (1 warnings)
+[2026-08-02T08:27:45.333Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.333Z] INFO : ✅ All routes passed validation (1 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Configuration options > should respect strictConventions option
-[2026-08-02T08:19:11.029Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.029Z] INFO : ✅ All routes passed validation (1 warnings)
+[2026-08-02T08:27:45.334Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.334Z] INFO : ✅ All routes passed validation (1 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Configuration options > should use custom service directory
-[2026-08-02T08:19:11.029Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.029Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T08:27:45.334Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.334Z] INFO : ✅ All routes passed validation (0 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Utility functions > should provide comprehensive error summary
-[2026-08-02T08:19:11.030Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.030Z] WARN : Validation found 2 errors and 1 warnings
+[2026-08-02T08:27:45.334Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.334Z] WARN : Validation found 2 errors and 1 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Utility functions > should handle empty route list
-[2026-08-02T08:19:11.030Z] INFO : Validating 0 routes...
-[2026-08-02T08:19:11.030Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T08:27:45.334Z] INFO : Validating 0 routes...
+[2026-08-02T08:27:45.334Z] INFO : ✅ All routes passed validation (0 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Utility functions > should validate service filename patterns indirectly
-[2026-08-02T08:19:11.031Z] INFO : Validating 2 routes...
-[2026-08-02T08:19:11.031Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T08:27:45.335Z] INFO : Validating 2 routes...
+[2026-08-02T08:27:45.335Z] INFO : ✅ All routes passed validation (0 warnings)
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Error types and categorization > should properly categorize validation errors
-[2026-08-02T08:19:11.052Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.052Z] WARN : Validation found 5 errors and 2 warnings
+[2026-08-02T08:27:45.335Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.335Z] WARN : Validation found 5 errors and 2 warnings
 
 stdout | tests/autogen/validators/route-validator.test.ts > RouteValidator > Error types and categorization > should include helpful suggestions in error messages
-[2026-08-02T08:19:11.052Z] INFO : Validating 1 routes...
-[2026-08-02T08:19:11.052Z] WARN : Validation found 2 errors and 1 warnings
+[2026-08-02T08:27:45.335Z] INFO : Validating 1 routes...
+[2026-08-02T08:27:45.335Z] WARN : Validation found 2 errors and 1 warnings
 
- ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 73ms
- ✓ tests/index.test.ts (1 test) 75ms
- ✓ tests/autogen/parsers/service-parser.test.ts (38 tests) 40284ms
-       ✓ should extract metadata for existing service and method  35107ms
-       ✓ should extract correct input and output shape for TestService.'mixedParams'  2842ms
-       ✓ should never produce unknown output types across all tested methods  421ms
-       ✓ should handle service method discovery  455ms
- ✓ tests/sample.http.test.ts (20 tests) 42702ms
-       ✓ should handle GET /api/test/async-fail-reject  4413ms
-     ✓ should have output schemas extracted for HTTP routes  37306ms
-     ✓ should handle different output types in routes  360ms
- ✓ tests/sample.trpc.test.ts (20 tests) 41897ms
-       ✓ should handle GET /trpc/test.asyncFailReject  3403ms
-     ✓ should have output schemas extracted for tRPC routes  36989ms
-     ✓ should handle different output types in tRPC routes  423ms
- ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 44157ms
-       ✓ should discover existing HTTP routes  40280ms
-       ✓ should return RouteHandlerInfo objects with correct structure  504ms
-       ✓ should find default route  447ms
-       ✓ should find test routes  313ms
-       ✓ should extract service information correctly  304ms
-       ✓ should handle different HTTP methods  506ms
-       ✓ should handle nested route paths  347ms
-       ✓ should handle parameter routes  393ms
- ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 44182ms
-       ✓ should discover existing tRPC routes  39713ms
-       ✓ should return RouteHandlerInfo objects with correct structure  592ms
-       ✓ should find default tRPC route  373ms
-       ✓ should find test tRPC routes  374ms
-       ✓ should extract service information correctly  456ms
-       ✓ should extract output schema from service methods  489ms
-       ✓ should handle nested tRPC route paths  329ms
-       ✓ should return absolute file paths  337ms
-       ✓ should handle parameter routes in tRPC format  365ms
- ✓ tests/autogen/index.test.ts (49 tests) 58896ms
-       ✓ should discover both HTTP and tRPC routes  40725ms
-       ✓ should return RouteInfo objects with correct structure  669ms
-       ✓ should find both HTTP and tRPC routes  882ms
-       ✓ should include service metadata when available  687ms
-       ✓ should include parameter metadata  619ms
-       ✓ should include output metadata  518ms
-       ✓ should handle different route types  451ms
-       ✓ should provide file path information  400ms
-       ✓ should provide service file path information  379ms
-       ✓ should find default routes  346ms
-       ✓ should find test routes in both HTTP and tRPC  334ms
-       ✓ should have consistent service mapping between HTTP and tRPC  355ms
-       ✓ should match shape for 'HTTP' '/'  352ms
-       ✓ should match shape for 'HTTP' '/test/_check-params'  340ms
-       ✓ should match shape for 'HTTP' '/test/async-fail-reject'  331ms
-       ✓ should match shape for 'HTTP' '/test/async-fail-throw'  346ms
-       ✓ should match shape for 'HTTP' '/test/hello'  317ms
-       ✓ should match shape for 'HTTP' '/test/get-with-param'  375ms
-       ✓ should match shape for 'HTTP' '/test/mixed-params'  378ms
-       ✓ should match shape for 'HTTP' '/test/object-destructured'  330ms
-       ✓ should match shape for 'HTTP' '/test/object-only'  319ms
-       ✓ should match shape for 'HTTP' '/test/primitives-and-array'  331ms
-       ✓ should match shape for 'HTTP' '/test/sync-fail-reject'  348ms
-       ✓ should match shape for 'HTTP' '/test/sync-fail-throw'  354ms
-       ✓ should match shape for 'HTTP' '/test/sync-success'  345ms
-       ✓ should match shape for 'HTTP' '/test/custom-type-array'  310ms
-       ✓ should match shape for 'HTTP' '/test/custom-type-single'  330ms
-       ✓ should match shape for 'tRPC' '/trpc/default.root'  362ms
-       ✓ should match shape for 'tRPC' '/trpc/test._checkParams'  340ms
-       ✓ should match shape for 'tRPC' '/trpc/test.asyncFailReject'  354ms
-       ✓ should match shape for 'tRPC' '/trpc/test.asyncFailThrow'  339ms
-       ✓ should match shape for 'tRPC' '/trpc/test.asyncSuccess'  311ms
-       ✓ should match shape for 'tRPC' '/trpc/test.hello'  302ms
-       ✓ should match shape for 'tRPC' '/trpc/test.mixedParams'  319ms
-       ✓ should match shape for 'tRPC' '/trpc/test.objectOnly'  316ms
-       ✓ should match shape for 'tRPC' '/trpc/test.primitivesAndArray'  316ms
-       ✓ should match shape for 'tRPC' '/trpc/test.syncFailReject'  322ms
-       ✓ should match shape for 'tRPC' '/trpc/test.syncFailThrow'  325ms
-       ✓ should match shape for 'tRPC' '/trpc/test.syncSuccess'  311ms
-       ✓ should match shape for 'tRPC' '/trpc/test.customTypeArray'  355ms
-       ✓ should have no unknown output types across all routes  328ms
-       ✓ should complete discovery within reasonable time  516ms
-       ✓ should be deterministic  533ms
+ ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 210ms
+ ✓ tests/autogen/types.test.ts (9 tests) 34ms
+ ✓ tests/autogen/parsers/service-parser.test.ts (38 tests) 36274ms
+       ✓ should extract metadata for existing service and method  32027ms
+       ✓ should extract correct input and output shape for TestService.'mixedParams'  2450ms
+       ✓ should never produce unknown output types across all tested methods  476ms
+       ✓ should handle service method discovery  453ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 37948ms
+       ✓ should handle GET /trpc/test.asyncFailReject  3472ms
+     ✓ should have output schemas extracted for tRPC routes  33017ms
+     ✓ should handle different output types in tRPC routes  364ms
+ ✓ tests/sample.http.test.ts (20 tests) 38830ms
+       ✓ should handle GET /api/test/async-fail-reject  3801ms
+     ✓ should have output schemas extracted for HTTP routes  33588ms
+     ✓ should handle different output types in routes  423ms
+ ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 39680ms
+       ✓ should discover existing tRPC routes  34084ms
+       ✓ should return RouteHandlerInfo objects with correct structure  331ms
+       ✓ should find default tRPC route  733ms
+       ✓ should find test tRPC routes  559ms
+       ✓ should extract service information correctly  625ms
+       ✓ should extract output schema from service methods  503ms
+       ✓ should handle nested tRPC route paths  514ms
+       ✓ should return absolute file paths  352ms
+       ✓ should handle missing routes directory gracefully  309ms
+       ✓ should handle invalid TypeScript files  453ms
+       ✓ should complete discovery within reasonable time  365ms
+       ✓ should distinguish between queries and mutations  307ms
+ ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 39707ms
+       ✓ should discover existing HTTP routes  35196ms
+       ✓ should return RouteHandlerInfo objects with correct structure  679ms
+       ✓ should find default route  439ms
+       ✓ should find test routes  351ms
+       ✓ should extract service information correctly  447ms
+       ✓ should handle nested route paths  490ms
+       ✓ should return absolute file paths  394ms
+       ✓ should handle parameter routes  348ms
+       ✓ should handle missing routes directory gracefully  353ms
+ ✓ tests/autogen/index.test.ts (49 tests) 52142ms
+       ✓ should discover both HTTP and tRPC routes  35451ms
+       ✓ should return RouteInfo objects with correct structure  1087ms
+       ✓ should find both HTTP and tRPC routes  677ms
+       ✓ should include service metadata when available  310ms
+       ✓ should include parameter metadata  687ms
+       ✓ should include output metadata  816ms
+       ✓ should handle different route types  542ms
+       ✓ should provide file path information  336ms
+       ✓ should discover expected number of routes  357ms
+       ✓ should find test routes in both HTTP and tRPC  352ms
+       ✓ should have consistent service mapping between HTTP and tRPC  304ms
+       ✓ should match shape for 'HTTP' '/'  343ms
+       ✓ should match shape for 'HTTP' '/test/async-fail-reject'  315ms
+       ✓ should match shape for 'HTTP' '/test/async-success'  304ms
+       ✓ should match shape for 'HTTP' '/test/hello'  400ms
+       ✓ should match shape for 'HTTP' '/test/object-only'  304ms
+       ✓ should match shape for 'HTTP' '/test/primitives-and-array'  320ms
+       ✓ should match shape for 'HTTP' '/test/sync-fail-reject'  300ms
+       ✓ should match shape for 'HTTP' '/test/sync-fail-throw'  335ms
+       ✓ should match shape for 'HTTP' '/test/sync-success'  307ms
+       ✓ should match shape for 'HTTP' '/test/custom-type-array'  326ms
+       ✓ should match shape for 'HTTP' '/test/custom-type-single'  300ms
+       ✓ should match shape for 'tRPC' '/trpc/test._checkParams'  320ms
+       ✓ should match shape for 'tRPC' '/trpc/test.asyncFailThrow'  311ms
+       ✓ should match shape for 'tRPC' '/trpc/test.hello'  307ms
+       ✓ should match shape for 'tRPC' '/trpc/test.objectDestructured'  301ms
+       ✓ should match shape for 'tRPC' '/trpc/test.primitivesAndArray'  336ms
+       ✓ should match shape for 'tRPC' '/trpc/test.syncFailReject'  329ms
+       ✓ should be deterministic  494ms
 
  Test Files  11 passed (11)
       Tests  197 passed (197)
-   Start at  16:18:51
-   Duration  63.95s (transform 5.17s, setup 0ms, import 34.48s, tests 274.99s, environment 2ms)
+   Start at  16:27:26
+   Duration  57.02s (transform 6.93s, setup 0ms, import 33.57s, tests 247.57s, environment 1ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -2784,12 +2774,12 @@ All files          |    59.9 |    49.76 |   60.71 |   60.33 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/frontend
       Coverage enabled with v8
 
- ✓ tests/index.test.ts (1 test) 5ms
+ ✓ tests/index.test.ts (1 test) 3ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  16:19:58
-   Duration  665ms (transform 139ms, setup 0ms, import 194ms, tests 5ms, environment 0ms)
+   Start at  16:28:25
+   Duration  611ms (transform 164ms, setup 0ms, import 207ms, tests 3ms, environment 0ms)
 
  % Coverage report from v8
 ------------|---------|----------|---------|---------|-------------------
@@ -2802,4 +2792,4 @@ All files   |      10 |        0 |       0 |      10 |
 ------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 4/4 cache hit (100%), 81.36s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 72.68s saved. (Run `vp run --last-details` for full details)
