@@ -21,8 +21,8 @@ function executeCommand() {
   local commandName="${arguments[*]}"
 
   case "${commandName}" in
-    "vp check")
-      commandOutputFile="root-check.output"
+    "vp run -r root")
+      commandOutputFile="root.output"
       ;;
     "vp run -r check")
       commandOutputFile="check.output"
@@ -96,7 +96,7 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
-executeCommand vp check
+executeCommand vp run -r root
 
 executeCommand vp run -r check
 executeCommand vp run -r format

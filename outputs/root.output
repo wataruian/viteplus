@@ -1,0 +1,6 @@
+[34m$ vp check[0m [32m◉[0m [90mcache hit, replaying[0m
+[1m[94mpass:[39m[0m All 168 files are correctly formatted [2m(611ms, 8 threads)[0m
+[1m[94mpass:[39m[0m Found no warnings, lint errors, or type errors in 146 files [2m(1.7s, 8 threads)[0m
+
+[90m---[0m
+[34;1mvp run:[0m cache hit, [32;1m3.02s[0m saved.

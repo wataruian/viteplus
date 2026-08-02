@@ -7,4 +7,4 @@
 [34m~/apps/frontend$ tsc[0m [32m◉[0m [90mcache hit, replaying[0m
 
 [90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m7.30s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m7.60s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
