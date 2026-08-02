@@ -71,6 +71,28 @@ const commonRunInputs = [
   ]),
 ];
 
+const getDotenvKeys = (rootDir: string): string[] => {
+  const filePath = path.resolve(rootDir, '.env');
+  const keys = new Set<string>();
+  if (fs.existsSync(filePath)) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          const match = /^(?<key>[^=]+)=/u.exec(trimmed);
+          if (match) {
+            keys.add(match[1].trim());
+          }
+        }
+      }
+    } catch {
+      // Ignore read errors
+    }
+  }
+  return [...keys];
+};
+
 const getCommonViteConfig = ({
   dir = import.meta.dirname,
   isRoot = false,
@@ -81,10 +103,13 @@ const getCommonViteConfig = ({
   mode?: string;
 } = {}): UserConfig => {
   let rootDir = dir;
+
   if (!isRoot) {
     rootDir = path.resolve(dir, '../..');
   }
-  const env = loadEnv(mode, rootDir, '');
+
+  const dotenvKeys = getDotenvKeys(rootDir);
+  const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
   const isLocal = env['ENV'] === 'local';
 
   const pkgPath = path.resolve(dir, 'package.json');
@@ -205,6 +230,7 @@ const getCommonViteConfig = ({
 const getPackageViteConfig = ({
   dir = import.meta.dirname,
   mode = 'development',
+  isRoot = false,
   buildType = 'pack',
   devCommand = 'tsx watch --conditions=typescript src/index.ts',
   startCommand = 'node dist/index.mjs',
@@ -212,59 +238,73 @@ const getPackageViteConfig = ({
   excludeStartCommand = true,
 }: {
   dir?: string;
+  isRoot?: boolean;
   mode?: string;
   buildType?: 'build' | 'pack';
   devCommand?: string;
   startCommand?: string;
   excludeDevCommand?: boolean;
   excludeStartCommand?: boolean;
-} = {}): UserConfig => ({
-  ...getCommonViteConfig({ dir, isRoot: false, mode }),
-  run: {
-    tasks: {
-      build: {
-        command: `vp ${buildType}`,
-        input: commonRunInputs,
+} = {}): UserConfig => {
+  let rootDir = dir;
+
+  if (!isRoot) {
+    rootDir = path.resolve(dir, '../..');
+  }
+
+  const dotenvKeys = getDotenvKeys(rootDir);
+  const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
+  const envArray = Object.keys(env).map((key) => key);
+  const commonProps = { env: envArray, input: commonRunInputs };
+
+  return {
+    ...getCommonViteConfig({ dir, isRoot, mode }),
+    run: {
+      tasks: {
+        build: {
+          command: `vp ${buildType}`,
+          ...commonProps,
+        },
+        check: {
+          command: 'vp check',
+          ...commonProps,
+        },
+        format: {
+          command: 'vp fmt',
+          ...commonProps,
+        },
+        lint: {
+          command: 'vp lint',
+          ...commonProps,
+        },
+        test: {
+          command: 'vp test',
+          ...commonProps,
+        },
+        'type-check': {
+          command: 'tsc',
+          ...commonProps,
+        },
+        ...(!excludeDevCommand && devCommand
+          ? {
+              dev: {
+                cache: false,
+                command: devCommand,
+              },
+            }
+          : {}),
+        ...(!excludeStartCommand && startCommand
+          ? {
+              start: {
+                cache: false,
+                command: startCommand,
+              },
+            }
+          : {}),
       },
-      check: {
-        command: 'vp check',
-        input: commonRunInputs,
-      },
-      format: {
-        command: 'vp fmt',
-        input: commonRunInputs,
-      },
-      lint: {
-        command: 'vp lint',
-        input: commonRunInputs,
-      },
-      test: {
-        command: 'vp test',
-        input: commonRunInputs,
-      },
-      'type-check': {
-        command: 'tsc',
-        input: commonRunInputs,
-      },
-      ...(!excludeDevCommand && devCommand
-        ? {
-            dev: {
-              cache: false,
-              command: devCommand,
-            },
-          }
-        : {}),
-      ...(!excludeStartCommand && startCommand
-        ? {
-            start: {
-              cache: false,
-              command: startCommand,
-            },
-          }
-        : {}),
     },
-  },
-});
+  };
+};
 
 const getRootViteConfig = (): UserConfig => ({
   ...getCommonViteConfig({
@@ -284,6 +324,7 @@ const getRootViteConfig = (): UserConfig => ({
 });
 
 export {
+  getDotenvKeys,
   commonIgnorePatterns,
   commonRunInputs,
   getCommonViteConfig,

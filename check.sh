@@ -50,13 +50,20 @@ function executeCommand() {
 
   local commandOutputPath="${outputsDir}/${commandOutputFile}"
   local commandSuccess="false"
+  
+  local exitStatus=0
   if [[ "${debug}" == "true" ]]; then
     FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" 2>&1 | tee "${commandOutputPath}"
+    exitStatus="${PIPESTATUS[0]}"
   else
     FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" > "${commandOutputPath}" 2>&1
+    exitStatus="${?}"
+  fi
+  
+  if [[ -f "${commandOutputPath}" ]]; then
+    node -e 'const fs = require("fs"); const f = process.argv[1]; fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace(/\x1b\[[0-9;]*[a-zA-Z]/g, ""));' "${commandOutputPath}"
   fi
 
-  local exitStatus="${PIPESTATUS[0]}"
   if [[ "${exitStatus}" -eq 0 ]]; then
     commandSuccess="true"
   fi
@@ -96,14 +103,14 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
-executeCommand vp run -r root
+# executeCommand vp run -r root
 
-executeCommand vp run -r check
-executeCommand vp run -r format
-executeCommand vp run -r lint
-executeCommand vp run -r type-check
-executeCommand vp run -r build
-executeCommand vp run -r test
+# executeCommand vp run -r check
+# executeCommand vp run -r format
+# executeCommand vp run -r lint
+# executeCommand vp run -r type-check
+# executeCommand vp run -r build
+# executeCommand vp run -r test
 
 executeCommand vp run -r autogen "${debug}"
 

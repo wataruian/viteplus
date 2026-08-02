@@ -1,10 +1,10 @@
-[34m~/packages/common$ tsc[0m [32m◉[0m [90mcache hit, replaying[0m
+~/packages/common$ tsc
+~/packages/design-system$ tsc
 
-[34m~/packages/design-system$ tsc[0m [32m◉[0m [90mcache hit, replaying[0m
 
-[34m~/apps/backend$ tsc[0m [32m◉[0m [90mcache hit, replaying[0m
+~/apps/backend$ tsc
 
-[34m~/apps/frontend$ tsc[0m [32m◉[0m [90mcache hit, replaying[0m
+~/apps/frontend$ tsc
 
-[90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m7.60s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+---
+vp run: 0/4 cache hit (0%). (Run `vp run --last-details` for full details)

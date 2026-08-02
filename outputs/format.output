@@ -1,14 +1,14 @@
-[34m~/packages/common$ vp fmt[0m [32m◉[0m [90mcache hit, replaying[0m
-Finished in 296ms on 39 files using 8 threads.
+~/packages/common$ vp fmt
+~/packages/design-system$ vp fmt
+Finished in 596ms on 39 files using 8 threads.
+Finished in 689ms on 44 files using 8 threads.
 
-[34m~/packages/design-system$ vp fmt[0m [32m◉[0m [90mcache hit, replaying[0m
-Finished in 306ms on 44 files using 8 threads.
+~/apps/backend$ vp fmt
 
-[34m~/apps/backend$ vp fmt[0m [32m◉[0m [90mcache hit, replaying[0m
-Finished in 284ms on 62 files using 8 threads.
+Finished in 415ms on 62 files using 8 threads.
 
-[34m~/apps/frontend$ vp fmt[0m [32m◉[0m [90mcache hit, replaying[0m
-Finished in 402ms on 9 files using 8 threads.
+~/apps/frontend$ vp fmt
+Finished in 596ms on 9 files using 8 threads.
 
-[90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m1.97s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+---
+vp run: 0/4 cache hit (0%). (Run `vp run --last-details` for full details)

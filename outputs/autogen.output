@@ -1,1609 +1,2423 @@
-[34m~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true[0m [32m◉[0m [90mcache hit, replaying[0m
-[[90m2026-08-02T04:52:02.352Z[39m] [34mINFO [39m: 🚀 Starting autogen build process...
+VITE+ - The Unified Toolchain for the Web
+
+~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true
+[2026-08-02T06:51:21.724Z] INFO : 🚀 Starting autogen build process...
 allRoutes [
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'DefaultService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts'[39m,
-    serviceMethod: [32m'root'[39m
+    path: '/',
+    requestType: 'HTTP',
+    serviceClass: 'DefaultService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts',
+    serviceMethod: 'root'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [32m'ABC'[39m,
-        description: [90mundefined[39m,
-        name: [32m'_stringInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 'ABC',
+        description: undefined,
+        name: '_stringInput',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_stringArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 'ABC', 'DEF' ],
+        description: undefined,
+        name: '_stringArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: [33m123[39m,
-        description: [90mundefined[39m,
-        name: [32m'_numberInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 123,
+        description: undefined,
+        name: '_numberInput',
+        required: false,
+        type: { base: 'number', kind: 'primitive' }
       },
       {
-        defaultValue: [ [33m123[39m, [33m456[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_numberArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 123, 456 ],
+        description: undefined,
+        name: '_numberArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'number', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: [33mtrue[39m,
-        description: [90mundefined[39m,
-        name: [32m'_booleanInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m }
+        defaultValue: true,
+        description: undefined,
+        name: '_booleanInput',
+        required: false,
+        type: { base: 'boolean', kind: 'primitive' }
       },
       {
-        defaultValue: [ [33mtrue[39m, [33mfalse[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_booleanArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ true, false ],
+        description: undefined,
+        name: '_booleanArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'boolean', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: { string: [32m'ABC'[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectStringInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { string: 'ABC' },
+        description: undefined,
+        name: '_objectStringInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            string: { base: 'string', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectStringArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { stringArray: [ 'ABC', 'DEF' ] },
+        description: undefined,
+        name: '_objectStringArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             stringArray: {
-              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'string', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: { number: [33m123[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectNumberInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { number: 123 },
+        description: undefined,
+        name: '_objectNumberInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            number: { base: 'number', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { numberArray: [ [33m123[39m, [33m456[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectNumberArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { numberArray: [ 123, 456 ] },
+        description: undefined,
+        name: '_objectNumberArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             numberArray: {
-              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'number', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: { boolean: [33mtrue[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectBooleanInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { boolean: true },
+        description: undefined,
+        name: '_objectBooleanInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            boolean: { base: 'boolean', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { booleanArray: [ [33mtrue[39m, [33mfalse[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectBooleanArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { booleanArray: [ true, false ] },
+        description: undefined,
+        name: '_objectBooleanArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             booleanArray: {
-              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'boolean', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
         defaultValue: {
-          boolean: [33mfalse[39m,
-          booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-          number: [33m123[39m,
-          numberArray: [ [33m123[39m, [33m456[39m ],
+          boolean: false,
+          booleanArray: [ true, false ],
+          number: 123,
+          numberArray: [ 123, 456 ],
           object: {
-            boolean: [33mtrue[39m,
-            booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-            number: [33m123[39m,
-            numberArray: [ [33m123[39m, [33m456[39m ],
-            string: [32m'ABC'[39m,
-            stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+            boolean: true,
+            booleanArray: [ true, false ],
+            number: 123,
+            numberArray: [ 123, 456 ],
+            string: 'ABC',
+            stringArray: [ 'ABC', 'DEF' ]
           },
           objectArray: [
             {
-              boolean: [33mtrue[39m,
-              booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-              number: [33m123[39m,
-              numberArray: [ [33m123[39m, [33m456[39m ],
-              string: [32m'ABC'[39m,
-              stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+              boolean: true,
+              booleanArray: [ true, false ],
+              number: 123,
+              numberArray: [ 123, 456 ],
+              string: 'ABC',
+              stringArray: [ 'ABC', 'DEF' ]
             },
             {
-              boolean: [33mfalse[39m,
-              booleanArray: [ [33mfalse[39m, [33mtrue[39m ],
-              number: [33m456[39m,
-              numberArray: [ [33m456[39m, [33m789[39m ],
-              string: [32m'DEF'[39m,
-              stringArray: [ [32m'DEF'[39m, [32m'GHI'[39m ]
+              boolean: false,
+              booleanArray: [ false, true ],
+              number: 456,
+              numberArray: [ 456, 789 ],
+              string: 'DEF',
+              stringArray: [ 'DEF', 'GHI' ]
             }
           ],
-          string: [32m'ABC'[39m,
-          stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+          string: 'ABC',
+          stringArray: [ 'ABC', 'DEF' ]
         },
-        description: [90mundefined[39m,
-        name: [32m'_objectMultipleInput'[39m,
-        required: [33mfalse[39m,
+        description: undefined,
+        name: '_objectMultipleInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            boolean: { base: 'boolean', kind: 'primitive', required: true },
             booleanArray: {
-              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'boolean', kind: 'primitive' },
+              kind: 'array',
+              required: true
             },
-            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            number: { base: 'number', kind: 'primitive', required: true },
             numberArray: {
-              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'number', kind: 'primitive' },
+              kind: 'array',
+              required: true
             },
             object: {
-              kind: [32m'object'[39m,
+              kind: 'object',
               properties: {
-                boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                boolean: { base: 'boolean', kind: 'primitive', required: true },
                 booleanArray: {
-                  itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'boolean', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 },
-                number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                number: { base: 'number', kind: 'primitive', required: true },
                 numberArray: {
-                  itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'number', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 },
-                string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                string: { base: 'string', kind: 'primitive', required: true },
                 stringArray: {
-                  itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'string', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 }
               },
-              required: [33mtrue[39m
+              required: true
             },
             objectArray: {
               itemType: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   boolean: {
-                    base: [32m'boolean'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mtrue[39m
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
                   },
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   },
-                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  number: { base: 'number', kind: 'primitive', required: true },
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   },
-                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  string: { base: 'string', kind: 'primitive', required: true },
                   stringArray: {
-                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   }
                 }
               },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              kind: 'array',
+              required: true
             },
-            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            string: { base: 'string', kind: 'primitive', required: true },
             stringArray: {
-              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'string', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: [32m'ABC'[39m,
-        description: [90mundefined[39m,
-        name: [32m'_string'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 'ABC',
+        description: undefined,
+        name: '_string',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_stringArray'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 'ABC', 'DEF' ],
+        description: undefined,
+        name: '_stringArray',
+        required: false,
         type: {
-          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
               booleanArrayOutput: {
-                itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'boolean', kind: 'primitive' },
+                kind: 'array'
               },
-              booleanOutput: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              booleanOutput: { base: 'boolean', kind: 'primitive' },
               numberArrayOutput: {
-                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'number', kind: 'primitive' },
+                kind: 'array'
               },
-              numberOutput: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              numberOutput: { base: 'number', kind: 'primitive' },
               objectBooleanArrayOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectBooleanOutput: {
-                kind: [32m'object'[39m,
-                properties: { boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m } }
+                kind: 'object',
+                properties: { boolean: { base: 'boolean', kind: 'primitive' } }
               },
               objectMultipleOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
-                  boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  boolean: { base: 'boolean', kind: 'primitive' },
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array'
                   },
-                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  number: { base: 'number', kind: 'primitive' },
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array'
                   },
                   object: {
-                    kind: [32m'object'[39m,
+                    kind: 'object',
                     properties: {
-                      boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                      boolean: { base: 'boolean', kind: 'primitive' },
                       booleanArray: {
-                        itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'boolean', kind: 'primitive' },
+                        kind: 'array'
                       },
-                      number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                      number: { base: 'number', kind: 'primitive' },
                       numberArray: {
-                        itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'number', kind: 'primitive' },
+                        kind: 'array'
                       },
-                      string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                      string: { base: 'string', kind: 'primitive' },
                       stringArray: {
-                        itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'string', kind: 'primitive' },
+                        kind: 'array'
                       }
                     }
                   },
                   objectArray: {
                     itemType: {
-                      kind: [32m'object'[39m,
+                      kind: 'object',
                       properties: {
-                        boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        boolean: { base: 'boolean', kind: 'primitive' },
                         booleanArray: {
-                          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'boolean', kind: 'primitive' },
+                          kind: 'array'
                         },
-                        number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        number: { base: 'number', kind: 'primitive' },
                         numberArray: {
-                          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'number', kind: 'primitive' },
+                          kind: 'array'
                         },
-                        string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        string: { base: 'string', kind: 'primitive' },
                         stringArray: {
-                          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'string', kind: 'primitive' },
+                          kind: 'array'
                         }
                       }
                     },
-                    kind: [32m'array'[39m
+                    kind: 'array'
                   },
-                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  string: { base: 'string', kind: 'primitive' },
                   stringArray: {
-                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectNumberArrayOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectNumberOutput: {
-                kind: [32m'object'[39m,
-                properties: { number: { base: [32m'number'[39m, kind: [32m'primitive'[39m } }
+                kind: 'object',
+                properties: { number: { base: 'number', kind: 'primitive' } }
               },
               objectStringArrayOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   stringArray: {
-                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectStringOutput: {
-                kind: [32m'object'[39m,
-                properties: { string: { base: [32m'string'[39m, kind: [32m'primitive'[39m } }
+                kind: 'object',
+                properties: { string: { base: 'string', kind: 'primitive' } }
               },
               stringArrayOutput: {
-                itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'string', kind: 'primitive' },
+                kind: 'array'
               },
-              stringOutput: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+              stringOutput: { base: 'string', kind: 'primitive' }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/_check-params'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'_checkParams'[39m
+    path: '/test/_check-params',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: '_checkParams'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
           error: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
             }
           },
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/async-fail-reject'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'asyncFailReject'[39m
+    path: '/test/async-fail-reject',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncFailReject'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
           error: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
             }
           },
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/async-fail-throw'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'asyncFailThrow'[39m
+    path: '/test/async-fail-throw',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncFailThrow'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/async-success'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'asyncSuccess'[39m
+    path: '/test/async-success',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncSuccess'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
         defaultValue: [
           {
             address: {
-              city: [32m'Sample City 1'[39m,
-              houseNumber: [33m11[39m,
-              province: [32m'Sample Province 1'[39m,
-              street: [32m'Sample Street 1'[39m
+              city: 'Sample City 1',
+              houseNumber: 11,
+              province: 'Sample Province 1',
+              street: 'Sample Street 1'
             },
-            age: [33m22[39m,
-            firstName: [32m'John'[39m,
-            lastName: [32m'Doe'[39m
+            age: 22,
+            firstName: 'John',
+            lastName: 'Doe'
           },
           {
             address: {
-              city: [32m'Sample City 2'[39m,
-              houseNumber: [33m22[39m,
-              province: [32m'Sample Province 2'[39m,
-              street: [32m'Sample Street 2'[39m
+              city: 'Sample City 2',
+              houseNumber: 22,
+              province: 'Sample Province 2',
+              street: 'Sample Street 2'
             },
-            age: [33m22[39m,
-            firstName: [32m'Jane'[39m,
-            lastName: [32m'Doe'[39m
+            age: 22,
+            firstName: 'Jane',
+            lastName: 'Doe'
           }
         ],
-        description: [90mundefined[39m,
-        name: [32m'testUsers'[39m,
-        required: [33mfalse[39m,
+        description: undefined,
+        name: 'testUsers',
+        required: false,
         type: {
           itemType: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              middleName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-              lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+              firstName: { base: 'string', kind: 'primitive', required: true },
+              middleName: { base: 'string', kind: 'primitive', required: false },
+              lastName: { base: 'string', kind: 'primitive', required: true },
+              age: { base: 'number', kind: 'primitive', required: true },
               address: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
-                  province: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-                  city: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  province: { base: 'string', kind: 'primitive', required: true },
+                  city: { base: 'string', kind: 'primitive', required: true },
                   street: {
-                    base: [32m'string'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
                   },
-                  houseNumber: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+                  houseNumber: { base: 'number', kind: 'primitive', required: true }
                 },
-                required: [33mtrue[39m
+                required: true
               }
             }
           },
-          kind: [32m'array'[39m
+          kind: 'array'
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
               testUsers: {
                 itemType: {
-                  kind: [32m'object'[39m,
+                  kind: 'object',
                   properties: {
                     firstName: {
-                      base: [32m'string'[39m,
-                      kind: [32m'primitive'[39m,
-                      required: [33mtrue[39m
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
                     },
                     middleName: {
-                      base: [32m'string'[39m,
-                      kind: [32m'primitive'[39m,
-                      required: [33mfalse[39m
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
                     },
                     lastName: {
-                      base: [32m'string'[39m,
-                      kind: [32m'primitive'[39m,
-                      required: [33mtrue[39m
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
                     },
                     age: {
-                      base: [32m'number'[39m,
-                      kind: [32m'primitive'[39m,
-                      required: [33mtrue[39m
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
                     },
                     address: {
-                      kind: [32m'object'[39m,
+                      kind: 'object',
                       properties: {
                         province: {
-                          base: [32m'string'[39m,
-                          kind: [32m'primitive'[39m,
-                          required: [33mtrue[39m
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
                         },
                         city: {
-                          base: [32m'string'[39m,
-                          kind: [32m'primitive'[39m,
-                          required: [33mtrue[39m
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
                         },
                         street: {
-                          base: [32m'string'[39m,
-                          kind: [32m'primitive'[39m,
-                          required: [33mfalse[39m
+                          base: 'string',
+                          kind: 'primitive',
+                          required: false
                         },
                         houseNumber: {
-                          base: [32m'number'[39m,
-                          kind: [32m'primitive'[39m,
-                          required: [33mtrue[39m
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
                         }
                       },
-                      required: [33mtrue[39m
+                      required: true
                     }
                   }
                 },
-                kind: [32m'array'[39m
+                kind: 'array'
               }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/custom-type-array'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'customTypeArray'[39m
+    path: '/test/custom-type-array',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeArray'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
         defaultValue: {
           address: {
-            city: [32m'Sample City'[39m,
-            houseNumber: [33m11[39m,
-            province: [32m'Sample Province'[39m,
-            street: [32m'Sample Street'[39m
+            city: 'Sample City',
+            houseNumber: 11,
+            province: 'Sample Province',
+            street: 'Sample Street'
           },
-          age: [33m22[39m,
-          firstName: [32m'John'[39m,
-          lastName: [32m'Doe'[39m
+          age: 22,
+          firstName: 'John',
+          lastName: 'Doe'
         },
-        description: [90mundefined[39m,
-        name: [32m'testUser'[39m,
-        required: [33mfalse[39m,
+        description: undefined,
+        name: 'testUser',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-            middleName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-            lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-            age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            age: { base: 'number', kind: 'primitive', required: true },
             address: {
-              kind: [32m'object'[39m,
+              kind: 'object',
               properties: {
-                province: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-                city: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-                street: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-                houseNumber: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+                province: { base: 'string', kind: 'primitive', required: true },
+                city: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false },
+                houseNumber: { base: 'number', kind: 'primitive', required: true }
               },
-              required: [33mtrue[39m
+              required: true
             }
           }
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
               testUser: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
-                  firstName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  firstName: { base: 'string', kind: 'primitive', required: true },
                   middleName: {
-                    base: [32m'string'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
                   },
-                  lastName: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-                  age: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  age: { base: 'number', kind: 'primitive', required: true },
                   address: {
-                    kind: [32m'object'[39m,
+                    kind: 'object',
                     properties: {
                       province: {
-                        base: [32m'string'[39m,
-                        kind: [32m'primitive'[39m,
-                        required: [33mtrue[39m
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
                       },
                       city: {
-                        base: [32m'string'[39m,
-                        kind: [32m'primitive'[39m,
-                        required: [33mtrue[39m
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
                       },
                       street: {
-                        base: [32m'string'[39m,
-                        kind: [32m'primitive'[39m,
-                        required: [33mfalse[39m
+                        base: 'string',
+                        kind: 'primitive',
+                        required: false
                       },
                       houseNumber: {
-                        base: [32m'number'[39m,
-                        kind: [32m'primitive'[39m,
-                        required: [33mtrue[39m
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
                       }
                     },
-                    required: [33mtrue[39m
+                    required: true
                   }
                 }
               }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/custom-type-single'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'customTypeSingle'[39m
+    path: '/test/custom-type-single',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeSingle'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'firstName'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'lastName'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       }
     ],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/get-with-param'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'getWithParam'[39m
+    path: '/test/get-with-param',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'getWithParam'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'firstName'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'lastName'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/hello'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'hello'[39m
+    path: '/test/hello',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'hello'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'a'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'a',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'b'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'b',
+        required: true,
+        type: { base: 'number', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'options'[39m,
-        required: [33mfalse[39m,
+        defaultValue: undefined,
+        description: undefined,
+        name: 'options',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            bar: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-            foo: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
           }
         }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'arr'[39m,
-        required: [33mfalse[39m,
+        defaultValue: undefined,
+        description: undefined,
+        name: 'arr',
+        required: false,
         type: {
-          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'number', kind: 'primitive' },
+          kind: 'array'
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              a: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+              a: { base: 'string', kind: 'primitive' },
               arr: {
-                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'number', kind: 'primitive' },
+                kind: 'array'
               },
-              b: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              b: { base: 'number', kind: 'primitive' },
               options: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   bar: {
-                    base: [32m'number'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'number',
+                    kind: 'primitive',
+                    required: false
                   },
                   foo: {
-                    base: [32m'string'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
                   }
                 }
               }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/mixed-params'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'mixedParams'[39m
+    path: '/test/mixed-params',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'mixedParams'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'payload'[39m,
-        required: [33mtrue[39m,
+        defaultValue: undefined,
+        description: undefined,
+        name: 'payload',
+        required: true,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            prop1: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-            prop2: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+            prop1: { base: 'string', kind: 'primitive', required: false },
+            prop2: { base: 'number', kind: 'primitive', required: false }
           }
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              prop1: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              prop2: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+              prop1: { base: 'string', kind: 'primitive' },
+              prop2: { base: 'number', kind: 'primitive' }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/object-destructured'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'objectDestructured'[39m
+    path: '/test/object-destructured',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectDestructured'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'options'[39m,
-        required: [33mtrue[39m,
+        defaultValue: undefined,
+        description: undefined,
+        name: 'options',
+        required: true,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            bar: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m },
-            foo: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mfalse[39m }
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
           }
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
               options: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   bar: {
-                    base: [32m'number'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'number',
+                    kind: 'primitive',
+                    required: false
                   },
                   foo: {
-                    base: [32m'string'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mfalse[39m
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
                   }
                 }
               }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/object-only'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'objectOnly'[39m
+    path: '/test/object-only',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectOnly'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'var1'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var1',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'var2'[39m,
-        required: [33mtrue[39m,
-        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var2',
+        required: true,
+        type: { base: 'number', kind: 'primitive' }
       },
       {
-        defaultValue: [90mundefined[39m,
-        description: [90mundefined[39m,
-        name: [32m'var3'[39m,
-        required: [33mfalse[39m,
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var3',
+        required: false,
         type: {
-          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              var1: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              var2: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              var1: { base: 'string', kind: 'primitive' },
+              var2: { base: 'number', kind: 'primitive' },
               var3: {
-                itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'string', kind: 'primitive' },
+                kind: 'array'
               }
             }
           },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/primitives-and-array'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'primitivesAndArray'[39m
+    path: '/test/primitives-and-array',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'primitivesAndArray'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
           error: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
             }
           },
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/sync-fail-reject'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'syncFailReject'[39m
+    path: '/test/sync-fail-reject',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailReject'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
           error: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
-              message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              name: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              stack: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-              statusCode: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
             }
           },
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/sync-fail-throw'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'syncFailThrow'[39m
+    path: '/test/sync-fail-throw',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailThrow'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/test/sync-success'[39m,
-    requestType: [32m'HTTP'[39m,
-    serviceClass: [32m'TestService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts'[39m,
-    serviceMethod: [32m'syncSuccess'[39m
+    path: '/test/sync-success',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncSuccess'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts',
     input: [],
-    method: [32m'get'[39m,
+    method: 'get',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          code: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          sessionId: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
-          success: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
         }
       }
     },
-    path: [32m'/trpc/default.root'[39m,
-    requestType: [32m'tRPC'[39m,
-    serviceClass: [32m'DefaultService'[39m,
-    serviceFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts'[39m,
-    serviceMethod: [32m'root'[39m,
-    type: [32m'query'[39m
+    path: '/trpc/default.root',
+    requestType: 'tRPC',
+    serviceClass: 'DefaultService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts',
+    serviceMethod: 'root',
+    type: 'query'
   },
   {
-    handlerFilePath: [32m'/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts'[39m,
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: [32m'ABC'[39m,
-        description: [90mundefined[39m,
-        name: [32m'_stringInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 'ABC',
+        description: undefined,
+        name: '_stringInput',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_stringArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 'ABC', 'DEF' ],
+        description: undefined,
+        name: '_stringArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: [33m123[39m,
-        description: [90mundefined[39m,
-        name: [32m'_numberInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'number'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 123,
+        description: undefined,
+        name: '_numberInput',
+        required: false,
+        type: { base: 'number', kind: 'primitive' }
       },
       {
-        defaultValue: [ [33m123[39m, [33m456[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_numberArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 123, 456 ],
+        description: undefined,
+        name: '_numberArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'number', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: [33mtrue[39m,
-        description: [90mundefined[39m,
-        name: [32m'_booleanInput'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m }
+        defaultValue: true,
+        description: undefined,
+        name: '_booleanInput',
+        required: false,
+        type: { base: 'boolean', kind: 'primitive' }
       },
       {
-        defaultValue: [ [33mtrue[39m, [33mfalse[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_booleanArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ true, false ],
+        description: undefined,
+        name: '_booleanArrayInput',
+        required: false,
         type: {
-          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'boolean', kind: 'primitive' },
+          kind: 'array'
         }
       },
       {
-        defaultValue: { string: [32m'ABC'[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectStringInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { string: 'ABC' },
+        description: undefined,
+        name: '_objectStringInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            string: { base: 'string', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectStringArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { stringArray: [ 'ABC', 'DEF' ] },
+        description: undefined,
+        name: '_objectStringArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             stringArray: {
-              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'string', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: { number: [33m123[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectNumberInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { number: 123 },
+        description: undefined,
+        name: '_objectNumberInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            number: { base: 'number', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { numberArray: [ [33m123[39m, [33m456[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectNumberArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { numberArray: [ 123, 456 ] },
+        description: undefined,
+        name: '_objectNumberArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             numberArray: {
-              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'number', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: { boolean: [33mtrue[39m },
-        description: [90mundefined[39m,
-        name: [32m'_objectBooleanInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { boolean: true },
+        description: undefined,
+        name: '_objectBooleanInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m }
+            boolean: { base: 'boolean', kind: 'primitive', required: true }
           }
         }
       },
       {
-        defaultValue: { booleanArray: [ [33mtrue[39m, [33mfalse[39m ] },
-        description: [90mundefined[39m,
-        name: [32m'_objectBooleanArrayInput'[39m,
-        required: [33mfalse[39m,
+        defaultValue: { booleanArray: [ true, false ] },
+        description: undefined,
+        name: '_objectBooleanArrayInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
             booleanArray: {
-              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'boolean', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
         defaultValue: {
-          boolean: [33mfalse[39m,
-          booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-          number: [33m123[39m,
-          numberArray: [ [33m123[39m, [33m456[39m ],
+          boolean: false,
+          booleanArray: [ true, false ],
+          number: 123,
+          numberArray: [ 123, 456 ],
           object: {
-            boolean: [33mtrue[39m,
-            booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-            number: [33m123[39m,
-            numberArray: [ [33m123[39m, [33m456[39m ],
-            string: [32m'ABC'[39m,
-            stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+            boolean: true,
+            booleanArray: [ true, false ],
+            number: 123,
+            numberArray: [ 123, 456 ],
+            string: 'ABC',
+            stringArray: [ 'ABC', 'DEF' ]
           },
           objectArray: [
             {
-              boolean: [33mtrue[39m,
-              booleanArray: [ [33mtrue[39m, [33mfalse[39m ],
-              number: [33m123[39m,
-              numberArray: [ [33m123[39m, [33m456[39m ],
-              string: [32m'ABC'[39m,
-              stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+              boolean: true,
+              booleanArray: [ true, false ],
+              number: 123,
+              numberArray: [ 123, 456 ],
+              string: 'ABC',
+              stringArray: [ 'ABC', 'DEF' ]
             },
             {
-              boolean: [33mfalse[39m,
-              booleanArray: [ [33mfalse[39m, [33mtrue[39m ],
-              number: [33m456[39m,
-              numberArray: [ [33m456[39m, [33m789[39m ],
-              string: [32m'DEF'[39m,
-              stringArray: [ [32m'DEF'[39m, [32m'GHI'[39m ]
+              boolean: false,
+              booleanArray: [ false, true ],
+              number: 456,
+              numberArray: [ 456, 789 ],
+              string: 'DEF',
+              stringArray: [ 'DEF', 'GHI' ]
             }
           ],
-          string: [32m'ABC'[39m,
-          stringArray: [ [32m'ABC'[39m, [32m'DEF'[39m ]
+          string: 'ABC',
+          stringArray: [ 'ABC', 'DEF' ]
         },
-        description: [90mundefined[39m,
-        name: [32m'_objectMultipleInput'[39m,
-        required: [33mfalse[39m,
+        description: undefined,
+        name: '_objectMultipleInput',
+        required: false,
         type: {
-          kind: [32m'object'[39m,
+          kind: 'object',
           properties: {
-            boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            boolean: { base: 'boolean', kind: 'primitive', required: true },
             booleanArray: {
-              itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'boolean', kind: 'primitive' },
+              kind: 'array',
+              required: true
             },
-            number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            number: { base: 'number', kind: 'primitive', required: true },
             numberArray: {
-              itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'number', kind: 'primitive' },
+              kind: 'array',
+              required: true
             },
             object: {
-              kind: [32m'object'[39m,
+              kind: 'object',
               properties: {
-                boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                boolean: { base: 'boolean', kind: 'primitive', required: true },
                 booleanArray: {
-                  itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'boolean', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 },
-                number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                number: { base: 'number', kind: 'primitive', required: true },
                 numberArray: {
-                  itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'number', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 },
-                string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                string: { base: 'string', kind: 'primitive', required: true },
                 stringArray: {
-                  itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                  kind: [32m'array'[39m,
-                  required: [33mtrue[39m
+                  itemType: { base: 'string', kind: 'primitive' },
+                  kind: 'array',
+                  required: true
                 }
               },
-              required: [33mtrue[39m
+              required: true
             },
             objectArray: {
               itemType: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   boolean: {
-                    base: [32m'boolean'[39m,
-                    kind: [32m'primitive'[39m,
-                    required: [33mtrue[39m
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
                   },
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   },
-                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  number: { base: 'number', kind: 'primitive', required: true },
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   },
-                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+                  string: { base: 'string', kind: 'primitive', required: true },
                   stringArray: {
-                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m,
-                    required: [33mtrue[39m
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array',
+                    required: true
                   }
                 }
               },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              kind: 'array',
+              required: true
             },
-            string: { base: [32m'string'[39m, kind: [32m'primitive'[39m, required: [33mtrue[39m },
+            string: { base: 'string', kind: 'primitive', required: true },
             stringArray: {
-              itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-              kind: [32m'array'[39m,
-              required: [33mtrue[39m
+              itemType: { base: 'string', kind: 'primitive' },
+              kind: 'array',
+              required: true
             }
           }
         }
       },
       {
-        defaultValue: [32m'ABC'[39m,
-        description: [90mundefined[39m,
-        name: [32m'_string'[39m,
-        required: [33mfalse[39m,
-        type: { base: [32m'string'[39m, kind: [32m'primitive'[39m }
+        defaultValue: 'ABC',
+        description: undefined,
+        name: '_string',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
       },
       {
-        defaultValue: [ [32m'ABC'[39m, [32m'DEF'[39m ],
-        description: [90mundefined[39m,
-        name: [32m'_stringArray'[39m,
-        required: [33mfalse[39m,
+        defaultValue: [ 'ABC', 'DEF' ],
+        description: undefined,
+        name: '_stringArray',
+        required: false,
         type: {
-          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-          kind: [32m'array'[39m
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
         }
       }
     ],
-    method: [32m'post'[39m,
+    method: 'post',
     output: {
-      description: [90mundefined[39m,
-      name: [32m'output'[39m,
-      required: [33mtrue[39m,
+      description: undefined,
+      name: 'output',
+      required: true,
       type: {
-        kind: [32m'object'[39m,
+        kind: 'object',
         properties: {
-          message: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+          message: { base: 'string', kind: 'primitive' },
           data: {
-            kind: [32m'object'[39m,
+            kind: 'object',
             properties: {
               booleanArrayOutput: {
-                itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'boolean', kind: 'primitive' },
+                kind: 'array'
               },
-              booleanOutput: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+              booleanOutput: { base: 'boolean', kind: 'primitive' },
               numberArrayOutput: {
-                itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                kind: [32m'array'[39m
+                itemType: { base: 'number', kind: 'primitive' },
+                kind: 'array'
               },
-              numberOutput: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+              numberOutput: { base: 'number', kind: 'primitive' },
               objectBooleanArrayOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectBooleanOutput: {
-                kind: [32m'object'[39m,
-                properties: { boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m } }
+                kind: 'object',
+                properties: { boolean: { base: 'boolean', kind: 'primitive' } }
               },
               objectMultipleOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
-                  boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                  boolean: { base: 'boolean', kind: 'primitive' },
                   booleanArray: {
-                    itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'boolean', kind: 'primitive' },
+                    kind: 'array'
                   },
-                  number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                  number: { base: 'number', kind: 'primitive' },
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array'
                   },
                   object: {
-                    kind: [32m'object'[39m,
+                    kind: 'object',
                     properties: {
-                      boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                      boolean: { base: 'boolean', kind: 'primitive' },
                       booleanArray: {
-                        itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'boolean', kind: 'primitive' },
+                        kind: 'array'
                       },
-                      number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                      number: { base: 'number', kind: 'primitive' },
                       numberArray: {
-                        itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'number', kind: 'primitive' },
+                        kind: 'array'
                       },
-                      string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                      string: { base: 'string', kind: 'primitive' },
                       stringArray: {
-                        itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                        kind: [32m'array'[39m
+                        itemType: { base: 'string', kind: 'primitive' },
+                        kind: 'array'
                       }
                     }
                   },
                   objectArray: {
                     itemType: {
-                      kind: [32m'object'[39m,
+                      kind: 'object',
                       properties: {
-                        boolean: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
+                        boolean: { base: 'boolean', kind: 'primitive' },
                         booleanArray: {
-                          itemType: { base: [32m'boolean'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'boolean', kind: 'primitive' },
+                          kind: 'array'
                         },
-                        number: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
+                        number: { base: 'number', kind: 'primitive' },
                         numberArray: {
-                          itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'number', kind: 'primitive' },
+                          kind: 'array'
                         },
-                        string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                        string: { base: 'string', kind: 'primitive' },
                         stringArray: {
-                          itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                          kind: [32m'array'[39m
+                          itemType: { base: 'string', kind: 'primitive' },
+                          kind: 'array'
                         }
                       }
                     },
-                    kind: [32m'array'[39m
+                    kind: 'array'
                   },
-                  string: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
+                  string: { base: 'string', kind: 'primitive' },
                   stringArray: {
-                    itemType: { base: [32m'string'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectNumberArrayOutput: {
-                kind: [32m'object'[39m,
+                kind: 'object',
                 properties: {
                   numberArray: {
-                    itemType: { base: [32m'number'[39m, kind: [32m'primitive'[39m },
-                    kind: [32m'array'[39m
+                    itemType: { base: 'number', kind: 'primitive' },
+                    kind: 'array'
                   }
                 }
               },
               objectNumberOutput: {
-                kind: [32m'object'[39m,
-                properties: { number: { base: [32m'number'[39m, kind: [32m'primitive'[39m } }
+                kind: 'object',
+                properties: { number: { base: 'number', kind: 'primitive' } }
               },
               objectStringArrayOutput: {
-                kind: [32m'object'[39m,
-    
-[90m---[0m
-[34;1mvp run:[0m cache hit, [32;1m4.65s[0m saved.
+                kind: 'object',
+                properties: {
+                  stringArray: {
+                    itemType: { base: 'string', kind: 'primitive' },
+                    kind: 'array'
+                  }
+                }
+              },
+              objectStringOutput: {
+                kind: 'object',
+                properties: { string: { base: 'string', kind: 'primitive' } }
+              },
+              stringArrayOutput: {
+                itemType: { base: 'string', kind: 'primitive' },
+                kind: 'array'
+              },
+              stringOutput: { base: 'string', kind: 'primitive' }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test._checkParams',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: '_checkParams',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            }
+          },
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.asyncFailReject',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncFailReject',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            }
+          },
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.asyncFailThrow',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncFailThrow',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.asyncSuccess',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'asyncSuccess',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: [
+          {
+            address: {
+              city: 'Sample City 1',
+              houseNumber: 11,
+              province: 'Sample Province 1',
+              street: 'Sample Street 1'
+            },
+            age: 22,
+            firstName: 'John',
+            lastName: 'Doe'
+          },
+          {
+            address: {
+              city: 'Sample City 2',
+              houseNumber: 22,
+              province: 'Sample Province 2',
+              street: 'Sample Street 2'
+            },
+            age: 22,
+            firstName: 'Jane',
+            lastName: 'Doe'
+          }
+        ],
+        description: undefined,
+        name: 'testUsers',
+        required: false,
+        type: {
+          itemType: {
+            kind: 'object',
+            properties: {
+              firstName: { base: 'string', kind: 'primitive', required: true },
+              middleName: { base: 'string', kind: 'primitive', required: false },
+              lastName: { base: 'string', kind: 'primitive', required: true },
+              age: { base: 'number', kind: 'primitive', required: true },
+              address: {
+                kind: 'object',
+                properties: {
+                  province: { base: 'string', kind: 'primitive', required: true },
+                  city: { base: 'string', kind: 'primitive', required: true },
+                  street: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  houseNumber: { base: 'number', kind: 'primitive', required: true }
+                },
+                required: true
+              }
+            }
+          },
+          kind: 'array'
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              testUsers: {
+                itemType: {
+                  kind: 'object',
+                  properties: {
+                    firstName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    middleName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
+                    },
+                    lastName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    age: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    address: {
+                      kind: 'object',
+                      properties: {
+                        province: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        city: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        street: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: false
+                        },
+                        houseNumber: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        }
+                      },
+                      required: true
+                    }
+                  }
+                },
+                kind: 'array'
+              }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.customTypeArray',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeArray',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: {
+          address: {
+            city: 'Sample City',
+            houseNumber: 11,
+            province: 'Sample Province',
+            street: 'Sample Street'
+          },
+          age: 22,
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        description: undefined,
+        name: 'testUser',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            age: { base: 'number', kind: 'primitive', required: true },
+            address: {
+              kind: 'object',
+              properties: {
+                province: { base: 'string', kind: 'primitive', required: true },
+                city: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false },
+                houseNumber: { base: 'number', kind: 'primitive', required: true }
+              },
+              required: true
+            }
+          }
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              testUser: {
+                kind: 'object',
+                properties: {
+                  firstName: { base: 'string', kind: 'primitive', required: true },
+                  middleName: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  age: { base: 'number', kind: 'primitive', required: true },
+                  address: {
+                    kind: 'object',
+                    properties: {
+                      province: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      city: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      street: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: false
+                      },
+                      houseNumber: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      }
+                    },
+                    required: true
+                  }
+                }
+              }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.customTypeSingle',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeSingle',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
+      }
+    ],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.getWithParam',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'getWithParam',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive' }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.hello',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'hello',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'a',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'b',
+        required: true,
+        type: { base: 'number', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'options',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
+          }
+        }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'arr',
+        required: false,
+        type: {
+          itemType: { base: 'number', kind: 'primitive' },
+          kind: 'array'
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              a: { base: 'string', kind: 'primitive' },
+              arr: {
+                itemType: { base: 'number', kind: 'primitive' },
+                kind: 'array'
+              },
+              b: { base: 'number', kind: 'primitive' },
+              options: {
+                kind: 'object',
+                properties: {
+                  bar: {
+                    base: 'number',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  foo: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  }
+                }
+              }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.mixedParams',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'mixedParams',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'payload',
+        required: true,
+        type: {
+          kind: 'object',
+          properties: {
+            prop1: { base: 'string', kind: 'primitive', required: false },
+            prop2: { base: 'number', kind: 'primitive', required: false }
+          }
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              prop1: { base: 'string', kind: 'primitive' },
+              prop2: { base: 'number', kind: 'primitive' }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.objectDestructured',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectDestructured',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'options',
+        required: true,
+        type: {
+          kind: 'object',
+          properties: {
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
+          }
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              options: {
+                kind: 'object',
+                properties: {
+                  bar: {
+                    base: 'number',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  foo: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  }
+                }
+              }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.objectOnly',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectOnly',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var1',
+        required: true,
+        type: { base: 'string', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var2',
+        required: true,
+        type: { base: 'number', kind: 'primitive' }
+      },
+      {
+        defaultValue: undefined,
+        description: undefined,
+        name: 'var3',
+        required: false,
+        type: {
+          itemType: { base: 'string', kind: 'primitive' },
+          kind: 'array'
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          data: {
+            kind: 'object',
+            properties: {
+              var1: { base: 'string', kind: 'primitive' },
+              var2: { base: 'number', kind: 'primitive' },
+              var3: {
+                itemType: { base: 'string', kind: 'primitive' },
+                kind: 'array'
+              }
+            }
+          },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.primitivesAndArray',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'primitivesAndArray',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            }
+          },
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.syncFailReject',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailReject',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: true },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            }
+          },
+          message: { base: 'string', kind: 'primitive', required: true },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.syncFailThrow',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailThrow',
+    type: 'query'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: undefined,
+      name: 'output',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        }
+      }
+    },
+    path: '/trpc/test.syncSuccess',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncSuccess',
+    type: 'query'
+  }
+]
+[2026-08-02T06:51:25.200Z] INFO : ✅ Route Extraction completed in 3.47s
+[2026-08-02T06:51:25.200Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
+[2026-08-02T06:51:25.200Z] INFO : Validating 32 routes...
+[2026-08-02T06:51:25.201Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-02T06:51:25.201Z] INFO : 📋 Validation Summary: 0 issues found
+[2026-08-02T06:51:25.201Z] INFO : 🔄 Validating routes: [████████████████████] 32/32 (100%)
+[2026-08-02T06:51:25.201Z] INFO : ✅ Route Validation completed in 1ms
+[2026-08-02T06:51:25.207Z] INFO : ✅ OpenAPI Generation completed in 6ms
+[2026-08-02T06:51:25.212Z] INFO : ✅ File Operations completed in 4ms
+[2026-08-02T06:51:25.212Z] INFO : ✅ OpenAPI spec generated with 32 paths
+[2026-08-02T06:51:25.212Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-08-02T06:51:25.212Z] INFO : 📊 Performance Summary (Total: 3.49s)
+[2026-08-02T06:51:25.212Z] INFO :   Route Extraction             3.47s (99.6%)
+[2026-08-02T06:51:25.212Z] INFO :   OpenAPI Generation             6ms (0.2%)
+[2026-08-02T06:51:25.212Z] INFO :   File Operations                4ms (0.1%)
+[2026-08-02T06:51:25.212Z] INFO :   Route Validation               1ms (0.0%)
+[2026-08-02T06:51:25.212Z] INFO : 🎉 OpenAPI specification generation completed successfully!

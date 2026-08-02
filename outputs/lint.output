@@ -1,18 +1,18 @@
-[34m~/packages/common$ vp lint[0m [32m◉[0m [90mcache hit, replaying[0m
+~/packages/common$ vp lint
+~/packages/design-system$ vp lint
 Found 0 warnings and 0 errors.
-Finished in 983ms on 37 files with 429 rules using 8 threads.
+Finished in 1.9s on 37 files with 429 rules using 8 threads.
 
-[34m~/packages/design-system$ vp lint[0m [32m◉[0m [90mcache hit, replaying[0m
+~/apps/backend$ vp lint
 Found 0 warnings and 0 errors.
-Finished in 958ms on 42 files with 429 rules using 8 threads.
+Finished in 1.9s on 42 files with 429 rules using 8 threads.
 
-[34m~/apps/backend$ vp lint[0m [32m◉[0m [90mcache hit, replaying[0m
 Found 0 warnings and 0 errors.
-Finished in 972ms on 60 files with 429 rules using 8 threads.
+Finished in 1.5s on 60 files with 429 rules using 8 threads.
 
-[34m~/apps/frontend$ vp lint[0m [32m◉[0m [90mcache hit, replaying[0m
+~/apps/frontend$ vp lint
 Found 0 warnings and 0 errors.
-Finished in 671ms on 6 files with 429 rules using 8 threads.
+Finished in 1.2s on 6 files with 429 rules using 8 threads.
 
-[90m---[0m
-[34;1mvp run:[0m 4/4 cache hit (100%), [32;1m4.12s[0m saved. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+---
+vp run: 0/4 cache hit (0%). (Run `vp run --last-details` for full details)
