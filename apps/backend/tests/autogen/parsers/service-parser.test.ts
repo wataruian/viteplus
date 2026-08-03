@@ -123,68 +123,64 @@ interface TestParams {
 }
 
 describe('Service Parser', () => {
-  const messageOutput = [
+  const baseOutput = [
     { name: 'code', required: true, type: 'number' },
-    { name: 'message', required: true, type: 'string' },
+    {
+      name: 'error',
+      required: false,
+      type: '{ message: string; name: string; stack?: string; statusCode: number; }',
+    },
+    { name: 'message', required: false, type: 'string' },
     { name: 'sessionId', required: true, type: 'string' },
     { name: 'success', required: true, type: 'boolean' },
   ] as const;
 
-  const errorOutput = [
-    { name: 'code', required: true, type: 'number' },
-    {
-      name: 'error',
-      required: true,
-      type: '{ message: string; name: string; stack: string; statusCode: number; }',
-    },
-    { name: 'message', required: true, type: 'string' },
-    { name: 'sessionId', required: true, type: 'string' },
-    { name: 'success', required: true, type: 'boolean' },
-  ] as const;
+  const voidOutput = [{ name: 'data', required: false, type: 'void' }, ...baseOutput] as const;
 
   const expectedServiceMethods: readonly TestParams[] = [
     {
       input: [
-        { name: '_stringInput', required: false, type: 'string' },
-        { name: '_stringArrayInput', required: false },
-        { name: '_numberInput', required: false, type: 'number' },
-        { name: '_numberArrayInput', required: false },
-        { name: '_booleanInput', required: false, type: 'boolean' },
-        { name: '_booleanArrayInput', required: false },
-        { name: '_objectStringInput', required: false, type: '{ string: string; }' },
-        { name: '_objectStringArrayInput', required: false },
-        { name: '_objectNumberInput', required: false, type: '{ number: number; }' },
-        { name: '_objectNumberArrayInput', required: false },
-        { name: '_objectBooleanInput', required: false, type: '{ boolean: boolean; }' },
-        { name: '_objectBooleanArrayInput', required: false },
-        { name: '_objectMultipleInput', required: false },
-        { name: '_string', required: false, type: 'string' },
-        { name: '_stringArray', required: false },
+        { name: 'string', required: false, type: 'string' },
+        { name: 'stringArray', required: false },
+        { name: 'number', required: false, type: 'number' },
+        { name: 'numberArray', required: false },
+        { name: 'boolean', required: false, type: 'boolean' },
+        { name: 'booleanArray', required: false },
+        { name: 'objectString', required: false, type: '{ string: string; }' },
+        { name: 'objectStringArray', required: false },
+        { name: 'objectNumber', required: false, type: '{ number: number; }' },
+        { name: 'objectNumberArray', required: false },
+        { name: 'objectBoolean', required: false, type: '{ boolean: boolean; }' },
+        { name: 'objectBooleanArray', required: false },
+        { name: 'objectMultiple', required: false },
       ],
-      method: '_checkParams',
+      method: 'checkParams',
       output: [
         {
           name: 'data',
-          required: true,
-          type: '{ booleanArrayOutput: boolean\\[\\]; booleanOutput: boolean; numberArrayOutput: number\\[\\]; numberOutput: number; objectBooleanArrayOutput: { booleanArray: boolean\\[\\]; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumberArrayOutput: { numberArray: number\\[\\]; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: string\\[\\]; }; objectStringOutput: { string: string; }; stringArrayOutput: string\\[\\]; stringOutput: string; }',
+          required: false,
+          type: '{ boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; objectBoolean: { boolean: boolean; }; objectBooleanArray: { booleanArray: boolean\\[\\]; }; objectMultiple: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumber: { number: number; }; objectNumberArray: { numberArray: number\\[\\]; }; objectString: { string: string; }; objectStringArray: { stringArray: string\\[\\]; }; string: string; stringArray: string\\[\\]; }',
         },
-        ...messageOutput,
+        ...baseOutput,
       ],
     },
     {
       input: [],
       method: 'asyncFailReject',
-      output: errorOutput,
+      output: voidOutput,
     },
     {
       input: [],
       method: 'asyncFailThrow',
-      output: errorOutput,
+      output: voidOutput,
     },
     {
       input: [],
       method: 'asyncSuccess',
-      output: messageOutput,
+      output: [
+        { name: 'data', required: false, type: '{ customMessage: string; }' },
+        ...baseOutput,
+      ],
     },
     {
       input: [
@@ -192,7 +188,10 @@ describe('Service Parser', () => {
         { name: 'lastName', required: false, type: 'string | undefined' },
       ],
       method: 'hello',
-      output: messageOutput,
+      output: [
+        { name: 'data', required: false, type: '{ customMessage: string; }' },
+        ...baseOutput,
+      ],
     },
     {
       input: [
@@ -200,7 +199,10 @@ describe('Service Parser', () => {
         { name: 'lastName', required: false, type: 'string | undefined' },
       ],
       method: 'getWithParam',
-      output: messageOutput,
+      output: [
+        { name: 'data', required: false, type: '{ customMessage: string; }' },
+        ...baseOutput,
+      ],
     },
     {
       input: [
@@ -213,32 +215,33 @@ describe('Service Parser', () => {
       output: [
         {
           name: 'data',
-          required: true,
+          required: false,
           type: '{ a: string; arr: number\\[\\] | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
         },
-        ...messageOutput,
+        ...baseOutput,
       ],
     },
     {
       input: [
-        { name: '{ prop1, prop2 }', required: true, type: '{ prop1?: string; prop2?: number; }' },
+        { name: 'prop1', required: true, type: 'string' },
+        { name: 'prop2', required: true, type: 'number' },
       ],
       method: 'objectDestructured',
       output: [
         {
           name: 'data',
-          required: true,
-          type: '{ prop1: string | undefined; prop2: number | undefined; }',
+          required: false,
+          type: '{ prop1: string; prop2: number; }',
         },
-        ...messageOutput,
+        ...baseOutput,
       ],
     },
     {
       input: [{ name: 'options', required: true, type: '{ bar?: number; foo?: string; }' }],
       method: 'objectOnly',
       output: [
-        { name: 'data', required: true, type: '{ options: { bar?: number; foo?: string; } }' },
-        ...messageOutput,
+        { name: 'data', required: false, type: '{ options: { bar?: number; foo?: string; } }' },
+        ...baseOutput,
       ],
     },
     {
@@ -251,36 +254,39 @@ describe('Service Parser', () => {
       output: [
         {
           name: 'data',
-          required: true,
+          required: false,
           type: '{ var1: string; var2: number; var3: string[] | undefined; }',
         },
-        ...messageOutput,
+        ...baseOutput,
       ],
     },
     {
       input: [],
       method: 'syncFailReject',
-      output: errorOutput,
+      output: voidOutput,
     },
     {
       input: [],
       method: 'syncFailThrow',
-      output: errorOutput,
+      output: voidOutput,
     },
     {
       input: [],
       method: 'syncSuccess',
-      output: messageOutput,
+      output: [
+        { name: 'data', required: false, type: '{ customMessage: string; }' },
+        ...baseOutput,
+      ],
     },
     {
       input: [{ name: 'testUsers', required: false }],
       method: 'customTypeArray',
-      output: [{ name: 'data', required: true }, ...messageOutput],
+      output: [{ name: 'data', required: false }, ...baseOutput],
     },
     {
       input: [{ name: 'testUser', required: false }],
       method: 'customTypeSingle',
-      output: [{ name: 'data', required: true }, ...messageOutput],
+      output: [{ name: 'data', required: false }, ...baseOutput],
     },
   ];
 
@@ -288,7 +294,10 @@ describe('Service Parser', () => {
     {
       input: [],
       method: 'root',
-      output: messageOutput,
+      output: [
+        { name: 'data', required: false, type: '{ customMessage: string; }' },
+        ...baseOutput,
+      ],
     },
   ];
 

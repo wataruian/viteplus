@@ -4,19 +4,58 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -28,7 +67,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/",
@@ -39,149 +79,275 @@
   },
   {
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/test/async-fail-reject",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailReject"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/test/async-fail-throw",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailThrow"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/test/async-success",
+    "requestType": "HTTP",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncSuccess"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
     "input": [
       {
-        "defaultValue": "ABC",
-        "name": "_stringInput",
-        "required": false,
-        "type": {
-          "base": "string",
-          "kind": "primitive"
-        }
-      },
-      {
-        "defaultValue": ["ABC", "DEF"],
-        "name": "_stringArrayInput",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "string",
-            "kind": "primitive"
-          },
-          "kind": "array"
-        }
-      },
-      {
-        "defaultValue": 123,
-        "name": "_numberInput",
-        "required": false,
-        "type": {
-          "base": "number",
-          "kind": "primitive"
-        }
-      },
-      {
-        "defaultValue": [123, 456],
-        "name": "_numberArrayInput",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "number",
-            "kind": "primitive"
-          },
-          "kind": "array"
-        }
-      },
-      {
-        "defaultValue": true,
-        "name": "_booleanInput",
+        "name": "boolean",
         "required": false,
         "type": {
           "base": "boolean",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": [true, false],
-        "name": "_booleanArrayInput",
+        "name": "booleanArray",
         "required": false,
         "type": {
           "itemType": {
             "base": "boolean",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "string": "ABC"
-        },
-        "name": "_objectStringInput",
+        "name": "number",
         "required": false,
         "type": {
-          "kind": "object",
-          "properties": {
-            "string": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            }
-          }
+          "base": "number",
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "stringArray": ["ABC", "DEF"]
-        },
-        "name": "_objectStringArrayInput",
+        "name": "numberArray",
         "required": false,
         "type": {
-          "kind": "object",
-          "properties": {
-            "stringArray": {
-              "itemType": {
-                "base": "string",
-                "kind": "primitive"
-              },
-              "kind": "array",
-              "required": true
-            }
-          }
+          "itemType": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "kind": "array",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "number": 123
-        },
-        "name": "_objectNumberInput",
-        "required": false,
-        "type": {
-          "kind": "object",
-          "properties": {
-            "number": {
-              "base": "number",
-              "kind": "primitive",
-              "required": true
-            }
-          }
-        }
-      },
-      {
-        "defaultValue": {
-          "numberArray": [123, 456]
-        },
-        "name": "_objectNumberArrayInput",
-        "required": false,
-        "type": {
-          "kind": "object",
-          "properties": {
-            "numberArray": {
-              "itemType": {
-                "base": "number",
-                "kind": "primitive"
-              },
-              "kind": "array",
-              "required": true
-            }
-          }
-        }
-      },
-      {
-        "defaultValue": {
-          "boolean": true
-        },
-        "name": "_objectBooleanInput",
+        "name": "objectBoolean",
         "required": false,
         "type": {
           "kind": "object",
@@ -191,14 +357,12 @@
               "kind": "primitive",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "booleanArray": [true, false]
-        },
-        "name": "_objectBooleanArrayInput",
+        "name": "objectBooleanArray",
         "required": false,
         "type": {
           "kind": "object",
@@ -206,50 +370,18 @@
             "booleanArray": {
               "itemType": {
                 "base": "boolean",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "boolean": false,
-          "booleanArray": [true, false],
-          "number": 123,
-          "numberArray": [123, 456],
-          "object": {
-            "boolean": true,
-            "booleanArray": [true, false],
-            "number": 123,
-            "numberArray": [123, 456],
-            "string": "ABC",
-            "stringArray": ["ABC", "DEF"]
-          },
-          "objectArray": [
-            {
-              "boolean": true,
-              "booleanArray": [true, false],
-              "number": 123,
-              "numberArray": [123, 456],
-              "string": "ABC",
-              "stringArray": ["ABC", "DEF"]
-            },
-            {
-              "boolean": false,
-              "booleanArray": [false, true],
-              "number": 456,
-              "numberArray": [456, 789],
-              "string": "DEF",
-              "stringArray": ["DEF", "GHI"]
-            }
-          ],
-          "string": "ABC",
-          "stringArray": ["ABC", "DEF"]
-        },
-        "name": "_objectMultipleInput",
+        "name": "objectMultiple",
         "required": false,
         "type": {
           "kind": "object",
@@ -262,7 +394,8 @@
             "booleanArray": {
               "itemType": {
                 "base": "boolean",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -275,7 +408,8 @@
             "numberArray": {
               "itemType": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -291,7 +425,8 @@
                 "booleanArray": {
                   "itemType": {
                     "base": "boolean",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -304,7 +439,8 @@
                 "numberArray": {
                   "itemType": {
                     "base": "number",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -317,7 +453,8 @@
                 "stringArray": {
                   "itemType": {
                     "base": "string",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -337,7 +474,8 @@
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
@@ -350,7 +488,8 @@
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
@@ -363,12 +502,14 @@
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
                   }
-                }
+                },
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -381,155 +522,255 @@
             "stringArray": {
               "itemType": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": "ABC",
-        "name": "_string",
+        "name": "objectNumber",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectNumberArray",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "kind": "array",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectString",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectStringArray",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "kind": "array",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "string",
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": ["ABC", "DEF"],
-        "name": "_stringArray",
+        "name": "stringArray",
         "required": false,
         "type": {
           "itemType": {
             "base": "string",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
-              "booleanArrayOutput": {
+              "boolean": {
+                "base": "boolean",
+                "kind": "primitive",
+                "required": true
+              },
+              "booleanArray": {
                 "itemType": {
                   "base": "boolean",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               },
-              "booleanOutput": {
-                "base": "boolean",
-                "kind": "primitive"
+              "number": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
               },
-              "numberArrayOutput": {
+              "numberArray": {
                 "itemType": {
                   "base": "number",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               },
-              "numberOutput": {
-                "base": "number",
-                "kind": "primitive"
+              "objectBoolean": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
               },
-              "objectBooleanArrayOutput": {
+              "objectBooleanArray": {
                 "kind": "object",
                 "properties": {
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectBooleanOutput": {
+              "objectMultiple": {
                 "kind": "object",
                 "properties": {
                   "boolean": {
                     "base": "boolean",
-                    "kind": "primitive"
-                  }
-                }
-              },
-              "objectMultipleOutput": {
-                "kind": "object",
-                "properties": {
-                  "boolean": {
-                    "base": "boolean",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "number": {
                     "base": "number",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "object": {
                     "kind": "object",
                     "properties": {
                       "boolean": {
                         "base": "boolean",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "booleanArray": {
                         "itemType": {
                           "base": "boolean",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       },
                       "number": {
                         "base": "number",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "numberArray": {
                         "itemType": {
                           "base": "number",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       },
                       "string": {
                         "base": "string",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "stringArray": {
                         "itemType": {
                           "base": "string",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       }
-                    }
+                    },
+                    "required": true
                   },
                   "objectArray": {
                     "itemType": {
@@ -537,143 +778,138 @@
                       "properties": {
                         "boolean": {
                           "base": "boolean",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "booleanArray": {
                           "itemType": {
                             "base": "boolean",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         },
                         "number": {
                           "base": "number",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "numberArray": {
                           "itemType": {
                             "base": "number",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         },
                         "string": {
                           "base": "string",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "stringArray": {
                           "itemType": {
                             "base": "string",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         }
-                      }
+                      },
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "string": {
                     "base": "string",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectNumberArrayOutput": {
+              "objectNumber": {
+                "kind": "object",
+                "properties": {
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
+              },
+              "objectNumberArray": {
                 "kind": "object",
                 "properties": {
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectNumberOutput": {
+              "objectString": {
                 "kind": "object",
                 "properties": {
-                  "number": {
-                    "base": "number",
-                    "kind": "primitive"
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectStringArrayOutput": {
+              "objectStringArray": {
                 "kind": "object",
                 "properties": {
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectStringOutput": {
-                "kind": "object",
-                "properties": {
-                  "string": {
-                    "base": "string",
-                    "kind": "primitive"
-                  }
-                }
+              "string": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
               },
-              "stringArrayOutput": {
+              "stringArray": {
                 "itemType": {
                   "base": "string",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
-              },
-              "stringOutput": {
-                "base": "string",
-                "kind": "primitive"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/test/_check-params",
-    "requestType": "HTTP",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "_checkParams"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
           "error": {
             "kind": "object",
             "properties": {
@@ -690,24 +926,20 @@
               "stack": {
                 "base": "string",
                 "kind": "primitive",
-                "required": true
+                "required": false
               },
               "statusCode": {
                 "base": "number",
                 "kind": "primitive",
                 "required": true
               }
-            }
+            },
+            "required": false
           },
           "message": {
             "base": "string",
             "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -719,180 +951,40 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
-    "path": "/test/async-fail-reject",
+    "path": "/test/check-params",
     "requestType": "HTTP",
     "serviceClass": "TestService",
     "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncFailReject"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
-          "error": {
-            "kind": "object",
-            "properties": {
-              "message": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "name": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "stack": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "statusCode": {
-                "base": "number",
-                "kind": "primitive",
-                "required": true
-              }
-            }
-          },
-          "message": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/test/async-fail-throw",
-    "requestType": "HTTP",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncFailThrow"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/test/async-success",
-    "requestType": "HTTP",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncSuccess"
+    "serviceMethod": "checkParams"
   },
   {
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
     "input": [
       {
-        "defaultValue": [
-          {
-            "address": {
-              "city": "Sample City 1",
-              "houseNumber": 11,
-              "province": "Sample Province 1",
-              "street": "Sample Street 1"
-            },
-            "age": 22,
-            "firstName": "John",
-            "lastName": "Doe"
-          },
-          {
-            "address": {
-              "city": "Sample City 2",
-              "houseNumber": 22,
-              "province": "Sample Province 2",
-              "street": "Sample Street 2"
-            },
-            "age": 22,
-            "firstName": "Jane",
-            "lastName": "Doe"
-          }
-        ],
         "name": "testUsers",
         "required": false,
         "type": {
           "itemType": {
             "kind": "object",
             "properties": {
-              "firstName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "middleName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": false
-              },
-              "lastName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "age": {
-                "base": "number",
-                "kind": "primitive",
-                "required": true
-              },
               "address": {
                 "kind": "object",
                 "properties": {
-                  "province": {
+                  "city": {
                     "base": "string",
                     "kind": "primitive",
                     "required": true
                   },
-                  "city": {
+                  "houseNumber": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "province": {
                     "base": "string",
                     "kind": "primitive",
                     "required": true
@@ -901,31 +993,50 @@
                     "base": "string",
                     "kind": "primitive",
                     "required": false
-                  },
-                  "houseNumber": {
-                    "base": "number",
-                    "kind": "primitive",
-                    "required": true
                   }
                 },
                 "required": true
+              },
+              "age": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "firstName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "lastName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "middleName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
               }
-            }
+            },
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -934,35 +1045,20 @@
                 "itemType": {
                   "kind": "object",
                   "properties": {
-                    "firstName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": true
-                    },
-                    "middleName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": false
-                    },
-                    "lastName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": true
-                    },
-                    "age": {
-                      "base": "number",
-                      "kind": "primitive",
-                      "required": true
-                    },
                     "address": {
                       "kind": "object",
                       "properties": {
-                        "province": {
+                        "city": {
                           "base": "string",
                           "kind": "primitive",
                           "required": true
                         },
-                        "city": {
+                        "houseNumber": {
+                          "base": "number",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "province": {
                           "base": "string",
                           "kind": "primitive",
                           "required": true
@@ -971,25 +1067,69 @@
                           "base": "string",
                           "kind": "primitive",
                           "required": false
-                        },
-                        "houseNumber": {
-                          "base": "number",
-                          "kind": "primitive",
-                          "required": true
                         }
                       },
                       "required": true
+                    },
+                    "age": {
+                      "base": "number",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "firstName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "lastName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "middleName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": false
                     }
-                  }
+                  },
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1001,7 +1141,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/custom-type-array",
@@ -1014,51 +1155,25 @@
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
     "input": [
       {
-        "defaultValue": {
-          "address": {
-            "city": "Sample City",
-            "houseNumber": 11,
-            "province": "Sample Province",
-            "street": "Sample Street"
-          },
-          "age": 22,
-          "firstName": "John",
-          "lastName": "Doe"
-        },
         "name": "testUser",
         "required": false,
         "type": {
           "kind": "object",
           "properties": {
-            "firstName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            },
-            "middleName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": false
-            },
-            "lastName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            },
-            "age": {
-              "base": "number",
-              "kind": "primitive",
-              "required": true
-            },
             "address": {
               "kind": "object",
               "properties": {
-                "province": {
+                "city": {
                   "base": "string",
                   "kind": "primitive",
                   "required": true
                 },
-                "city": {
+                "houseNumber": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "province": {
                   "base": "string",
                   "kind": "primitive",
                   "required": true
@@ -1067,29 +1182,47 @@
                   "base": "string",
                   "kind": "primitive",
                   "required": false
-                },
-                "houseNumber": {
-                  "base": "number",
-                  "kind": "primitive",
-                  "required": true
                 }
               },
               "required": true
+            },
+            "age": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "firstName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "lastName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "middleName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
             }
-          }
+          },
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -1097,35 +1230,20 @@
               "testUser": {
                 "kind": "object",
                 "properties": {
-                  "firstName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": true
-                  },
-                  "middleName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": false
-                  },
-                  "lastName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": true
-                  },
-                  "age": {
-                    "base": "number",
-                    "kind": "primitive",
-                    "required": true
-                  },
                   "address": {
                     "kind": "object",
                     "properties": {
-                      "province": {
+                      "city": {
                         "base": "string",
                         "kind": "primitive",
                         "required": true
                       },
-                      "city": {
+                      "houseNumber": {
+                        "base": "number",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "province": {
                         "base": "string",
                         "kind": "primitive",
                         "required": true
@@ -1134,23 +1252,66 @@
                         "base": "string",
                         "kind": "primitive",
                         "required": false
-                      },
-                      "houseNumber": {
-                        "base": "number",
-                        "kind": "primitive",
-                        "required": true
                       }
                     },
                     "required": true
+                  },
+                  "age": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "firstName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "lastName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "middleName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
                   }
-                }
+                },
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1162,7 +1323,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/custom-type-single",
@@ -1179,7 +1341,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -1187,25 +1350,65 @@
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       }
     ],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1217,7 +1420,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/get-with-param",
@@ -1234,7 +1438,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -1242,25 +1447,65 @@
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1272,7 +1517,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/hello",
@@ -1289,7 +1535,21 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
+        }
+      },
+      {
+        "name": "arr",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "kind": "array",
+          "required": false
         }
       },
       {
@@ -1297,7 +1557,8 @@
         "required": true,
         "type": {
           "base": "number",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -1316,49 +1577,45 @@
               "kind": "primitive",
               "required": false
             }
-          }
-        }
-      },
-      {
-        "name": "arr",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "number",
-            "kind": "primitive"
           },
-          "kind": "array"
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "a": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "arr": {
                 "itemType": {
                   "base": "number",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": false
               },
               "b": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "options": {
                 "kind": "object",
@@ -1373,14 +1630,42 @@
                     "kind": "primitive",
                     "required": false
                   }
-                }
+                },
+                "required": false
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1392,7 +1677,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/mixed-params",
@@ -1405,53 +1691,83 @@
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts",
     "input": [
       {
-        "name": "payload",
+        "name": "prop1",
         "required": true,
         "type": {
-          "kind": "object",
-          "properties": {
-            "prop1": {
-              "base": "string",
-              "kind": "primitive",
-              "required": false
-            },
-            "prop2": {
-              "base": "number",
-              "kind": "primitive",
-              "required": false
-            }
-          }
+          "base": "string",
+          "kind": "primitive",
+          "required": true
+        }
+      },
+      {
+        "name": "prop2",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive",
+          "required": true
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "prop1": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "prop2": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1463,7 +1779,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/object-destructured",
@@ -1491,20 +1808,23 @@
               "kind": "primitive",
               "required": false
             }
-          }
+          },
+          "required": true
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -1515,21 +1835,49 @@
                   "bar": {
                     "base": "number",
                     "kind": "primitive",
-                    "required": false
+                    "required": true
                   },
                   "foo": {
                     "base": "string",
                     "kind": "primitive",
-                    "required": false
+                    "required": true
                   }
-                }
+                },
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1541,7 +1889,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/object-only",
@@ -1558,7 +1907,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -1566,7 +1916,8 @@
         "required": true,
         "type": {
           "base": "number",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -1575,47 +1926,82 @@
         "type": {
           "itemType": {
             "base": "string",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "var1": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "var2": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "var3": {
                 "itemType": {
                   "base": "string",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1627,7 +2013,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/primitives-and-array",
@@ -1641,11 +2028,22 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
           "error": {
             "kind": "object",
             "properties": {
@@ -1662,24 +2060,20 @@
               "stack": {
                 "base": "string",
                 "kind": "primitive",
-                "required": true
+                "required": false
               },
               "statusCode": {
                 "base": "number",
                 "kind": "primitive",
                 "required": true
               }
-            }
+            },
+            "required": false
           },
           "message": {
             "base": "string",
             "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1691,7 +2085,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/sync-fail-reject",
@@ -1705,11 +2100,22 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
           "error": {
             "kind": "object",
             "properties": {
@@ -1726,24 +2132,20 @@
               "stack": {
                 "base": "string",
                 "kind": "primitive",
-                "required": true
+                "required": false
               },
               "statusCode": {
                 "base": "number",
                 "kind": "primitive",
                 "required": true
               }
-            }
+            },
+            "required": false
           },
           "message": {
             "base": "string",
             "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1755,7 +2157,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/sync-fail-throw",
@@ -1769,19 +2172,58 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1793,7 +2235,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/test/sync-success",
@@ -1807,19 +2250,58 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -1831,7 +2313,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/default.root",
@@ -1843,149 +2326,278 @@
   },
   {
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/trpc/test.asyncFailReject",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailReject",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/trpc/test.asyncFailThrow",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncFailThrow",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
+    "input": [],
+    "method": "get",
+    "output": {
+      "description": "Response from the service method",
+      "name": "return",
+      "required": true,
+      "type": {
+        "kind": "object",
+        "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
+          },
+          "sessionId": {
+            "base": "string",
+            "kind": "primitive",
+            "required": true
+          },
+          "success": {
+            "base": "boolean",
+            "kind": "primitive",
+            "required": true
+          }
+        },
+        "required": true
+      }
+    },
+    "path": "/trpc/test.asyncSuccess",
+    "requestType": "tRPC",
+    "serviceClass": "TestService",
+    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
+    "serviceMethod": "asyncSuccess",
+    "type": "query"
+  },
+  {
+    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
     "input": [
       {
-        "defaultValue": "ABC",
-        "name": "_stringInput",
-        "required": false,
-        "type": {
-          "base": "string",
-          "kind": "primitive"
-        }
-      },
-      {
-        "defaultValue": ["ABC", "DEF"],
-        "name": "_stringArrayInput",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "string",
-            "kind": "primitive"
-          },
-          "kind": "array"
-        }
-      },
-      {
-        "defaultValue": 123,
-        "name": "_numberInput",
-        "required": false,
-        "type": {
-          "base": "number",
-          "kind": "primitive"
-        }
-      },
-      {
-        "defaultValue": [123, 456],
-        "name": "_numberArrayInput",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "number",
-            "kind": "primitive"
-          },
-          "kind": "array"
-        }
-      },
-      {
-        "defaultValue": true,
-        "name": "_booleanInput",
+        "name": "boolean",
         "required": false,
         "type": {
           "base": "boolean",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": [true, false],
-        "name": "_booleanArrayInput",
+        "name": "booleanArray",
         "required": false,
         "type": {
           "itemType": {
             "base": "boolean",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "string": "ABC"
-        },
-        "name": "_objectStringInput",
+        "name": "number",
         "required": false,
         "type": {
-          "kind": "object",
-          "properties": {
-            "string": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            }
-          }
+          "base": "number",
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "stringArray": ["ABC", "DEF"]
-        },
-        "name": "_objectStringArrayInput",
+        "name": "numberArray",
         "required": false,
         "type": {
-          "kind": "object",
-          "properties": {
-            "stringArray": {
-              "itemType": {
-                "base": "string",
-                "kind": "primitive"
-              },
-              "kind": "array",
-              "required": true
-            }
-          }
+          "itemType": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "kind": "array",
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "number": 123
-        },
-        "name": "_objectNumberInput",
-        "required": false,
-        "type": {
-          "kind": "object",
-          "properties": {
-            "number": {
-              "base": "number",
-              "kind": "primitive",
-              "required": true
-            }
-          }
-        }
-      },
-      {
-        "defaultValue": {
-          "numberArray": [123, 456]
-        },
-        "name": "_objectNumberArrayInput",
-        "required": false,
-        "type": {
-          "kind": "object",
-          "properties": {
-            "numberArray": {
-              "itemType": {
-                "base": "number",
-                "kind": "primitive"
-              },
-              "kind": "array",
-              "required": true
-            }
-          }
-        }
-      },
-      {
-        "defaultValue": {
-          "boolean": true
-        },
-        "name": "_objectBooleanInput",
+        "name": "objectBoolean",
         "required": false,
         "type": {
           "kind": "object",
@@ -1995,14 +2607,12 @@
               "kind": "primitive",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "booleanArray": [true, false]
-        },
-        "name": "_objectBooleanArrayInput",
+        "name": "objectBooleanArray",
         "required": false,
         "type": {
           "kind": "object",
@@ -2010,50 +2620,18 @@
             "booleanArray": {
               "itemType": {
                 "base": "boolean",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": {
-          "boolean": false,
-          "booleanArray": [true, false],
-          "number": 123,
-          "numberArray": [123, 456],
-          "object": {
-            "boolean": true,
-            "booleanArray": [true, false],
-            "number": 123,
-            "numberArray": [123, 456],
-            "string": "ABC",
-            "stringArray": ["ABC", "DEF"]
-          },
-          "objectArray": [
-            {
-              "boolean": true,
-              "booleanArray": [true, false],
-              "number": 123,
-              "numberArray": [123, 456],
-              "string": "ABC",
-              "stringArray": ["ABC", "DEF"]
-            },
-            {
-              "boolean": false,
-              "booleanArray": [false, true],
-              "number": 456,
-              "numberArray": [456, 789],
-              "string": "DEF",
-              "stringArray": ["DEF", "GHI"]
-            }
-          ],
-          "string": "ABC",
-          "stringArray": ["ABC", "DEF"]
-        },
-        "name": "_objectMultipleInput",
+        "name": "objectMultiple",
         "required": false,
         "type": {
           "kind": "object",
@@ -2066,7 +2644,8 @@
             "booleanArray": {
               "itemType": {
                 "base": "boolean",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -2079,7 +2658,8 @@
             "numberArray": {
               "itemType": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -2095,7 +2675,8 @@
                 "booleanArray": {
                   "itemType": {
                     "base": "boolean",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -2108,7 +2689,8 @@
                 "numberArray": {
                   "itemType": {
                     "base": "number",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -2121,7 +2703,8 @@
                 "stringArray": {
                   "itemType": {
                     "base": "string",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "kind": "array",
                   "required": true
@@ -2141,7 +2724,8 @@
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
@@ -2154,7 +2738,8 @@
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
@@ -2167,12 +2752,14 @@
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
                     "kind": "array",
                     "required": true
                   }
-                }
+                },
+                "required": true
               },
               "kind": "array",
               "required": true
@@ -2185,155 +2772,255 @@
             "stringArray": {
               "itemType": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "kind": "array",
               "required": true
             }
-          }
+          },
+          "required": false
         }
       },
       {
-        "defaultValue": "ABC",
-        "name": "_string",
+        "name": "objectNumber",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "number": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectNumberArray",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "numberArray": {
+              "itemType": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "kind": "array",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectString",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "string": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "objectStringArray",
+        "required": false,
+        "type": {
+          "kind": "object",
+          "properties": {
+            "stringArray": {
+              "itemType": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "kind": "array",
+              "required": true
+            }
+          },
+          "required": false
+        }
+      },
+      {
+        "name": "string",
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       },
       {
-        "defaultValue": ["ABC", "DEF"],
-        "name": "_stringArray",
+        "name": "stringArray",
         "required": false,
         "type": {
           "itemType": {
             "base": "string",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
-              "booleanArrayOutput": {
+              "boolean": {
+                "base": "boolean",
+                "kind": "primitive",
+                "required": true
+              },
+              "booleanArray": {
                 "itemType": {
                   "base": "boolean",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               },
-              "booleanOutput": {
-                "base": "boolean",
-                "kind": "primitive"
+              "number": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
               },
-              "numberArrayOutput": {
+              "numberArray": {
                 "itemType": {
                   "base": "number",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               },
-              "numberOutput": {
-                "base": "number",
-                "kind": "primitive"
+              "objectBoolean": {
+                "kind": "object",
+                "properties": {
+                  "boolean": {
+                    "base": "boolean",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
               },
-              "objectBooleanArrayOutput": {
+              "objectBooleanArray": {
                 "kind": "object",
                 "properties": {
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectBooleanOutput": {
+              "objectMultiple": {
                 "kind": "object",
                 "properties": {
                   "boolean": {
                     "base": "boolean",
-                    "kind": "primitive"
-                  }
-                }
-              },
-              "objectMultipleOutput": {
-                "kind": "object",
-                "properties": {
-                  "boolean": {
-                    "base": "boolean",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "booleanArray": {
                     "itemType": {
                       "base": "boolean",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "number": {
                     "base": "number",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "object": {
                     "kind": "object",
                     "properties": {
                       "boolean": {
                         "base": "boolean",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "booleanArray": {
                         "itemType": {
                           "base": "boolean",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       },
                       "number": {
                         "base": "number",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "numberArray": {
                         "itemType": {
                           "base": "number",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       },
                       "string": {
                         "base": "string",
-                        "kind": "primitive"
+                        "kind": "primitive",
+                        "required": true
                       },
                       "stringArray": {
                         "itemType": {
                           "base": "string",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
-                        "kind": "array"
+                        "kind": "array",
+                        "required": true
                       }
-                    }
+                    },
+                    "required": true
                   },
                   "objectArray": {
                     "itemType": {
@@ -2341,113 +3028,168 @@
                       "properties": {
                         "boolean": {
                           "base": "boolean",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "booleanArray": {
                           "itemType": {
                             "base": "boolean",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         },
                         "number": {
                           "base": "number",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "numberArray": {
                           "itemType": {
                             "base": "number",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         },
                         "string": {
                           "base": "string",
-                          "kind": "primitive"
+                          "kind": "primitive",
+                          "required": true
                         },
                         "stringArray": {
                           "itemType": {
                             "base": "string",
-                            "kind": "primitive"
+                            "kind": "primitive",
+                            "required": true
                           },
-                          "kind": "array"
+                          "kind": "array",
+                          "required": true
                         }
-                      }
+                      },
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   },
                   "string": {
                     "base": "string",
-                    "kind": "primitive"
+                    "kind": "primitive",
+                    "required": true
                   },
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectNumberArrayOutput": {
+              "objectNumber": {
+                "kind": "object",
+                "properties": {
+                  "number": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  }
+                },
+                "required": true
+              },
+              "objectNumberArray": {
                 "kind": "object",
                 "properties": {
                   "numberArray": {
                     "itemType": {
                       "base": "number",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectNumberOutput": {
+              "objectString": {
                 "kind": "object",
                 "properties": {
-                  "number": {
-                    "base": "number",
-                    "kind": "primitive"
+                  "string": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectStringArrayOutput": {
+              "objectStringArray": {
                 "kind": "object",
                 "properties": {
                   "stringArray": {
                     "itemType": {
                       "base": "string",
-                      "kind": "primitive"
+                      "kind": "primitive",
+                      "required": true
                     },
-                    "kind": "array"
+                    "kind": "array",
+                    "required": true
                   }
-                }
+                },
+                "required": true
               },
-              "objectStringOutput": {
-                "kind": "object",
-                "properties": {
-                  "string": {
-                    "base": "string",
-                    "kind": "primitive"
-                  }
-                }
+              "string": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
               },
-              "stringArrayOutput": {
+              "stringArray": {
                 "itemType": {
                   "base": "string",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
-              },
-              "stringOutput": {
-                "base": "string",
-                "kind": "primitive"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -2459,248 +3201,41 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
-    "path": "/trpc/test._checkParams",
+    "path": "/trpc/test.checkParams",
     "requestType": "tRPC",
     "serviceClass": "TestService",
     "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "_checkParams",
+    "serviceMethod": "checkParams",
     "type": "mutation"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
-          "error": {
-            "kind": "object",
-            "properties": {
-              "message": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "name": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "stack": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "statusCode": {
-                "base": "number",
-                "kind": "primitive",
-                "required": true
-              }
-            }
-          },
-          "message": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/trpc/test.asyncFailReject",
-    "requestType": "tRPC",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncFailReject",
-    "type": "query"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
-          "error": {
-            "kind": "object",
-            "properties": {
-              "message": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "name": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "stack": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "statusCode": {
-                "base": "number",
-                "kind": "primitive",
-                "required": true
-              }
-            }
-          },
-          "message": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/trpc/test.asyncFailThrow",
-    "requestType": "tRPC",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncFailThrow",
-    "type": "query"
-  },
-  {
-    "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
-    "input": [],
-    "method": "get",
-    "output": {
-      "name": "output",
-      "required": true,
-      "type": {
-        "kind": "object",
-        "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
-          },
-          "sessionId": {
-            "base": "string",
-            "kind": "primitive",
-            "required": true
-          },
-          "success": {
-            "base": "boolean",
-            "kind": "primitive",
-            "required": true
-          }
-        }
-      }
-    },
-    "path": "/trpc/test.asyncSuccess",
-    "requestType": "tRPC",
-    "serviceClass": "TestService",
-    "serviceFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts",
-    "serviceMethod": "asyncSuccess",
-    "type": "query"
   },
   {
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
     "input": [
       {
-        "defaultValue": [
-          {
-            "address": {
-              "city": "Sample City 1",
-              "houseNumber": 11,
-              "province": "Sample Province 1",
-              "street": "Sample Street 1"
-            },
-            "age": 22,
-            "firstName": "John",
-            "lastName": "Doe"
-          },
-          {
-            "address": {
-              "city": "Sample City 2",
-              "houseNumber": 22,
-              "province": "Sample Province 2",
-              "street": "Sample Street 2"
-            },
-            "age": 22,
-            "firstName": "Jane",
-            "lastName": "Doe"
-          }
-        ],
         "name": "testUsers",
         "required": false,
         "type": {
           "itemType": {
             "kind": "object",
             "properties": {
-              "firstName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "middleName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": false
-              },
-              "lastName": {
-                "base": "string",
-                "kind": "primitive",
-                "required": true
-              },
-              "age": {
-                "base": "number",
-                "kind": "primitive",
-                "required": true
-              },
               "address": {
                 "kind": "object",
                 "properties": {
-                  "province": {
+                  "city": {
                     "base": "string",
                     "kind": "primitive",
                     "required": true
                   },
-                  "city": {
+                  "houseNumber": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "province": {
                     "base": "string",
                     "kind": "primitive",
                     "required": true
@@ -2709,31 +3244,50 @@
                     "base": "string",
                     "kind": "primitive",
                     "required": false
-                  },
-                  "houseNumber": {
-                    "base": "number",
-                    "kind": "primitive",
-                    "required": true
                   }
                 },
                 "required": true
+              },
+              "age": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              },
+              "firstName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "lastName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "middleName": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
               }
-            }
+            },
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -2742,35 +3296,20 @@
                 "itemType": {
                   "kind": "object",
                   "properties": {
-                    "firstName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": true
-                    },
-                    "middleName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": false
-                    },
-                    "lastName": {
-                      "base": "string",
-                      "kind": "primitive",
-                      "required": true
-                    },
-                    "age": {
-                      "base": "number",
-                      "kind": "primitive",
-                      "required": true
-                    },
                     "address": {
                       "kind": "object",
                       "properties": {
-                        "province": {
+                        "city": {
                           "base": "string",
                           "kind": "primitive",
                           "required": true
                         },
-                        "city": {
+                        "houseNumber": {
+                          "base": "number",
+                          "kind": "primitive",
+                          "required": true
+                        },
+                        "province": {
                           "base": "string",
                           "kind": "primitive",
                           "required": true
@@ -2779,25 +3318,69 @@
                           "base": "string",
                           "kind": "primitive",
                           "required": false
-                        },
-                        "houseNumber": {
-                          "base": "number",
-                          "kind": "primitive",
-                          "required": true
                         }
                       },
                       "required": true
+                    },
+                    "age": {
+                      "base": "number",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "firstName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "lastName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": true
+                    },
+                    "middleName": {
+                      "base": "string",
+                      "kind": "primitive",
+                      "required": false
                     }
-                  }
+                  },
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -2809,7 +3392,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.customTypeArray",
@@ -2823,51 +3407,25 @@
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
     "input": [
       {
-        "defaultValue": {
-          "address": {
-            "city": "Sample City",
-            "houseNumber": 11,
-            "province": "Sample Province",
-            "street": "Sample Street"
-          },
-          "age": 22,
-          "firstName": "John",
-          "lastName": "Doe"
-        },
         "name": "testUser",
         "required": false,
         "type": {
           "kind": "object",
           "properties": {
-            "firstName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            },
-            "middleName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": false
-            },
-            "lastName": {
-              "base": "string",
-              "kind": "primitive",
-              "required": true
-            },
-            "age": {
-              "base": "number",
-              "kind": "primitive",
-              "required": true
-            },
             "address": {
               "kind": "object",
               "properties": {
-                "province": {
+                "city": {
                   "base": "string",
                   "kind": "primitive",
                   "required": true
                 },
-                "city": {
+                "houseNumber": {
+                  "base": "number",
+                  "kind": "primitive",
+                  "required": true
+                },
+                "province": {
                   "base": "string",
                   "kind": "primitive",
                   "required": true
@@ -2876,29 +3434,47 @@
                   "base": "string",
                   "kind": "primitive",
                   "required": false
-                },
-                "houseNumber": {
-                  "base": "number",
-                  "kind": "primitive",
-                  "required": true
                 }
               },
               "required": true
+            },
+            "age": {
+              "base": "number",
+              "kind": "primitive",
+              "required": true
+            },
+            "firstName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "lastName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": true
+            },
+            "middleName": {
+              "base": "string",
+              "kind": "primitive",
+              "required": false
             }
-          }
+          },
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -2906,35 +3482,20 @@
               "testUser": {
                 "kind": "object",
                 "properties": {
-                  "firstName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": true
-                  },
-                  "middleName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": false
-                  },
-                  "lastName": {
-                    "base": "string",
-                    "kind": "primitive",
-                    "required": true
-                  },
-                  "age": {
-                    "base": "number",
-                    "kind": "primitive",
-                    "required": true
-                  },
                   "address": {
                     "kind": "object",
                     "properties": {
-                      "province": {
+                      "city": {
                         "base": "string",
                         "kind": "primitive",
                         "required": true
                       },
-                      "city": {
+                      "houseNumber": {
+                        "base": "number",
+                        "kind": "primitive",
+                        "required": true
+                      },
+                      "province": {
                         "base": "string",
                         "kind": "primitive",
                         "required": true
@@ -2943,23 +3504,66 @@
                         "base": "string",
                         "kind": "primitive",
                         "required": false
-                      },
-                      "houseNumber": {
-                        "base": "number",
-                        "kind": "primitive",
-                        "required": true
                       }
                     },
                     "required": true
+                  },
+                  "age": {
+                    "base": "number",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "firstName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "lastName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": true
+                  },
+                  "middleName": {
+                    "base": "string",
+                    "kind": "primitive",
+                    "required": false
                   }
-                }
+                },
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -2971,7 +3575,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.customTypeSingle",
@@ -2989,7 +3594,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -2997,25 +3603,65 @@
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       }
     ],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3027,7 +3673,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.getWithParam",
@@ -3045,7 +3692,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -3053,25 +3701,65 @@
         "required": false,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3083,7 +3771,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.hello",
@@ -3101,7 +3790,21 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
+        }
+      },
+      {
+        "name": "arr",
+        "required": false,
+        "type": {
+          "itemType": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "kind": "array",
+          "required": false
         }
       },
       {
@@ -3109,7 +3812,8 @@
         "required": true,
         "type": {
           "base": "number",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -3128,49 +3832,45 @@
               "kind": "primitive",
               "required": false
             }
-          }
-        }
-      },
-      {
-        "name": "arr",
-        "required": false,
-        "type": {
-          "itemType": {
-            "base": "number",
-            "kind": "primitive"
           },
-          "kind": "array"
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "a": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "arr": {
                 "itemType": {
                   "base": "number",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": false
               },
               "b": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "options": {
                 "kind": "object",
@@ -3185,14 +3885,42 @@
                     "kind": "primitive",
                     "required": false
                   }
-                }
+                },
+                "required": false
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3204,7 +3932,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.mixedParams",
@@ -3218,53 +3947,83 @@
     "handlerFilePath": "/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts",
     "input": [
       {
-        "name": "payload",
+        "name": "prop1",
         "required": true,
         "type": {
-          "kind": "object",
-          "properties": {
-            "prop1": {
-              "base": "string",
-              "kind": "primitive",
-              "required": false
-            },
-            "prop2": {
-              "base": "number",
-              "kind": "primitive",
-              "required": false
-            }
-          }
+          "base": "string",
+          "kind": "primitive",
+          "required": true
+        }
+      },
+      {
+        "name": "prop2",
+        "required": true,
+        "type": {
+          "base": "number",
+          "kind": "primitive",
+          "required": true
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "prop1": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "prop2": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3276,7 +4035,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.objectDestructured",
@@ -3305,20 +4065,23 @@
               "kind": "primitive",
               "required": false
             }
-          }
+          },
+          "required": true
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
@@ -3329,21 +4092,49 @@
                   "bar": {
                     "base": "number",
                     "kind": "primitive",
-                    "required": false
+                    "required": true
                   },
                   "foo": {
                     "base": "string",
                     "kind": "primitive",
-                    "required": false
+                    "required": true
                   }
-                }
+                },
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3355,7 +4146,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.objectOnly",
@@ -3373,7 +4165,8 @@
         "required": true,
         "type": {
           "base": "string",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -3381,7 +4174,8 @@
         "required": true,
         "type": {
           "base": "number",
-          "kind": "primitive"
+          "kind": "primitive",
+          "required": true
         }
       },
       {
@@ -3390,47 +4184,82 @@
         "type": {
           "itemType": {
             "base": "string",
-            "kind": "primitive"
+            "kind": "primitive",
+            "required": true
           },
-          "kind": "array"
+          "kind": "array",
+          "required": false
         }
       }
     ],
     "method": "post",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
           },
           "data": {
             "kind": "object",
             "properties": {
               "var1": {
                 "base": "string",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "var2": {
                 "base": "number",
-                "kind": "primitive"
+                "kind": "primitive",
+                "required": true
               },
               "var3": {
                 "itemType": {
                   "base": "string",
-                  "kind": "primitive"
+                  "kind": "primitive",
+                  "required": true
                 },
-                "kind": "array"
+                "kind": "array",
+                "required": true
               }
-            }
+            },
+            "required": false
           },
-          "code": {
-            "base": "number",
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
             "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3442,7 +4271,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.primitivesAndArray",
@@ -3457,11 +4287,22 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
           "error": {
             "kind": "object",
             "properties": {
@@ -3478,24 +4319,20 @@
               "stack": {
                 "base": "string",
                 "kind": "primitive",
-                "required": true
+                "required": false
               },
               "statusCode": {
                 "base": "number",
                 "kind": "primitive",
                 "required": true
               }
-            }
+            },
+            "required": false
           },
           "message": {
             "base": "string",
             "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3507,7 +4344,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.syncFailReject",
@@ -3522,11 +4360,22 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
+          "code": {
+            "base": "number",
+            "kind": "primitive",
+            "required": true
+          },
+          "data": {
+            "base": "void",
+            "kind": "primitive",
+            "required": false
+          },
           "error": {
             "kind": "object",
             "properties": {
@@ -3543,24 +4392,20 @@
               "stack": {
                 "base": "string",
                 "kind": "primitive",
-                "required": true
+                "required": false
               },
               "statusCode": {
                 "base": "number",
                 "kind": "primitive",
                 "required": true
               }
-            }
+            },
+            "required": false
           },
           "message": {
             "base": "string",
             "kind": "primitive",
-            "required": true
-          },
-          "code": {
-            "base": "number",
-            "kind": "primitive",
-            "required": true
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3572,7 +4417,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.syncFailThrow",
@@ -3587,19 +4433,58 @@
     "input": [],
     "method": "get",
     "output": {
-      "name": "output",
+      "description": "Response from the service method",
+      "name": "return",
       "required": true,
       "type": {
         "kind": "object",
         "properties": {
-          "message": {
-            "base": "string",
-            "kind": "primitive"
-          },
           "code": {
             "base": "number",
             "kind": "primitive",
             "required": true
+          },
+          "data": {
+            "kind": "object",
+            "properties": {
+              "customMessage": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "error": {
+            "kind": "object",
+            "properties": {
+              "message": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "name": {
+                "base": "string",
+                "kind": "primitive",
+                "required": true
+              },
+              "stack": {
+                "base": "string",
+                "kind": "primitive",
+                "required": false
+              },
+              "statusCode": {
+                "base": "number",
+                "kind": "primitive",
+                "required": true
+              }
+            },
+            "required": false
+          },
+          "message": {
+            "base": "string",
+            "kind": "primitive",
+            "required": false
           },
           "sessionId": {
             "base": "string",
@@ -3611,7 +4496,8 @@
             "kind": "primitive",
             "required": true
           }
-        }
+        },
+        "required": true
       }
     },
     "path": "/trpc/test.syncSuccess",

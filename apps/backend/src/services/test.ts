@@ -1,115 +1,269 @@
 import type { InputArgs, ServiceContext } from '../types/middlware';
 import { BaseService } from './base';
+import type { InferSchemaMap } from '../utils/autogen/utils/zod';
 import { sleep } from '@lightproject/common/utils';
+import z from 'zod';
 
-interface Address {
-  province: string;
-  city: string;
-  street?: string;
-  houseNumber: number;
-}
+const TestServiceInputSchemas = {
+  asyncFailReject: z.void(),
+  asyncFailThrow: z.void(),
+  asyncSuccess: z.void(),
+  checkParams: z.object({
+    boolean: z.boolean().optional(),
+    booleanArray: z.array(z.boolean()).optional(),
+    number: z.number().optional(),
+    numberArray: z.array(z.number()).optional(),
+    objectBoolean: z.object({ boolean: z.boolean() }).nullable().optional(),
+    objectBooleanArray: z
+      .object({ booleanArray: z.array(z.boolean()) })
+      .nullable()
+      .optional(),
+    objectMultiple: z
+      .object({
+        boolean: z.boolean(),
+        booleanArray: z.array(z.boolean()),
+        number: z.number(),
+        numberArray: z.array(z.number()),
+        object: z.object({
+          boolean: z.boolean(),
+          booleanArray: z.array(z.boolean()),
+          number: z.number(),
+          numberArray: z.array(z.number()),
+          string: z.string(),
+          stringArray: z.array(z.string()),
+        }),
+        objectArray: z.array(
+          z.object({
+            boolean: z.boolean(),
+            booleanArray: z.array(z.boolean()),
+            number: z.number(),
+            numberArray: z.array(z.number()),
+            string: z.string(),
+            stringArray: z.array(z.string()),
+          }),
+        ),
+        string: z.string(),
+        stringArray: z.array(z.string()),
+      })
+      .nullable()
+      .optional(),
+    objectNumber: z.object({ number: z.number() }).nullable().optional(),
+    objectNumberArray: z
+      .object({ numberArray: z.array(z.number()) })
+      .nullable()
+      .optional(),
+    objectString: z.object({ string: z.string() }).nullable().optional(),
+    objectStringArray: z
+      .object({ stringArray: z.array(z.string()) })
+      .nullable()
+      .optional(),
+    string: z.string().optional(),
+    stringArray: z.array(z.string()).optional(),
+  }),
+  customTypeArray: z.object({
+    testUsers: z
+      .array(
+        z.object({
+          address: z.object({
+            city: z.string(),
+            houseNumber: z.number(),
+            province: z.string(),
+            street: z.string().optional(),
+          }),
+          age: z.number(),
+          firstName: z.string(),
+          lastName: z.string(),
+          middleName: z.string().optional(),
+        }),
+      )
+      .optional(),
+  }),
+  customTypeSingle: z.object({
+    testUser: z
+      .object({
+        address: z.object({
+          city: z.string(),
+          houseNumber: z.number(),
+          province: z.string(),
+          street: z.string().optional(),
+        }),
+        age: z.number(),
+        firstName: z.string(),
+        lastName: z.string(),
+        middleName: z.string().optional(),
+      })
+      .optional(),
+  }),
+  getWithParam: z.object({
+    firstName: z.string(),
+    lastName: z.string().optional(),
+  }),
+  hello: z.object({
+    firstName: z.string(),
+    lastName: z.string().optional(),
+  }),
+  mixedParams: z.object({
+    a: z.string(),
+    arr: z.array(z.number()).optional(),
+    b: z.number(),
+    options: z
+      .object({
+        bar: z.number().optional(),
+        foo: z.string().optional(),
+      })
+      .optional(),
+  }),
+  objectDestructured: z.object({
+    prop1: z.string(),
+    prop2: z.number(),
+  }),
+  objectOnly: z.object({
+    options: z.object({
+      bar: z.number().optional(),
+      foo: z.string().optional(),
+    }),
+  }),
+  primitivesAndArray: z.object({
+    var1: z.string(),
+    var2: z.number(),
+    var3: z.array(z.string()).optional(),
+  }),
+  syncFailReject: z.void(),
+  syncFailThrow: z.void(),
+  syncSuccess: z.void(),
+};
 
-interface TestUser {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  age: number;
-  address: Address;
-}
+const TestServiceOutputSchemas = {
+  asyncFailReject: z.void(),
+  asyncFailThrow: z.void(),
+  asyncSuccess: z.object({
+    customMessage: z.string(),
+  }),
+  checkParams: z.object({
+    boolean: z.boolean(),
+    booleanArray: z.array(z.boolean()),
+    number: z.number(),
+    numberArray: z.array(z.number()),
+    objectBoolean: z.object({ boolean: z.boolean() }),
+    objectBooleanArray: z.object({ booleanArray: z.array(z.boolean()) }),
+    objectMultiple: z.object({
+      boolean: z.boolean(),
+      booleanArray: z.array(z.boolean()),
+      number: z.number(),
+      numberArray: z.array(z.number()),
+      object: z.object({
+        boolean: z.boolean(),
+        booleanArray: z.array(z.boolean()),
+        number: z.number(),
+        numberArray: z.array(z.number()),
+        string: z.string(),
+        stringArray: z.array(z.string()),
+      }),
+      objectArray: z.array(
+        z.object({
+          boolean: z.boolean(),
+          booleanArray: z.array(z.boolean()),
+          number: z.number(),
+          numberArray: z.array(z.number()),
+          string: z.string(),
+          stringArray: z.array(z.string()),
+        }),
+      ),
+      string: z.string(),
+      stringArray: z.array(z.string()),
+    }),
+    objectNumber: z.object({ number: z.number() }),
+    objectNumberArray: z.object({ numberArray: z.array(z.number()) }),
+    objectString: z.object({ string: z.string() }),
+    objectStringArray: z.object({ stringArray: z.array(z.string()) }),
+    string: z.string(),
+    stringArray: z.array(z.string()),
+  }),
+  customTypeArray: z.object({
+    testUsers: z.array(
+      z.object({
+        address: z.object({
+          city: z.string(),
+          houseNumber: z.number(),
+          province: z.string(),
+          street: z.string().optional(),
+        }),
+        age: z.number(),
+        firstName: z.string(),
+        lastName: z.string(),
+        middleName: z.string().optional(),
+      }),
+    ),
+  }),
+  customTypeSingle: z.object({
+    testUser: z.object({
+      address: z.object({
+        city: z.string(),
+        houseNumber: z.number(),
+        province: z.string(),
+        street: z.string().optional(),
+      }),
+      age: z.number(),
+      firstName: z.string(),
+      lastName: z.string(),
+      middleName: z.string().optional(),
+    }),
+  }),
+  getWithParam: z.object({
+    customMessage: z.string(),
+  }),
+  hello: z.object({
+    customMessage: z.string(),
+  }),
+  mixedParams: z.object({
+    a: z.string(),
+    arr: z.array(z.number()).optional(),
+    b: z.number(),
+    options: z
+      .object({
+        bar: z.number().optional(),
+        foo: z.string().optional(),
+      })
+      .optional(),
+  }),
+  objectDestructured: z.object({
+    prop1: z.string(),
+    prop2: z.number(),
+  }),
+  objectOnly: z.object({
+    options: z.object({
+      bar: z.number(),
+      foo: z.string(),
+    }),
+  }),
+  primitivesAndArray: z.object({
+    var1: z.string(),
+    var2: z.number(),
+    var3: z.array(z.string()),
+  }),
+  syncFailReject: z.void(),
+  syncFailThrow: z.void(),
+  syncSuccess: z.object({
+    customMessage: z.string(),
+  }),
+};
 
 class TestService extends BaseService {
   public constructor(ctx: ServiceContext, inputArgs: InputArgs = {}) {
     super(ctx, inputArgs);
   }
 
-  public static _checkParams(
-    _stringInput = 'ABC',
-    _stringArrayInput: string[] = ['ABC', 'DEF'],
-    _numberInput = 123,
-    _numberArrayInput: number[] = [123, 456],
-    _booleanInput = true,
-    _booleanArrayInput: boolean[] = [true, false],
-    _objectStringInput: { string: string } = { string: 'ABC' },
-    _objectStringArrayInput: { stringArray: string[] } = {
-      stringArray: ['ABC', 'DEF'],
-    },
-    _objectNumberInput: { number: number } = { number: 123 },
-    _objectNumberArrayInput: { numberArray: number[] } = {
-      numberArray: [123, 456],
-    },
-    _objectBooleanInput: { boolean: boolean } = { boolean: true },
-    _objectBooleanArrayInput: { booleanArray: boolean[] } = {
-      booleanArray: [true, false],
-    },
-    _objectMultipleInput: {
-      boolean: boolean;
-      booleanArray: boolean[];
-      number: number;
-      numberArray: number[];
-      object: {
-        boolean: boolean;
-        booleanArray: boolean[];
-        number: number;
-        numberArray: number[];
-        string: string;
-        stringArray: string[];
-      };
-      objectArray: {
-        boolean: boolean;
-        booleanArray: boolean[];
-        number: number;
-        numberArray: number[];
-        string: string;
-        stringArray: string[];
-      }[];
-      string: string;
-      stringArray: string[];
-    } = {
-      boolean: false,
+  public static checkParams(
+    _input: z.infer<typeof TestServiceInputSchemas.checkParams> = {},
+  ): z.infer<typeof TestServiceOutputSchemas.checkParams> {
+    return {
+      boolean: true,
       booleanArray: [true, false],
       number: 123,
       numberArray: [123, 456],
-      object: {
-        boolean: true,
-        booleanArray: [true, false],
-        number: 123,
-        numberArray: [123, 456],
-        string: 'ABC',
-        stringArray: ['ABC', 'DEF'],
-      },
-      objectArray: [
-        {
-          boolean: true,
-          booleanArray: [true, false],
-          number: 123,
-          numberArray: [123, 456],
-          string: 'ABC',
-          stringArray: ['ABC', 'DEF'],
-        },
-        {
-          boolean: false,
-          booleanArray: [false, true],
-          number: 456,
-          numberArray: [456, 789],
-          string: 'DEF',
-          stringArray: ['DEF', 'GHI'],
-        },
-      ],
-      string: 'ABC',
-      stringArray: ['ABC', 'DEF'],
-    },
-    _string = 'ABC',
-    _stringArray: string[] = ['ABC', 'DEF'],
-  ) {
-    return {
-      booleanArrayOutput: [true, false],
-      booleanOutput: true,
-      message: 'Check parameters processed successfully',
-      numberArrayOutput: [123, 456],
-      numberOutput: 123,
-      objectBooleanArrayOutput: { booleanArray: [true, false] },
-      objectBooleanOutput: { boolean: true },
-      objectMultipleOutput: {
+      objectBoolean: { boolean: true },
+      objectBooleanArray: { booleanArray: [true, false] },
+      objectMultiple: {
         boolean: false,
         booleanArray: [true, false],
         number: 123,
@@ -143,40 +297,52 @@ class TestService extends BaseService {
         string: 'ABC',
         stringArray: ['ABC', 'DEF'],
       },
-      objectNumberArrayOutput: {
+      objectNumber: { number: 123 },
+      objectNumberArray: {
         numberArray: [123, 456],
       },
-      objectNumberOutput: { number: 123 },
-      objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
-      objectStringOutput: { string: 'ABC' },
-      stringArrayOutput: ['ABC', 'DEF'],
-      stringOutput: 'ABC',
+      objectString: { string: 'ABC' },
+      objectStringArray: { stringArray: ['ABC', 'DEF'] },
+      string: 'ABC',
+      stringArray: ['ABC', 'DEF'],
     };
   }
 
-  public static getWithParam(firstName: string, lastName?: string) {
+  public static getWithParam(
+    input: z.infer<typeof TestServiceInputSchemas.getWithParam>,
+  ): z.infer<typeof TestServiceOutputSchemas.getWithParam> {
     const fullName =
-      lastName !== undefined && lastName !== '' ? `${firstName} ${lastName}` : firstName;
-    return { message: `Hello, ${fullName}!` };
+      input.lastName !== undefined && input.lastName !== ''
+        ? `${input.firstName} ${input.lastName}`
+        : input.firstName;
+    return { customMessage: `Hello, ${fullName}!` };
   }
 
-  public static async asyncFailReject() {
+  public static async asyncFailReject(): Promise<
+    z.infer<typeof TestServiceOutputSchemas.asyncFailReject>
+  > {
     await Promise.resolve(sleep(0));
     throw new Error('Async error. Simulated promise rejection');
   }
 
-  public static async asyncFailThrow() {
+  public static async asyncFailThrow(): Promise<
+    z.infer<typeof TestServiceOutputSchemas.asyncFailThrow>
+  > {
     await Promise.resolve(sleep(0));
     throw new Error('Async error. Simulated throwing exception');
   }
 
-  public static async asyncSuccess() {
+  public static async asyncSuccess(): Promise<
+    z.infer<typeof TestServiceOutputSchemas.asyncSuccess>
+  > {
     await Promise.resolve(sleep(0));
-    return { message: 'Async success' };
+    return { customMessage: 'Async success' };
   }
 
   public static customTypeArray(
-    testUsers: TestUser[] = [
+    input: z.infer<typeof TestServiceInputSchemas.customTypeArray> = {},
+  ): z.infer<typeof TestServiceOutputSchemas.customTypeArray> {
+    const testUsers = input.testUsers ?? [
       {
         address: {
           city: 'Sample City 1',
@@ -199,16 +365,16 @@ class TestService extends BaseService {
         firstName: 'Jane',
         lastName: 'Doe',
       },
-    ],
-  ) {
+    ];
     return {
-      message: 'Custom type array processed successfully',
       testUsers,
     };
   }
 
   public static customTypeSingle(
-    testUser: TestUser = {
+    input: z.infer<typeof TestServiceInputSchemas.customTypeSingle> = {},
+  ): z.infer<typeof TestServiceOutputSchemas.customTypeSingle> {
+    const testUser = input.testUser ?? {
       address: {
         city: 'Sample City',
         houseNumber: 11,
@@ -218,71 +384,78 @@ class TestService extends BaseService {
       age: 22,
       firstName: 'John',
       lastName: 'Doe',
-    },
-  ) {
+    };
     return {
-      message: 'Custom type single processed successfully',
       testUser,
     };
   }
 
-  public static hello(firstName: string, lastName?: string) {
+  public static hello(
+    input: z.infer<typeof TestServiceInputSchemas.hello>,
+  ): z.infer<typeof TestServiceOutputSchemas.hello> {
     const fullName =
-      lastName !== undefined && lastName !== '' ? `${firstName} ${lastName}` : firstName;
-    return { message: `Hello, ${fullName}!` };
+      input.lastName !== undefined && input.lastName !== ''
+        ? `${input.firstName} ${input.lastName}`
+        : input.firstName;
+    return { customMessage: `Hello, ${fullName}!` };
   }
 
   public static mixedParams(
-    a: string,
-    b: number,
-    options?: { bar?: number; foo?: string },
-    arr?: number[],
-  ) {
+    input: z.infer<typeof TestServiceInputSchemas.mixedParams>,
+  ): z.infer<typeof TestServiceOutputSchemas.mixedParams> {
     return {
-      a,
-      arr,
-      b,
-      message: 'Mixed parameters processed successfully',
-      options,
+      a: input.a,
+      arr: input.arr,
+      b: input.b,
+      options: input.options,
     };
   }
 
-  public static objectDestructured({ prop1, prop2 }: { prop1?: string; prop2?: number }) {
+  public static objectDestructured(
+    input: z.infer<typeof TestServiceInputSchemas.objectDestructured>,
+  ): z.infer<typeof TestServiceOutputSchemas.objectDestructured> {
     return {
-      message: 'Object destructured parameters processed successfully',
-      prop1,
-      prop2,
+      prop1: input.prop1,
+      prop2: input.prop2,
     };
   }
 
-  public static objectOnly(options: { bar?: number; foo?: string }) {
+  public static objectOnly(
+    _input: z.infer<typeof TestServiceInputSchemas.objectOnly>,
+  ): z.infer<typeof TestServiceOutputSchemas.objectOnly> {
     return {
-      message: 'Object parameters processed successfully',
-      options,
+      options: {
+        bar: 123,
+        foo: 'ABC',
+      },
     };
   }
 
-  public static primitivesAndArray(var1: string, var2: number, var3?: string[]) {
+  public static primitivesAndArray(
+    input: z.infer<typeof TestServiceInputSchemas.primitivesAndArray>,
+  ): z.infer<typeof TestServiceOutputSchemas.primitivesAndArray> {
     return {
-      message: 'Primitives and array processed successfully',
-      var1,
-      var2,
-      var3,
+      var1: input.var1,
+      var2: input.var2,
+      var3: ['ABC', 'DEF'],
     };
   }
 
-  public static syncFailReject() {
+  public static syncFailReject(): z.infer<typeof TestServiceOutputSchemas.syncFailReject> {
     throw new Error('Sync error. Simulated promise rejection');
   }
 
-  public static syncFailThrow() {
+  public static syncFailThrow(): z.infer<typeof TestServiceOutputSchemas.syncFailThrow> {
     throw new Error('Sync error. Simulated throwing exception');
   }
 
-  public static syncSuccess() {
-    return { message: 'Sync success' };
+  public static syncSuccess(): z.infer<typeof TestServiceOutputSchemas.syncSuccess> {
+    return { customMessage: 'Sync success' };
   }
 }
 
-export type { Address, TestUser };
-export { TestService };
+type TestServiceInputs = InferSchemaMap<typeof TestServiceInputSchemas>;
+type TestServiceOutputs = InferSchemaMap<typeof TestServiceOutputSchemas>;
+
+export type { TestServiceInputs, TestServiceOutputs };
+export { TestServiceInputSchemas, TestServiceOutputSchemas, TestService };

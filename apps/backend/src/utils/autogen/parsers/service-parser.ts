@@ -1,96 +1,78 @@
-import { extractParameterMetadata, extractReturnTypeMetadata } from '@lightproject/common/utils';
 import { getProject, servicesDir } from '../config';
 import type { ParsedType } from '@lightproject/common/types';
 import type { ServiceMetadata } from '../types';
 import type { SourceFile } from 'ts-morph';
+import { createBaseResponseSchema } from '../../route-handler';
 import { isRecord } from '@lightproject/common/validators';
+import { z } from 'zod';
+import { zodToParsedType } from '../utils/zod';
 
-const isObjectParsedType = (
-  val: unknown,
-): val is ParsedType & { kind: 'object'; properties: Record<string, ParsedType | string> } =>
-  isRecord(val) && val['kind'] === 'object' && isRecord(val['properties']);
-
-const getDataProp = (
-  existingData: ParsedType | string | undefined,
-  extraProps: Record<string, ParsedType | string>,
-  hasExtra: boolean,
-): ParsedType | string | undefined => {
-  if (isObjectParsedType(existingData)) {
-    return {
-      kind: 'object',
-      properties: {
-        ...existingData.properties,
-        ...extraProps,
-      },
-    };
-  }
-  if (hasExtra) {
-    return {
-      kind: 'object',
-      properties: extraProps,
-    };
-  }
-  return existingData;
-};
-
-const wrapOutputProperties = (
-  properties: Record<string, ParsedType | string>,
-): Record<string, ParsedType | string> => {
-  if (
-    'error' in properties &&
-    'name' in properties &&
-    'stack' in properties &&
-    'statusCode' in properties
-  ) {
-    const errorMsg = properties['error'];
-    const nameProp = properties['name'];
-    const stackProp = properties['stack'];
-    const statusCodeProp = properties['statusCode'];
-
-    delete properties['name'];
-    delete properties['stack'];
-    delete properties['statusCode'];
-
-    properties['error'] = {
-      kind: 'object',
-      properties: {
-        message: errorMsg,
-        name: nameProp,
-        stack: stackProp,
-        statusCode: statusCodeProp,
-      },
-    };
+const extractSchemas = (
+  serviceModule: unknown,
+  serviceClass: string,
+  serviceMethod: string,
+): { inputType: ParsedType | undefined; outputType: ParsedType | undefined } => {
+  if (!isRecord(serviceModule)) {
+    throw new Error('Service module is not a record');
   }
 
-  const standardKeys = new Set(['code', 'data', 'message', 'sessionId', 'success', 'error']);
-  const standardProps: Record<string, ParsedType | string> = {};
-  const extraProps: Record<string, ParsedType | string> = {};
-  let hasExtra = false;
+  const inputSchemasName = `${serviceClass}InputSchemas`;
+  const outputSchemasName = `${serviceClass}OutputSchemas`;
 
-  for (const [key, prop] of Object.entries(properties)) {
-    if (standardKeys.has(key)) {
-      standardProps[key] = prop;
-    } else {
-      extraProps[key] = prop;
-      hasExtra = true;
+  const rawInputSchemas = serviceModule[inputSchemasName];
+  const rawOutputSchemas = serviceModule[outputSchemasName];
+
+  const inputSchemas = isRecord(rawInputSchemas) ? rawInputSchemas : undefined;
+  const outputSchemas = isRecord(rawOutputSchemas) ? rawOutputSchemas : undefined;
+
+  let inputType: ParsedType | undefined = undefined;
+  if (inputSchemas && serviceMethod in inputSchemas) {
+    const schema = inputSchemas[serviceMethod];
+    if (schema instanceof z.ZodType) {
+      inputType = zodToParsedType(schema);
     }
   }
 
-  const existingData = standardProps['data'];
-  const dataProp = getDataProp(existingData, extraProps, hasExtra);
-
-  const newProperties: Record<string, ParsedType | string> = {
-    ...standardProps,
-  };
-  if (dataProp !== undefined) {
-    newProperties['data'] = dataProp;
+  let outputType: ParsedType | undefined = undefined;
+  if (outputSchemas && serviceMethod in outputSchemas) {
+    const schema = outputSchemas[serviceMethod];
+    if (schema instanceof z.ZodType) {
+      const outputSchema = createBaseResponseSchema(schema);
+      outputType = zodToParsedType(outputSchema);
+    }
   }
-  newProperties['code'] ??= { base: 'number', kind: 'primitive', required: true };
-  newProperties['message'] ??= { base: 'string', kind: 'primitive', required: true };
-  newProperties['sessionId'] ??= { base: 'string', kind: 'primitive', required: true };
-  newProperties['success'] ??= { base: 'boolean', kind: 'primitive', required: true };
 
-  return newProperties;
+  return { inputType, outputType };
+};
+
+const buildInputParams = (
+  inputType?: ParsedType,
+): { name: string; type: ParsedType; required: boolean }[] => {
+  if (!inputType || inputType.base === 'void') {
+    return [];
+  }
+
+  if (inputType.kind === 'object' && inputType.properties) {
+    const { properties } = inputType;
+    return Object.entries(properties).map(([name, type]) => {
+      if (typeof type === 'string') {
+        throw new TypeError('Type is a string');
+      }
+      return {
+        name,
+        required: type.required ?? true,
+        type,
+      };
+    });
+  }
+
+  return [
+    {
+      name: 'payload',
+      required: inputType.required ?? true,
+      type: inputType,
+    },
+  ];
 };
 
 const extractServiceMetadata = async (
@@ -116,24 +98,30 @@ const extractServiceMetadata = async (
   }
 
   const serviceFilePath = serviceFile.getFilePath();
-  const serviceClassDecl = serviceFile.getClass(serviceClass);
-  const methodDecl = serviceClassDecl?.getMethod(serviceMethod);
 
-  if (methodDecl === undefined || (serviceFilePath as string) === '') {
+  try {
+    const serviceModule: unknown = await import(serviceFilePath);
+
+    const extracted = extractSchemas(serviceModule, serviceClass, serviceMethod);
+    const { inputType } = extracted;
+    let { outputType } = extracted;
+
+    outputType ??= zodToParsedType(createBaseResponseSchema());
+
+    const input = buildInputParams(inputType);
+
+    const output: { name: string; type: ParsedType; required: boolean; description: string } = {
+      description: 'Response from the service method',
+      name: 'return',
+      required: outputType.required ?? true,
+      type: outputType,
+    };
+
+    return { input, output, serviceFilePath };
+  } catch {
+    // Ignore errors that happen during static schema extraction
     return { input: undefined, output: undefined, serviceFilePath };
   }
-
-  const input = await Promise.resolve(
-    extractParameterMetadata(methodDecl, serviceFilePath, serviceClass, serviceMethod),
-  );
-
-  const output = extractReturnTypeMetadata(methodDecl);
-
-  if (output?.type !== undefined && isObjectParsedType(output.type)) {
-    output.type.properties = wrapOutputProperties(output.type.properties);
-  }
-
-  return { input, output, serviceFilePath };
 };
 
 const toPascalCase = (str: string): string =>
@@ -171,9 +159,6 @@ const getRouteHandlerFilePath = (routerDirectory: string, routeName: string): st
 };
 
 export {
-  isObjectParsedType,
-  getDataProp,
-  wrapOutputProperties,
   extractServiceMetadata,
   toPascalCase,
   getServiceNameFromHandlerFile,

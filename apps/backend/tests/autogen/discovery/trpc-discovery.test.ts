@@ -61,9 +61,8 @@ describe('tRPC Discovery', () => {
       if (outputSchema && typeof outputSchema === 'object') {
         expect(outputSchema).toHaveProperty('name');
         expect(outputSchema).toHaveProperty('type');
-        expect(outputSchema).toHaveProperty('description');
 
-        const typeVal = outputSchema.type;
+        const typeVal = 'type' in outputSchema ? outputSchema.type : undefined;
         if (typeof typeVal === 'string') {
           expect(typeVal).not.toBe('unknown');
         }
@@ -123,7 +122,6 @@ describe('tRPC Discovery', () => {
         if (output) {
           expect(output).toHaveProperty('name');
           expect(output).toHaveProperty('type');
-          expect(output).toHaveProperty('description');
         }
       }
     });

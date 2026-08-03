@@ -234,71 +234,67 @@ describe('Autogen Main', () => {
   });
 
   describe('Route input/output shapes', () => {
-    const messageOutput = [
-      { name: 'code', required: true, type: 'number' },
-      { name: 'message', required: true, type: 'string' },
-      { name: 'sessionId', required: true, type: 'string' },
-      { name: 'success', required: true, type: 'boolean' },
-    ] as const;
-
-    const errorOutput = [
+    const baseOutput = [
       { name: 'code', required: true, type: 'number' },
       {
         name: 'error',
-        required: true,
-        type: '{ message: string; name: string; stack: string; statusCode: number; }',
+        required: false,
+        type: '{ message: string; name: string; stack?: string; statusCode: number; }',
       },
-      { name: 'message', required: true, type: 'string' },
+      { name: 'message', required: false, type: 'string' },
       { name: 'sessionId', required: true, type: 'string' },
       { name: 'success', required: true, type: 'boolean' },
     ] as const;
 
+    const voidOutput = [{ name: 'data', required: false, type: 'void' }, ...baseOutput] as const;
+
     const sharedRouteCases = [
       {
-        httpPath: '/test/_check-params',
+        httpPath: '/test/check-params',
         input: [
-          { name: '_stringInput', required: false, type: 'string' },
-          { name: '_stringArrayInput', required: false },
-          { name: '_numberInput', required: false, type: 'number' },
-          { name: '_numberArrayInput', required: false },
-          { name: '_booleanInput', required: false, type: 'boolean' },
-          { name: '_booleanArrayInput', required: false },
-          { name: '_objectStringInput', required: false, type: '{ string: string; }' },
-          { name: '_objectStringArrayInput', required: false },
-          { name: '_objectNumberInput', required: false, type: '{ number: number; }' },
-          { name: '_objectNumberArrayInput', required: false },
-          { name: '_objectBooleanInput', required: false, type: '{ boolean: boolean; }' },
-          { name: '_objectBooleanArrayInput', required: false },
-          { name: '_objectMultipleInput', required: false },
-          { name: '_string', required: false, type: 'string' },
-          { name: '_stringArray', required: false },
+          { name: 'boolean', required: false, type: 'boolean' },
+          { name: 'booleanArray', required: false, type: 'boolean\\[\\]' },
+          { name: 'number', required: false, type: 'number' },
+          { name: 'numberArray', required: false, type: 'number\\[\\]' },
+          { name: 'objectBoolean', required: false, type: '{ boolean: boolean; }' },
+          { name: 'objectBooleanArray', required: false },
+          { name: 'objectMultiple', required: false },
+          { name: 'objectNumber', required: false, type: '{ number: number; }' },
+          { name: 'objectNumberArray', required: false },
+          { name: 'objectString', required: false, type: '{ string: string; }' },
+          { name: 'objectStringArray', required: false },
+          { name: 'string', required: false, type: 'string' },
+          { name: 'stringArray', required: false, type: 'string\\[\\]' },
         ],
         output: [
           {
             name: 'data',
-            required: true,
-            type: '{ booleanArrayOutput: boolean\\[\\]; booleanOutput: boolean; numberArrayOutput: number\\[\\]; numberOutput: number; objectBooleanArrayOutput: { booleanArray: boolean\\[\\]; }; objectBooleanOutput: { boolean: boolean; }; objectMultipleOutput: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumberArrayOutput: { numberArray: number\\[\\]; }; objectNumberOutput: { number: number; }; objectStringArrayOutput: { stringArray: string\\[\\]; }; objectStringOutput: { string: string; }; stringArrayOutput: string\\[\\]; stringOutput: string; }',
+            required: false,
+            type: '{ boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; objectBoolean: { boolean: boolean; }; objectBooleanArray: { booleanArray: boolean\\[\\]; }; objectMultiple: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; object: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }; objectArray: { boolean: boolean; booleanArray: boolean\\[\\]; number: number; numberArray: number\\[\\]; string: string; stringArray: string\\[\\]; }\\[\\]; string: string; stringArray: string\\[\\]; }; objectNumber: { number: number; }; objectNumberArray: { numberArray: number\\[\\]; }; objectString: { string: string; }; objectStringArray: { stringArray: string\\[\\]; }; string: string; stringArray: string\\[\\]; }',
           },
-          ...messageOutput,
+          ...baseOutput,
         ],
-        trpcPath: '/trpc/test._checkParams',
+        trpcPath: '/trpc/test.checkParams',
       },
       {
         httpPath: '/test/async-fail-reject',
         input: [],
-        output: errorOutput,
+        output: voidOutput,
         trpcPath: '/trpc/test.asyncFailReject',
       },
       {
         httpPath: '/test/async-fail-throw',
         input: [],
-        output: errorOutput,
+        output: voidOutput,
         trpcPath: '/trpc/test.asyncFailThrow',
       },
       {
         httpPath: '/test/async-success',
         input: [],
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ],
         trpcPath: '/trpc/test.asyncSuccess',
       },
       {
@@ -307,7 +303,10 @@ describe('Autogen Main', () => {
           { name: 'firstName', required: true, type: 'string' },
           { name: 'lastName', required: false, type: 'string | undefined' },
         ],
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ],
         trpcPath: '/trpc/test.hello',
       },
       {
@@ -316,7 +315,10 @@ describe('Autogen Main', () => {
           { name: 'firstName', required: true, type: 'string' },
           { name: 'lastName', required: false, type: 'string | undefined' },
         ],
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ],
         trpcPath: '/trpc/test.getWithParam',
       },
       {
@@ -330,25 +332,26 @@ describe('Autogen Main', () => {
         output: [
           {
             name: 'data',
-            required: true,
+            required: false,
             type: '{ a: string; arr: number\\[\\] | undefined; b: number; options: { bar?: number; foo?: string; } | undefined; }',
           },
-          ...messageOutput,
+          ...baseOutput,
         ],
         trpcPath: '/trpc/test.mixedParams',
       },
       {
         httpPath: '/test/object-destructured',
         input: [
-          { name: '{ prop1, prop2 }', required: true, type: '{ prop1?: string; prop2?: number; }' },
+          { name: 'prop1', required: true, type: 'string' },
+          { name: 'prop2', required: true, type: 'number' },
         ],
         output: [
           {
             name: 'data',
-            required: true,
-            type: '{ prop1: string | undefined; prop2: number | undefined; }',
+            required: false,
+            type: '{ prop1: string; prop2: number; }',
           },
-          ...messageOutput,
+          ...baseOutput,
         ],
         trpcPath: '/trpc/test.objectDestructured',
       },
@@ -356,8 +359,8 @@ describe('Autogen Main', () => {
         httpPath: '/test/object-only',
         input: [{ name: 'options', required: true, type: '{ bar?: number; foo?: string; }' }],
         output: [
-          { name: 'data', required: true, type: '{ options: { bar?: number; foo?: string; } }' },
-          ...messageOutput,
+          { name: 'data', required: false, type: '{ options: { bar?: number; foo?: string; } }' },
+          ...baseOutput,
         ],
         trpcPath: '/trpc/test.objectOnly',
       },
@@ -371,41 +374,44 @@ describe('Autogen Main', () => {
         output: [
           {
             name: 'data',
-            required: true,
+            required: false,
             type: '{ var1: string; var2: number; var3: string[] | undefined; }',
           },
-          ...messageOutput,
+          ...baseOutput,
         ],
         trpcPath: '/trpc/test.primitivesAndArray',
       },
       {
         httpPath: '/test/sync-fail-reject',
         input: [],
-        output: errorOutput,
+        output: voidOutput,
         trpcPath: '/trpc/test.syncFailReject',
       },
       {
         httpPath: '/test/sync-fail-throw',
         input: [],
-        output: errorOutput,
+        output: voidOutput,
         trpcPath: '/trpc/test.syncFailThrow',
       },
       {
         httpPath: '/test/sync-success',
         input: [],
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ],
         trpcPath: '/trpc/test.syncSuccess',
       },
       {
         httpPath: '/test/custom-type-array',
         input: [{ name: 'testUsers', required: false }],
-        output: [{ name: 'data', required: true }, ...messageOutput],
+        output: [{ name: 'data', required: false }, ...baseOutput],
         trpcPath: '/trpc/test.customTypeArray',
       },
       {
         httpPath: '/test/custom-type-single',
         input: [{ name: 'testUser', required: false }],
-        output: [{ name: 'data', required: true }, ...messageOutput],
+        output: [{ name: 'data', required: false }, ...baseOutput],
         trpcPath: '/trpc/test.customTypeSingle',
       },
     ] as const;
@@ -413,7 +419,10 @@ describe('Autogen Main', () => {
     const expectedRoutes = [
       {
         input: [] as const,
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ] as const,
         path: '/',
         requestType: 'HTTP' as const,
       },
@@ -425,7 +434,10 @@ describe('Autogen Main', () => {
       })),
       {
         input: [] as const,
-        output: messageOutput,
+        output: [
+          { name: 'data', required: false, type: '{ customMessage: string; }' },
+          ...baseOutput,
+        ] as const,
         path: '/trpc/default.root',
         requestType: 'tRPC' as const,
       },
@@ -466,40 +478,35 @@ describe('Autogen Main', () => {
         }
 
         const { output: routeOutput } = route;
-        if (output.length > 0) {
-          expect(routeOutput).toBeDefined();
-          if (routeOutput !== undefined) {
-            const { type: typeVal } = routeOutput;
-            expect(typeof typeVal).toBe('object');
-            expect(typeVal).not.toBeNull();
-            if (isParsedType(typeVal)) {
-              const { properties } = typeVal;
-              expect(properties).toBeDefined();
-              expect(Object.keys(properties ?? {})).toHaveLength(output.length);
+        expect(routeOutput).toBeDefined();
 
-              for (const expectedField of output) {
-                const found = properties?.[expectedField.name];
-                expect(found, `output field '${expectedField.name}'`).toBeDefined();
-                if (found !== undefined) {
-                  if ('type' in expectedField) {
-                    const formattedFoundType = formatTypeToString(found);
-                    expect(normalizeType(formattedFoundType)).toBe(
-                      normalizeType(expectedField.type),
-                    );
-                  }
-                  if ('required' in expectedField) {
-                    const isRequired =
-                      typeof found === 'object' && 'required' in found
-                        ? (found.required ?? true)
-                        : true;
-                    expect(isRequired).toBe(expectedField.required);
-                  }
+        if (routeOutput !== undefined) {
+          const { type: typeVal } = routeOutput;
+          expect(typeof typeVal).toBe('object');
+          expect(typeVal).not.toBeNull();
+          if (isParsedType(typeVal)) {
+            const { properties } = typeVal;
+            expect(properties).toBeDefined();
+            expect(Object.keys(properties ?? {})).toHaveLength(output.length);
+
+            for (const expectedField of output) {
+              const found = properties?.[expectedField.name];
+              expect(found, `output field '${expectedField.name}'`).toBeDefined();
+              if (found !== undefined) {
+                if ('type' in expectedField) {
+                  const formattedFoundType = formatTypeToString(found);
+                  expect(normalizeType(formattedFoundType)).toBe(normalizeType(expectedField.type));
+                }
+                if ('required' in expectedField) {
+                  const isRequired =
+                    typeof found === 'object' && 'required' in found
+                      ? (found.required ?? true)
+                      : true;
+                  expect(isRequired).toBe(expectedField.required);
                 }
               }
             }
           }
-        } else {
-          expect(routeOutput).toBeUndefined();
         }
       },
     );

@@ -24,12 +24,12 @@ interface Metadata {
   error?: ErrorDetails;
 }
 
-interface BaseResponse {
+interface BaseResponse<T = Record<string, JsonValue> | object> {
   code: number;
   message?: string;
   sessionId: string;
   success: boolean;
-  data?: Record<string, JsonValue> | object;
+  data?: T;
   error?: ErrorDetails;
 }
 
@@ -78,9 +78,9 @@ type RouteHandlerParams =
   | (Record<string, JsonValue> & { ctx: ServiceContext; input?: JsonValue })
   | TrpcRouteHandlerParams;
 
-type RouteHandler = (params: RouteHandlerParams) => BaseResponse | Promise<BaseResponse>;
-
-type ServiceMethod = (...args: never[]) => JsonValue;
+type RouteHandler<T = unknown> = (
+  params: RouteHandlerParams,
+) => BaseResponse<T> | Promise<BaseResponse<T>>;
 
 export type {
   ServiceContext,
@@ -95,5 +95,4 @@ export type {
   InputArgs,
   RouteHandler,
   RouteHandlerParams,
-  ServiceMethod,
 };

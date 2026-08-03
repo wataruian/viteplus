@@ -5,14 +5,16 @@ import type {
   RouteHandler,
   RouteHandlerParams,
   ServiceContext,
-  ServiceMethod,
 } from '../types/middlware';
 import type { BaseService } from '../services/base';
-import { invokeWithParsedArgs } from '@lightproject/common/utils';
-import { isRecord } from '@lightproject/common/validators';
+import type { JsonValue } from '@lightproject/common/utils';
 import { logger } from '@lightproject/common/logger';
 
+import { z } from 'zod';
+
 const assertIsInputArgs: (val: unknown) => asserts val is InputArgs = (_val: unknown) => {};
+
+type ServiceMethod = (input?: JsonValue) => JsonValue | Promise<JsonValue>;
 const assertIsServiceMethod: (val: unknown) => asserts val is ServiceMethod = (_val: unknown) => {};
 
 type CreateRouteHandler = <
@@ -20,9 +22,16 @@ type CreateRouteHandler = <
 >(
   serviceClass: C,
   method: keyof C,
+  schemas?: {
+    input?: z.ZodType<JsonValue>;
+    output?: z.ZodType;
+  },
 ) => RouteHandler;
 
-type RawServiceResult = Partial<BaseResponse> & Record<string, unknown>;
+type RawServiceResult = Partial<BaseResponse<unknown>> & Record<string, unknown>;
+
+const isRecord = (val: unknown): val is Record<string, unknown> =>
+  typeof val === 'object' && val !== null && !Array.isArray(val);
 
 const isRecordArray = (val: unknown): val is Record<string, unknown>[] =>
   Array.isArray(val) && val.every((item) => isRecord(item));
@@ -34,7 +43,7 @@ const getResponseData = (
   result: Record<string, unknown>,
   extraData: Record<string, unknown>,
   hasExtraData: boolean,
-): BaseResponse['data'] => {
+): unknown => {
   const resultData = result['data'];
   if (isRecord(resultData)) {
     return { ...resultData, ...extraData };
@@ -48,7 +57,7 @@ const getResponseData = (
   if (resultData === null) {
     return undefined;
   }
-  return undefined;
+  return resultData;
 };
 
 const getResponseErrorAndSuccessAndCode = (
@@ -65,7 +74,9 @@ const getResponseErrorAndSuccessAndCode = (
 
   let code = typeof result['code'] === 'number' ? result['code'] : 200;
   if (hasError && result['code'] === undefined) {
-    const { statusCode, code: errCode } = err as { statusCode?: number; code?: number };
+    const { statusCode, code: errCode } = isRecord(err)
+      ? err
+      : { code: undefined, statusCode: undefined };
 
     if (typeof statusCode === 'number') {
       code = statusCode;
@@ -93,10 +104,20 @@ const createRouteHandlerImpl =
   <C extends new (ctx: ServiceContext, inputArgs?: InputArgs) => BaseService>(
     serviceClass: C,
     method: keyof C,
+    schemas?: {
+      input?: z.ZodType<JsonValue>;
+      output?: z.ZodType;
+    },
   ): RouteHandler =>
   async (params: RouteHandlerParams) => {
     try {
-      const { ctx, input } = params as { ctx: ServiceContext; input?: unknown };
+      const { ctx, input: rawInput } = params as { ctx: ServiceContext; input?: JsonValue };
+      const isTrpc = 'path' in params && 'batchIndex' in params;
+
+      let input: JsonValue = rawInput;
+      if (!isTrpc && schemas?.input) {
+        input = schemas.input.parse(rawInput);
+      }
 
       const serviceMethod = Reflect.get(serviceClass, String(method));
 
@@ -104,14 +125,8 @@ const createRouteHandlerImpl =
         throw new TypeError(`Method ${String(method)} not found on service ${serviceClass.name}`);
       }
 
-      let inputArgs: InputArgs = {};
-      if (isRecord(input)) {
-        assertIsInputArgs(input);
-        inputArgs = input;
-      }
-
       assertIsServiceMethod(serviceMethod);
-      const rawResult: unknown = await invokeWithParsedArgs(serviceMethod, inputArgs);
+      const rawResult: unknown = await serviceMethod(input);
       const result = isRecord(rawResult) ? rawResult : {};
 
       const standardKeys = new Set(['code', 'data', 'message', 'sessionId', 'success', 'error']);
@@ -128,7 +143,7 @@ const createRouteHandlerImpl =
       const responseData = getResponseData(result, extraData, hasExtraData);
       const { code, error, success } = getResponseErrorAndSuccessAndCode(result);
 
-      const response: BaseResponse = {
+      const response: BaseResponse<unknown> = {
         code,
         message:
           typeof result['message'] === 'string'
@@ -138,8 +153,13 @@ const createRouteHandlerImpl =
         success,
       };
 
-      if (responseData) {
-        response.data = responseData;
+      let parsedData = responseData;
+      if (!isTrpc && schemas?.output && parsedData !== undefined) {
+        parsedData = schemas.output.parse(parsedData);
+      }
+
+      if (parsedData !== undefined) {
+        response.data = parsedData;
       }
 
       if (error) {
@@ -153,11 +173,42 @@ const createRouteHandlerImpl =
         isRecord(error) ? error : { error: String(error) },
       );
 
+      if (error instanceof z.ZodError) {
+        return {
+          code: 400,
+          error: {
+            message: 'Validation failed',
+            name: 'ZodError',
+            statusCode: 400,
+          },
+          message: error.message,
+          sessionId: (params as { ctx: ServiceContext }).ctx.req.locals.sessionId,
+          success: false,
+        };
+      }
+
       throw error;
     }
   };
 
 const createRouteHandler = createRouteHandlerImpl;
+
+const createBaseResponseSchema = <T extends z.ZodType>(dataSchema?: T) =>
+  z.object({
+    code: z.number(),
+    data: dataSchema ? dataSchema.optional() : z.any().optional(),
+    error: z
+      .object({
+        message: z.string(),
+        name: z.string(),
+        stack: z.string().optional(),
+        statusCode: z.number(),
+      })
+      .optional(),
+    message: z.string().optional(),
+    sessionId: z.string(),
+    success: z.boolean(),
+  });
 
 export type { RawServiceResult, CreateRouteHandler };
 export {
@@ -169,4 +220,5 @@ export {
   getResponseErrorAndSuccessAndCode,
   createRouteHandlerImpl,
   createRouteHandler,
+  createBaseResponseSchema,
 };

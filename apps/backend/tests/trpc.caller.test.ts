@@ -79,7 +79,7 @@ describe('tRPC Integration Tests', () => {
     expect(result).toBeDefined();
     expect(result).toMatchObject({
       code: 200,
-      message: 'Hello, Test World!',
+      data: { customMessage: 'Hello, Test World!' },
       success: true,
     });
   });
@@ -99,7 +99,7 @@ describe('tRPC Integration Tests', () => {
     expect(result).toBeDefined();
     expect(result).toMatchObject({
       code: 200,
-      message: 'Hello, Test!',
+      data: { customMessage: 'Hello, Test!' },
       success: true,
     });
   });

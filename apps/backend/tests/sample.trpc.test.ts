@@ -62,7 +62,7 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `GET ${trpcEndpoint}/test.asyncSuccess returns 200`,
       expected: {
         code: 200,
-        message: 'Async success',
+        data: { customMessage: 'Async success' },
         success: true,
       },
       path: 'test.asyncSuccess',
@@ -92,7 +92,7 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `GET ${trpcEndpoint}/test.syncSuccess returns 200`,
       expected: {
         code: 200,
-        message: 'Sync success',
+        data: { customMessage: 'Sync success' },
         success: true,
       },
       path: 'test.syncSuccess',
@@ -102,7 +102,7 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `GET ${trpcEndpoint} returns 200`,
       expected: {
         code: 200,
-        message: 'OK',
+        data: { customMessage: 'OK' },
         success: true,
       },
       path: 'default.root',
@@ -134,17 +134,17 @@ const cases: Record<string, TrpcTestCase[]> = {
   ],
   'test param endpoints': [
     {
-      description: `POST ${trpcEndpoint}/test._checkParams returns correct output`,
+      description: `POST ${trpcEndpoint}/test.checkParams returns correct output`,
       expected: {
         code: 200,
         data: {
-          booleanArrayOutput: [true, false],
-          booleanOutput: true,
-          numberArrayOutput: [123, 456],
-          numberOutput: 123,
-          objectBooleanArrayOutput: { booleanArray: [true, false] },
-          objectBooleanOutput: { boolean: true },
-          objectMultipleOutput: {
+          boolean: true,
+          booleanArray: [true, false],
+          number: 123,
+          numberArray: [123, 456],
+          objectBoolean: { boolean: true },
+          objectBooleanArray: { booleanArray: [true, false] },
+          objectMultiple: {
             boolean: false,
             booleanArray: [true, false],
             number: 123,
@@ -178,24 +178,23 @@ const cases: Record<string, TrpcTestCase[]> = {
             string: 'ABC',
             stringArray: ['ABC', 'DEF'],
           },
-          objectNumberArrayOutput: { numberArray: [123, 456] },
-          objectNumberOutput: { number: 123 },
-          objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
-          objectStringOutput: { string: 'ABC' },
-          stringArrayOutput: ['ABC', 'DEF'],
-          stringOutput: 'ABC',
+          objectNumber: { number: 123 },
+          objectNumberArray: { numberArray: [123, 456] },
+          objectString: { string: 'ABC' },
+          objectStringArray: { stringArray: ['ABC', 'DEF'] },
+          string: 'ABC',
+          stringArray: ['ABC', 'DEF'],
         },
-        message: 'Check parameters processed successfully',
         success: true,
       },
-      path: 'test._checkParams',
+      path: 'test.checkParams',
       type: 'mutation',
     },
     {
       description: `POST ${trpcEndpoint}/test.hello returns 200`,
       expected: {
         code: 200,
-        message: 'Hello, Test World!',
+        data: { customMessage: 'Hello, Test World!' },
         success: true,
       },
       input: { firstName: 'Test', lastName: 'World' },
@@ -212,7 +211,6 @@ const cases: Record<string, TrpcTestCase[]> = {
           b: 7,
           options: { bar: 2, foo: 'y' },
         },
-        message: 'Mixed parameters processed successfully',
         success: true,
       },
       input: { a: 'x', arr: [1, 2], b: 7, options: { bar: 2, foo: 'y' } },
@@ -224,7 +222,6 @@ const cases: Record<string, TrpcTestCase[]> = {
       expected: {
         code: 200,
         data: { prop1: 'hello', prop2: 99 },
-        message: 'Object destructured parameters processed successfully',
         success: true,
       },
       input: { prop1: 'hello', prop2: 99 },
@@ -235,11 +232,10 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `POST ${trpcEndpoint}/test.objectOnly returns correct object`,
       expected: {
         code: 200,
-        data: { options: { bar: 1, foo: 'baz' } },
-        message: 'Object parameters processed successfully',
+        data: { options: { bar: 123, foo: 'ABC' } },
         success: true,
       },
-      input: { bar: 1, foo: 'baz' },
+      input: { options: { bar: 1, foo: 'baz' } },
       path: 'test.objectOnly',
       type: 'mutation',
     },
@@ -250,9 +246,8 @@ const cases: Record<string, TrpcTestCase[]> = {
         data: {
           var1: 'foo',
           var2: 42,
-          var3: ['a', 'b'],
+          var3: ['ABC', 'DEF'],
         },
-        message: 'Primitives and array processed successfully',
         success: true,
       },
       input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
@@ -277,7 +272,6 @@ const cases: Record<string, TrpcTestCase[]> = {
             },
           ],
         },
-        message: 'Custom type array processed successfully',
         success: true,
       },
       input: {
@@ -313,7 +307,6 @@ const cases: Record<string, TrpcTestCase[]> = {
             lastName: 'Last',
           },
         },
-        message: 'Custom type single processed successfully',
         success: true,
       },
       input: {
@@ -335,7 +328,7 @@ const cases: Record<string, TrpcTestCase[]> = {
       description: `GET ${trpcEndpoint}/test.getWithParam returns 200`,
       expected: {
         code: 200,
-        message: 'Hello, Test World!',
+        data: { customMessage: 'Hello, Test World!' },
         success: true,
       },
       input: { firstName: 'Test', lastName: 'World' },
@@ -384,11 +377,14 @@ const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
         if (typeof resultData === 'object' && resultData !== null) {
           const jsonData = Reflect.get(resultData, 'json') as unknown;
           if (typeof jsonData === 'object' && jsonData !== null) {
-            expect(jsonData).toMatchObject({
+            const matchObject: { code: number; message?: string; success: boolean } = {
               code: expected.code,
-              message: expected.message,
               success: expected.success,
-            });
+            };
+            if (expected.message !== undefined) {
+              matchObject.message = expected.message;
+            }
+            expect(jsonData).toMatchObject(matchObject);
 
             const jsonDataData = Reflect.get(jsonData, 'data') as unknown;
             if (

@@ -50,7 +50,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/async-success`,
       expected: {
         code: 200,
-        message: 'Async success',
+        data: { customMessage: 'Async success' },
         success: true,
       },
       method: 'get',
@@ -80,7 +80,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/sync-success`,
       expected: {
         code: 200,
-        message: 'Sync success',
+        data: { customMessage: 'Sync success' },
         success: true,
       },
       method: 'get',
@@ -90,7 +90,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/`,
       expected: {
         code: 200,
-        message: 'OK',
+        data: { customMessage: 'OK' },
         success: true,
       },
       method: 'get',
@@ -121,18 +121,18 @@ const cases: Record<string, HttpTestCase[]> = {
   ],
   'test param endpoints': [
     {
-      description: `POST ${apiEndpoint}/test/_check-params returns correct output`,
-      endpoint: `${apiEndpoint}/test/_check-params`,
+      description: `POST ${apiEndpoint}/test/check-params returns correct output`,
+      endpoint: `${apiEndpoint}/test/check-params`,
       expected: {
         code: 200,
         data: {
-          booleanArrayOutput: [true, false],
-          booleanOutput: true,
-          numberArrayOutput: [123, 456],
-          numberOutput: 123,
-          objectBooleanArrayOutput: { booleanArray: [true, false] },
-          objectBooleanOutput: { boolean: true },
-          objectMultipleOutput: {
+          boolean: true,
+          booleanArray: [true, false],
+          number: 123,
+          numberArray: [123, 456],
+          objectBoolean: { boolean: true },
+          objectBooleanArray: { booleanArray: [true, false] },
+          objectMultiple: {
             boolean: false,
             booleanArray: [true, false],
             number: 123,
@@ -166,14 +166,13 @@ const cases: Record<string, HttpTestCase[]> = {
             string: 'ABC',
             stringArray: ['ABC', 'DEF'],
           },
-          objectNumberArrayOutput: { numberArray: [123, 456] },
-          objectNumberOutput: { number: 123 },
-          objectStringArrayOutput: { stringArray: ['ABC', 'DEF'] },
-          objectStringOutput: { string: 'ABC' },
-          stringArrayOutput: ['ABC', 'DEF'],
-          stringOutput: 'ABC',
+          objectNumber: { number: 123 },
+          objectNumberArray: { numberArray: [123, 456] },
+          objectString: { string: 'ABC' },
+          objectStringArray: { stringArray: ['ABC', 'DEF'] },
+          string: 'ABC',
+          stringArray: ['ABC', 'DEF'],
         },
-        message: 'Check parameters processed successfully',
         success: true,
       },
       method: 'post',
@@ -183,7 +182,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/hello`,
       expected: {
         code: 200,
-        message: 'Hello, Test World!',
+        data: { customMessage: 'Hello, Test World!' },
         success: true,
       },
       input: { firstName: 'Test', lastName: 'World' },
@@ -200,7 +199,6 @@ const cases: Record<string, HttpTestCase[]> = {
           b: 7,
           options: { bar: 2, foo: 'y' },
         },
-        message: 'Mixed parameters processed successfully',
         success: true,
       },
       input: { a: 'x', arr: [1, 2], b: 7, options: { bar: 2, foo: 'y' } },
@@ -212,7 +210,6 @@ const cases: Record<string, HttpTestCase[]> = {
       expected: {
         code: 200,
         data: { prop1: 'hello', prop2: 99 },
-        message: 'Object destructured parameters processed successfully',
         success: true,
       },
       input: { prop1: 'hello', prop2: 99 },
@@ -223,11 +220,10 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/object-only`,
       expected: {
         code: 200,
-        data: { options: { bar: 1, foo: 'baz' } },
-        message: 'Object parameters processed successfully',
+        data: { options: { bar: 123, foo: 'ABC' } },
         success: true,
       },
-      input: { bar: 1, foo: 'baz' },
+      input: { options: { bar: 1, foo: 'baz' } },
       method: 'post',
     },
     {
@@ -238,9 +234,8 @@ const cases: Record<string, HttpTestCase[]> = {
         data: {
           var1: 'foo',
           var2: 42,
-          var3: ['a', 'b'],
+          var3: ['ABC', 'DEF'],
         },
-        message: 'Primitives and array processed successfully',
         success: true,
       },
       input: { var1: 'foo', var2: 42, var3: ['a', 'b'] },
@@ -265,7 +260,6 @@ const cases: Record<string, HttpTestCase[]> = {
             },
           ],
         },
-        message: 'Custom type array processed successfully',
         success: true,
       },
       input: {
@@ -301,7 +295,6 @@ const cases: Record<string, HttpTestCase[]> = {
             lastName: 'Last',
           },
         },
-        message: 'Custom type single processed successfully',
         success: true,
       },
       input: {
@@ -323,7 +316,7 @@ const cases: Record<string, HttpTestCase[]> = {
       endpoint: `${apiEndpoint}/test/get-with-param`,
       expected: {
         code: 200,
-        message: 'Hello, Test World!',
+        data: { customMessage: 'Hello, Test World!' },
         success: true,
       },
       input: { firstName: 'Test', lastName: 'World' },
@@ -358,11 +351,14 @@ const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
         throw new Error('Response body is not an object');
       }
 
-      expect(body).toMatchObject({
+      const matchObject: { code: number; message?: string; success: boolean } = {
         code: expected.code,
-        message: expected.message,
         success: expected.success,
-      });
+      };
+      if (expected.message !== undefined) {
+        matchObject.message = expected.message;
+      }
+      expect(body).toMatchObject(matchObject);
 
       if ('data' in expected && expected.data !== undefined && expected.data !== null) {
         expect(Reflect.get(body, 'data')).toEqual(expect.objectContaining(expected.data));

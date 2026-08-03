@@ -1,22 +1,40 @@
 ~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true ◉ cache hit, replaying
-[2026-08-03T11:58:21.302Z] INFO : 🚀 Starting autogen build process...
+[2026-08-03T18:19:10.208Z] INFO : 🚀 Starting autogen build process...
 allRoutes [
   {
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/',
@@ -27,445 +45,32 @@ allRoutes [
   },
   {
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: 'ABC',
-        description: undefined,
-        name: '_stringInput',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 'ABC', 'DEF' ],
-        description: undefined,
-        name: '_stringArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: 123,
-        description: undefined,
-        name: '_numberInput',
-        required: false,
-        type: { base: 'number', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 123, 456 ],
-        description: undefined,
-        name: '_numberArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'number', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: true,
-        description: undefined,
-        name: '_booleanInput',
-        required: false,
-        type: { base: 'boolean', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ true, false ],
-        description: undefined,
-        name: '_booleanArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'boolean', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: { string: 'ABC' },
-        description: undefined,
-        name: '_objectStringInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            string: { base: 'string', kind: 'primitive', required: true }
-          }
-        }
-      },
-      {
-        defaultValue: { stringArray: [ 'ABC', 'DEF' ] },
-        description: undefined,
-        name: '_objectStringArrayInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            stringArray: {
-              itemType: { base: 'string', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: { number: 123 },
-        description: undefined,
-        name: '_objectNumberInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            number: { base: 'number', kind: 'primitive', required: true }
-          }
-        }
-      },
-      {
-        defaultValue: { numberArray: [ 123, 456 ] },
-        description: undefined,
-        name: '_objectNumberArrayInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            numberArray: {
-              itemType: { base: 'number', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: { boolean: true },
-        description: undefined,
-        name: '_objectBooleanInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            boolean: { base: 'boolean', kind: 'primitive', required: true }
-          }
-        }
-      },
-      {
-        defaultValue: { booleanArray: [ true, false ] },
-        description: undefined,
-        name: '_objectBooleanArrayInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            booleanArray: {
-              itemType: { base: 'boolean', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: {
-          boolean: false,
-          booleanArray: [ true, false ],
-          number: 123,
-          numberArray: [ 123, 456 ],
-          object: {
-            boolean: true,
-            booleanArray: [ true, false ],
-            number: 123,
-            numberArray: [ 123, 456 ],
-            string: 'ABC',
-            stringArray: [ 'ABC', 'DEF' ]
-          },
-          objectArray: [
-            {
-              boolean: true,
-              booleanArray: [ true, false ],
-              number: 123,
-              numberArray: [ 123, 456 ],
-              string: 'ABC',
-              stringArray: [ 'ABC', 'DEF' ]
-            },
-            {
-              boolean: false,
-              booleanArray: [ false, true ],
-              number: 456,
-              numberArray: [ 456, 789 ],
-              string: 'DEF',
-              stringArray: [ 'DEF', 'GHI' ]
-            }
-          ],
-          string: 'ABC',
-          stringArray: [ 'ABC', 'DEF' ]
-        },
-        description: undefined,
-        name: '_objectMultipleInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            boolean: { base: 'boolean', kind: 'primitive', required: true },
-            booleanArray: {
-              itemType: { base: 'boolean', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            },
-            number: { base: 'number', kind: 'primitive', required: true },
-            numberArray: {
-              itemType: { base: 'number', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            },
-            object: {
-              kind: 'object',
-              properties: {
-                boolean: { base: 'boolean', kind: 'primitive', required: true },
-                booleanArray: {
-                  itemType: { base: 'boolean', kind: 'primitive' },
-                  kind: 'array',
-                  required: true
-                },
-                number: { base: 'number', kind: 'primitive', required: true },
-                numberArray: {
-                  itemType: { base: 'number', kind: 'primitive' },
-                  kind: 'array',
-                  required: true
-                },
-                string: { base: 'string', kind: 'primitive', required: true },
-                stringArray: {
-                  itemType: { base: 'string', kind: 'primitive' },
-                  kind: 'array',
-                  required: true
-                }
-              },
-              required: true
-            },
-            objectArray: {
-              itemType: {
-                kind: 'object',
-                properties: {
-                  boolean: {
-                    base: 'boolean',
-                    kind: 'primitive',
-                    required: true
-                  },
-                  booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
-                    kind: 'array',
-                    required: true
-                  },
-                  number: { base: 'number', kind: 'primitive', required: true },
-                  numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
-                    kind: 'array',
-                    required: true
-                  },
-                  string: { base: 'string', kind: 'primitive', required: true },
-                  stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
-                    kind: 'array',
-                    required: true
-                  }
-                }
-              },
-              kind: 'array',
-              required: true
-            },
-            string: { base: 'string', kind: 'primitive', required: true },
-            stringArray: {
-              itemType: { base: 'string', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: 'ABC',
-        description: undefined,
-        name: '_string',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 'ABC', 'DEF' ],
-        description: undefined,
-        name: '_stringArray',
-        required: false,
-        type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              booleanArrayOutput: {
-                itemType: { base: 'boolean', kind: 'primitive' },
-                kind: 'array'
-              },
-              booleanOutput: { base: 'boolean', kind: 'primitive' },
-              numberArrayOutput: {
-                itemType: { base: 'number', kind: 'primitive' },
-                kind: 'array'
-              },
-              numberOutput: { base: 'number', kind: 'primitive' },
-              objectBooleanArrayOutput: {
-                kind: 'object',
-                properties: {
-                  booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
-                    kind: 'array'
-                  }
-                }
-              },
-              objectBooleanOutput: {
-                kind: 'object',
-                properties: { boolean: { base: 'boolean', kind: 'primitive' } }
-              },
-              objectMultipleOutput: {
-                kind: 'object',
-                properties: {
-                  boolean: { base: 'boolean', kind: 'primitive' },
-                  booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
-                    kind: 'array'
-                  },
-                  number: { base: 'number', kind: 'primitive' },
-                  numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
-                    kind: 'array'
-                  },
-                  object: {
-                    kind: 'object',
-                    properties: {
-                      boolean: { base: 'boolean', kind: 'primitive' },
-                      booleanArray: {
-                        itemType: { base: 'boolean', kind: 'primitive' },
-                        kind: 'array'
-                      },
-                      number: { base: 'number', kind: 'primitive' },
-                      numberArray: {
-                        itemType: { base: 'number', kind: 'primitive' },
-                        kind: 'array'
-                      },
-                      string: { base: 'string', kind: 'primitive' },
-                      stringArray: {
-                        itemType: { base: 'string', kind: 'primitive' },
-                        kind: 'array'
-                      }
-                    }
-                  },
-                  objectArray: {
-                    itemType: {
-                      kind: 'object',
-                      properties: {
-                        boolean: { base: 'boolean', kind: 'primitive' },
-                        booleanArray: {
-                          itemType: { base: 'boolean', kind: 'primitive' },
-                          kind: 'array'
-                        },
-                        number: { base: 'number', kind: 'primitive' },
-                        numberArray: {
-                          itemType: { base: 'number', kind: 'primitive' },
-                          kind: 'array'
-                        },
-                        string: { base: 'string', kind: 'primitive' },
-                        stringArray: {
-                          itemType: { base: 'string', kind: 'primitive' },
-                          kind: 'array'
-                        }
-                      }
-                    },
-                    kind: 'array'
-                  },
-                  string: { base: 'string', kind: 'primitive' },
-                  stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
-                    kind: 'array'
-                  }
-                }
-              },
-              objectNumberArrayOutput: {
-                kind: 'object',
-                properties: {
-                  numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
-                    kind: 'array'
-                  }
-                }
-              },
-              objectNumberOutput: {
-                kind: 'object',
-                properties: { number: { base: 'number', kind: 'primitive' } }
-              },
-              objectStringArrayOutput: {
-                kind: 'object',
-                properties: {
-                  stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
-                    kind: 'array'
-                  }
-                }
-              },
-              objectStringOutput: {
-                kind: 'object',
-                properties: { string: { base: 'string', kind: 'primitive' } }
-              },
-              stringArrayOutput: {
-                itemType: { base: 'string', kind: 'primitive' },
-                kind: 'array'
-              },
-              stringOutput: { base: 'string', kind: 'primitive' }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/_check-params',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: '_checkParams'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/test/async-fail-reject',
@@ -479,26 +84,29 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/test/async-fail-throw',
@@ -512,17 +120,35 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/test/async-success',
@@ -535,877 +161,74 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
     input: [
       {
-        defaultValue: [
-          {
-            address: {
-              city: 'Sample City 1',
-              houseNumber: 11,
-              province: 'Sample Province 1',
-              street: 'Sample Street 1'
-            },
-            age: 22,
-            firstName: 'John',
-            lastName: 'Doe'
-          },
-          {
-            address: {
-              city: 'Sample City 2',
-              houseNumber: 22,
-              province: 'Sample Province 2',
-              street: 'Sample Street 2'
-            },
-            age: 22,
-            firstName: 'Jane',
-            lastName: 'Doe'
-          }
-        ],
-        description: undefined,
-        name: 'testUsers',
+        name: 'boolean',
+        required: false,
+        type: { base: 'boolean', kind: 'primitive', required: false }
+      },
+      {
+        name: 'booleanArray',
         required: false,
         type: {
-          itemType: {
-            kind: 'object',
-            properties: {
-              firstName: { base: 'string', kind: 'primitive', required: true },
-              middleName: { base: 'string', kind: 'primitive', required: false },
-              lastName: { base: 'string', kind: 'primitive', required: true },
-              age: { base: 'number', kind: 'primitive', required: true },
-              address: {
-                kind: 'object',
-                properties: {
-                  province: { base: 'string', kind: 'primitive', required: true },
-                  city: { base: 'string', kind: 'primitive', required: true },
-                  street: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  houseNumber: { base: 'number', kind: 'primitive', required: true }
-                },
-                required: true
-              }
-            }
-          },
-          kind: 'array'
+          itemType: { base: 'boolean', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
         }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              testUsers: {
-                itemType: {
-                  kind: 'object',
-                  properties: {
-                    firstName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: true
-                    },
-                    middleName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: false
-                    },
-                    lastName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: true
-                    },
-                    age: {
-                      base: 'number',
-                      kind: 'primitive',
-                      required: true
-                    },
-                    address: {
-                      kind: 'object',
-                      properties: {
-                        province: {
-                          base: 'string',
-                          kind: 'primitive',
-                          required: true
-                        },
-                        city: {
-                          base: 'string',
-                          kind: 'primitive',
-                          required: true
-                        },
-                        street: {
-                          base: 'string',
-                          kind: 'primitive',
-                          required: false
-                        },
-                        houseNumber: {
-                          base: 'number',
-                          kind: 'primitive',
-                          required: true
-                        }
-                      },
-                      required: true
-                    }
-                  }
-                },
-                kind: 'array'
-              }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/custom-type-array',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'customTypeArray'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
+      },
       {
-        defaultValue: {
-          address: {
-            city: 'Sample City',
-            houseNumber: 11,
-            province: 'Sample Province',
-            street: 'Sample Street'
-          },
-          age: 22,
-          firstName: 'John',
-          lastName: 'Doe'
-        },
-        description: undefined,
-        name: 'testUser',
+        name: 'number',
+        required: false,
+        type: { base: 'number', kind: 'primitive', required: false }
+      },
+      {
+        name: 'numberArray',
         required: false,
         type: {
-          kind: 'object',
-          properties: {
-            firstName: { base: 'string', kind: 'primitive', required: true },
-            middleName: { base: 'string', kind: 'primitive', required: false },
-            lastName: { base: 'string', kind: 'primitive', required: true },
-            age: { base: 'number', kind: 'primitive', required: true },
-            address: {
-              kind: 'object',
-              properties: {
-                province: { base: 'string', kind: 'primitive', required: true },
-                city: { base: 'string', kind: 'primitive', required: true },
-                street: { base: 'string', kind: 'primitive', required: false },
-                houseNumber: { base: 'number', kind: 'primitive', required: true }
-              },
-              required: true
-            }
-          }
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              testUser: {
-                kind: 'object',
-                properties: {
-                  firstName: { base: 'string', kind: 'primitive', required: true },
-                  middleName: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  lastName: { base: 'string', kind: 'primitive', required: true },
-                  age: { base: 'number', kind: 'primitive', required: true },
-                  address: {
-                    kind: 'object',
-                    properties: {
-                      province: {
-                        base: 'string',
-                        kind: 'primitive',
-                        required: true
-                      },
-                      city: {
-                        base: 'string',
-                        kind: 'primitive',
-                        required: true
-                      },
-                      street: {
-                        base: 'string',
-                        kind: 'primitive',
-                        required: false
-                      },
-                      houseNumber: {
-                        base: 'number',
-                        kind: 'primitive',
-                        required: true
-                      }
-                    },
-                    required: true
-                  }
-                }
-              }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/custom-type-single',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'customTypeSingle'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'firstName',
-        required: true,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'lastName',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      }
-    ],
-    method: 'get',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/get-with-param',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'getWithParam'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'firstName',
-        required: true,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'lastName',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/hello',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'hello'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'a',
-        required: true,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'b',
-        required: true,
-        type: { base: 'number', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'options',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            bar: { base: 'number', kind: 'primitive', required: false },
-            foo: { base: 'string', kind: 'primitive', required: false }
-          }
+          itemType: { base: 'number', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
         }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'arr',
-        required: false,
-        type: {
-          itemType: { base: 'number', kind: 'primitive' },
-          kind: 'array'
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              a: { base: 'string', kind: 'primitive' },
-              arr: {
-                itemType: { base: 'number', kind: 'primitive' },
-                kind: 'array'
-              },
-              b: { base: 'number', kind: 'primitive' },
-              options: {
-                kind: 'object',
-                properties: {
-                  bar: {
-                    base: 'number',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  foo: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  }
-                }
-              }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/mixed-params',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'mixedParams'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'payload',
-        required: true,
-        type: {
-          kind: 'object',
-          properties: {
-            prop1: { base: 'string', kind: 'primitive', required: false },
-            prop2: { base: 'number', kind: 'primitive', required: false }
-          }
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              prop1: { base: 'string', kind: 'primitive' },
-              prop2: { base: 'number', kind: 'primitive' }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/object-destructured',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'objectDestructured'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'options',
-        required: true,
-        type: {
-          kind: 'object',
-          properties: {
-            bar: { base: 'number', kind: 'primitive', required: false },
-            foo: { base: 'string', kind: 'primitive', required: false }
-          }
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              options: {
-                kind: 'object',
-                properties: {
-                  bar: {
-                    base: 'number',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  foo: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  }
-                }
-              }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/object-only',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'objectOnly'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'var1',
-        required: true,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'var2',
-        required: true,
-        type: { base: 'number', kind: 'primitive' }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'var3',
-        required: false,
-        type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
-        }
-      }
-    ],
-    method: 'post',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          data: {
-            kind: 'object',
-            properties: {
-              var1: { base: 'string', kind: 'primitive' },
-              var2: { base: 'number', kind: 'primitive' },
-              var3: {
-                itemType: { base: 'string', kind: 'primitive' },
-                kind: 'array'
-              }
-            }
-          },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/primitives-and-array',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'primitivesAndArray'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [],
-    method: 'get',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          error: {
-            kind: 'object',
-            properties: {
-              message: { base: 'string', kind: 'primitive', required: true },
-              name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
-              statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
-          },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/sync-fail-reject',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'syncFailReject'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [],
-    method: 'get',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          error: {
-            kind: 'object',
-            properties: {
-              message: { base: 'string', kind: 'primitive', required: true },
-              name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
-              statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
-          },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/sync-fail-throw',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'syncFailThrow'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
-    input: [],
-    method: 'get',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/test/sync-success',
-    requestType: 'HTTP',
-    serviceClass: 'TestService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: 'syncSuccess'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts',
-    input: [],
-    method: 'get',
-    output: {
-      description: undefined,
-      name: 'output',
-      required: true,
-      type: {
-        kind: 'object',
-        properties: {
-          message: { base: 'string', kind: 'primitive' },
-          code: { base: 'number', kind: 'primitive', required: true },
-          sessionId: { base: 'string', kind: 'primitive', required: true },
-          success: { base: 'boolean', kind: 'primitive', required: true }
-        }
-      }
-    },
-    path: '/trpc/default.root',
-    requestType: 'tRPC',
-    serviceClass: 'DefaultService',
-    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts',
-    serviceMethod: 'root',
-    type: 'query'
-  },
-  {
-    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
-    input: [
-      {
-        defaultValue: 'ABC',
-        description: undefined,
-        name: '_stringInput',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 'ABC', 'DEF' ],
-        description: undefined,
-        name: '_stringArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: 123,
-        description: undefined,
-        name: '_numberInput',
-        required: false,
-        type: { base: 'number', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 123, 456 ],
-        description: undefined,
-        name: '_numberArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'number', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: true,
-        description: undefined,
-        name: '_booleanInput',
-        required: false,
-        type: { base: 'boolean', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ true, false ],
-        description: undefined,
-        name: '_booleanArrayInput',
-        required: false,
-        type: {
-          itemType: { base: 'boolean', kind: 'primitive' },
-          kind: 'array'
-        }
-      },
-      {
-        defaultValue: { string: 'ABC' },
-        description: undefined,
-        name: '_objectStringInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            string: { base: 'string', kind: 'primitive', required: true }
-          }
-        }
-      },
-      {
-        defaultValue: { stringArray: [ 'ABC', 'DEF' ] },
-        description: undefined,
-        name: '_objectStringArrayInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            stringArray: {
-              itemType: { base: 'string', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: { number: 123 },
-        description: undefined,
-        name: '_objectNumberInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            number: { base: 'number', kind: 'primitive', required: true }
-          }
-        }
-      },
-      {
-        defaultValue: { numberArray: [ 123, 456 ] },
-        description: undefined,
-        name: '_objectNumberArrayInput',
-        required: false,
-        type: {
-          kind: 'object',
-          properties: {
-            numberArray: {
-              itemType: { base: 'number', kind: 'primitive' },
-              kind: 'array',
-              required: true
-            }
-          }
-        }
-      },
-      {
-        defaultValue: { boolean: true },
-        description: undefined,
-        name: '_objectBooleanInput',
+        name: 'objectBoolean',
         required: false,
         type: {
           kind: 'object',
           properties: {
             boolean: { base: 'boolean', kind: 'primitive', required: true }
-          }
+          },
+          required: false
         }
       },
       {
-        defaultValue: { booleanArray: [ true, false ] },
-        description: undefined,
-        name: '_objectBooleanArrayInput',
+        name: 'objectBooleanArray',
         required: false,
         type: {
           kind: 'object',
           properties: {
             booleanArray: {
-              itemType: { base: 'boolean', kind: 'primitive' },
+              itemType: { base: 'boolean', kind: 'primitive', required: true },
               kind: 'array',
               required: true
             }
-          }
+          },
+          required: false
         }
       },
       {
-        defaultValue: {
-          boolean: false,
-          booleanArray: [ true, false ],
-          number: 123,
-          numberArray: [ 123, 456 ],
-          object: {
-            boolean: true,
-            booleanArray: [ true, false ],
-            number: 123,
-            numberArray: [ 123, 456 ],
-            string: 'ABC',
-            stringArray: [ 'ABC', 'DEF' ]
-          },
-          objectArray: [
-            {
-              boolean: true,
-              booleanArray: [ true, false ],
-              number: 123,
-              numberArray: [ 123, 456 ],
-              string: 'ABC',
-              stringArray: [ 'ABC', 'DEF' ]
-            },
-            {
-              boolean: false,
-              booleanArray: [ false, true ],
-              number: 456,
-              numberArray: [ 456, 789 ],
-              string: 'DEF',
-              stringArray: [ 'DEF', 'GHI' ]
-            }
-          ],
-          string: 'ABC',
-          stringArray: [ 'ABC', 'DEF' ]
-        },
-        description: undefined,
-        name: '_objectMultipleInput',
+        name: 'objectMultiple',
         required: false,
         type: {
           kind: 'object',
           properties: {
             boolean: { base: 'boolean', kind: 'primitive', required: true },
             booleanArray: {
-              itemType: { base: 'boolean', kind: 'primitive' },
+              itemType: { base: 'boolean', kind: 'primitive', required: true },
               kind: 'array',
               required: true
             },
             number: { base: 'number', kind: 'primitive', required: true },
             numberArray: {
-              itemType: { base: 'number', kind: 'primitive' },
+              itemType: { base: 'number', kind: 'primitive', required: true },
               kind: 'array',
               required: true
             },
@@ -1414,19 +237,23 @@ allRoutes [
               properties: {
                 boolean: { base: 'boolean', kind: 'primitive', required: true },
                 booleanArray: {
-                  itemType: { base: 'boolean', kind: 'primitive' },
+                  itemType: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
+                  },
                   kind: 'array',
                   required: true
                 },
                 number: { base: 'number', kind: 'primitive', required: true },
                 numberArray: {
-                  itemType: { base: 'number', kind: 'primitive' },
+                  itemType: { base: 'number', kind: 'primitive', required: true },
                   kind: 'array',
                   required: true
                 },
                 string: { base: 'string', kind: 'primitive', required: true },
                 stringArray: {
-                  itemType: { base: 'string', kind: 'primitive' },
+                  itemType: { base: 'string', kind: 'primitive', required: true },
                   kind: 'array',
                   required: true
                 }
@@ -1443,223 +270,1190 @@ allRoutes [
                     required: true
                   },
                   booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
                     kind: 'array',
                     required: true
                   },
                   number: { base: 'number', kind: 'primitive', required: true },
                   numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
                     kind: 'array',
                     required: true
                   },
                   string: { base: 'string', kind: 'primitive', required: true },
                   stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
                     kind: 'array',
                     required: true
                   }
-                }
+                },
+                required: true
               },
               kind: 'array',
               required: true
             },
             string: { base: 'string', kind: 'primitive', required: true },
             stringArray: {
-              itemType: { base: 'string', kind: 'primitive' },
+              itemType: { base: 'string', kind: 'primitive', required: true },
               kind: 'array',
               required: true
             }
-          }
+          },
+          required: false
         }
       },
       {
-        defaultValue: 'ABC',
-        description: undefined,
-        name: '_string',
-        required: false,
-        type: { base: 'string', kind: 'primitive' }
-      },
-      {
-        defaultValue: [ 'ABC', 'DEF' ],
-        description: undefined,
-        name: '_stringArray',
+        name: 'objectNumber',
         required: false,
         type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
+          kind: 'object',
+          properties: {
+            number: { base: 'number', kind: 'primitive', required: true }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectNumberArray',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            numberArray: {
+              itemType: { base: 'number', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectString',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            string: { base: 'string', kind: 'primitive', required: true }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectStringArray',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            stringArray: {
+              itemType: { base: 'string', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'string',
+        required: false,
+        type: { base: 'string', kind: 'primitive', required: false }
+      },
+      {
+        name: 'stringArray',
+        required: false,
+        type: {
+          itemType: { base: 'string', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
-              booleanArrayOutput: {
-                itemType: { base: 'boolean', kind: 'primitive' },
-                kind: 'array'
+              boolean: { base: 'boolean', kind: 'primitive', required: true },
+              booleanArray: {
+                itemType: { base: 'boolean', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
               },
-              booleanOutput: { base: 'boolean', kind: 'primitive' },
-              numberArrayOutput: {
-                itemType: { base: 'number', kind: 'primitive' },
-                kind: 'array'
+              number: { base: 'number', kind: 'primitive', required: true },
+              numberArray: {
+                itemType: { base: 'number', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
               },
-              numberOutput: { base: 'number', kind: 'primitive' },
-              objectBooleanArrayOutput: {
+              objectBoolean: {
                 kind: 'object',
                 properties: {
-                  booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
-                    kind: 'array'
+                  boolean: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
                   }
-                }
+                },
+                required: true
               },
-              objectBooleanOutput: {
-                kind: 'object',
-                properties: { boolean: { base: 'boolean', kind: 'primitive' } }
-              },
-              objectMultipleOutput: {
+              objectBooleanArray: {
                 kind: 'object',
                 properties: {
-                  boolean: { base: 'boolean', kind: 'primitive' },
                   booleanArray: {
-                    itemType: { base: 'boolean', kind: 'primitive' },
-                    kind: 'array'
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              objectMultiple: {
+                kind: 'object',
+                properties: {
+                  boolean: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
                   },
-                  number: { base: 'number', kind: 'primitive' },
+                  booleanArray: {
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  number: { base: 'number', kind: 'primitive', required: true },
                   numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
-                    kind: 'array'
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
                   },
                   object: {
                     kind: 'object',
                     properties: {
-                      boolean: { base: 'boolean', kind: 'primitive' },
+                      boolean: {
+                        base: 'boolean',
+                        kind: 'primitive',
+                        required: true
+                      },
                       booleanArray: {
-                        itemType: { base: 'boolean', kind: 'primitive' },
-                        kind: 'array'
+                        itemType: {
+                          base: 'boolean',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
                       },
-                      number: { base: 'number', kind: 'primitive' },
+                      number: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      },
                       numberArray: {
-                        itemType: { base: 'number', kind: 'primitive' },
-                        kind: 'array'
+                        itemType: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
                       },
-                      string: { base: 'string', kind: 'primitive' },
+                      string: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
                       stringArray: {
-                        itemType: { base: 'string', kind: 'primitive' },
-                        kind: 'array'
+                        itemType: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
                       }
-                    }
+                    },
+                    required: true
                   },
                   objectArray: {
                     itemType: {
                       kind: 'object',
                       properties: {
-                        boolean: { base: 'boolean', kind: 'primitive' },
+                        boolean: {
+                          base: 'boolean',
+                          kind: 'primitive',
+                          required: true
+                        },
                         booleanArray: {
-                          itemType: { base: 'boolean', kind: 'primitive' },
-                          kind: 'array'
+                          itemType: {
+                            base: 'boolean',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
                         },
-                        number: { base: 'number', kind: 'primitive' },
+                        number: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
                         numberArray: {
-                          itemType: { base: 'number', kind: 'primitive' },
-                          kind: 'array'
+                          itemType: {
+                            base: 'number',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
                         },
-                        string: { base: 'string', kind: 'primitive' },
+                        string: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
                         stringArray: {
-                          itemType: { base: 'string', kind: 'primitive' },
-                          kind: 'array'
+                          itemType: {
+                            base: 'string',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
                         }
-                      }
+                      },
+                      required: true
                     },
-                    kind: 'array'
+                    kind: 'array',
+                    required: true
                   },
-                  string: { base: 'string', kind: 'primitive' },
+                  string: { base: 'string', kind: 'primitive', required: true },
                   stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
-                    kind: 'array'
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
                   }
-                }
+                },
+                required: true
               },
-              objectNumberArrayOutput: {
+              objectNumber: {
+                kind: 'object',
+                properties: {
+                  number: { base: 'number', kind: 'primitive', required: true }
+                },
+                required: true
+              },
+              objectNumberArray: {
                 kind: 'object',
                 properties: {
                   numberArray: {
-                    itemType: { base: 'number', kind: 'primitive' },
-                    kind: 'array'
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
                   }
-                }
+                },
+                required: true
               },
-              objectNumberOutput: {
+              objectString: {
                 kind: 'object',
-                properties: { number: { base: 'number', kind: 'primitive' } }
+                properties: {
+                  string: { base: 'string', kind: 'primitive', required: true }
+                },
+                required: true
               },
-              objectStringArrayOutput: {
+              objectStringArray: {
                 kind: 'object',
                 properties: {
                   stringArray: {
-                    itemType: { base: 'string', kind: 'primitive' },
-                    kind: 'array'
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
                   }
-                }
+                },
+                required: true
               },
-              objectStringOutput: {
-                kind: 'object',
-                properties: { string: { base: 'string', kind: 'primitive' } }
-              },
-              stringArrayOutput: {
-                itemType: { base: 'string', kind: 'primitive' },
-                kind: 'array'
-              },
-              stringOutput: { base: 'string', kind: 'primitive' }
-            }
+              string: { base: 'string', kind: 'primitive', required: true },
+              stringArray: {
+                itemType: { base: 'string', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
+              }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
-    path: '/trpc/test._checkParams',
-    requestType: 'tRPC',
+    path: '/test/check-params',
+    requestType: 'HTTP',
     serviceClass: 'TestService',
     serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
-    serviceMethod: '_checkParams',
-    type: 'mutation'
+    serviceMethod: 'checkParams'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'testUsers',
+        required: false,
+        type: {
+          itemType: {
+            kind: 'object',
+            properties: {
+              address: {
+                kind: 'object',
+                properties: {
+                  city: { base: 'string', kind: 'primitive', required: true },
+                  houseNumber: { base: 'number', kind: 'primitive', required: true },
+                  province: { base: 'string', kind: 'primitive', required: true },
+                  street: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  }
+                },
+                required: true
+              },
+              age: { base: 'number', kind: 'primitive', required: true },
+              firstName: { base: 'string', kind: 'primitive', required: true },
+              lastName: { base: 'string', kind: 'primitive', required: true },
+              middleName: { base: 'string', kind: 'primitive', required: false }
+            },
+            required: true
+          },
+          kind: 'array',
+          required: false
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              testUsers: {
+                itemType: {
+                  kind: 'object',
+                  properties: {
+                    address: {
+                      kind: 'object',
+                      properties: {
+                        city: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        houseNumber: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        province: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        street: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: false
+                        }
+                      },
+                      required: true
+                    },
+                    age: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    firstName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    lastName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    middleName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
+                    }
+                  },
+                  required: true
+                },
+                kind: 'array',
+                required: true
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/custom-type-array',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeArray'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'testUser',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            address: {
+              kind: 'object',
+              properties: {
+                city: { base: 'string', kind: 'primitive', required: true },
+                houseNumber: { base: 'number', kind: 'primitive', required: true },
+                province: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false }
+              },
+              required: true
+            },
+            age: { base: 'number', kind: 'primitive', required: true },
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false }
+          },
+          required: false
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              testUser: {
+                kind: 'object',
+                properties: {
+                  address: {
+                    kind: 'object',
+                    properties: {
+                      city: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      houseNumber: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      province: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      street: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: false
+                      }
+                    },
+                    required: true
+                  },
+                  age: { base: 'number', kind: 'primitive', required: true },
+                  firstName: { base: 'string', kind: 'primitive', required: true },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  middleName: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  }
+                },
+                required: true
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/custom-type-single',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'customTypeSingle'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive', required: false }
+      }
+    ],
+    method: 'get',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/get-with-param',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'getWithParam'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'firstName',
+        required: true,
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'lastName',
+        required: false,
+        type: { base: 'string', kind: 'primitive', required: false }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/hello',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'hello'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'a',
+        required: true,
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'arr',
+        required: false,
+        type: {
+          itemType: { base: 'number', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      },
+      {
+        name: 'b',
+        required: true,
+        type: { base: 'number', kind: 'primitive', required: true }
+      },
+      {
+        name: 'options',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
+          },
+          required: false
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              a: { base: 'string', kind: 'primitive', required: true },
+              arr: {
+                itemType: { base: 'number', kind: 'primitive', required: true },
+                kind: 'array',
+                required: false
+              },
+              b: { base: 'number', kind: 'primitive', required: true },
+              options: {
+                kind: 'object',
+                properties: {
+                  bar: {
+                    base: 'number',
+                    kind: 'primitive',
+                    required: false
+                  },
+                  foo: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
+                  }
+                },
+                required: false
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/mixed-params',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'mixedParams'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'prop1',
+        required: true,
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'prop2',
+        required: true,
+        type: { base: 'number', kind: 'primitive', required: true }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              prop1: { base: 'string', kind: 'primitive', required: true },
+              prop2: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/object-destructured',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectDestructured'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'options',
+        required: true,
+        type: {
+          kind: 'object',
+          properties: {
+            bar: { base: 'number', kind: 'primitive', required: false },
+            foo: { base: 'string', kind: 'primitive', required: false }
+          },
+          required: true
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              options: {
+                kind: 'object',
+                properties: {
+                  bar: { base: 'number', kind: 'primitive', required: true },
+                  foo: { base: 'string', kind: 'primitive', required: true }
+                },
+                required: true
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/object-only',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'objectOnly'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [
+      {
+        name: 'var1',
+        required: true,
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'var2',
+        required: true,
+        type: { base: 'number', kind: 'primitive', required: true }
+      },
+      {
+        name: 'var3',
+        required: false,
+        type: {
+          itemType: { base: 'string', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              var1: { base: 'string', kind: 'primitive', required: true },
+              var2: { base: 'number', kind: 'primitive', required: true },
+              var3: {
+                itemType: { base: 'string', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/primitives-and-array',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'primitivesAndArray'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/sync-fail-reject',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailReject'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/sync-fail-throw',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncFailThrow'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/test.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/test/sync-success',
+    requestType: 'HTTP',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'syncSuccess'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/default.ts',
+    input: [],
+    method: 'get',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/trpc/default.root',
+    requestType: 'tRPC',
+    serviceClass: 'DefaultService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/default.ts',
+    serviceMethod: 'root',
+    type: 'query'
   },
   {
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.asyncFailReject',
@@ -1674,26 +1468,29 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.asyncFailThrow',
@@ -1708,17 +1505,35 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.asyncSuccess',
@@ -1732,70 +1547,538 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: [
-          {
-            address: {
-              city: 'Sample City 1',
-              houseNumber: 11,
-              province: 'Sample Province 1',
-              street: 'Sample Street 1'
-            },
-            age: 22,
-            firstName: 'John',
-            lastName: 'Doe'
+        name: 'boolean',
+        required: false,
+        type: { base: 'boolean', kind: 'primitive', required: false }
+      },
+      {
+        name: 'booleanArray',
+        required: false,
+        type: {
+          itemType: { base: 'boolean', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      },
+      {
+        name: 'number',
+        required: false,
+        type: { base: 'number', kind: 'primitive', required: false }
+      },
+      {
+        name: 'numberArray',
+        required: false,
+        type: {
+          itemType: { base: 'number', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      },
+      {
+        name: 'objectBoolean',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            boolean: { base: 'boolean', kind: 'primitive', required: true }
           },
-          {
-            address: {
-              city: 'Sample City 2',
-              houseNumber: 22,
-              province: 'Sample Province 2',
-              street: 'Sample Street 2'
+          required: false
+        }
+      },
+      {
+        name: 'objectBooleanArray',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            booleanArray: {
+              itemType: { base: 'boolean', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectMultiple',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            boolean: { base: 'boolean', kind: 'primitive', required: true },
+            booleanArray: {
+              itemType: { base: 'boolean', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
             },
-            age: 22,
-            firstName: 'Jane',
-            lastName: 'Doe'
-          }
-        ],
-        description: undefined,
+            number: { base: 'number', kind: 'primitive', required: true },
+            numberArray: {
+              itemType: { base: 'number', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            },
+            object: {
+              kind: 'object',
+              properties: {
+                boolean: { base: 'boolean', kind: 'primitive', required: true },
+                booleanArray: {
+                  itemType: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
+                  },
+                  kind: 'array',
+                  required: true
+                },
+                number: { base: 'number', kind: 'primitive', required: true },
+                numberArray: {
+                  itemType: { base: 'number', kind: 'primitive', required: true },
+                  kind: 'array',
+                  required: true
+                },
+                string: { base: 'string', kind: 'primitive', required: true },
+                stringArray: {
+                  itemType: { base: 'string', kind: 'primitive', required: true },
+                  kind: 'array',
+                  required: true
+                }
+              },
+              required: true
+            },
+            objectArray: {
+              itemType: {
+                kind: 'object',
+                properties: {
+                  boolean: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
+                  },
+                  booleanArray: {
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  number: { base: 'number', kind: 'primitive', required: true },
+                  numberArray: {
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  string: { base: 'string', kind: 'primitive', required: true },
+                  stringArray: {
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              kind: 'array',
+              required: true
+            },
+            string: { base: 'string', kind: 'primitive', required: true },
+            stringArray: {
+              itemType: { base: 'string', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectNumber',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            number: { base: 'number', kind: 'primitive', required: true }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectNumberArray',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            numberArray: {
+              itemType: { base: 'number', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectString',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            string: { base: 'string', kind: 'primitive', required: true }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'objectStringArray',
+        required: false,
+        type: {
+          kind: 'object',
+          properties: {
+            stringArray: {
+              itemType: { base: 'string', kind: 'primitive', required: true },
+              kind: 'array',
+              required: true
+            }
+          },
+          required: false
+        }
+      },
+      {
+        name: 'string',
+        required: false,
+        type: { base: 'string', kind: 'primitive', required: false }
+      },
+      {
+        name: 'stringArray',
+        required: false,
+        type: {
+          itemType: { base: 'string', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      }
+    ],
+    method: 'post',
+    output: {
+      description: 'Response from the service method',
+      name: 'return',
+      required: true,
+      type: {
+        kind: 'object',
+        properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              boolean: { base: 'boolean', kind: 'primitive', required: true },
+              booleanArray: {
+                itemType: { base: 'boolean', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
+              },
+              number: { base: 'number', kind: 'primitive', required: true },
+              numberArray: {
+                itemType: { base: 'number', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
+              },
+              objectBoolean: {
+                kind: 'object',
+                properties: {
+                  boolean: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              objectBooleanArray: {
+                kind: 'object',
+                properties: {
+                  booleanArray: {
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              objectMultiple: {
+                kind: 'object',
+                properties: {
+                  boolean: {
+                    base: 'boolean',
+                    kind: 'primitive',
+                    required: true
+                  },
+                  booleanArray: {
+                    itemType: {
+                      base: 'boolean',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  number: { base: 'number', kind: 'primitive', required: true },
+                  numberArray: {
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  object: {
+                    kind: 'object',
+                    properties: {
+                      boolean: {
+                        base: 'boolean',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      booleanArray: {
+                        itemType: {
+                          base: 'boolean',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
+                      },
+                      number: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      numberArray: {
+                        itemType: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
+                      },
+                      string: {
+                        base: 'string',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      stringArray: {
+                        itemType: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        kind: 'array',
+                        required: true
+                      }
+                    },
+                    required: true
+                  },
+                  objectArray: {
+                    itemType: {
+                      kind: 'object',
+                      properties: {
+                        boolean: {
+                          base: 'boolean',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        booleanArray: {
+                          itemType: {
+                            base: 'boolean',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
+                        },
+                        number: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        numberArray: {
+                          itemType: {
+                            base: 'number',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
+                        },
+                        string: {
+                          base: 'string',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        stringArray: {
+                          itemType: {
+                            base: 'string',
+                            kind: 'primitive',
+                            required: true
+                          },
+                          kind: 'array',
+                          required: true
+                        }
+                      },
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  },
+                  string: { base: 'string', kind: 'primitive', required: true },
+                  stringArray: {
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              objectNumber: {
+                kind: 'object',
+                properties: {
+                  number: { base: 'number', kind: 'primitive', required: true }
+                },
+                required: true
+              },
+              objectNumberArray: {
+                kind: 'object',
+                properties: {
+                  numberArray: {
+                    itemType: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              objectString: {
+                kind: 'object',
+                properties: {
+                  string: { base: 'string', kind: 'primitive', required: true }
+                },
+                required: true
+              },
+              objectStringArray: {
+                kind: 'object',
+                properties: {
+                  stringArray: {
+                    itemType: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    kind: 'array',
+                    required: true
+                  }
+                },
+                required: true
+              },
+              string: { base: 'string', kind: 'primitive', required: true },
+              stringArray: {
+                itemType: { base: 'string', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
+              }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
+          sessionId: { base: 'string', kind: 'primitive', required: true },
+          success: { base: 'boolean', kind: 'primitive', required: true }
+        },
+        required: true
+      }
+    },
+    path: '/trpc/test.checkParams',
+    requestType: 'tRPC',
+    serviceClass: 'TestService',
+    serviceFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/services/test.ts',
+    serviceMethod: 'checkParams',
+    type: 'mutation'
+  },
+  {
+    handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
+    input: [
+      {
         name: 'testUsers',
         required: false,
         type: {
           itemType: {
             kind: 'object',
             properties: {
-              firstName: { base: 'string', kind: 'primitive', required: true },
-              middleName: { base: 'string', kind: 'primitive', required: false },
-              lastName: { base: 'string', kind: 'primitive', required: true },
-              age: { base: 'number', kind: 'primitive', required: true },
               address: {
                 kind: 'object',
                 properties: {
-                  province: { base: 'string', kind: 'primitive', required: true },
                   city: { base: 'string', kind: 'primitive', required: true },
+                  houseNumber: { base: 'number', kind: 'primitive', required: true },
+                  province: { base: 'string', kind: 'primitive', required: true },
                   street: {
                     base: 'string',
                     kind: 'primitive',
                     required: false
-                  },
-                  houseNumber: { base: 'number', kind: 'primitive', required: true }
+                  }
                 },
                 required: true
-              }
-            }
+              },
+              age: { base: 'number', kind: 'primitive', required: true },
+              firstName: { base: 'string', kind: 'primitive', required: true },
+              lastName: { base: 'string', kind: 'primitive', required: true },
+              middleName: { base: 'string', kind: 'primitive', required: false }
+            },
+            required: true
           },
-          kind: 'array'
+          kind: 'array',
+          required: false
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
@@ -1803,35 +2086,20 @@ allRoutes [
                 itemType: {
                   kind: 'object',
                   properties: {
-                    firstName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: true
-                    },
-                    middleName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: false
-                    },
-                    lastName: {
-                      base: 'string',
-                      kind: 'primitive',
-                      required: true
-                    },
-                    age: {
-                      base: 'number',
-                      kind: 'primitive',
-                      required: true
-                    },
                     address: {
                       kind: 'object',
                       properties: {
-                        province: {
+                        city: {
                           base: 'string',
                           kind: 'primitive',
                           required: true
                         },
-                        city: {
+                        houseNumber: {
+                          base: 'number',
+                          kind: 'primitive',
+                          required: true
+                        },
+                        province: {
                           base: 'string',
                           kind: 'primitive',
                           required: true
@@ -1840,25 +2108,54 @@ allRoutes [
                           base: 'string',
                           kind: 'primitive',
                           required: false
-                        },
-                        houseNumber: {
-                          base: 'number',
-                          kind: 'primitive',
-                          required: true
                         }
                       },
                       required: true
+                    },
+                    age: {
+                      base: 'number',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    firstName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    lastName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: true
+                    },
+                    middleName: {
+                      base: 'string',
+                      kind: 'primitive',
+                      required: false
                     }
-                  }
+                  },
+                  required: true
                 },
-                kind: 'array'
+                kind: 'array',
+                required: true
               }
-            }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.customTypeArray',
@@ -1872,73 +2169,59 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: {
-          address: {
-            city: 'Sample City',
-            houseNumber: 11,
-            province: 'Sample Province',
-            street: 'Sample Street'
-          },
-          age: 22,
-          firstName: 'John',
-          lastName: 'Doe'
-        },
-        description: undefined,
         name: 'testUser',
         required: false,
         type: {
           kind: 'object',
           properties: {
-            firstName: { base: 'string', kind: 'primitive', required: true },
-            middleName: { base: 'string', kind: 'primitive', required: false },
-            lastName: { base: 'string', kind: 'primitive', required: true },
-            age: { base: 'number', kind: 'primitive', required: true },
             address: {
               kind: 'object',
               properties: {
-                province: { base: 'string', kind: 'primitive', required: true },
                 city: { base: 'string', kind: 'primitive', required: true },
-                street: { base: 'string', kind: 'primitive', required: false },
-                houseNumber: { base: 'number', kind: 'primitive', required: true }
+                houseNumber: { base: 'number', kind: 'primitive', required: true },
+                province: { base: 'string', kind: 'primitive', required: true },
+                street: { base: 'string', kind: 'primitive', required: false }
               },
               required: true
-            }
-          }
+            },
+            age: { base: 'number', kind: 'primitive', required: true },
+            firstName: { base: 'string', kind: 'primitive', required: true },
+            lastName: { base: 'string', kind: 'primitive', required: true },
+            middleName: { base: 'string', kind: 'primitive', required: false }
+          },
+          required: false
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
               testUser: {
                 kind: 'object',
                 properties: {
-                  firstName: { base: 'string', kind: 'primitive', required: true },
-                  middleName: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  lastName: { base: 'string', kind: 'primitive', required: true },
-                  age: { base: 'number', kind: 'primitive', required: true },
                   address: {
                     kind: 'object',
                     properties: {
-                      province: {
+                      city: {
                         base: 'string',
                         kind: 'primitive',
                         required: true
                       },
-                      city: {
+                      houseNumber: {
+                        base: 'number',
+                        kind: 'primitive',
+                        required: true
+                      },
+                      province: {
                         base: 'string',
                         kind: 'primitive',
                         required: true
@@ -1947,23 +2230,39 @@ allRoutes [
                         base: 'string',
                         kind: 'primitive',
                         required: false
-                      },
-                      houseNumber: {
-                        base: 'number',
-                        kind: 'primitive',
-                        required: true
                       }
                     },
                     required: true
+                  },
+                  age: { base: 'number', kind: 'primitive', required: true },
+                  firstName: { base: 'string', kind: 'primitive', required: true },
+                  lastName: { base: 'string', kind: 'primitive', required: true },
+                  middleName: {
+                    base: 'string',
+                    kind: 'primitive',
+                    required: false
                   }
-                }
+                },
+                required: true
               }
-            }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.customTypeSingle',
@@ -1977,33 +2276,47 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'firstName',
         required: true,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'lastName',
         required: false,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: false }
       }
     ],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.getWithParam',
@@ -2017,33 +2330,47 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'firstName',
         required: true,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'lastName',
         required: false,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: false }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.hello',
@@ -2057,22 +2384,25 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'a',
         required: true,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
+        name: 'arr',
+        required: false,
+        type: {
+          itemType: { base: 'number', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
+        }
+      },
+      {
         name: 'b',
         required: true,
-        type: { base: 'number', kind: 'primitive' }
+        type: { base: 'number', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'options',
         required: false,
         type: {
@@ -2080,38 +2410,30 @@ allRoutes [
           properties: {
             bar: { base: 'number', kind: 'primitive', required: false },
             foo: { base: 'string', kind: 'primitive', required: false }
-          }
-        }
-      },
-      {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'arr',
-        required: false,
-        type: {
-          itemType: { base: 'number', kind: 'primitive' },
-          kind: 'array'
+          },
+          required: false
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
-              a: { base: 'string', kind: 'primitive' },
+              a: { base: 'string', kind: 'primitive', required: true },
               arr: {
-                itemType: { base: 'number', kind: 'primitive' },
-                kind: 'array'
+                itemType: { base: 'number', kind: 'primitive', required: true },
+                kind: 'array',
+                required: false
               },
-              b: { base: 'number', kind: 'primitive' },
+              b: { base: 'number', kind: 'primitive', required: true },
               options: {
                 kind: 'object',
                 properties: {
@@ -2125,14 +2447,27 @@ allRoutes [
                     kind: 'primitive',
                     required: false
                   }
-                }
+                },
+                required: false
               }
-            }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.mixedParams',
@@ -2146,39 +2481,48 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
-        name: 'payload',
+        name: 'prop1',
         required: true,
-        type: {
-          kind: 'object',
-          properties: {
-            prop1: { base: 'string', kind: 'primitive', required: false },
-            prop2: { base: 'number', kind: 'primitive', required: false }
-          }
-        }
+        type: { base: 'string', kind: 'primitive', required: true }
+      },
+      {
+        name: 'prop2',
+        required: true,
+        type: { base: 'number', kind: 'primitive', required: true }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
-              prop1: { base: 'string', kind: 'primitive' },
-              prop2: { base: 'number', kind: 'primitive' }
-            }
+              prop1: { base: 'string', kind: 'primitive', required: true },
+              prop2: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.objectDestructured',
@@ -2192,8 +2536,6 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'options',
         required: true,
         type: {
@@ -2201,43 +2543,49 @@ allRoutes [
           properties: {
             bar: { base: 'number', kind: 'primitive', required: false },
             foo: { base: 'string', kind: 'primitive', required: false }
-          }
+          },
+          required: true
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
               options: {
                 kind: 'object',
                 properties: {
-                  bar: {
-                    base: 'number',
-                    kind: 'primitive',
-                    required: false
-                  },
-                  foo: {
-                    base: 'string',
-                    kind: 'primitive',
-                    required: false
-                  }
-                }
+                  bar: { base: 'number', kind: 'primitive', required: true },
+                  foo: { base: 'string', kind: 'primitive', required: true }
+                },
+                required: true
               }
-            }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.objectOnly',
@@ -2251,54 +2599,62 @@ allRoutes [
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/trpc/routes/test.ts',
     input: [
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'var1',
         required: true,
-        type: { base: 'string', kind: 'primitive' }
+        type: { base: 'string', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'var2',
         required: true,
-        type: { base: 'number', kind: 'primitive' }
+        type: { base: 'number', kind: 'primitive', required: true }
       },
       {
-        defaultValue: undefined,
-        description: undefined,
         name: 'var3',
         required: false,
         type: {
-          itemType: { base: 'string', kind: 'primitive' },
-          kind: 'array'
+          itemType: { base: 'string', kind: 'primitive', required: true },
+          kind: 'array',
+          required: false
         }
       }
     ],
     method: 'post',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
+          code: { base: 'number', kind: 'primitive', required: true },
           data: {
             kind: 'object',
             properties: {
-              var1: { base: 'string', kind: 'primitive' },
-              var2: { base: 'number', kind: 'primitive' },
+              var1: { base: 'string', kind: 'primitive', required: true },
+              var2: { base: 'number', kind: 'primitive', required: true },
               var3: {
-                itemType: { base: 'string', kind: 'primitive' },
-                kind: 'array'
+                itemType: { base: 'string', kind: 'primitive', required: true },
+                kind: 'array',
+                required: true
               }
-            }
+            },
+            required: false
           },
-          code: { base: 'number', kind: 'primitive', required: true },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.primitivesAndArray',
@@ -2313,26 +2669,29 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.syncFailReject',
@@ -2347,26 +2706,29 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
+          code: { base: 'number', kind: 'primitive', required: true },
+          data: { base: 'void', kind: 'primitive', required: false },
           error: {
             kind: 'object',
             properties: {
               message: { base: 'string', kind: 'primitive', required: true },
               name: { base: 'string', kind: 'primitive', required: true },
-              stack: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
               statusCode: { base: 'number', kind: 'primitive', required: true }
-            }
+            },
+            required: false
           },
-          message: { base: 'string', kind: 'primitive', required: true },
-          code: { base: 'number', kind: 'primitive', required: true },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.syncFailThrow',
@@ -2381,17 +2743,35 @@ allRoutes [
     input: [],
     method: 'get',
     output: {
-      description: undefined,
-      name: 'output',
+      description: 'Response from the service method',
+      name: 'return',
       required: true,
       type: {
         kind: 'object',
         properties: {
-          message: { base: 'string', kind: 'primitive' },
           code: { base: 'number', kind: 'primitive', required: true },
+          data: {
+            kind: 'object',
+            properties: {
+              customMessage: { base: 'string', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          error: {
+            kind: 'object',
+            properties: {
+              message: { base: 'string', kind: 'primitive', required: true },
+              name: { base: 'string', kind: 'primitive', required: true },
+              stack: { base: 'string', kind: 'primitive', required: false },
+              statusCode: { base: 'number', kind: 'primitive', required: true }
+            },
+            required: false
+          },
+          message: { base: 'string', kind: 'primitive', required: false },
           sessionId: { base: 'string', kind: 'primitive', required: true },
           success: { base: 'boolean', kind: 'primitive', required: true }
-        }
+        },
+        required: true
       }
     },
     path: '/trpc/test.syncSuccess',
@@ -2402,23 +2782,23 @@ allRoutes [
     type: 'query'
   }
 ]
-[2026-08-03T11:58:25.800Z] INFO : ✅ Route Extraction completed in 4.46s
-[2026-08-03T11:58:25.809Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
-[2026-08-03T11:58:25.809Z] INFO : Validating 32 routes...
-[2026-08-03T11:58:25.809Z] INFO : ✅ All routes passed validation (0 warnings)
-[2026-08-03T11:58:25.810Z] INFO : 📋 Validation Summary: 0 issues found
-[2026-08-03T11:58:25.810Z] INFO : 🔄 Validating routes: [████████████████████] 32/32 (100%)
-[2026-08-03T11:58:25.810Z] INFO : ✅ Route Validation completed in 1ms
-[2026-08-03T11:58:25.815Z] INFO : ✅ OpenAPI Generation completed in 6ms
-[2026-08-03T11:58:25.859Z] INFO : ✅ File Operations completed in 44ms
-[2026-08-03T11:58:25.859Z] INFO : ✅ OpenAPI spec generated with 32 paths
-[2026-08-03T11:58:25.860Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
-[2026-08-03T11:58:25.860Z] INFO : 📊 Performance Summary (Total: 4.56s)
-[2026-08-03T11:58:25.860Z] INFO :   Route Extraction             4.46s (97.9%)
-[2026-08-03T11:58:25.860Z] INFO :   File Operations               44ms (1.0%)
-[2026-08-03T11:58:25.860Z] INFO :   OpenAPI Generation             6ms (0.1%)
-[2026-08-03T11:58:25.860Z] INFO :   Route Validation               1ms (0.0%)
-[2026-08-03T11:58:25.860Z] INFO : 🎉 OpenAPI specification generation completed successfully!
+[2026-08-03T18:19:11.413Z] INFO : ✅ Route Extraction completed in 1.19s
+[2026-08-03T18:19:11.413Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
+[2026-08-03T18:19:11.413Z] INFO : Validating 32 routes...
+[2026-08-03T18:19:11.414Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-03T18:19:11.414Z] INFO : 📋 Validation Summary: 0 issues found
+[2026-08-03T18:19:11.414Z] INFO : 🔄 Validating routes: [████████████████████] 32/32 (100%)
+[2026-08-03T18:19:11.414Z] INFO : ✅ Route Validation completed in 1ms
+[2026-08-03T18:19:11.433Z] INFO : ✅ OpenAPI Generation completed in 19ms
+[2026-08-03T18:19:11.516Z] INFO : ✅ File Operations completed in 82ms
+[2026-08-03T18:19:11.516Z] INFO : ✅ OpenAPI spec generated with 32 paths
+[2026-08-03T18:19:11.516Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-08-03T18:19:11.516Z] INFO : 📊 Performance Summary (Total: 1.31s)
+[2026-08-03T18:19:11.516Z] INFO :   Route Extraction             1.19s (91.0%)
+[2026-08-03T18:19:11.516Z] INFO :   File Operations               82ms (6.3%)
+[2026-08-03T18:19:11.516Z] INFO :   OpenAPI Generation            19ms (1.5%)
+[2026-08-03T18:19:11.516Z] INFO :   Route Validation               1ms (0.1%)
+[2026-08-03T18:19:11.516Z] INFO : 🎉 OpenAPI specification generation completed successfully!
 
 ---
-vp run: cache hit, 10.58s saved.
+vp run: cache hit, 7.10s saved.

@@ -1,33 +1,96 @@
-import { TestService } from '../../../services/test';
+import {
+  TestService,
+  TestServiceInputSchemas,
+  TestServiceOutputSchemas,
+} from '../../../services/test';
 import { createRouteHandler } from '../../../utils/route-handler';
 import { publicHttp } from '../../../utils/http';
 
 const routes = {
-  '/test/_check-params': publicHttp.post(() => createRouteHandler(TestService, '_checkParams')),
   '/test/async-fail-reject': publicHttp.get(() =>
-    createRouteHandler(TestService, 'asyncFailReject'),
+    createRouteHandler(TestService, 'asyncFailReject', {
+      output: TestServiceOutputSchemas.asyncFailReject,
+    }),
   ),
-  '/test/async-fail-throw': publicHttp.get(() => createRouteHandler(TestService, 'asyncFailThrow')),
-  '/test/async-success': publicHttp.get(() => createRouteHandler(TestService, 'asyncSuccess')),
+  '/test/async-fail-throw': publicHttp.get(() =>
+    createRouteHandler(TestService, 'asyncFailThrow', {
+      output: TestServiceOutputSchemas.asyncFailThrow,
+    }),
+  ),
+  '/test/async-success': publicHttp.get(() =>
+    createRouteHandler(TestService, 'asyncSuccess', {
+      output: TestServiceOutputSchemas.asyncSuccess,
+    }),
+  ),
+  '/test/check-params': publicHttp.post(() =>
+    createRouteHandler(TestService, 'checkParams', {
+      input: TestServiceInputSchemas.checkParams,
+      output: TestServiceOutputSchemas.checkParams,
+    }),
+  ),
   '/test/custom-type-array': publicHttp.post(() =>
-    createRouteHandler(TestService, 'customTypeArray'),
+    createRouteHandler(TestService, 'customTypeArray', {
+      input: TestServiceInputSchemas.customTypeArray,
+      output: TestServiceOutputSchemas.customTypeArray,
+    }),
   ),
   '/test/custom-type-single': publicHttp.post(() =>
-    createRouteHandler(TestService, 'customTypeSingle'),
+    createRouteHandler(TestService, 'customTypeSingle', {
+      input: TestServiceInputSchemas.customTypeSingle,
+      output: TestServiceOutputSchemas.customTypeSingle,
+    }),
   ),
-  '/test/get-with-param': publicHttp.get(() => createRouteHandler(TestService, 'getWithParam')),
-  '/test/hello': publicHttp.post(() => createRouteHandler(TestService, 'hello')),
-  '/test/mixed-params': publicHttp.post(() => createRouteHandler(TestService, 'mixedParams')),
+  '/test/get-with-param': publicHttp.get(() =>
+    createRouteHandler(TestService, 'getWithParam', {
+      input: TestServiceInputSchemas.getWithParam,
+      output: TestServiceOutputSchemas.getWithParam,
+    }),
+  ),
+  '/test/hello': publicHttp.post(() =>
+    createRouteHandler(TestService, 'hello', {
+      input: TestServiceInputSchemas.hello,
+      output: TestServiceOutputSchemas.hello,
+    }),
+  ),
+  '/test/mixed-params': publicHttp.post(() =>
+    createRouteHandler(TestService, 'mixedParams', {
+      input: TestServiceInputSchemas.mixedParams,
+      output: TestServiceOutputSchemas.mixedParams,
+    }),
+  ),
   '/test/object-destructured': publicHttp.post(() =>
-    createRouteHandler(TestService, 'objectDestructured'),
+    createRouteHandler(TestService, 'objectDestructured', {
+      input: TestServiceInputSchemas.objectDestructured,
+      output: TestServiceOutputSchemas.objectDestructured,
+    }),
   ),
-  '/test/object-only': publicHttp.post(() => createRouteHandler(TestService, 'objectOnly')),
+  '/test/object-only': publicHttp.post(() =>
+    createRouteHandler(TestService, 'objectOnly', {
+      input: TestServiceInputSchemas.objectOnly,
+      output: TestServiceOutputSchemas.objectOnly,
+    }),
+  ),
   '/test/primitives-and-array': publicHttp.post(() =>
-    createRouteHandler(TestService, 'primitivesAndArray'),
+    createRouteHandler(TestService, 'primitivesAndArray', {
+      input: TestServiceInputSchemas.primitivesAndArray,
+      output: TestServiceOutputSchemas.primitivesAndArray,
+    }),
   ),
-  '/test/sync-fail-reject': publicHttp.get(() => createRouteHandler(TestService, 'syncFailReject')),
-  '/test/sync-fail-throw': publicHttp.get(() => createRouteHandler(TestService, 'syncFailThrow')),
-  '/test/sync-success': publicHttp.get(() => createRouteHandler(TestService, 'syncSuccess')),
+  '/test/sync-fail-reject': publicHttp.get(() =>
+    createRouteHandler(TestService, 'syncFailReject', {
+      output: TestServiceOutputSchemas.syncFailReject,
+    }),
+  ),
+  '/test/sync-fail-throw': publicHttp.get(() =>
+    createRouteHandler(TestService, 'syncFailThrow', {
+      output: TestServiceOutputSchemas.syncFailThrow,
+    }),
+  ),
+  '/test/sync-success': publicHttp.get(() =>
+    createRouteHandler(TestService, 'syncSuccess', {
+      output: TestServiceOutputSchemas.syncSuccess,
+    }),
+  ),
 };
 
 export default routes;
