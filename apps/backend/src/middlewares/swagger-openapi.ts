@@ -1,6 +1,6 @@
 import type { Express } from 'express';
 import { docsEndpoint } from '@lightproject/common/configs';
-import { isRecord } from '@lightproject/common/validators';
+import { logger } from '@lightproject/common/logger';
 import { openApiSpecFile } from '../utils/autogen';
 import { readFile } from '@lightproject/common/utils';
 import swaggerUi from 'swagger-ui-express';
@@ -14,14 +14,19 @@ const swaggerOpenApiMiddleware = (app: Express) => {
         try {
           const swaggerJson = readFile({
             encoding: 'utf8',
-            // path: swaggerJsonOutputFile,
             path: openApiSpecFile,
           });
-          const jsonString =
-            typeof swaggerJson === 'string' ? swaggerJson : (swaggerJson?.toString() ?? '{}');
-          const parsed = JSON.parse(jsonString) as unknown;
-          return isRecord(parsed) ? parsed : {};
-        } catch {
+          if (typeof swaggerJson !== 'string') {
+            throw new TypeError('Swagger JSON file is empty or not a string');
+          }
+          return (JSON.parse as (text: string) => Record<string, object>)(swaggerJson);
+        } catch (error) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.error('Failed to parse swagger json', {
+            message: err.message,
+            name: err.name,
+            stack: err.stack,
+          });
           return {};
         }
       })(),

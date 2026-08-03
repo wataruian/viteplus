@@ -1,8 +1,8 @@
 import { ProgressIndicator, performanceTimer } from './utils/performance';
 import { autogenDir, routesFile } from './config';
+import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
 import type { RouteInfo } from './types';
 import { generateOpenApiSpec } from './generators/openapi-generator';
-import { getEnv } from '@lightproject/common/environment';
 import { getHttpRoutes } from './discovery/http-discovery';
 import { getTrpcRoutes } from './discovery/trpc-discovery';
 import { inspect } from 'node:util';
@@ -22,7 +22,7 @@ const extractAllRoutes = async (): Promise<RouteInfo[]> => {
   await Promise.resolve(fs.mkdir(autogenDir, { recursive: true }));
   await Promise.resolve(fs.writeFile(routesFile, JSON.stringify(allRoutes, undefined, 2)));
 
-  if (getEnv('AUTOGEN_DEBUG') === 'true') {
+  if (isTrue(getEnv('AUTOGEN_DEBUG'))) {
     globalThis.console.log(
       'allRoutes',
       inspect(allRoutes, {
@@ -39,11 +39,8 @@ const build = async () => {
   performanceTimer.start();
 
   try {
-    if (
-      globalThis.process.env['NODE_ENV'] === 'test' ||
-      globalThis.process.env['VITEST'] === 'true'
-    ) {
-      logger.info('Skipping swagger build during tests');
+    if (isTest() || isTrue(getEnv('SKIP_AUTOGEN'))) {
+      logger.info('Skipping swagger build during tests or SKIP_AUTOGEN is true');
       return;
     }
 

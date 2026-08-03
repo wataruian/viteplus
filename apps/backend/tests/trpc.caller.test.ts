@@ -1,9 +1,5 @@
-import {
-  type Locals,
-  type ServiceContext,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
-} from '../src/types/middlware';
+/* eslint-disable typescript/no-explicit-any, typescript/no-unsafe-type-assertion */
+import type { Locals, Request, Response, ServiceContext } from '../src/types/middlware';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
@@ -48,26 +44,25 @@ describe('tRPC Integration Tests', () => {
       metadata: {
         method: 'POST',
         requestType: 'tRPC',
+        source: 'test',
         startTime: Date.now(),
         url: trpcEndpoint,
       },
       sessionId: 'test',
     };
 
-    const requestRaw: unknown = {
+    const requestRaw: any = {
       locals,
       method: 'GET',
       originalUrl: trpcEndpoint,
       url: trpcEndpoint,
     };
-    assertIsCustomRequest(requestRaw);
-    const request = requestRaw;
+    const request = requestRaw as Request;
 
-    const responseRaw: unknown = {
+    const responseRaw: any = {
       locals,
     };
-    assertIsCustomResponse(responseRaw);
-    const response = responseRaw;
+    const response = responseRaw as Response;
 
     const ctx: ServiceContext = {
       req: request,

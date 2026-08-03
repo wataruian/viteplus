@@ -1,20 +1,23 @@
-import {
-  type ExpressRequest,
-  type ExpressResponse,
-  type ServiceContext,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
-  isBaseResponse,
-  isHttpMethod,
-} from '../types/middlware';
+import type { BaseResponse } from '../types/middlware';
 import type { Express } from 'express';
 import { apiEndpoint } from '@lightproject/common/configs';
 import { httpRouter } from '../routers/http';
-import { isCallable } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
+
+const HTTP_METHODS = new Set(['get', 'post', 'put', 'delete', 'patch', 'options', 'head']);
+
+const isHttpMethod = (
+  val: unknown,
+): val is 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head' =>
+  typeof val === 'string' && HTTP_METHODS.has(val.toLowerCase());
 
 const joinPaths = (a: string, b: string) =>
   `${a.replace(/\/+$/u, '')}/${b.replace(/^\/+/u, '')}`.replace(/\/+$/u, '') || '/';
+
+const isServiceHandler = (
+  val: unknown,
+): val is (args: { ctx: unknown; input: unknown }) => Promise<BaseResponse> | BaseResponse =>
+  typeof val === 'function';
 
 const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void => {
   try {
@@ -28,18 +31,19 @@ const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void 
         const fullPath = joinPaths(rootPath, path);
 
         for (const routePath of [fullPath, `${fullPath}/`]) {
-          app[httpMethod](routePath, async (req: ExpressRequest, res: ExpressResponse) => {
-            assertIsCustomRequest(req);
-            assertIsCustomResponse(res);
-            const ctx: ServiceContext = {
+          app[httpMethod](routePath, async (req, res) => {
+            const ctx = {
               req,
               res,
             };
+
             const inputRaw: unknown = req.body ?? req.query ?? req.params ?? {};
-            if (isCallable(handler)) {
+
+            if (isServiceHandler(handler)) {
               const responseRaw = await Promise.resolve(handler({ ctx, input: inputRaw }));
-              if (isBaseResponse(responseRaw) && !res.headersSent) {
-                ctx.res.status(responseRaw.code ?? 200).json(responseRaw);
+
+              if (!res.headersSent) {
+                ctx.res.status(responseRaw.code).json(responseRaw);
               }
             }
           });
@@ -55,4 +59,4 @@ const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void 
   }
 };
 
-export { joinPaths, registerHttpRoutes };
+export { HTTP_METHODS, isServiceHandler, isHttpMethod, joinPaths, registerHttpRoutes };

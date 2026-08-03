@@ -1,23 +1,28 @@
+import { getEnv, isTrue } from '@lightproject/common/environment';
 import { initializeTelemetry } from '@lightproject/common/utils';
+import { logger } from '@lightproject/common/logger';
 import packageJson from '../package.json' with { type: 'json' };
 
-const bootstrap = () => {
-  initializeTelemetry({
-    serviceName: packageJson.name,
-    serviceVersion: packageJson.version,
-  })
-    .then(async () => {
-      const { startServer } = await import('./main');
-
-      startServer().catch((error: unknown) => {
-        globalThis.console.error('Failed to start server:', error);
-        globalThis.process.exit(1);
-      });
-    })
-    .catch((error: unknown) => {
-      globalThis.console.error('Failed to bootstrap:', error);
-      globalThis.process.exit(1);
+const init = async () => {
+  if (isTrue(getEnv('SKIP_OPENTELEMETRY'))) {
+    logger.info('Skipping telemetry initialization when SKIP_OPENTELEMETRY is true');
+  } else {
+    await initializeTelemetry({
+      serviceName: packageJson.name,
+      serviceVersion: packageJson.version,
     });
+  }
+
+  const { startServer } = await import('./main');
+
+  await startServer();
+};
+
+const bootstrap = () => {
+  init().catch((error: unknown) => {
+    logger.error('Failed to bootstrap:', { error });
+    globalThis.process.exit(1);
+  });
 };
 
 bootstrap();

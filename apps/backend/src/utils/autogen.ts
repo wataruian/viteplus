@@ -16,6 +16,7 @@ if (typeof globalThis.process.loadEnvFile === 'function' && fs.existsSync(envPat
 if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
   if (globalThis.process.argv[2] === 'true') {
     globalThis.process.env['AUTOGEN_DEBUG'] = 'true';
+    globalThis.process.env['SKIP_AUTOGEN'] = 'false';
   }
 
   globalThis.setTimeout(() => {

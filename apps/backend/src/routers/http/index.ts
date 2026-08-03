@@ -1,14 +1,11 @@
-import { getEnv, isTest } from '@lightproject/common/environment';
+import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
+import type { RouteHandler } from '../../types/middlware';
 import defaultRoutes from './routes/default';
 import testRoutes from './routes/test';
 
-const httpRouter: Record<string, { handler: unknown; method: string }>[] = [defaultRoutes];
+const httpRouter: Record<string, { handler: RouteHandler; method: string }>[] = [defaultRoutes];
 
-const includeTestRoutes =
-  getEnv('ENABLE_TEST_ROUTES') === 'true' ||
-  isTest() ||
-  getEnv('VITEST') === 'true' ||
-  getEnv('NODE_ENV') === 'test';
+const includeTestRoutes = isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest();
 
 if (includeTestRoutes) {
   httpRouter.push(testRoutes);
@@ -17,4 +14,4 @@ if (includeTestRoutes) {
 type HttpRouter = typeof httpRouter;
 
 export type { HttpRouter };
-export { httpRouter };
+export { includeTestRoutes, httpRouter };

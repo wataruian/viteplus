@@ -1,14 +1,8 @@
-import { getEnv, isTest } from '@lightproject/common/environment';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import defaultRoutes from './routes/default';
+import { includeTestRoutes } from '../http';
 import { router } from '../../utils/trpc';
 import testRoutes from './routes/test';
-
-const includeTestRoutes =
-  getEnv('ENABLE_TEST_ROUTES') === 'true' ||
-  isTest() ||
-  getEnv('VITEST') === 'true' ||
-  getEnv('NODE_ENV') === 'test';
 
 const trpcRouter = router({
   default: defaultRoutes,

@@ -1,44 +1,54 @@
 import { Buffer } from 'node:buffer';
+import type { Response } from '../types/middlware';
 import type express from 'express';
-import { isLocals } from '../types/middlware';
-import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 
-const isDataChunk = (v: unknown): v is string | Buffer | Uint8Array =>
+type ResponseChunk = string | Buffer | Uint8Array;
+type ChunkParameter = ResponseChunk | (() => void) | undefined;
+
+const isDataChunk = (v: ChunkParameter): v is ResponseChunk =>
   typeof v === 'string' || v instanceof Buffer || v instanceof Uint8Array;
 
-const captureResponse = (res: express.Response): void => {
-  const locals = Reflect.get(res, 'locals') as unknown;
-  if (isLocals(locals)) {
-    const metadata = locals.metadata as unknown;
-    if (isRecord(metadata)) {
-      Reflect.set(metadata, 'source', 'captureResponse');
-    }
-    logger.info('Registering response data', locals);
-  }
+const getCallbackAndEncoding = (
+  encodingOrCallback?: ((error: Error | null | undefined) => void) | (() => void) | BufferEncoding,
+  callback?: (error: Error | null | undefined) => void,
+) => {
+  const cb = typeof encodingOrCallback === 'function' ? encodingOrCallback : callback;
+  const enc = typeof encodingOrCallback === 'string' ? encodingOrCallback : 'utf8';
+  return { callback: cb, encoding: enc };
+};
 
-  const originalWrite = res.write.bind(res);
-  const originalEnd = res.end.bind(res);
+const captureResponse = (res: Response): void => {
+  const { locals } = res;
+
+  const { metadata } = locals;
+
+  Reflect.set(metadata, 'source', 'captureResponse');
+
+  logger.info('Registering response data', locals);
+
+  const write = res.write.bind(res);
+  const end = res.end.bind(res);
 
   let responseBody: Buffer | null | object | string = null;
+
+  const captureChunk = (chunk: ChunkParameter) => {
+    if (isDataChunk(chunk)) {
+      responseBody = chunk instanceof Buffer ? chunk.toString() : chunk;
+    }
+  };
 
   Reflect.set(
     res,
     'write',
     (
-      chunk: string | Buffer | Uint8Array,
+      chunk: ResponseChunk,
       encodingOrCallback?: ((error: Error | null | undefined) => void) | BufferEncoding,
       callback?: (error: Error | null | undefined) => void,
     ): boolean => {
-      const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
-      responseBody = chunkString;
-
-      if (typeof encodingOrCallback === 'function') {
-        originalWrite(chunk, 'utf8', encodingOrCallback);
-        return true;
-      }
-
-      originalWrite(chunk, encodingOrCallback ?? 'utf8', callback);
+      captureChunk(chunk);
+      const { callback: cb, encoding: enc } = getCallbackAndEncoding(encodingOrCallback, callback);
+      write(chunk, enc, cb);
       return true;
     },
   );
@@ -47,34 +57,25 @@ const captureResponse = (res: express.Response): void => {
     res,
     'end',
     (
-      chunk?: string | Buffer | Uint8Array | (() => void),
+      chunk?: ChunkParameter,
       encodingOrCallback?: (() => void) | BufferEncoding,
       callback?: () => void,
     ): express.Response => {
       if (typeof chunk === 'function') {
-        originalEnd(chunk);
+        end(chunk);
         return res;
       }
-
-      if (isDataChunk(chunk)) {
-        const chunkString = chunk instanceof Buffer ? chunk.toString() : chunk;
-        responseBody = chunkString;
-      }
-
-      if (typeof encodingOrCallback === 'function') {
-        if (isDataChunk(chunk)) {
-          originalEnd(chunk, 'utf8', encodingOrCallback);
-        } else {
-          originalEnd(undefined, 'utf8', encodingOrCallback);
-        }
-        return res;
-      }
-
-      if (isDataChunk(chunk)) {
-        originalEnd(chunk, encodingOrCallback ?? 'utf8', callback);
-      } else {
-        originalEnd(undefined, encodingOrCallback ?? 'utf8', callback);
-      }
+      captureChunk(chunk);
+      const { callback: cb, encoding: enc } = getCallbackAndEncoding(encodingOrCallback, callback);
+      end(
+        isDataChunk(chunk) ? chunk : undefined,
+        enc,
+        cb
+          ? () => {
+              cb(undefined);
+            }
+          : undefined,
+      );
       return res;
     },
   );
@@ -89,4 +90,5 @@ const captureResponse = (res: express.Response): void => {
   });
 };
 
-export { captureResponse };
+export type { ResponseChunk, ChunkParameter };
+export { isDataChunk, getCallbackAndEncoding, captureResponse };

@@ -1,18 +1,16 @@
+import type { Request, Response } from './types/middlware';
 import {
   apiEndpoint,
   docsUrl,
   trpcEndpoint,
   trpcPlaygroundUrl,
 } from '@lightproject/common/configs';
-import { assertIsCustomRequest, assertIsCustomResponse, isError } from './types/middlware';
+import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
 import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
 import { build } from './utils/autogen';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
-// import { cspMiddleware } from './middlewares/csp';
-import { errorHandler } from './middlewares/error-handler';
 import express from 'express';
-import { gatewayMiddleware } from './middlewares/gateway-middleware';
 import { initializeRequest } from './middlewares/initialize-request';
 import { logger } from '@lightproject/common/logger';
 import { notFoundHandler } from './middlewares/not-found-handler';
@@ -22,6 +20,9 @@ import { registerTrpcRoutes } from './utils/trpc-router';
 import { swaggerOpenApiMiddleware } from './middlewares/swagger-openapi';
 import { trpcPlayground } from './middlewares/trpc-playground';
 import { trustProxyMiddleware } from './middlewares/trust-proxy';
+
+const isRequest = (req: express.Request): req is Request => 'locals' in req;
+const isResponse = (res: express.Response): res is Response => 'locals' in res;
 
 const createApp = async (shouldAutogen = false) => {
   if (shouldAutogen) {
@@ -43,10 +44,20 @@ const createApp = async (shouldAutogen = false) => {
   app.use(cors(corsOptions));
 
   app.use(initializeRequest);
-  app.use(gatewayMiddleware);
+  app.use((req, res, next) => {
+    if (!isRequest(req) || !isResponse(res)) {
+      throw new Error('Invalid request or response context: missing locals');
+    }
+    gatewayMiddleware(req, res, next);
+  });
 
   app.set('trust proxy', true);
-  app.use(trustProxyMiddleware);
+  app.use((req, res, next) => {
+    if (!isRequest(req) || !isResponse(res)) {
+      throw new Error('Invalid request or response context: missing locals');
+    }
+    trustProxyMiddleware(req, res, next);
+  });
 
   //   app.use(cspMiddleware);
 
@@ -69,13 +80,19 @@ const createApp = async (shouldAutogen = false) => {
     logger.info(`📚 Swagger UI: ${docsUrl}`);
   }
 
-  app.use(notFoundHandler as express.RequestHandler);
+  app.use((req, res, next) => {
+    if (!isRequest(req) || !isResponse(res)) {
+      throw new Error('Invalid request or response context: missing locals');
+    }
+    notFoundHandler(req, res, next);
+  });
 
   app.use(
     (err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      if (isError(err)) {
-        assertIsCustomRequest(req);
-        assertIsCustomResponse(res);
+      if (err instanceof Error) {
+        if (!isRequest(req) || !isResponse(res)) {
+          throw new Error('Invalid request or response context: missing locals');
+        }
         errorHandler(err, req, res, next);
       } else {
         next(err);

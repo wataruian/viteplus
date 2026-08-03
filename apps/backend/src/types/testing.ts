@@ -1,6 +1,7 @@
 import type { AppRouterPaths } from '../utils/trpc-router';
-import type { HttpMethod } from './middlware';
 import type { TRPCProcedureType } from '@trpc/server';
+
+type HttpMethod = 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put';
 
 interface HttpTestCase {
   description?: string;

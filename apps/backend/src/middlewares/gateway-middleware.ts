@@ -1,95 +1,202 @@
-import {
-  type Locals,
-  type MiddlewareLoggingOptionsType,
-  type Request,
-  type Response,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
+import type {
+  BaseResponse,
+  ErrorDetails,
+  MiddlewareLoggingOptions,
+  NextFunction,
+  Request,
+  Response,
 } from '../types/middlware';
-import type express from 'express';
-import { isRecord } from '@lightproject/common/validators';
-import { requestHandler } from './request-handler';
-import { responseHandler } from './response-handler';
-import { safeClone } from '@lightproject/common/utils';
+import { type JsonValue, safeSerialize } from '@lightproject/common/utils';
+import { getEnv, isProduction, isTrue } from '@lightproject/common/environment';
+import { Buffer } from 'node:buffer';
+import type { TRPCError } from '@trpc/server';
+import { captureResponse } from './capture-response';
+import { isTrpcEndpoint } from '@lightproject/common/configs';
+import { logger } from '@lightproject/common/logger';
 
-const loggingOptions: MiddlewareLoggingOptionsType = {
-  logBody: false,
-  logHeaders: false,
-  logParams: false,
-  logQuery: false,
+const loggingOptions: MiddlewareLoggingOptions = {
+  body: false,
+  headers: false,
+  params: false,
+  query: false,
 };
 
-const cleanLocals = (locals: Record<string, unknown>): void => {
-  if ('originalStatusCode' in locals) {
-    delete locals['originalStatusCode'];
+const isErrorStackEnabled = isTrue(getEnv('ENABLE_ERROR_STACK')) || !isProduction();
+
+const getStatusCode = (statusCode?: number): number => {
+  if (statusCode === undefined || statusCode === 0) {
+    return 500;
   }
-  if ('responseBody' in locals) {
-    delete locals['responseBody'];
-  }
+  return statusCode === 200 ? 500 : statusCode;
 };
 
-const syncLocals = ({
-  locals,
-  req,
-  res,
-  target = 'both',
-}: {
-  locals: Partial<Locals>;
-  req?: null | Request | undefined;
-  res?: null | Response | undefined;
-  target?: 'both' | 'req' | 'res';
-}): void => {
-  if (!['both', 'req', 'res'].includes(target)) {
-    throw new TypeError('Target must be either "both", "req", or "res"');
-  }
-
-  if (req === undefined && res === undefined) {
-    throw new Error('Either req or res must be provided to sync local variables');
-  }
-
-  const allLocalsRaw = safeClone({
-    ...req?.locals,
-    ...res?.locals,
-    ...locals,
-  });
-
-  if (!isRecord(allLocalsRaw)) {
-    throw new Error('Failed to clone locals');
-  }
-
-  const allLocals = allLocalsRaw;
-
-  if (req !== null && req !== undefined && (target === 'req' || target === 'both')) {
-    const reqLocals = { ...allLocals };
-    cleanLocals(reqLocals);
-    Object.assign(req.locals, reqLocals);
-  }
-
-  if (res !== null && res !== undefined && (target === 'res' || target === 'both')) {
-    const resLocals = { ...allLocals };
-    Object.assign(res.locals, resLocals);
-  }
+const getErrorDetails = (err: Error | ErrorDetails | TRPCError, res: Response) => {
+  const error: ErrorDetails = {
+    message: err.message === '' ? 'Unknown error occurred' : err.message,
+    name: err.name === '' ? 'UnknownError' : err.name,
+    stack: err.stack ?? 'No stack trace available',
+    statusCode: getStatusCode(res.statusCode),
+  };
+  return error;
 };
 
-const gatewayMiddleware = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-): void => {
+const getErrorResponse = (error: ErrorDetails, req: Request, res: Response): BaseResponse => ({
+  code: res.statusCode,
+  error,
+  message: error.message,
+  sessionId: req.locals.sessionId,
+  success: false,
+});
+
+const getDuration = (startTime: number, endTime?: number): number =>
+  (endTime ?? Date.now()) - startTime;
+
+const getLogMetadata = (req: Request) => {
+  const metadata: Record<string, JsonValue> = {};
+
+  for (const key of ['body', 'headers', 'params', 'query'] as const) {
+    if (loggingOptions[key]) {
+      metadata[key] = safeSerialize(req[key]);
+    }
+  }
+
+  return {
+    ...req.locals.metadata,
+    ...metadata,
+  };
+};
+
+const gatewayMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    assertIsCustomRequest(req);
-    assertIsCustomResponse(res);
-    requestHandler(req, res, next);
+    if (isTrpcEndpoint(req.originalUrl) && Buffer.isBuffer(req.body)) {
+      req.body = req.body.toString();
+    }
+
+    captureResponse(res);
+
+    logger.info(
+      `Incoming [${req.method}] request`,
+      safeSerialize({
+        ...req.locals,
+        metadata: {
+          ...getLogMetadata(req),
+          source: 'requestHandler',
+        },
+      }),
+    );
+
     res.on('finish', () => {
-      try {
-        responseHandler(req, res, next);
-      } catch (error) {
-        next(error);
+      if (req.locals.error || res.statusCode >= 400) {
+        return;
       }
+
+      const startTime = req.locals.metadata.startTime || Date.now();
+      const endTime = Date.now();
+
+      logger.info(
+        `Response completed for [${req.method}] request with status: ${res.statusCode}`,
+        safeSerialize({
+          ...req.locals,
+          ...res.locals,
+          metadata: {
+            ...getLogMetadata(req),
+            duration: getDuration(startTime, endTime),
+            endTime,
+            headers: loggingOptions.headers ? res.getHeaders() : undefined,
+            responseBody: res.locals.responseBody ?? undefined,
+            source: 'responseHandler',
+            statusCode: res.statusCode,
+          },
+        }),
+      );
     });
+
+    next();
   } catch (error) {
     next(error);
   }
 };
 
-export { gatewayMiddleware, loggingOptions, syncLocals };
+const processError = ({
+  err,
+  message,
+  req,
+  res,
+  throwError = false,
+}: {
+  err: Error | ErrorDetails | TRPCError;
+  message?: string;
+  req: Request;
+  res: Response;
+  throwError?: boolean;
+}) => {
+  const startTime = req.locals.metadata.startTime || Date.now();
+  const errorDetails = getErrorDetails(err, res);
+  const errorMessage = message ?? errorDetails.message;
+  const statusCode = getStatusCode(res.statusCode);
+  res.statusCode = statusCode;
+  req.locals.error = errorDetails;
+  const endTime = Date.now();
+
+  logger.error(
+    `Error [${req.method}]: ${errorMessage}`,
+    safeSerialize({
+      ...req.locals,
+      ...res.locals,
+      error: errorDetails,
+      metadata: {
+        ...getLogMetadata(req),
+        duration: getDuration(startTime, endTime),
+        endTime,
+        headers: loggingOptions.headers ? res.getHeaders() : undefined,
+        source: 'errorHandler',
+        statusCode,
+      },
+    }),
+  );
+
+  if (!isErrorStackEnabled) {
+    delete errorDetails.stack;
+  }
+
+  if (throwError) {
+    throw err instanceof Error ? err : new Error(JSON.stringify(err));
+  }
+
+  return errorDetails;
+};
+
+const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+): BaseResponse => {
+  const errorDetails = processError({
+    err,
+    message: `Error Response [${req.method}]`,
+    req,
+    res,
+  });
+
+  const errorResponse = getErrorResponse(errorDetails, req, res);
+
+  if (!res.headersSent) {
+    res.status(getStatusCode(res.statusCode)).json(errorResponse);
+  }
+
+  return errorResponse;
+};
+
+export {
+  getErrorResponse,
+  gatewayMiddleware,
+  loggingOptions,
+  getLogMetadata,
+  isErrorStackEnabled,
+  getStatusCode,
+  getDuration,
+  getErrorDetails,
+  processError,
+  errorHandler,
+};

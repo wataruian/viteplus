@@ -221,8 +221,15 @@ const getCommonViteConfig = ({
         reporter: ['text', 'json', 'html'],
         reportsDirectory: 'coverage',
       },
+      env: {
+        LOG_LEVEL: 'silent',
+      },
+      fileParallelism: false,
       include: ['tests/**/*.test.ts'],
-      testTimeout: 60 * 60 * 1000, // 1 hour
+      isolate: false,
+      pool: 'forks',
+      testTimeout: 30_000,
+      // testTimeout: 60 * 60 * 1000, // 1 hour
     },
   };
 };

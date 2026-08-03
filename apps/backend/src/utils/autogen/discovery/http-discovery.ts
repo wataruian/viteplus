@@ -1,5 +1,5 @@
 import { extractServiceMetadata, getServiceNameFromHandlerFile } from '../parsers/service-parser';
-import { getEnv, isTest } from '@lightproject/common/environment';
+import { getEnv, isTest, isTrue, isVitest } from '@lightproject/common/environment';
 import { getProject, projectDir } from '../config';
 import { Node } from 'ts-morph';
 import type { RouteInfo } from '../types';
@@ -101,10 +101,7 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
     .filter((name): name is string => name !== undefined);
 
   const importedRouteNames =
-    getEnv('ENABLE_TEST_ROUTES') === 'true' ||
-    isTest() ||
-    getEnv('VITEST') === 'true' ||
-    getEnv('NODE_ENV') === 'test'
+    isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest() || isVitest()
       ? rawImportedRouteNames
       : rawImportedRouteNames.filter((name) => name !== 'testRoutes');
 

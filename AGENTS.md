@@ -78,8 +78,10 @@ When first entering the repository or a new package:
 - **Pre-execution**: Always run `vp install` if `package.json` or `pnpm-lock.yaml` has changed.
 - **Verification**: Run `vp run ready` as a mandatory final verification step before completing a task.
 - **Type Safety**:
-  - Avoid `any` and `@ts-ignore`.
-  - Prefer proper TypeScript interfaces and types.
+  - Avoid `any` and `unknown` typings. Always use correct and specific types.
+  - Avoid `@ts-ignore`.
+  - Since correct and precise typings should be used, avoid type-checking helper functions like `isRecord()`. Prefer structural TypeScript validation and narrow types using native operators.
+  - Do not use ESLint or TypeScript disable comments (e.g. `eslint-disable` or `@ts-nocheck`).
   - Use `vite-plus` provided types for configuration and tests.
 - **Refactoring**: When moving code between packages, ensure `exports`, `imports`, and `tsconfig` references are updated atomically.
 - **File Naming**: Use kebab-case for file names.

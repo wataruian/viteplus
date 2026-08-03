@@ -284,4 +284,5 @@ class TestService extends BaseService {
   }
 }
 
+export type { Address, TestUser };
 export { TestService };

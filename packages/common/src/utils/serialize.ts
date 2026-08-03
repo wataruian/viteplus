@@ -2,7 +2,16 @@ import { isRecord } from '../validators/validate';
 
 const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
 
-const safeSerialize = (value: unknown, ignoredKeys?: string[]): unknown => {
+type Primitive = string | number | boolean | bigint | symbol | null | undefined;
+
+type JsonValue = Primitive | { [key: string]: JsonValue } | JsonValue[];
+
+const isT = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
+
+const safeSerialize = <T>(
+  value: T,
+  ignoredKeys?: string[],
+): T extends object ? JsonValue & object : JsonValue => {
   const seen = new WeakSet<object>();
 
   if (ignoredKeys) {
@@ -11,8 +20,8 @@ const safeSerialize = (value: unknown, ignoredKeys?: string[]): unknown => {
     }
   }
 
-  return JSON.parse(
-    JSON.stringify(value, (key, val: unknown) => {
+  const result = (JSON.parse as (text: string) => JsonValue)(
+    JSON.stringify(value, (key, val: JsonValue) => {
       if (defaultIgnoredKeys.has(key)) {
         return '[Circular]';
       }
@@ -26,36 +35,48 @@ const safeSerialize = (value: unknown, ignoredKeys?: string[]): unknown => {
       return val;
     }),
   );
+
+  type R = T extends object ? JsonValue & object : JsonValue;
+  if (isT<R>(result)) {
+    return result;
+  }
+  throw new Error('Unreachable');
 };
 
-const safeClone = (source: unknown): unknown => {
+const safeClone = <T extends JsonValue>(source: T): T => {
   if (source === null || typeof source !== 'object') {
     return source;
   }
 
-  if (Array.isArray(source)) {
-    return source.map((item: unknown) => safeClone(item));
+  if (Array.isArray(source) && isT<JsonValue[]>(source)) {
+    const result = source.map((item: JsonValue) => safeClone(item));
+    if (isT<T>(result)) {
+      return result;
+    }
   }
 
-  if (!isRecord(source)) {
+  if (!isRecord(source) || !isT<Record<string, JsonValue>>(source)) {
     return source;
   }
 
-  const result: Record<string, unknown> = {};
+  const result: Record<string, JsonValue> = {};
   const sourceRecord = source;
-  for (const key in sourceRecord) {
-    if (Object.hasOwn(sourceRecord, key)) {
-      try {
-        const value = sourceRecord[key];
-        if (typeof value !== 'function' && value !== undefined) {
-          result[key] = safeClone(value);
-        }
-      } catch {
-        // Ignore errors when accessing properties
+  for (const key of Object.keys(sourceRecord)) {
+    try {
+      const value = sourceRecord[key];
+      if (typeof value !== 'function' && value !== undefined) {
+        result[key] = safeClone(value);
       }
+    } catch {
+      // Ignore errors when accessing properties
     }
   }
-  return result;
+
+  if (isT<T>(result)) {
+    return result;
+  }
+  throw new Error('Unreachable');
 };
 
-export { defaultIgnoredKeys, safeClone, safeSerialize };
+export type { Primitive, JsonValue };
+export { isT, defaultIgnoredKeys, safeClone, safeSerialize };

@@ -1,18 +1,18 @@
 ~/packages/common$ vp check ◉ cache hit, replaying
-pass: All 39 files are correctly formatted (643ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 37 files (1.6s, 8 threads)
+pass: All 40 files are correctly formatted (1074ms, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 38 files (3.1s, 8 threads)
 
 ~/packages/design-system$ vp check ◉ cache hit, replaying
-pass: All 44 files are correctly formatted (461ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 42 files (1.6s, 8 threads)
+pass: All 44 files are correctly formatted (1331ms, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 42 files (2.8s, 8 threads)
 
 ~/apps/backend$ vp check ◉ cache hit, replaying
-pass: All 62 files are correctly formatted (484ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 60 files (1.4s, 8 threads)
+pass: All 58 files are correctly formatted (1057ms, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 56 files (2.4s, 8 threads)
 
 ~/apps/frontend$ vp check ◉ cache hit, replaying
-pass: All 9 files are correctly formatted (564ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 6 files (811ms, 8 threads)
+pass: All 9 files are correctly formatted (1456ms, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 6 files (1.7s, 8 threads)
 
 ---
-vp run: 4/4 cache hit (100%), 11.22s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 23.89s saved. (Run `vp run --last-details` for full details)

@@ -3,11 +3,10 @@ import { type TRPCError, initTRPC } from '@trpc/server';
 import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
 import type { OpenApiMeta } from 'trpc-openapi';
 import { generateUuid } from '@lightproject/common/utils';
-import { getErrorDetails } from '../middlewares/error-handler';
+import { getErrorDetails } from '../middlewares/gateway-middleware';
 import { isProduction } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import superjson from 'superjson';
-import { syncLocals } from '../middlewares/gateway-middleware';
 
 const transformer = superjson;
 
@@ -41,16 +40,6 @@ const errorFormatter = ({
     }
 
     ctx.req.locals.metadata.error = errorDetails;
-
-    syncLocals({
-      locals: {
-        ...ctx.req.locals,
-        ...ctx.res.locals,
-      },
-      req: ctx.req,
-      res: ctx.res,
-      target: 'both',
-    });
   }
 
   const formattedError = {
@@ -69,10 +58,10 @@ const errorFormatter = ({
     success: false,
   };
 
-  const enableErrorStack =
+  const isErrorStackEnabled =
     globalThis.process.env['ENABLE_ERROR_STACK'] === 'true' ? true : !isProduction();
 
-  if (!enableErrorStack) {
+  if (!isErrorStackEnabled) {
     formattedError.error.stack = undefined;
   }
 
@@ -80,8 +69,9 @@ const errorFormatter = ({
 };
 
 const createContext = (req: Request, res: Response): ServiceContext => {
-  const sessionId = req.locals.sessionId ?? generateUuid();
-  req.locals.sessionId ??= sessionId;
+  const sessionId = req.locals.sessionId || generateUuid();
+
+  req.locals.sessionId = sessionId;
 
   return {
     req,

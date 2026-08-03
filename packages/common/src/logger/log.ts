@@ -1,7 +1,8 @@
 import { type AnyValueMap, SeverityNumber, logs } from '@opentelemetry/api-logs';
 import type { LogEntry, LogLevel, LogStream, LoggerOptions } from '../types/log';
 import { formatJSON, formatPretty } from './formatters';
-import { getLogFormat, isBrowser, isLocal } from '../environment/env';
+import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
+import { getSessionId } from './context';
 import { isRecord } from '../validators/validate';
 import { redact } from './redactor';
 
@@ -24,13 +25,24 @@ const isAnyValueMap = (value: unknown): value is AnyValueMap =>
 
 class Logger {
   private readonly options: LoggerOptions;
+  private readonly silent: boolean;
   private stream: LogStream | undefined;
   private readonly otelLogger = logs.getLogger('application');
 
   public constructor(options: Partial<LoggerOptions> = {}) {
+    const rawLogLevel = getLogLevel();
+    this.silent = options.silent ?? rawLogLevel === 'silent';
+    const defaultLogLevel: LogLevel =
+      rawLogLevel === 'debug' ||
+      rawLogLevel === 'info' ||
+      rawLogLevel === 'warn' ||
+      rawLogLevel === 'error'
+        ? rawLogLevel
+        : 'info';
+
     this.options = {
       color: options.color ?? true,
-      level: options.level ?? 'info',
+      level: options.level ?? defaultLogLevel,
       mode: isLocal() ? (options.mode ?? (getLogFormat() === 'json' ? 'json' : 'pretty')) : 'json',
       outputPath: options.outputPath ?? undefined,
       redact: options.redact ?? [],
@@ -59,23 +71,27 @@ class Logger {
     return this;
   }
 
-  public debug(message: string, metadata?: Record<string, unknown>): void {
+  public debug(message: string, metadata?: Record<string, unknown> | object): void {
     this.log('debug', message, metadata);
   }
 
-  public info(message: string, metadata?: Record<string, unknown>): void {
+  public info(message: string, metadata?: Record<string, unknown> | object): void {
     this.log('info', message, metadata);
   }
 
-  public warn(message: string, metadata?: Record<string, unknown>): void {
+  public warn(message: string, metadata?: Record<string, unknown> | object): void {
     this.log('warn', message, metadata);
   }
 
-  public error(message: string, metadata?: Record<string, unknown>): void {
+  public error(message: string, metadata?: Record<string, unknown> | object): void {
     this.log('error', message, metadata);
   }
 
-  private log(level: LogLevel, message: string, metadata?: Record<string, unknown>): void {
+  private log(level: LogLevel, message: string, metadata?: Record<string, unknown> | object): void {
+    if (this.silent) {
+      return;
+    }
+
     const levelPriority = logLevelPriority[level];
     const optionLevelPriority = logLevelPriority[this.options.level];
 
@@ -86,10 +102,17 @@ class Logger {
     const redactedMetadata =
       metadata === undefined ? undefined : redact(metadata, this.options.redact);
 
+    const sessionId = getSessionId();
+
+    const resolvedMetadata = {
+      ...(isRecord(redactedMetadata) ? redactedMetadata : {}),
+      ...(sessionId === 'no-id' ? {} : { sessionId }),
+    };
+
     const entry: LogEntry = {
       level,
       message,
-      metadata: isRecord(redactedMetadata) ? redactedMetadata : undefined,
+      ...(Object.keys(resolvedMetadata).length > 0 ? { metadata: resolvedMetadata } : {}),
       timestamp: this.options.timestamp ? new Date().toISOString() : '',
     };
 

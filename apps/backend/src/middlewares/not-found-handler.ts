@@ -1,4 +1,4 @@
-import type { ExpressNextFunction, ExpressRequest, ExpressResponse } from '../types/middlware';
+import type { NextFunction, Request, Response } from '../types/middlware';
 import {
   apiEndpoint,
   docsEndpoint,
@@ -7,100 +7,83 @@ import {
 } from '@lightproject/common/configs';
 import { httpRouter } from '../routers/http';
 import { isLocal } from '@lightproject/common/environment';
-import { isRecord } from '@lightproject/common/validators';
 import { trpcRouter } from '../routers/trpc';
 
-const trailingSlashesRegex = /\/+$/u;
+const stripTrailingSlashes = (str: string) => str.replace(/\/+$/u, '');
 
-const getHttpRouterPaths = (
-  router: Record<string, { handler: unknown; method: string }>[],
-): string[] => {
-  const paths: string[] = [];
-  for (const routeObj of router) {
-    for (const path of Object.keys(routeObj)) {
-      paths.push(path);
-    }
-  }
-  return paths;
-};
+const prefixPath = (path: string, prefix: string) =>
+  path.startsWith(prefix) ? path : `${prefix}${path.startsWith('/') ? '' : '/'}${path}`;
 
-const getTrpcProcedureKeys = (node: unknown, prefix = ''): string[] => {
-  const keys: string[] = [];
-  if (!isRecord(node)) {
-    return keys;
-  }
-  for (const [key, value] of Object.entries(node)) {
+const getHttpRouterPaths = (router: Record<string, object>[]): string[] =>
+  router.flatMap((r) => Object.keys(r));
+
+const getTrpcProcedureKeys = (node: object, prefix = ''): string[] => {
+  const getProperty = Reflect.get as (
+    o: object,
+    k: string,
+  ) => object | ((...args: never[]) => object | undefined) | undefined;
+  const getPropertyDef = Reflect.get as (o: object, k: string) => object | undefined;
+
+  return Object.keys(node).flatMap((key) => {
     if (key.startsWith('_def')) {
-      continue;
+      return [];
     }
-    const defRaw: unknown = typeof value === 'function' ? Reflect.get(value, '_def') : undefined;
-    const def = isRecord(defRaw) ? defRaw : undefined;
-    if (isRecord(def)) {
-      keys.push(`${prefix}${key}`);
-    } else if (isRecord(value)) {
-      keys.push(...getTrpcProcedureKeys(value, `${prefix}${key}.`));
+    const value = getProperty(node, key);
+    const def = typeof value === 'function' ? getPropertyDef(value, '_def') : undefined;
+    if (def !== undefined && typeof def === 'object') {
+      return [`${prefix}${key}`];
     }
-  }
-  return keys;
+    if (typeof value === 'object') {
+      return getTrpcProcedureKeys(value, `${prefix}${key}.`);
+    }
+    return [];
+  });
 };
 
-const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
+const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   if (isLocal()) {
-    const swaggerPath = docsEndpoint.replace(trailingSlashesRegex, '');
-    const trpcPlaygroundPath = trpcPlaygroundEndpoint.replace(trailingSlashesRegex, '');
-
-    const normalizedUrl = req.originalUrl.replace(trailingSlashesRegex, '');
+    const swaggerPath = stripTrailingSlashes(docsEndpoint);
+    const trpcPlaygroundPath = stripTrailingSlashes(trpcPlaygroundEndpoint);
+    const normalizedUrl = stripTrailingSlashes(req.originalUrl);
 
     if (normalizedUrl === swaggerPath || normalizedUrl === trpcPlaygroundPath) {
       next();
-      return;
     }
   }
 
-  const normalizedApiEndpoint = apiEndpoint.replace(trailingSlashesRegex, '');
-  const normalizedTrpcEndpoint = trpcEndpoint.replace(trailingSlashesRegex, '');
+  const normalizedApiEndpoint = stripTrailingSlashes(apiEndpoint);
+  const normalizedTrpcEndpoint = stripTrailingSlashes(trpcEndpoint);
 
-  const httpPathsRaw = getHttpRouterPaths(httpRouter).map((path) =>
-    path.startsWith(normalizedApiEndpoint)
-      ? path
-      : `${normalizedApiEndpoint}${path.startsWith('/') ? '' : '/'}${path}`,
+  const httpPathsRaw = getHttpRouterPaths(httpRouter).map((p) =>
+    prefixPath(p, normalizedApiEndpoint),
   );
-  const httpPathsSet = new Set(httpPathsRaw.map((p) => p.replace(/\/$/u, '')));
-  const httpPaths: string[] = [];
-  for (const path of httpPathsSet) {
-    if (path === '') {
-      continue;
-    }
-    httpPaths.push(path);
-    if (path === normalizedApiEndpoint) {
-      httpPaths.push(`${normalizedApiEndpoint}/`);
-    }
-  }
+  const httpPaths = new Set(
+    httpPathsRaw
+      .map((p) => p.replace(/\/$/u, ''))
+      .filter(Boolean)
+      .flatMap((path) =>
+        path === normalizedApiEndpoint ? [path, `${normalizedApiEndpoint}/`] : [path],
+      ),
+  );
 
-  const trpcPaths = getTrpcProcedureKeys(trpcRouter).map((path) =>
-    path.startsWith(normalizedTrpcEndpoint)
-      ? path
-      : `${normalizedTrpcEndpoint}${path.startsWith('/') ? '' : '/'}${path}`,
+  const trpcPaths = new Set(
+    getTrpcProcedureKeys(trpcRouter).map((p) => prefixPath(p, normalizedTrpcEndpoint)),
   );
 
   const { pathname } = new globalThis.URL(req.originalUrl, 'http://localhost');
-
-  const normalizedHttpPath = pathname.replace(trailingSlashesRegex, '');
-  const normalizedTrpcPath = pathname.replace(/\/batch$/u, '').replace(trailingSlashesRegex, '');
+  const normalizedHttpPath = stripTrailingSlashes(pathname);
+  const normalizedTrpcPath = stripTrailingSlashes(pathname.replace(/\/batch$/u, ''));
 
   const isHttpEndpoint =
-    httpPaths.includes(normalizedHttpPath) || httpPaths.includes(`${normalizedHttpPath}/`);
-  const isTrpcEndpoint = trpcPaths.includes(normalizedTrpcPath);
+    httpPaths.has(normalizedHttpPath) || httpPaths.has(`${normalizedHttpPath}/`);
+  const isTrpcEndpoint = trpcPaths.has(normalizedTrpcPath);
 
-  const isValidEndpoint = isHttpEndpoint || isTrpcEndpoint;
-
-  if (!isValidEndpoint) {
+  if (!isHttpEndpoint && !isTrpcEndpoint) {
     const statusCode = 404;
     const error = new Error('Not Found');
-
     Object.assign(error, {
       name: 'NotFoundError',
-      stack: 'No stack trace available',
+      stack: error.stack,
       statusCode,
     });
     res.status(statusCode);
@@ -110,4 +93,10 @@ const notFoundHandler = (req: ExpressRequest, res: ExpressResponse, next: Expres
   next();
 };
 
-export { getHttpRouterPaths, getTrpcProcedureKeys, notFoundHandler };
+export {
+  stripTrailingSlashes,
+  prefixPath,
+  getHttpRouterPaths,
+  getTrpcProcedureKeys,
+  notFoundHandler,
+};

@@ -1,9 +1,4 @@
-import {
-  type InputArgs,
-  type ServiceContext,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
-} from '../types/middlware';
+import type { InputArgs, ServiceContext } from '../types/middlware';
 
 const assertIsGetInstanceFn: (fn: unknown) => asserts fn is () => BaseServiceInterface = (
   _fn: unknown,
@@ -112,17 +107,6 @@ abstract class BaseService implements BaseServiceInterface {
   public static getInstance<T extends BaseService>(
     this: new (ctx: ServiceContext, inputArgs?: InputArgs) => T,
   ): T {
-    if (BaseService.instance === null) {
-      const req: unknown = { locals: {} };
-      assertIsCustomRequest(req);
-      const res: unknown = { locals: {} };
-      assertIsCustomResponse(res);
-      const dummyContext: ServiceContext = {
-        req,
-        res,
-      };
-      BaseService.instance = new this(dummyContext);
-    }
     if (BaseService.instance instanceof this) {
       return BaseService.instance;
     }

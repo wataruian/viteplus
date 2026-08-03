@@ -1,25 +1,27 @@
+import type { RouteHandler } from '../types/middlware';
+
 const publicHttp = {
-  delete: (handlerFactory: () => unknown) => ({
+  delete: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'delete',
   }),
-  get: (handlerFactory: () => unknown) => ({
+  get: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'get',
   }),
-  options: (handlerFactory: () => unknown) => ({
+  options: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'options',
   }),
-  patch: (handlerFactory: () => unknown) => ({
+  patch: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'patch',
   }),
-  post: (handlerFactory: () => unknown) => ({
+  post: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'post',
   }),
-  put: (handlerFactory: () => unknown) => ({
+  put: (handlerFactory: () => RouteHandler) => ({
     handler: handlerFactory(),
     method: 'put',
   }),

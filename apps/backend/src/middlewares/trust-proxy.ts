@@ -1,41 +1,38 @@
+import type { NextFunction, Request, Response } from '../types/middlware';
 import {
-  type ExpressNextFunction,
-  type ExpressRequest,
-  type ExpressResponse,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
-} from '../types/middlware';
-import {
+  getEnv,
   isCi,
+  isDebug,
   isLocal,
   isNonProduction,
   isOtherEnvironment,
   isTest,
+  isTrue,
 } from '@lightproject/common/environment';
-import { errorHandler } from './error-handler';
+import { errorHandler } from './gateway-middleware';
 import { isTrpcEndpoint } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
 
 const logDebugTruthTable = (
-  isLoopback: boolean,
+  isIpAllowed: boolean,
   inSafeEnv: boolean,
   allowAll: boolean,
   blockAll: boolean,
   isAllowed: boolean,
 ) => {
-  if (isNonProduction() && globalThis.process.env['DEBUG'] === 'true') {
+  if (isNonProduction() && isDebug()) {
     const bools = [false, true];
     logger.debug('--- trustProxy decision truth table ---');
-    for (const loopback of bools) {
+    for (const ipAllowed of bools) {
       for (const safe of bools) {
         for (const allow of bools) {
           for (const block of bools) {
             const allowedByBlock = !block;
             const allowedByAllow = allow;
-            const allowedByEnv = loopback || safe;
+            const allowedByEnv = ipAllowed || safe;
             const decision = allowedByBlock && (allowedByAllow || allowedByEnv);
             logger.debug(
-              `isLoopback=${loopback}, inSafeEnv=${safe}, allowAll=${allow}, blockAll=${block} => isAllowed=${decision}`,
+              `isIpAllowed=${ipAllowed}, inSafeEnv=${safe}, allowAll=${allow}, blockAll=${block} => isAllowed=${decision}`,
             );
           }
         }
@@ -43,52 +40,54 @@ const logDebugTruthTable = (
     }
     logger.debug('--- actual flags ---');
     logger.debug(
-      `isLoopback=${isLoopback}, inSafeEnv=${inSafeEnv}, allowAll=${allowAll}, blockAll=${blockAll} => isAllowed=${isAllowed}`,
+      `isIpAllowed=${isIpAllowed}, inSafeEnv=${inSafeEnv}, allowAll=${allowAll}, blockAll=${blockAll} => isAllowed=${isAllowed}`,
     );
   }
 };
 
-const handleAccessDenied = (
-  req: ExpressRequest,
-  res: ExpressResponse,
-  next: ExpressNextFunction,
-) => {
+const handleAccessDenied = (req: Request, res: Response, next: NextFunction) => {
   const statusCode = 403;
   const error = new Error('Access denied');
+
   Object.assign(error, {
     name: 'AccessDeniedError',
-    stack: 'No stack trace available',
+    stack: error.stack,
     statusCode,
   });
 
   res.status(statusCode);
 
   if (isTrpcEndpoint(req.originalUrl)) {
-    assertIsCustomRequest(req);
-    assertIsCustomResponse(res);
     errorHandler(error, req, res, next);
   } else {
     next(error);
   }
 };
 
-const trustProxyMiddleware = (
-  req: ExpressRequest,
-  res: ExpressResponse,
-  next: ExpressNextFunction,
-) => {
+const trustProxyMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const allowedIps = new Set(['127.0.0.1', '::1']);
+
+  const additionalIps = getEnv('ALLOWED_IPS');
+  if (additionalIps !== undefined && additionalIps !== '') {
+    for (const ip of additionalIps.split(',')) {
+      const trimmed = ip.trim();
+      if (trimmed !== '') {
+        allowedIps.add(trimmed);
+      }
+    }
+  }
+
   const requestIp = req.ip ?? req.socket.remoteAddress;
 
-  const isLoopback = requestIp !== undefined && requestIp !== '' && allowedIps.has(requestIp);
+  const isIpAllowed = requestIp !== undefined && requestIp !== '' && allowedIps.has(requestIp);
   const inSafeEnv = isLocal() || isTest() || isCi() || isOtherEnvironment();
-  const allowAll = globalThis.process.env['ALLOW_ALL_IPS'] === 'true';
-  const blockAll = globalThis.process.env['BLOCK_ALL_IPS'] === 'true';
+  const allowAll = isTrue(getEnv('ALLOW_ALL_IPS'));
+  const blockAll = isTrue(getEnv('BLOCK_ALL_IPS'));
 
-  // Precedence: blockAll > allowAll > (isLoopback || inSafeEnv)
-  const isAllowed = !blockAll && (allowAll || isLoopback || inSafeEnv);
+  // Precedence: blockAll > allowAll > (isIpAllowed || inSafeEnv)
+  const isAllowed = !blockAll && (allowAll || isIpAllowed || inSafeEnv);
 
-  logDebugTruthTable(isLoopback, inSafeEnv, allowAll, blockAll, isAllowed);
+  logDebugTruthTable(isIpAllowed, inSafeEnv, allowAll, blockAll, isAllowed);
 
   if (isAllowed) {
     next();

@@ -14,6 +14,7 @@ interface LoggerOptions {
   outputPath?: string | undefined;
   redact: string[];
   rotation?: RotationOptions | undefined;
+  silent?: boolean;
   timestamp: boolean;
 }
 
@@ -29,11 +30,11 @@ interface LogStream {
 }
 
 interface LogEntry {
+  [key: string]: unknown;
   level: LogLevel;
   message: string;
   timestamp: string;
-  metadata?: Record<string, unknown> | undefined;
-  [key: string]: unknown;
+  metadata?: Record<string, unknown> | object;
 }
 
 type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;

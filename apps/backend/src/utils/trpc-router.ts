@@ -1,10 +1,4 @@
-import {
-  type ExpressRequest,
-  type ExpressResponse,
-  type ServiceContext,
-  assertIsCustomRequest,
-  assertIsCustomResponse,
-} from '../types/middlware';
+import type { Request, Response, ServiceContext } from '../types/middlware';
 import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
@@ -26,7 +20,10 @@ const trpcClient = createTRPCClient<TrpcRouter>({
   ],
 });
 
-const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
+const isRequest = (req: Express.Request): req is Request => 'locals' in req;
+const isResponse = (res: Express.Response): res is Response => 'locals' in res;
+
+const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint): void => {
   try {
     app.use(rootPath, (req, _res, next) => {
       const bodyRecord: unknown = req.body;
@@ -67,15 +64,10 @@ const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint) => {
     app.use(
       rootPath,
       createExpressMiddleware({
-        createContext: ({
-          req,
-          res,
-        }: {
-          req: ExpressRequest;
-          res: ExpressResponse;
-        }): ServiceContext => {
-          assertIsCustomRequest(req);
-          assertIsCustomResponse(res);
+        createContext: ({ req, res }): ServiceContext => {
+          if (!isRequest(req) || !isResponse(res)) {
+            throw new Error('Invalid request or response context: missing locals');
+          }
           return createContext(req, res);
         },
         router: trpcRouter,

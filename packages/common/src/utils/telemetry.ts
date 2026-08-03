@@ -19,12 +19,16 @@ interface TelemetryOptions {
 
 let sdk: NodeSDK | undefined = undefined;
 let shutdownRegistered = false;
-const tracer = trace.getTracer('application');
+const tracer = trace.getTracer(getEnv('OTEL_SERVICE_NAME') ?? 'application');
 
 const initializeTelemetry = async (options: TelemetryOptions = {}) => {
+  await Promise.resolve();
+
   if (sdk) {
     return sdk;
   }
+
+  const span = tracer.startSpan('opentelemetry.initialize');
 
   const endpoint =
     options.otlpEndpoint ?? getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ?? 'http://localhost:4318';
@@ -33,17 +37,20 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
   }
 
+  const serviceName = options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app';
+  const serviceVersion = options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0';
+
   sdk = new NodeSDK({
     instrumentations: [
       getNodeAutoInstrumentations({
         '@opentelemetry/instrumentation-express': {
-          enabled: true,
+          enabled: false,
         },
         '@opentelemetry/instrumentation-fs': {
           enabled: false,
         },
         '@opentelemetry/instrumentation-http': {
-          enabled: true,
+          enabled: false,
         },
       }),
     ],
@@ -60,8 +67,8 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
       }),
     }),
     resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app',
-      [ATTR_SERVICE_VERSION]: options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0',
+      [ATTR_SERVICE_NAME]: serviceName,
+      [ATTR_SERVICE_VERSION]: serviceVersion,
     }),
     traceExporter: new OTLPTraceExporter({
       url: `${endpoint}/v1/traces`,
@@ -83,24 +90,29 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
       }
     };
 
-    globalThis.process.once('SIGTERM', () => {
-      shutdown().catch(() => {});
-    });
+    const signals = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 
-    globalThis.process.once('SIGINT', () => {
-      shutdown().catch(() => {});
-    });
+    for (const signal of signals) {
+      globalThis.process.once(signal, () => {
+        shutdown().catch(() => {});
+      });
+    }
 
     shutdownRegistered = true;
   }
 
-  await new Promise((resolve) => {
-    const span = tracer.startSpan('opentelemetry.initialize');
-    span.setAttribute('initialized', true).end();
-    logger.info('OpenTelemetry initialized', {
-      endpoint,
-    });
-    resolve(null);
+  span.setAttributes({
+    initialized: true,
+    'otel.endpoint': endpoint,
+    'otel.service.name': serviceName,
+    'otel.service.version': serviceVersion,
+  });
+  span.end();
+
+  logger.info('OpenTelemetry initialized', {
+    endpoint,
+    serviceName,
+    serviceVersion,
   });
 
   return sdk;
@@ -108,3 +120,4 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
 
 export type { TelemetryOptions };
 export { initializeTelemetry, tracer };
+export { trace, context } from '@opentelemetry/api';

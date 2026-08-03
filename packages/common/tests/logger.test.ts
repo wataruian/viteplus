@@ -21,7 +21,7 @@ const testLoggerCall = async ({
   metadata?: Record<string, unknown>;
   options?: Partial<LoggerOptions>;
 }) => {
-  const logger = await Logger.create(options);
+  const logger = await Logger.create({ silent: false, ...options });
   logger[level](message, metadata);
   return getLastConsoleLog();
 };
@@ -199,5 +199,41 @@ describe('Logger Integration - Redaction Output', () => {
     await testLoggerCall({ level: 'info', message: 'test', metadata });
 
     expect(metadata).toEqual(original);
+  });
+});
+
+describe('Logger Integration - Session ID Color', () => {
+  beforeEach(() => {
+    vi.stubEnv('ENV', 'local');
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  test('should format message with color based on sessionId and metadata with gray', async () => {
+    const { requestContextStorage } = await import('../src/logger/context');
+    const { getRandomColor, chalkInstance } = await import('../src/utils/color');
+    const sessionId = 'test-session-id';
+    const color = getRandomColor(sessionId);
+
+    let output = '';
+    await requestContextStorage.run({ color, sessionId }, async () => {
+      output = await testLoggerCall({
+        level: 'info',
+        message: 'hello from session',
+        metadata: { foo: 'bar' },
+        options: { color: true, mode: 'pretty' },
+      });
+    });
+
+    const expectedColoredMessage = color('hello from session');
+    expect(output).toContain(expectedColoredMessage);
+
+    const expectedMetadataStr = JSON.stringify({ foo: 'bar', sessionId }, undefined, 5);
+    const expectedColoredMetadata = chalkInstance.gray(expectedMetadataStr);
+    expect(output).toContain(expectedColoredMetadata);
   });
 });

@@ -7,4 +7,4 @@
 ~/apps/frontend$ tsc ◉ cache hit, replaying
 
 ---
-vp run: 4/4 cache hit (100%), 11.26s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 19.21s saved. (Run `vp run --last-details` for full details)

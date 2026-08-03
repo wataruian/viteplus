@@ -1,13 +1,14 @@
 import type {
   BaseResponse,
+  ErrorDetails,
   InputArgs,
   RouteHandler,
   RouteHandlerParams,
   ServiceContext,
   ServiceMethod,
 } from '../types/middlware';
-import { generateUuid, invokeWithParsedArgs, tracer } from '@lightproject/common/utils';
 import type { BaseService } from '../services/base';
+import { invokeWithParsedArgs } from '@lightproject/common/utils';
 import { isRecord } from '@lightproject/common/validators';
 import { logger } from '@lightproject/common/logger';
 
@@ -45,7 +46,7 @@ const getResponseData = (
     return extraData;
   }
   if (resultData === null) {
-    return null;
+    return undefined;
   }
   return undefined;
 };
@@ -54,48 +55,38 @@ const getResponseErrorAndSuccessAndCode = (
   result: Record<string, unknown>,
 ): {
   code: number;
-  error: BaseResponse['error'];
+  error: ErrorDetails | undefined;
   success: boolean;
 } => {
-  const hasError = result['error'] !== undefined && result['error'] !== null;
-  let responseSuccess = typeof result['success'] === 'boolean' ? result['success'] : true;
-  if (hasError && result['success'] === undefined) {
-    responseSuccess = false;
-  }
+  const err = result['error'];
+  const hasError = err !== undefined && err !== null;
 
-  let responseCode = typeof result['code'] === 'number' ? result['code'] : 200;
+  const success = typeof result['success'] === 'boolean' ? result['success'] : !hasError;
+
+  let code = typeof result['code'] === 'number' ? result['code'] : 200;
   if (hasError && result['code'] === undefined) {
-    const errObj = result['error'];
-    if (isRecord(errObj)) {
-      if (typeof errObj['statusCode'] === 'number') {
-        responseCode = errObj['statusCode'];
-      } else if (typeof errObj['code'] === 'number') {
-        responseCode = errObj['code'];
-      } else {
-        responseCode = 500;
-      }
+    const { statusCode, code: errCode } = err as { statusCode?: number; code?: number };
+
+    if (typeof statusCode === 'number') {
+      code = statusCode;
+    } else if (typeof errCode === 'number') {
+      code = errCode;
     } else {
-      responseCode = 500;
+      code = 500;
     }
   }
 
-  let errorObj: BaseResponse['error'] = undefined;
-  if (hasError) {
-    const err = result['error'];
-    if (err instanceof Error) {
-      errorObj = err;
-    } else if (isErrorLike(err)) {
-      errorObj = err;
-    } else if (err === null) {
-      errorObj = null;
-    }
+  let error: ErrorDetails | undefined = undefined;
+  if (hasError && (err instanceof Error || isErrorLike(err))) {
+    error = {
+      message: err.message,
+      name: err.name,
+      statusCode: code,
+      ...(err.stack === undefined ? {} : { stack: err.stack }),
+    };
   }
 
-  return {
-    code: responseCode,
-    error: errorObj,
-    success: responseSuccess,
-  };
+  return { code, error, success };
 };
 
 const createRouteHandlerImpl =
@@ -104,23 +95,9 @@ const createRouteHandlerImpl =
     method: keyof C,
   ): RouteHandler =>
   async (params: RouteHandlerParams) => {
-    const { ctx, input } = params as { ctx: ServiceContext; input?: unknown };
-
-    const sessionId = ctx.req.locals.sessionId ?? generateUuid();
-    const { requestType } = ctx.req.locals.metadata;
-
-    const span = tracer.startSpan(`${requestType.toLowerCase()}.start`, {
-      attributes: {
-        class: serviceClass.name,
-        function: String(method),
-        method: ctx.req.method,
-        path: ctx.req.locals.metadata.url,
-        requestType,
-        sessionId,
-      },
-    });
-
     try {
+      const { ctx, input } = params as { ctx: ServiceContext; input?: unknown };
+
       const serviceMethod = Reflect.get(serviceClass, String(method));
 
       if (typeof serviceMethod !== 'function') {
@@ -139,6 +116,7 @@ const createRouteHandlerImpl =
 
       const standardKeys = new Set(['code', 'data', 'message', 'sessionId', 'success', 'error']);
       const extraData: Record<string, unknown> = {};
+
       let hasExtraData = false;
       for (const key of Object.keys(result)) {
         if (!standardKeys.has(key)) {
@@ -156,28 +134,20 @@ const createRouteHandlerImpl =
           typeof result['message'] === 'string'
             ? result['message']
             : 'Request processed successfully',
-        sessionId:
-          typeof result['sessionId'] === 'string'
-            ? result['sessionId']
-            : (ctx.req.locals.sessionId ?? undefined),
+        sessionId: ctx.req.locals.sessionId,
         success,
       };
 
-      if (responseData !== null && responseData !== undefined) {
+      if (responseData) {
         response.data = responseData;
       }
 
-      if (error !== null && error !== undefined) {
+      if (error) {
         response.error = error;
       }
 
-      span.setAttribute('success', true).end();
-
       return response;
     } catch (error) {
-      span.recordException(error instanceof Error ? error : new Error(String(error)));
-      span.setAttribute('success', false).end();
-
       logger.error(
         `Error in route handler for ${serviceClass.name}.${String(method)}:`,
         isRecord(error) ? error : { error: String(error) },
@@ -193,6 +163,8 @@ export type { RawServiceResult, CreateRouteHandler };
 export {
   assertIsInputArgs,
   assertIsServiceMethod,
+  isRecordArray,
+  isErrorLike,
   getResponseData,
   getResponseErrorAndSuccessAndCode,
   createRouteHandlerImpl,

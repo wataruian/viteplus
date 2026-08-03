@@ -1,4 +1,4 @@
-import { getEnv, isTest } from '@lightproject/common/environment';
+import { getEnv, isTest, isTrue, isVitest } from '@lightproject/common/environment';
 import type { RouteInfo } from '../types';
 import { extractServiceMetadata } from '../parsers/service-parser';
 import { extractTrpcRoutesFromFile } from '../parsers/trpc-parser';
@@ -13,10 +13,7 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
     const fs = await import('node:fs/promises');
     const rawRouteFiles = await fs.readdir(trpcRouterDir);
     const routeFiles =
-      getEnv('ENABLE_TEST_ROUTES') === 'true' ||
-      isTest() ||
-      getEnv('VITEST') === 'true' ||
-      getEnv('NODE_ENV') === 'test'
+      isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest() || isVitest()
         ? rawRouteFiles
         : rawRouteFiles.filter((file) => file !== 'test.ts');
 

@@ -1,10 +1,11 @@
-import type { ExpressNextFunction, ExpressRequest, ExpressResponse } from '../types/middlware';
+import type { NextFunction, Request, Response } from '../types/middlware';
 import { uniqueOrigins } from '../utils/cors';
 
 const allowedCsp = [...uniqueOrigins];
 
-const cspMiddleware = (_req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
+const cspMiddleware = (_req: Request, res: Response, next: NextFunction) => {
   let csp = '';
+
   for (const origin of allowedCsp) {
     csp += `default-src 'self'; script-src 'self' ${origin}; worker-src 'self' ${origin}; `;
   }

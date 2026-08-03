@@ -34,12 +34,14 @@ class ProjectCache {
     }
 
     this.projectCache = new Project({
-      skipAddingFilesFromTsConfig: false,
+      skipAddingFilesFromTsConfig: true,
       skipFileDependencyResolution: true,
       skipLoadingLibFiles: true,
       tsConfigFilePath: 'tsconfig.json',
       useInMemoryFileSystem: false,
     });
+
+    this.projectCache.addSourceFilesAtPaths(['src/**/*.ts']);
 
     this.lastCacheTime = now;
     return this.projectCache;

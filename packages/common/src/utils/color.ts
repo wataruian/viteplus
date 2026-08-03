@@ -1,9 +1,8 @@
 import chalk from 'chalk';
-const chalkInstance = chalk;
-export { chalkInstance };
 import { getEnv } from '../environment/env';
 import { getRandomText } from './text';
 
+const chalkInstance = chalk;
 const defaultChalkLevel = 3 as 0 | 1 | 2 | 3;
 const chalkLevelEnv = getEnv('CHALK_LEVEL') ?? defaultChalkLevel.toString();
 
@@ -20,12 +19,21 @@ if (normalizedChalkLevel === 0) {
   chalk.level = 3;
 }
 
-const colors = [chalk.red, chalk.green, chalk.blue, chalk.yellow, chalk.cyan, chalk.magenta];
+type ColorFunction = (text: string) => string;
+
+const green = chalkInstance.hex('#2ECC71');
+const magenta = chalkInstance.hex('#E056FD');
+const orange = chalkInstance.hex('#FF8C00');
+const purple = chalkInstance.hex('#9B59B6');
+const pink = chalkInstance.hex('#FF69B4');
+const teal = chalkInstance.hex('#1ABC9C');
+
+const colors: ColorFunction[] = [green, magenta, orange, purple, pink, teal];
 
 const ansiEscapeCodeRegex = /^(?<ansi>\u001B\[[0-9;]*m)/u;
 
-const defaultColor = chalk.white;
-const resetColor = chalk.reset;
+const defaultColor = chalkInstance.white;
+const resetColor = chalkInstance.reset;
 const resetColorAnsiEscapeCode = '\u001B[39m';
 
 const getRandomColor = (id = '') => {
@@ -33,7 +41,7 @@ const getRandomColor = (id = '') => {
   if (!colorId) {
     colorId = getRandomText();
   } else if (colorId === 'no-id') {
-    return chalk.white;
+    return defaultColor;
   }
 
   const index =
@@ -45,7 +53,7 @@ const getRandomColor = (id = '') => {
   return colors[index];
 };
 
-const getNextRandomColor = (id: string, previousColor: typeof chalk | undefined) => {
+const getNextRandomColor = (id: string, previousColor: ColorFunction | undefined) => {
   let colorId = id;
   if (!colorId) {
     colorId = getRandomText();
@@ -53,7 +61,7 @@ const getNextRandomColor = (id: string, previousColor: typeof chalk | undefined)
 
   const nextColor = getRandomColor(colorId);
 
-  if (previousColor === undefined || nextColor.level !== previousColor.level) {
+  if (previousColor === undefined || nextColor !== previousColor) {
     return { nextColor, previousColor };
   }
 
@@ -81,6 +89,7 @@ const getAnsiEscapeCodes = (colorFunction: (text: string) => string) => {
 };
 
 export {
+  chalkInstance,
   chalkLevelEnv,
   defaultChalkLevel,
   colors,
