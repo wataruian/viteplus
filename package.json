@@ -17,6 +17,7 @@
     "serve:prod": "vp run -r start"
   },
   "devDependencies": {
+    "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",
     "rimraf": "catalog:",

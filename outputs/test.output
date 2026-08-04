@@ -3,19 +3,19 @@
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/param-parser.test.ts (4 tests) 10057ms
-   ✓ returns an object-shaped output schema for object returns  4172ms
-   ✓ serializes nested object values from identifiers as object schemas  3090ms
-   ✓ serializes optional array parameters referenced in returned objects as arrays  2786ms
- ✓ tests/logger.test.ts (20 tests) 40ms
- ✓ tests/telemetry.test.ts (1 test) 11ms
- ✓ tests/env.test.ts (17 tests) 2ms
- ✓ tests/index.test.ts (1 test) 1ms
+ ✓ tests/logger.test.ts (20 tests) 66ms
+ ✓ tests/param-parser.test.ts (4 tests) 10549ms
+   ✓ returns an object-shaped output schema for object returns  4120ms
+   ✓ serializes nested object values from identifiers as object schemas  3314ms
+   ✓ serializes optional array parameters referenced in returned objects as arrays  3112ms
+ ✓ tests/env.test.ts (17 tests) 9ms
+ ✓ tests/telemetry.test.ts (1 test) 31ms
+ ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  5 passed (5)
       Tests  43 passed (43)
-   Start at  23:29:22
-   Duration  15.20s (transform 2.09s, setup 0ms, import 3.31s, tests 10.11s, environment 0ms)
+   Start at  00:33:39
+   Duration  16.82s (transform 2.29s, setup 0ms, import 4.18s, tests 10.66s, environment 0ms)
 
  % Coverage report from v8
 ------------------|---------|----------|---------|---------|--------------------
@@ -68,12 +68,12 @@ All files         |   34.61 |    26.15 |   35.29 |   34.45 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
- ✓ tests/button.test.ts (1 test) 3ms
+ ✓ tests/button.test.ts (1 test) 19ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  23:29:23
-   Duration  3.38s (transform 410ms, setup 0ms, import 521ms, tests 3ms, environment 0ms)
+   Start at  00:33:39
+   Duration  2.76s (transform 258ms, setup 0ms, import 372ms, tests 19ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -133,38 +133,46 @@ All files          |    2.21 |        0 |    2.08 |    2.25 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/autogen/index.test.ts (49 tests) 14242ms
-       ✓ should discover both HTTP and tRPC routes  1024ms
-       ✓ should return RouteInfo objects with correct structure  306ms
-       ✓ should find default routes  333ms
-       ✓ should match shape for 'HTTP' '/test/async-fail-throw'  313ms
-       ✓ should match shape for 'HTTP' '/test/get-with-param'  338ms
-       ✓ should match shape for 'HTTP' '/test/object-destructured'  392ms
-       ✓ should match shape for 'HTTP' '/test/sync-fail-throw'  305ms
-       ✓ should match shape for 'HTTP' '/test/sync-success'  307ms
-       ✓ should match shape for 'tRPC' '/trpc/test.checkParams'  373ms
-       ✓ should match shape for 'tRPC' '/trpc/test.asyncFailReject'  310ms
-       ✓ should match shape for 'tRPC' '/trpc/test.customTypeArray'  347ms
-       ✓ should have no unknown output types across all routes  340ms
-       ✓ should complete discovery within reasonable time  309ms
-       ✓ should be deterministic  546ms
-       ✓ should handle discovery errors gracefully  301ms
- ✓ tests/sample.http.test.ts (20 tests) 1093ms
-       ✓ should handle GET /api/test/async-fail-reject  667ms
- ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 1458ms
- ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 1523ms
- ✓ tests/sample.trpc.test.ts (20 tests) 635ms
- ✓ tests/autogen/parsers/service-parser.test.ts (38 tests) 492ms
- ✓ tests/trpc.caller.test.ts (2 tests) 126ms
- ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 41ms
- ✓ tests/autogen/config.test.ts (10 tests) 2ms
- ✓ tests/autogen/types.test.ts (9 tests) 15ms
+ ✓ tests/autogen/index.test.ts (49 tests) 15859ms
+       ✓ should discover both HTTP and tRPC routes  1569ms
+       ✓ should return RouteInfo objects with correct structure  376ms
+       ✓ should find both HTTP and tRPC routes  319ms
+       ✓ should include service metadata when available  387ms
+       ✓ should include output metadata  311ms
+       ✓ should handle different route types  317ms
+       ✓ should discover expected number of routes  324ms
+       ✓ should find test routes in both HTTP and tRPC  307ms
+       ✓ should match shape for 'HTTP' '/'  354ms
+       ✓ should match shape for 'HTTP' '/test/check-params'  332ms
+       ✓ should match shape for 'HTTP' '/test/hello'  352ms
+       ✓ should match shape for 'HTTP' '/test/get-with-param'  328ms
+       ✓ should match shape for 'HTTP' '/test/object-only'  303ms
+       ✓ should match shape for 'HTTP' '/test/sync-fail-reject'  411ms
+       ✓ should match shape for 'HTTP' '/test/sync-fail-throw'  301ms
+       ✓ should match shape for 'tRPC' '/trpc/test.checkParams'  338ms
+       ✓ should match shape for 'tRPC' '/trpc/test.asyncFailReject'  306ms
+       ✓ should match shape for 'tRPC' '/trpc/test.getWithParam'  303ms
+       ✓ should match shape for 'tRPC' '/trpc/test.mixedParams'  329ms
+       ✓ should match shape for 'tRPC' '/trpc/test.primitivesAndArray'  340ms
+       ✓ should match shape for 'tRPC' '/trpc/test.syncFailThrow'  330ms
+       ✓ should match shape for 'tRPC' '/trpc/test.customTypeSingle'  319ms
+       ✓ should be deterministic  530ms
+ ✓ tests/autogen/parsers/service-parser.test.ts (38 tests) 411ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 3122ms
+       ✓ should handle GET /trpc/test.asyncFailReject  2376ms
+ ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 9ms
+ ✓ tests/sample.http.test.ts (20 tests) 801ms
+ ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 2003ms
+ ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 1987ms
+ ✓ tests/autogen/types.test.ts (9 tests) 5ms
+ ✓ tests/trpc.caller.test.ts (2 tests) 152ms
+ ✓ tests/autogen/config.test.ts (10 tests) 3ms
  ✓ tests/index.test.ts (1 test) 1ms
 
  Test Files  11 passed (11)
       Tests  197 passed (197)
-   Start at  23:29:39
-   Duration  30.06s (transform 5.32s, setup 0ms, import 7.98s, tests 19.63s, environment 0ms)
+   Start at  00:33:58
+   Duration  35.06s (transform 6.49s, setup 0ms, import 8.00s, tests 24.35s, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -242,8 +250,8 @@ All files          |   59.18 |    49.14 |   63.07 |   59.27 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  23:30:13
-   Duration  2.76s (transform 1.45s, setup 0ms, import 1.66s, tests 5ms, environment 0ms)
+   Start at  00:34:38
+   Duration  2.81s (transform 1.37s, setup 0ms, import 1.56s, tests 5ms, environment 0ms)
 
  % Coverage report from v8
 ------------|---------|----------|---------|---------|-------------------
@@ -256,4 +264,4 @@ All files   |      10 |        0 |       0 |      10 |
 ------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 4/4 cache hit (100%), 61.41s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 68.42s saved. (Run `vp run --last-details` for full details)

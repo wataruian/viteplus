@@ -2,6 +2,9 @@
   "name": "@lightproject/backend",
   "version": "1.0.0",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/client.cjs",
   "module": "./dist/client.mjs",
@@ -54,6 +57,7 @@
     "@types/node": "catalog:",
     "@types/supertest": "catalog:",
     "@types/swagger-ui-express": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "supertest": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:"

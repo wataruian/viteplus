@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-vp run init
+vp run --no-cache init
