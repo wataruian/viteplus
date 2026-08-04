@@ -14,7 +14,10 @@ import { z } from 'zod';
 
 const assertIsInputArgs: (val: unknown) => asserts val is InputArgs = (_val: unknown) => {};
 
-type ServiceMethod = (input?: JsonValue) => JsonValue | Promise<JsonValue>;
+type ServiceMethod = <TInput>(
+  input?: TInput,
+  ...additionalInputs: TInput[]
+) => JsonValue | Promise<JsonValue>;
 const assertIsServiceMethod: (val: unknown) => asserts val is ServiceMethod = (_val: unknown) => {};
 
 type CreateRouteHandler = <
@@ -23,7 +26,7 @@ type CreateRouteHandler = <
   serviceClass: C,
   method: keyof C,
   schemas?: {
-    input?: z.ZodType<JsonValue>;
+    input?: z.ZodType;
     output?: z.ZodType;
   },
 ) => RouteHandler;
@@ -105,19 +108,16 @@ const createRouteHandlerImpl =
     serviceClass: C,
     method: keyof C,
     schemas?: {
-      input?: z.ZodType<JsonValue>;
+      input?: z.ZodType;
       output?: z.ZodType;
     },
   ): RouteHandler =>
-  async (params: RouteHandlerParams) => {
+  async <TInput>(params: RouteHandlerParams<TInput>) => {
     try {
-      const { ctx, input: rawInput } = params as { ctx: ServiceContext; input?: JsonValue };
+      const { ctx, input: rawInput } = params;
       const isTrpc = 'path' in params && 'batchIndex' in params;
 
-      let input: JsonValue = rawInput;
-      if (!isTrpc && schemas?.input) {
-        input = schemas.input.parse(rawInput);
-      }
+      const input = !isTrpc && schemas?.input ? schemas.input.parse(rawInput) : rawInput;
 
       const serviceMethod = Reflect.get(serviceClass, String(method));
 

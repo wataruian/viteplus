@@ -61,11 +61,13 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
         }),
       }),
     ],
-    metricReader: new PeriodicExportingMetricReader({
-      exporter: new OTLPMetricExporter({
-        url: `${endpoint}/v1/metrics`,
+    metricReaders: [
+      new PeriodicExportingMetricReader({
+        exporter: new OTLPMetricExporter({
+          url: `${endpoint}/v1/metrics`,
+        }),
       }),
-    }),
+    ],
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: serviceName,
       [ATTR_SERVICE_VERSION]: serviceVersion,

@@ -9,16 +9,19 @@ import { publicHttp } from '../../../utils/http';
 const routes = {
   '/test/async-fail-reject': publicHttp.get(() =>
     createRouteHandler(TestService, 'asyncFailReject', {
+      input: TestServiceInputSchemas.asyncFailReject,
       output: TestServiceOutputSchemas.asyncFailReject,
     }),
   ),
   '/test/async-fail-throw': publicHttp.get(() =>
     createRouteHandler(TestService, 'asyncFailThrow', {
+      input: TestServiceInputSchemas.asyncFailThrow,
       output: TestServiceOutputSchemas.asyncFailThrow,
     }),
   ),
   '/test/async-success': publicHttp.get(() =>
     createRouteHandler(TestService, 'asyncSuccess', {
+      input: TestServiceInputSchemas.asyncSuccess,
       output: TestServiceOutputSchemas.asyncSuccess,
     }),
   ),
@@ -78,16 +81,19 @@ const routes = {
   ),
   '/test/sync-fail-reject': publicHttp.get(() =>
     createRouteHandler(TestService, 'syncFailReject', {
+      input: TestServiceInputSchemas.syncFailReject,
       output: TestServiceOutputSchemas.syncFailReject,
     }),
   ),
   '/test/sync-fail-throw': publicHttp.get(() =>
     createRouteHandler(TestService, 'syncFailThrow', {
+      input: TestServiceInputSchemas.syncFailThrow,
       output: TestServiceOutputSchemas.syncFailThrow,
     }),
   ),
   '/test/sync-success': publicHttp.get(() =>
     createRouteHandler(TestService, 'syncSuccess', {
+      input: TestServiceInputSchemas.syncSuccess,
       output: TestServiceOutputSchemas.syncSuccess,
     }),
   ),

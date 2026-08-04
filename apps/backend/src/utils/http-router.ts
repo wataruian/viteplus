@@ -37,7 +37,9 @@ const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void 
               res,
             };
 
-            const inputRaw: unknown = req.body ?? req.query ?? req.params ?? {};
+            const query = Object.keys(req.query).length > 0 ? req.query : undefined;
+            const params = Object.keys(req.params).length > 0 ? req.params : undefined;
+            const inputRaw: unknown = req.body ?? query ?? params;
 
             if (isServiceHandler(handler)) {
               const responseRaw = await Promise.resolve(handler({ ctx, input: inputRaw }));

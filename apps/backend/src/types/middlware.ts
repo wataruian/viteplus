@@ -66,20 +66,20 @@ interface ServiceContext {
 
 type InputArgs = Record<string, JsonValue>;
 
-interface TrpcRouteHandlerParams {
+interface TrpcRouteHandlerParams<TInput = never> {
   ctx: ServiceContext;
-  input: JsonValue;
+  input: TInput;
   signal: AbortSignal | undefined;
   path: string;
   batchIndex?: number;
 }
 
-type RouteHandlerParams =
-  | (Record<string, JsonValue> & { ctx: ServiceContext; input?: JsonValue })
-  | TrpcRouteHandlerParams;
+type RouteHandlerParams<TInput = never> =
+  | (Record<string, JsonValue> & { ctx: ServiceContext; input?: TInput })
+  | TrpcRouteHandlerParams<TInput>;
 
-type RouteHandler<T = unknown> = (
-  params: RouteHandlerParams,
+type RouteHandler<T = unknown> = <TInput>(
+  params: RouteHandlerParams<TInput>,
 ) => BaseResponse<T> | Promise<BaseResponse<T>>;
 
 export type {

@@ -79,8 +79,8 @@ catalog:
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
   uuid: npm:uuid@11.0.0
-  vite: npm:@voidzero-dev/vite-plus-core@0.2.4
-  vite-plus: npm:vite-plus@0.2.4
+  vite: npm:@voidzero-dev/vite-plus-core@0.2.7
+  vite-plus: npm:vite-plus@0.2.7
   wcwidth: npm:wcwidth@1.0.1
   zod: npm:zod@4.4.3
 

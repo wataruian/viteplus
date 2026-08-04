@@ -21,6 +21,7 @@
     "bumpp": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   },

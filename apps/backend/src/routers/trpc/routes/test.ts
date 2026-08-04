@@ -9,12 +9,15 @@ import { publicProcedure, router } from '../../../utils/trpc';
 
 const testRouter = router({
   asyncFailReject: publicProcedure
+    .input(TestServiceInputSchemas.asyncFailReject)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.asyncFailReject))
     .query(createRouteHandler(TestService, 'asyncFailReject')),
   asyncFailThrow: publicProcedure
+    .input(TestServiceInputSchemas.asyncFailThrow)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.asyncFailThrow))
     .query(createRouteHandler(TestService, 'asyncFailThrow')),
   asyncSuccess: publicProcedure
+    .input(TestServiceInputSchemas.asyncSuccess)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.asyncSuccess))
     .query(createRouteHandler(TestService, 'asyncSuccess')),
   checkParams: publicProcedure
@@ -54,12 +57,15 @@ const testRouter = router({
     .output(createBaseResponseSchema(TestServiceOutputSchemas.primitivesAndArray))
     .mutation(createRouteHandler(TestService, 'primitivesAndArray')),
   syncFailReject: publicProcedure
+    .input(TestServiceInputSchemas.syncFailReject)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.syncFailReject))
     .query(createRouteHandler(TestService, 'syncFailReject')),
   syncFailThrow: publicProcedure
+    .input(TestServiceInputSchemas.syncFailThrow)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.syncFailThrow))
     .query(createRouteHandler(TestService, 'syncFailThrow')),
   syncSuccess: publicProcedure
+    .input(TestServiceInputSchemas.syncSuccess)
     .output(createBaseResponseSchema(TestServiceOutputSchemas.syncSuccess))
     .query(createRouteHandler(TestService, 'syncSuccess')),
 });

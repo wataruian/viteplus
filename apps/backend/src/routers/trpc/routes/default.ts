@@ -1,10 +1,17 @@
+import {
+  DefaultService,
+  DefaultServiceInputSchemas,
+  DefaultServiceOutputSchemas,
+} from '../../../services/default';
+import { createBaseResponseSchema, createRouteHandler } from '../../../utils/route-handler';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { publicProcedure, router } from '../../../utils/trpc';
-import { DefaultService } from '../../../services/default';
-import { createRouteHandler } from '../../../utils/route-handler';
 
 const defaultRouter = router({
-  root: publicProcedure.query(createRouteHandler(DefaultService, 'root')),
+  root: publicProcedure
+    .input(DefaultServiceInputSchemas.root)
+    .output(createBaseResponseSchema(DefaultServiceOutputSchemas.root))
+    .query(createRouteHandler(DefaultService, 'root')),
 });
 
 type DefaultRouter = typeof defaultRouter;
