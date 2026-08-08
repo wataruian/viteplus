@@ -1,5 +1,5 @@
 ~/packages/common$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts
+ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/environment/env.ts, src/environment/index.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/validators/index.ts, src/validators/validate.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts
 ℹ [@lightproject/common] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 213 files
@@ -93,7 +93,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] 87 files, total: 213.57 kB
-✔ [@lightproject/common] Build complete in 114ms
+✔ [@lightproject/common] Build complete in 200ms
 ℹ [@lightproject/common] [ESM] dist/utils/param-parser.mjs          27.33 kB │ gzip:  5.33 kB
 ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                  7.91 kB │ gzip:  1.86 kB
 ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs              6.89 kB │ gzip:  1.77 kB
@@ -211,13 +211,13 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts              0.27 kB │ gzip:  0.18 kB
 ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts              0.22 kB │ gzip:  0.17 kB
 ℹ [@lightproject/common] [ESM] 116 files, total: 240.97 kB
-✔ [@lightproject/common] Build complete in 462ms
+✔ [@lightproject/common] Build complete in 439ms
 
 ~/packages/design-system$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/types/component.ts, src/types/index.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
+ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
 ℹ [@lightproject/design-system] tsconfig: tsconfig.json
 ℹ Build start
-ℹ Cleaning 295 files
+ℹ Cleaning 283 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs             16.63 kB │ gzip: 3.94 kB
@@ -230,16 +230,16 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs        3.71 kB │ gzip: 1.26 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/index.cjs                    3.41 kB │ gzip: 0.80 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs               3.08 kB │ gzip: 1.12 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs                  2.94 kB │ gzip: 1.07 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs       2.48 kB │ gzip: 1.00 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs                  2.35 kB │ gzip: 0.88 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs               2.13 kB │ gzip: 0.80 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/compile.cjs                   2.08 kB │ gzip: 0.86 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs                2.07 kB │ gzip: 0.86 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs                  2.06 kB │ gzip: 0.77 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs              2.01 kB │ gzip: 0.90 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs                     1.84 kB │ gzip: 0.59 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs                 1.83 kB │ gzip: 0.79 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs                 1.81 kB │ gzip: 0.80 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/compile.cjs                   1.72 kB │ gzip: 0.73 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs               1.69 kB │ gzip: 0.64 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs           1.66 kB │ gzip: 0.70 kB
 ℹ [@lightproject/design-system] [CJS] dist/context/index.cjs                   1.46 kB │ gzip: 0.45 kB
@@ -268,20 +268,20 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/mode-switcher.cjs.map    5.14 kB │ gzip: 1.82 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/button.cjs.map           4.72 kB │ gzip: 1.67 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/theme-switcher.cjs.map   3.80 kB │ gzip: 1.49 kB
-ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs.map              3.75 kB │ gzip: 1.49 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/layout.cjs.map           3.52 kB │ gzip: 1.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/marquee.cjs.map          3.38 kB │ gzip: 1.39 kB
+ℹ [@lightproject/design-system] [CJS] dist/configs/unocss.cjs.map              3.08 kB │ gzip: 1.23 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.cjs.map                 2.92 kB │ gzip: 0.85 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/badge.cjs.map            2.90 kB │ gzip: 1.19 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/header.cjs.map           2.84 kB │ gzip: 1.17 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/effects.cjs.map              2.75 kB │ gzip: 0.93 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/logo.cjs.map             2.69 kB │ gzip: 1.14 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/typography.cjs.map       2.63 kB │ gzip: 1.08 kB
+ℹ [@lightproject/design-system] [CJS] dist/utils/compile.cjs.map               2.62 kB │ gzip: 1.13 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/card.cjs.map             2.53 kB │ gzip: 1.10 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/typography.cjs.map           2.26 kB │ gzip: 0.87 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/spacing.cjs.map              2.16 kB │ gzip: 0.68 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/input.cjs.map            2.10 kB │ gzip: 0.97 kB
-ℹ [@lightproject/design-system] [CJS] dist/utils/compile.cjs.map               2.09 kB │ gzip: 0.93 kB
 ℹ [@lightproject/design-system] [CJS] dist/utils/helpers.cjs.map               1.91 kB │ gzip: 0.81 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/icon.cjs.map             1.68 kB │ gzip: 0.80 kB
 ℹ [@lightproject/design-system] [CJS] dist/_virtual/_rolldown/runtime.cjs      1.33 kB │ gzip: 0.62 kB
@@ -338,8 +338,8 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/logo.d.cts               0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/components/icon.d.cts               0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/design-system] [CJS] 118 files, total: 237.01 kB
-✔ [@lightproject/design-system] Build complete in 237ms
+ℹ [@lightproject/design-system] [CJS] 118 files, total: 236.65 kB
+✔ [@lightproject/design-system] Build complete in 230ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs               14.48 kB │ gzip: 3.90 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs             9.32 kB │ gzip: 2.64 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/colors.mjs                     6.79 kB │ gzip: 0.92 kB
@@ -349,20 +349,20 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/components/button.mjs                 2.80 kB │ gzip: 1.13 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/index.mjs                       2.71 kB │ gzip: 0.88 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/index.mjs                  2.69 kB │ gzip: 0.82 kB
-ℹ [@lightproject/design-system] [ESM] dist/configs/unocss.mjs                    2.52 kB │ gzip: 1.04 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/theme-switcher.mjs         2.33 kB │ gzip: 0.99 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/effects.mjs                    2.20 kB │ gzip: 0.83 kB
+ℹ [@lightproject/design-system] [ESM] dist/configs/unocss.mjs                    2.16 kB │ gzip: 0.90 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/marquee.mjs                2.06 kB │ gzip: 0.92 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/index.mjs                      2.03 kB │ gzip: 0.70 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/base.mjs                       1.95 kB │ gzip: 0.65 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/badge.mjs                  1.93 kB │ gzip: 0.87 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/header.mjs                 1.92 kB │ gzip: 0.80 kB
+ℹ [@lightproject/design-system] [ESM] dist/utils/compile.mjs                     1.80 kB │ gzip: 0.79 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/logo.mjs                   1.80 kB │ gzip: 0.80 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/card.mjs                   1.76 kB │ gzip: 0.82 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/layout.mjs                 1.70 kB │ gzip: 0.66 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/typography.mjs             1.68 kB │ gzip: 0.74 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/typography.mjs                 1.50 kB │ gzip: 0.68 kB
-ℹ [@lightproject/design-system] [ESM] dist/utils/compile.mjs                     1.48 kB │ gzip: 0.66 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/input.mjs                  1.44 kB │ gzip: 0.71 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/spacing.mjs                    1.30 kB │ gzip: 0.54 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/helpers.mjs                     1.14 kB │ gzip: 0.54 kB
@@ -388,20 +388,20 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/components/mode-switcher.mjs.map      5.06 kB │ gzip: 1.79 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/button.mjs.map             4.67 kB │ gzip: 1.65 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/theme-switcher.mjs.map     3.77 kB │ gzip: 1.46 kB
-ℹ [@lightproject/design-system] [ESM] dist/configs/unocss.mjs.map                3.60 kB │ gzip: 1.42 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/layout.mjs.map             3.54 kB │ gzip: 1.05 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/marquee.mjs.map            3.37 kB │ gzip: 1.39 kB
+ℹ [@lightproject/design-system] [ESM] dist/configs/unocss.mjs.map                2.97 kB │ gzip: 1.18 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/base.mjs.map                   2.93 kB │ gzip: 0.85 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/badge.mjs.map              2.87 kB │ gzip: 1.18 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/header.mjs.map             2.79 kB │ gzip: 1.15 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/effects.mjs.map                2.75 kB │ gzip: 0.92 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/logo.mjs.map               2.67 kB │ gzip: 1.13 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/typography.mjs.map         2.63 kB │ gzip: 1.07 kB
+ℹ [@lightproject/design-system] [ESM] dist/utils/compile.mjs.map                 2.60 kB │ gzip: 1.11 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/card.mjs.map               2.51 kB │ gzip: 1.09 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/typography.mjs.map             2.26 kB │ gzip: 0.88 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/spacing.mjs.map                2.17 kB │ gzip: 0.68 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/input.mjs.map              2.07 kB │ gzip: 0.96 kB
-ℹ [@lightproject/design-system] [ESM] dist/utils/compile.mjs.map                 2.06 kB │ gzip: 0.91 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/helpers.mjs.map                 1.92 kB │ gzip: 0.82 kB
 ℹ [@lightproject/design-system] [ESM] dist/components/icon.mjs.map               1.69 kB │ gzip: 0.80 kB
 ℹ [@lightproject/design-system] [ESM] dist/context/theme-provider.mjs.map        1.31 kB │ gzip: 0.66 kB
@@ -497,11 +497,11 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/types/index.d.mts                     0.32 kB │ gzip: 0.20 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/icons.d.mts                    0.29 kB │ gzip: 0.19 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                 0.28 kB │ gzip: 0.18 kB
-ℹ [@lightproject/design-system] [ESM] 157 files, total: 300.77 kB
-✔ [@lightproject/design-system] Build complete in 512ms
+ℹ [@lightproject/design-system] [ESM] 157 files, total: 300.63 kB
+✔ [@lightproject/design-system] Build complete in 481ms
 
 ~/apps/backend$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/types/middlware.ts, src/types/testing.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/utils/autogen/validators/route-validator.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts
+ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/trpc/index.ts, src/routers/http/index.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/validators/route-validator.ts, src/utils/autogen/generators/openapi-generator.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 326 files
@@ -642,7 +642,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [CJS] dist/utils/autogen/utils/zod.d.cts                        0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/middlewares/csp.d.cts                                0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 134 files, total: 365.64 kB
-✔ [@lightproject/backend] Build complete in 221ms
+✔ [@lightproject/backend] Build complete in 229ms
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/generators/openapi-generator.mjs        14.87 kB │ gzip: 4.02 kB
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/validators/route-validator.mjs          10.63 kB │ gzip: 2.60 kB
 ℹ [@lightproject/backend] [ESM] dist/services/test.mjs                                      9.65 kB │ gzip: 1.63 kB
@@ -819,7 +819,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [ESM] dist/client.d.mts                                           0.17 kB │ gzip: 0.13 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                                            0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 175 files, total: 471.68 kB
-✔ [@lightproject/backend] Build complete in 808ms
+✔ [@lightproject/backend] Build complete in 632ms
 
 ~/apps/frontend$ vp build ◉ cache hit, replaying
 transforming...[plugin rolldown:vite-resolve] Module "node:async_hooks" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/context.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
@@ -842,7 +842,7 @@ dist/assets/rotation-CeuKmYgw.js    1.43 kB │ gzip:   0.67 kB │ map:     1.8
 dist/assets/esm-qnv2WAAO.js        17.42 kB │ gzip:   4.72 kB │ map:    35.35 kB
 dist/assets/index-B2HBhLlX.js     742.02 kB │ gzip: 153.71 kB │ map: 1,473.41 kB
 
-✓ built in 935ms
+✓ built in 822ms
 
 ---
-vp run: 4/4 cache hit (100%), 5.44s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 5.11s saved. (Run `vp run --last-details` for full details)

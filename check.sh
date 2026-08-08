@@ -16,6 +16,7 @@ function executeCommand() {
   local outputsDir="${scriptDir}/outputs"
   mkdir -p "${outputsDir}"
 
+  local isCompileCommand="false"
   local isAutogenCommand="false"
   local commandOutputFile=""
   local commandName="${arguments[*]}"
@@ -43,6 +44,7 @@ function executeCommand() {
       commandOutputFile="test.output"
       ;;
     "vp run -r compile"*)
+      isCompileCommand="true"
       commandOutputFile="compile.output"
       ;;
     "vp run -r autogen"*)
@@ -121,6 +123,17 @@ function executeCommand() {
         cp "${openApiGeneratedJsonFile}" "${openApiMasterJsonFile}"
         vp fmt --write "${openApiMasterJsonFile}"
         echo "✅ Saved OpenAPI spec to ${openApiMasterJsonFile}"
+      fi
+    fi
+
+    if [[ "${isCompileCommand}" == "true" ]]; then
+      local stylesGeneratedJsonFile="${scriptDir}/packages/design-system/tmp/compile/styles.json"
+      local stylesMasterJsonFile="${outputsDir}/styles.json"
+      
+      if [[ -f "${stylesGeneratedJsonFile}" ]]; then
+        cp "${stylesGeneratedJsonFile}" "${stylesMasterJsonFile}"
+        vp fmt --write "${stylesMasterJsonFile}"
+        echo "✅ Saved styles to ${stylesMasterJsonFile}"
       fi
     fi
 

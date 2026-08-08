@@ -1,8 +1,3 @@
-import {
-  type ASTNode,
-  compileStylesRegistry,
-  extractStylesFromFile,
-} from '../utils/style-compiler';
 import { type ColorKeyMap, baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import {
   type UserConfig,
@@ -17,11 +12,10 @@ import {
 } from 'unocss';
 import { getCSS, getThemes } from '../utils/theme-generator';
 import { animation } from '../tokens/animation';
-import fg from 'fast-glob';
 import { getStyles } from '../utils/helpers';
 import { iconsOptions } from '../tokens/icons';
-import path from 'node:path';
 import { shortcuts } from '../utils/shortcuts';
+import { stylesRegistry } from '../utils/compile';
 import { webFontsOptions } from '../tokens/typography';
 
 const themes = getThemes();
@@ -34,17 +28,6 @@ for (const color of semanticColors) {
 }
 
 intentClasses.push(...intentInput('danger').split(' '), ...intentInput('success').split(' '));
-
-const componentsGlob = path.resolve(import.meta.dirname, '../components/**/*.tsx');
-
-const files = fg.globSync(componentsGlob);
-
-const raw: Record<string, ASTNode> = {};
-for (const file of files) {
-  Object.assign(raw, extractStylesFromFile(file));
-}
-
-const stylesRegistry = compileStylesRegistry(raw);
 
 const safelist = [
   ...new Set(

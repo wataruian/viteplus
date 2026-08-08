@@ -1,4 +1,5 @@
 ~/packages/design-system$ tsx --conditions=typescript ./src/utils/compile.ts true ◉ cache hit, replaying
+🚀 Starting style compile process...
 styles {
   raw: {
     badgeStyles: {
@@ -1111,4 +1112,4 @@ styles {
 }
 
 ---
-vp run: cache hit, 572ms saved.
+vp run: cache hit, 580ms saved.

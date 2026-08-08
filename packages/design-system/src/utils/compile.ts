@@ -35,6 +35,14 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
     globalThis.process.env['STYLE_COMPILE_DEBUG'] = 'true';
   }
 
+  globalThis.console.log('🚀 Starting style compile process...');
+
+  const outputDir = path.resolve(import.meta.dirname, '../../tmp/compile');
+  const outputFile = path.resolve(outputDir, 'styles.json');
+
+  fs.mkdirSync(outputDir, { recursive: true });
+  fs.writeFileSync(outputFile, JSON.stringify(styles, undefined, 2));
+
   if (globalThis.process.env['STYLE_COMPILE_DEBUG'] === 'true') {
     globalThis.console.log(
       'styles',
