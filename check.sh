@@ -42,6 +42,9 @@ function executeCommand() {
     "vp run -r test")
       commandOutputFile="test.output"
       ;;
+    "vp run -r compile"*)
+      commandOutputFile="compile.output"
+      ;;
     "vp run -r autogen"*)
       isAutogenCommand="true"
       commandOutputFile="autogen.output"
@@ -145,6 +148,7 @@ executeCommand vp run -r type-check
 executeCommand vp run -r build
 executeCommand vp run -r test
 
+executeCommand vp run -r compile "${debug}"
 executeCommand vp run -r autogen "${debug}"
 
 echo "✅ All commands executed successfully"
