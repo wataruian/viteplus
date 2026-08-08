@@ -1,5 +1,5 @@
 ~/packages/common$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/typecast/index.ts, src/typecast/tc.ts, src/environment/env.ts, src/environment/index.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts, src/validators/index.ts, src/validators/validate.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts
+ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/param-parser.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts, src/typecast/index.ts, src/typecast/tc.ts, src/types/index.ts, src/types/log.ts, src/types/parameter.ts
 ℹ [@lightproject/common] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 213 files
@@ -93,7 +93,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip:  0.05 kB
 ℹ [@lightproject/common] [CJS] 87 files, total: 213.57 kB
-✔ [@lightproject/common] Build complete in 200ms
+✔ [@lightproject/common] Build complete in 236ms
 ℹ [@lightproject/common] [ESM] dist/utils/param-parser.mjs          27.33 kB │ gzip:  5.33 kB
 ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                  7.91 kB │ gzip:  1.86 kB
 ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs              6.89 kB │ gzip:  1.77 kB
@@ -211,10 +211,10 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts              0.27 kB │ gzip:  0.18 kB
 ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts              0.22 kB │ gzip:  0.17 kB
 ℹ [@lightproject/common] [ESM] 116 files, total: 240.97 kB
-✔ [@lightproject/common] Build complete in 439ms
+✔ [@lightproject/common] Build complete in 421ms
 
 ~/packages/design-system$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
+ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/types/component.ts, src/types/index.ts, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
 ℹ [@lightproject/design-system] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 283 files
@@ -339,7 +339,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/icon.d.cts               0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] 118 files, total: 236.65 kB
-✔ [@lightproject/design-system] Build complete in 230ms
+✔ [@lightproject/design-system] Build complete in 247ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs               14.48 kB │ gzip: 3.90 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs             9.32 kB │ gzip: 2.64 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/colors.mjs                     6.79 kB │ gzip: 0.92 kB
@@ -498,10 +498,10 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/tokens/icons.d.mts                    0.29 kB │ gzip: 0.19 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                 0.28 kB │ gzip: 0.18 kB
 ℹ [@lightproject/design-system] [ESM] 157 files, total: 300.63 kB
-✔ [@lightproject/design-system] Build complete in 481ms
+✔ [@lightproject/design-system] Build complete in 446ms
 
 ~/apps/backend$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/trpc/index.ts, src/routers/http/index.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/validators/route-validator.ts, src/utils/autogen/generators/openapi-generator.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts
+ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/trpc/index.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/generators/openapi-generator.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/validators/route-validator.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 326 files
@@ -642,7 +642,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [CJS] dist/utils/autogen/utils/zod.d.cts                        0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/middlewares/csp.d.cts                                0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 134 files, total: 365.64 kB
-✔ [@lightproject/backend] Build complete in 229ms
+✔ [@lightproject/backend] Build complete in 222ms
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/generators/openapi-generator.mjs        14.87 kB │ gzip: 4.02 kB
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/validators/route-validator.mjs          10.63 kB │ gzip: 2.60 kB
 ℹ [@lightproject/backend] [ESM] dist/services/test.mjs                                      9.65 kB │ gzip: 1.63 kB
@@ -819,20 +819,20 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [ESM] dist/client.d.mts                                           0.17 kB │ gzip: 0.13 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                                            0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 175 files, total: 471.68 kB
-✔ [@lightproject/backend] Build complete in 632ms
+✔ [@lightproject/backend] Build complete in 705ms
 
 ~/apps/frontend$ vp build ◉ cache hit, replaying
 transforming...[plugin rolldown:vite-resolve] Module "node:async_hooks" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/context.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "node:path" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/rotation.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
-[plugin rolldown:vite-resolve] Module "node:crypto" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/utils/text.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "zlib" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "util" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
-[plugin rolldown:vite-resolve] Module "zlib" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "fs" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "fs/promises" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "path" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "timers" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 [plugin rolldown:vite-resolve] Module "child_process" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/node_modules/.pnpm/rotating-file-stream@3.2.9/node_modules/rotating-file-stream/dist/esm/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "node:crypto" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/utils/text.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
 ✓ 326 modules transformed.
 rendering chunks...
 computing gzip size...
@@ -842,7 +842,7 @@ dist/assets/rotation-CeuKmYgw.js    1.43 kB │ gzip:   0.67 kB │ map:     1.8
 dist/assets/esm-qnv2WAAO.js        17.42 kB │ gzip:   4.72 kB │ map:    35.35 kB
 dist/assets/index-B2HBhLlX.js     742.02 kB │ gzip: 153.71 kB │ map: 1,473.41 kB
 
-✓ built in 822ms
+✓ built in 783ms
 
 ---
-vp run: 4/4 cache hit (100%), 5.11s saved. (Run `vp run --last-details` for full details)
+vp run: 4/4 cache hit (100%), 5.09s saved. (Run `vp run --last-details` for full details)
