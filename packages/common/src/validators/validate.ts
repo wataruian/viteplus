@@ -1,4 +1,4 @@
-import type { ModuleExports } from '../types/parameter';
+type ModuleExports = Record<string, unknown>;
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -55,6 +55,7 @@ const checkDuplicateExports = (
   }
 };
 
+export type { ModuleExports };
 export {
   checkDuplicateExports,
   isPlainObject,

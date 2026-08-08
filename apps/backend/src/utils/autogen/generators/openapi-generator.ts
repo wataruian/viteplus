@@ -1,5 +1,4 @@
-import type { ParameterMetadata, ParsedType } from '@lightproject/common/types';
-import type { RouteInfo } from '../types';
+import type { ParameterMetadata, ParsedType, RouteInfo } from '../types';
 import { apiEndpoint } from '@lightproject/common/configs';
 
 interface OpenApiOperation {

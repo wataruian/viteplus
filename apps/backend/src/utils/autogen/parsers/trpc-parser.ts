@@ -234,83 +234,6 @@ const extractTrpcRoutesFromFile = (
   }
 };
 
-const extractTrpcServiceMethodEnhanced = (procedureName: string): string | undefined => {
-  try {
-    const parts = procedureName.split('.');
-
-    if (parts.length > 2) {
-      return parts.at(-1) ?? undefined;
-    }
-
-    if (parts.length === 2) {
-      return parts[1];
-    }
-
-    if (parts.length === 1) {
-      return parts[0];
-    }
-
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-const getTrpcRouteObjNameEnhanced = (procedureName: string): string | undefined => {
-  try {
-    const nameParts = procedureName.split('.');
-
-    if (nameParts.length < 2) {
-      return `${nameParts[0]}Routes`;
-    }
-
-    const [routePrefix] = nameParts;
-
-    return `${routePrefix}Routes`;
-  } catch {
-    return undefined;
-  }
-};
-
-const normalizeTrpcProcedureName = (procedureName: string): string => {
-  let normalized = procedureName.trim();
-
-  if (!normalized.includes('.')) {
-    normalized = `default.${normalized}`;
-  }
-
-  return normalized;
-};
-
-const extractTrpcInputSchema = (
-  procedureCall: CallExpression,
-): Record<string, unknown> | undefined => {
-  let current: Node | undefined = procedureCall;
-
-  while (current !== undefined) {
-    if (Node.isCallExpression(current)) {
-      const expression = current.getExpression();
-
-      if (Node.isPropertyAccessExpression(expression) && expression.getName() === 'input') {
-        const args = current.getArguments();
-
-        if (args.length > 0) {
-          const [schemaArg] = args;
-
-          return {
-            definition: schemaArg.getText(),
-            type: 'schema',
-          };
-        }
-      }
-    }
-
-    current = current.getParent();
-  }
-
-  return undefined;
-};
-
 export {
   findRouterCalls,
   findCreateRouteHandlerCall,
@@ -319,9 +242,5 @@ export {
   extractTrpcRoutesFromFile,
   extractProcedureType,
   extractServiceInfoFromProcedure,
-  extractTrpcServiceMethodEnhanced,
-  getTrpcRouteObjNameEnhanced,
-  normalizeTrpcProcedureName,
-  extractTrpcInputSchema,
   getPropertyName,
 };

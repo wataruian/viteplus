@@ -85,11 +85,4 @@ const extractHttpServiceMethod = (handlerFilePath: string, path: string): string
   }
 };
 
-const getServiceMethodFromHandlerFile = (
-  handlerFilePath: string,
-  propertyKey: string,
-  requestType: 'HTTP' | 'tRPC',
-): string | undefined =>
-  requestType === 'HTTP' ? extractHttpServiceMethod(handlerFilePath, propertyKey) : propertyKey;
-
-export { extractServiceMethodFromChain, extractHttpServiceMethod, getServiceMethodFromHandlerFile };
+export { extractServiceMethodFromChain, extractHttpServiceMethod };

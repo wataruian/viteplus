@@ -1,5 +1,5 @@
+import { isCallable, isRecord } from '../validators/validate';
 import type { RedactFn } from '../types/log';
-import { isRecord } from '../validators/validate';
 import redactObj from 'redact-object';
 
 const defaultRedactValue = '[REDACTED]';
@@ -24,18 +24,18 @@ const defaultMaskFields: string[] = [
   'refresh_token',
 ];
 
-const isFunc = (val: unknown): val is RedactFn => typeof val === 'function';
-
 const getRedactFn = (mod: unknown): RedactFn | null => {
-  if (isFunc(mod)) {
+  if (isCallable(mod)) {
     return mod;
   }
+
   if (isRecord(mod) && 'default' in mod) {
     const def = mod['default'];
-    if (isFunc(def)) {
+    if (isCallable(def)) {
       return def;
     }
   }
+
   return null;
 };
 
@@ -70,4 +70,4 @@ const redact = (
   }
 };
 
-export { defaultRedactValue, defaultMaskFields, isFunc, getRedactFn, redact };
+export { defaultRedactValue, defaultMaskFields, getRedactFn, redact };

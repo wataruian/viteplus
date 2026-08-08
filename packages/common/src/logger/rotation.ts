@@ -1,8 +1,4 @@
-import type { InternalStream, LogStream, RotationOptions } from '../types/log';
-import { isRecord } from '../validators/validate';
-
-const isInternalStream = (value: unknown): value is InternalStream =>
-  isRecord(value) && typeof value['write'] === 'function';
+import type { LogStream, RotationOptions } from '../types/log';
 
 const createRotationStream = async (
   outputPath: string,
@@ -23,15 +19,11 @@ const createRotationStream = async (
     size: options.size ?? '10M',
   });
 
-  if (isInternalStream(stream)) {
-    return {
-      write: (data: string) => {
-        stream.write(data);
-      },
-    };
-  }
-
-  throw new Error('Failed to create a valid rotation stream');
+  return {
+    write: (data: string) => {
+      stream.write(data);
+    },
+  };
 };
 
-export { isInternalStream, createRotationStream };
+export { createRotationStream };

@@ -18,13 +18,6 @@ interface LoggerOptions {
   timestamp: boolean;
 }
 
-interface InternalStream {
-  write: (
-    data: string | Uint8Array,
-    callback?: (error: Error | null | undefined) => void,
-  ) => boolean;
-}
-
 interface LogStream {
   write: (data: string) => void;
 }
@@ -39,13 +32,4 @@ interface LogEntry {
 
 type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;
 
-export type {
-  LogLevel,
-  LogMode,
-  RotationOptions,
-  LoggerOptions,
-  InternalStream,
-  LogStream,
-  LogEntry,
-  RedactFn,
-};
+export type { LogLevel, LogMode, RotationOptions, LoggerOptions, LogStream, LogEntry, RedactFn };

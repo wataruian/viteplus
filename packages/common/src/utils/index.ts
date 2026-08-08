@@ -2,7 +2,6 @@ export * from './base';
 export * from './color';
 export * from './date';
 export * from './directory';
-export * from './param-parser';
 export * from './serialize';
 export * from './text';
 export * from './telemetry';

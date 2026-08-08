@@ -1,7 +1,5 @@
+import type { ParsedType, ServiceMetadata } from '../types';
 import { getProject, servicesDir } from '../config';
-import type { ParsedType } from '@lightproject/common/types';
-import type { ServiceMetadata } from '../types';
-import type { SourceFile } from 'ts-morph';
 import { createBaseResponseSchema } from '../../route-handler';
 import { isRecord } from '@lightproject/common/validators';
 import { z } from 'zod';
@@ -145,23 +143,4 @@ const getServiceNameFromHandlerFile = (handlerFilePath: string): string | undefi
   }
 };
 
-const getImportedRouteNames = (routerFile: SourceFile): string[] =>
-  routerFile
-    .getImportDeclarations()
-    .map((importDecl) => importDecl.getDefaultImport()?.getText())
-    .filter((name): name is string => name !== undefined);
-
-const getRouteHandlerFilePath = (routerDirectory: string, routeName: string): string => {
-  const routesDir = `${routerDirectory}/routes`;
-  const fileName = routeName.replace('Routes', '').toLowerCase();
-
-  return `${routesDir}/${fileName}.ts`;
-};
-
-export {
-  extractServiceMetadata,
-  toPascalCase,
-  getServiceNameFromHandlerFile,
-  getImportedRouteNames,
-  getRouteHandlerFilePath,
-};
+export { extractServiceMetadata, toPascalCase, getServiceNameFromHandlerFile };

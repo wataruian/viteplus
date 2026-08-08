@@ -88,6 +88,7 @@ const getAnsiEscapeCodes = (colorFunction: (text: string) => string) => {
   return { close: '', open: '' };
 };
 
+export type { ColorFunction };
 export {
   chalkInstance,
   chalkLevelEnv,

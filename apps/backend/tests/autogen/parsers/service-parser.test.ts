@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test';
 import {
   extractServiceMetadata,
-  getRouteHandlerFilePath,
   getServiceNameFromHandlerFile,
   toPascalCase,
 } from '../../../src/utils/autogen/parsers/service-parser';
-import type { ParameterMetadata } from '@lightproject/common/types';
+import type { ParameterMetadata } from '../../../src/utils/autogen/types';
 import { isParsedType } from '../../../src/utils/autogen/generators/openapi-generator';
 
 const formatTypeToString = (type: unknown): string => {
@@ -350,30 +349,6 @@ describe('Service Parser', () => {
         '/Users/project/src/services/my-custom-service.ts',
       );
       expect(result).toBe('MyCustomServiceService');
-    });
-  });
-
-  describe('getRouteHandlerFilePath', () => {
-    it('should construct correct file path from route name', () => {
-      const routerDir = '/path/to/router';
-      const result = getRouteHandlerFilePath(routerDir, 'testRoutes');
-
-      expect(result).toBe('/path/to/router/routes/test.ts');
-    });
-
-    it('should handle different route naming patterns', () => {
-      const routerDir = '/router';
-
-      expect(getRouteHandlerFilePath(routerDir, 'defaultRoutes')).toBe('/router/routes/default.ts');
-      expect(getRouteHandlerFilePath(routerDir, 'userRoutes')).toBe('/router/routes/user.ts');
-      expect(getRouteHandlerFilePath(routerDir, 'authRoutes')).toBe('/router/routes/auth.ts');
-    });
-
-    it('should handle routes without "Routes" suffix', () => {
-      const routerDir = '/router';
-      const result = getRouteHandlerFilePath(routerDir, 'test');
-
-      expect(result).toBe('/router/routes/test.ts');
     });
   });
 

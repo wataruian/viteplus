@@ -1,4 +1,20 @@
-import type { ParameterMetadata } from '@lightproject/common/types';
+interface ParsedType {
+  base?: string;
+  itemType?: ParsedType | string;
+  kind: 'array' | 'object' | 'primitive' | 'union';
+  properties?: Record<string, ParsedType | string>;
+  types?: (ParsedType | string)[];
+  required?: boolean;
+}
+
+interface ParameterMetadata {
+  name: string;
+  defaultValue?: boolean | number | string | undefined | unknown[] | Record<string, unknown>;
+  description?: string | undefined;
+  properties?: ParameterMetadata[] | undefined;
+  required?: boolean | undefined;
+  type: string | ParsedType | Record<string, unknown>;
+}
 
 interface RouteHandlerInfo {
   handlerFilePath: string;
@@ -27,4 +43,4 @@ interface ServiceMetadata {
   serviceFilePath: string | undefined;
 }
 
-export type { RouteHandlerInfo, RouteInfo, ServiceMetadata };
+export type { ParameterMetadata, ParsedType, RouteHandlerInfo, RouteInfo, ServiceMetadata };

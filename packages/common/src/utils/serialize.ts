@@ -1,10 +1,10 @@
 import { isRecord } from '../validators/validate';
 
-const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
-
 type Primitive = string | number | boolean | bigint | symbol | null | undefined;
 
 type JsonValue = Primitive | { [key: string]: JsonValue } | JsonValue[];
+
+const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
 
 const isT = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
 

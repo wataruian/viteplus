@@ -1,4 +1,4 @@
-import type { ParsedType } from '@lightproject/common/types';
+import type { ParsedType } from '../types';
 import { z } from 'zod';
 
 type InferSchemaMap<T extends Record<string, z.ZodType>> = {

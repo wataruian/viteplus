@@ -1,5 +1,5 @@
-import { type AnyValueMap, SeverityNumber, logs } from '@opentelemetry/api-logs';
 import type { LogEntry, LogLevel, LogStream, LoggerOptions } from '../types/log';
+import { SeverityNumber, logs } from '@opentelemetry/api-logs';
 import { formatJSON, formatPretty } from './formatters';
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
 import { getSessionId } from './context';
@@ -19,9 +19,6 @@ const otelSeverity: Record<LogLevel, SeverityNumber> = {
   info: SeverityNumber.INFO,
   warn: SeverityNumber.WARN,
 };
-
-const isAnyValueMap = (value: unknown): value is AnyValueMap =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 class Logger {
   private readonly options: LoggerOptions;
@@ -125,7 +122,7 @@ class Logger {
     this.otelLogger.emit({
       attributes: {
         logger: 'application',
-        metadata: isAnyValueMap(metadata) ? metadata : {},
+        metadata: Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : undefined,
         timestamp: entry.timestamp,
       },
       body: JSON.stringify(entry),
@@ -163,4 +160,4 @@ class Logger {
 
 const logger = new Logger();
 
-export { isAnyValueMap, logLevelPriority, Logger, logger };
+export { logLevelPriority, otelSeverity, Logger, logger };
