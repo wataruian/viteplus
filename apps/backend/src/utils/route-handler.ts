@@ -6,41 +6,18 @@ import type {
   RouteHandlerParams,
   ServiceContext,
 } from '../types/middlware';
+import { isRecord, isRecordArray } from '@lightproject/common/validators';
 import type { BaseService } from '../services/base';
 import type { JsonValue } from '@lightproject/common/utils';
 import { logger } from '@lightproject/common/logger';
-
 import { z } from 'zod';
-
-const assertIsInputArgs: (val: unknown) => asserts val is InputArgs = (_val: unknown) => {};
 
 type ServiceMethod = <TInput>(
   input?: TInput,
   ...additionalInputs: TInput[]
 ) => JsonValue | Promise<JsonValue>;
+
 const assertIsServiceMethod: (val: unknown) => asserts val is ServiceMethod = (_val: unknown) => {};
-
-type CreateRouteHandler = <
-  C extends new (ctx: ServiceContext, inputArgs?: InputArgs) => BaseService,
->(
-  serviceClass: C,
-  method: keyof C,
-  schemas?: {
-    input?: z.ZodType;
-    output?: z.ZodType;
-  },
-) => RouteHandler;
-
-type RawServiceResult = Partial<BaseResponse<unknown>> & Record<string, unknown>;
-
-const isRecord = (val: unknown): val is Record<string, unknown> =>
-  typeof val === 'object' && val !== null && !Array.isArray(val);
-
-const isRecordArray = (val: unknown): val is Record<string, unknown>[] =>
-  Array.isArray(val) && val.every((item) => isRecord(item));
-
-const isErrorLike = (val: unknown): val is Error =>
-  isRecord(val) && typeof val['name'] === 'string' && typeof val['message'] === 'string';
 
 const getResponseData = (
   result: Record<string, unknown>,
@@ -91,7 +68,7 @@ const getResponseErrorAndSuccessAndCode = (
   }
 
   let error: ErrorDetails | undefined = undefined;
-  if (hasError && (err instanceof Error || isErrorLike(err))) {
+  if (hasError && err instanceof Error) {
     error = {
       message: err.message,
       name: err.name,
@@ -210,12 +187,8 @@ const createBaseResponseSchema = <T extends z.ZodType>(dataSchema?: T) =>
     success: z.boolean(),
   });
 
-export type { RawServiceResult, CreateRouteHandler };
 export {
-  assertIsInputArgs,
   assertIsServiceMethod,
-  isRecordArray,
-  isErrorLike,
   getResponseData,
   getResponseErrorAndSuccessAndCode,
   createRouteHandlerImpl,

@@ -2,6 +2,7 @@ import type { ParsedType, ServiceMetadata } from '../types';
 import { getProject, servicesDir } from '../config';
 import { createBaseResponseSchema } from '../../route-handler';
 import { isRecord } from '@lightproject/common/validators';
+import { toPascalCase } from '@lightproject/common/utils';
 import { z } from 'zod';
 import { zodToParsedType } from '../utils/zod';
 
@@ -122,12 +123,6 @@ const extractServiceMetadata = async (
   }
 };
 
-const toPascalCase = (str: string): string =>
-  str
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('');
-
 const getServiceNameFromHandlerFile = (handlerFilePath: string): string | undefined => {
   try {
     const fileName = handlerFilePath.split('/').pop()?.replace('.ts', '');
@@ -143,4 +138,4 @@ const getServiceNameFromHandlerFile = (handlerFilePath: string): string | undefi
   }
 };
 
-export { extractServiceMetadata, toPascalCase, getServiceNameFromHandlerFile };
+export { extractSchemas, buildInputParams, extractServiceMetadata, getServiceNameFromHandlerFile };

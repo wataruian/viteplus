@@ -1,4 +1,4 @@
-import type { Request, Response, ServiceContext } from '../types/middlware';
+import { type ServiceContext, isRequest, isResponse } from '../types/middlware';
 import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
@@ -19,9 +19,6 @@ const trpcClient = createTRPCClient<TrpcRouter>({
     }),
   ],
 });
-
-const isRequest = (req: Express.Request): req is Request => 'locals' in req;
-const isResponse = (res: Express.Response): res is Response => 'locals' in res;
 
 const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint): void => {
   try {

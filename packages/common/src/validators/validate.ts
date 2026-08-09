@@ -6,6 +6,9 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
+const isRecordArray = (val: unknown): val is Record<string, unknown>[] =>
+  Array.isArray(val) && val.every((item) => isRecord(item));
+
 const isCallable = (value: unknown): value is (...args: unknown[]) => unknown =>
   typeof value === 'function';
 
@@ -60,6 +63,7 @@ export {
   checkDuplicateExports,
   isPlainObject,
   isRecord,
+  isRecordArray,
   isCallable,
   isNonNullObject,
   isModuleExports,

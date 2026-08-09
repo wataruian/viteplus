@@ -1,4 +1,3 @@
-import type { Request, Response } from './types/middlware';
 import {
   apiEndpoint,
   docsUrl,
@@ -7,6 +6,7 @@ import {
 } from '@lightproject/common/configs';
 import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
 import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
+import { isRequest, isResponse } from './types/middlware';
 import { build } from './utils/autogen';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
@@ -20,9 +20,6 @@ import { registerTrpcRoutes } from './utils/trpc-router';
 import { swaggerOpenApiMiddleware } from './middlewares/swagger-openapi';
 import { trpcPlayground } from './middlewares/trpc-playground';
 import { trustProxyMiddleware } from './middlewares/trust-proxy';
-
-const isRequest = (req: express.Request): req is Request => 'locals' in req;
-const isResponse = (res: express.Response): res is Response => 'locals' in res;
 
 const createApp = async (shouldAutogen = false) => {
   if (shouldAutogen) {

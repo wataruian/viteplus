@@ -75,6 +75,12 @@ const upperCaseFirstLetter = (str: string): string => str.charAt(0).toUpperCase(
 
 const uppercasePerWord = (str: string): string => str.replaceAll(/\b\w/gu, (c) => c.toUpperCase());
 
+const toPascalCase = (str: string): string =>
+  str
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+
 export {
   generateShortUuid,
   generateUuid,
@@ -83,4 +89,5 @@ export {
   safeToString,
   upperCaseFirstLetter,
   uppercasePerWord,
+  toPascalCase,
 };

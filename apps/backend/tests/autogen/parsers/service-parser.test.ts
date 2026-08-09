@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vite-plus/test';
 import {
   extractServiceMetadata,
   getServiceNameFromHandlerFile,
-  toPascalCase,
 } from '../../../src/utils/autogen/parsers/service-parser';
 import type { ParameterMetadata } from '../../../src/utils/autogen/types';
 import { isParsedType } from '../../../src/utils/autogen/generators/openapi-generator';
+import { toPascalCase } from '@lightproject/common/utils';
 
 const formatTypeToString = (type: unknown): string => {
   if (typeof type === 'string') {

@@ -82,6 +82,9 @@ type RouteHandler<T = unknown> = <TInput>(
   params: RouteHandlerParams<TInput>,
 ) => BaseResponse<T> | Promise<BaseResponse<T>>;
 
+const isRequest = (req: ExpressRequest): req is Request => 'locals' in req;
+const isResponse = (res: ExpressResponse): res is Response => 'locals' in res;
+
 export type {
   ServiceContext,
   ErrorDetails,
@@ -96,3 +99,4 @@ export type {
   RouteHandler,
   RouteHandlerParams,
 };
+export { isRequest, isResponse };
