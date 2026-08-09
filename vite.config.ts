@@ -17,6 +17,7 @@ const commonIgnorePatterns = [
     '.gitignore',
     '.vite-hooks',
     '.vscode',
+    '.templates',
     'AGENTS.md',
     'CLAUDE.md',
     'GEMINI.md',
@@ -320,6 +321,25 @@ const getRootViteConfig = (): UserConfig => ({
     isRoot: true,
     mode: globalThis.process.env['NODE_ENV'] ?? 'development',
   }),
+  create: {
+    templates: [
+      {
+        description: 'New backend application',
+        name: 'backend',
+        template: './.templates/backend',
+      },
+      {
+        description: 'New frontend application',
+        name: 'frontend',
+        template: './.templates/frontend',
+      },
+      {
+        description: 'New shared package or library',
+        name: 'library',
+        template: './.templates/library',
+      },
+    ],
+  },
   run: {
     cache: {
       scripts: true,

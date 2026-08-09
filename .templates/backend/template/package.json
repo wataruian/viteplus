@@ -1,0 +1,65 @@
+{
+  "name": "@lightproject/backend-template",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/client.cjs",
+  "module": "./dist/client.mjs",
+  "types": "./dist/client.d.mts",
+  "exports": {
+    ".": {
+      "typescript": {
+        "types": "./src/client.ts",
+        "default": "./src/client.ts"
+      },
+      "require": {
+        "types": "./dist/client.d.cts",
+        "default": "./dist/client.cjs"
+      },
+      "import": {
+        "types": "./dist/client.d.mts",
+        "default": "./dist/client.mjs"
+      }
+    }
+  },
+  "scripts": {
+    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts"
+  },
+  "dependencies": {
+    "@lightproject/common": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "axios": "catalog:",
+    "chalk": "catalog:",
+    "cors": "catalog:",
+    "crypto-js": "catalog:",
+    "express": "catalog:",
+    "express-list-endpoints": "catalog:",
+    "helmet": "catalog:",
+    "openapi-trpc": "catalog:",
+    "openapi-types": "catalog:",
+    "superjson": "catalog:",
+    "swagger-autogen": "catalog:",
+    "swagger-ui-express": "catalog:",
+    "trpc-openapi": "catalog:",
+    "trpc-playground": "catalog:",
+    "ts-morph": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/cors": "catalog:",
+    "@types/crypto-js": "catalog:",
+    "@types/express": "catalog:",
+    "@types/express-serve-static-core": "catalog:",
+    "@types/node": "catalog:",
+    "@types/supertest": "catalog:",
+    "@types/swagger-ui-express": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "supertest": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

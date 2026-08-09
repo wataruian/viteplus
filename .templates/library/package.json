@@ -1,0 +1,9 @@
+{
+  "name": "@lightproject/template-library-generator",
+  "version": "1.0.0",
+  "private": true,
+  "bin": {
+    "create-library": "./index.ts"
+  },
+  "type": "module"
+}

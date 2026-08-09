@@ -1,0 +1,30 @@
+{
+  "name": "@lightproject/frontend-template",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@iconify-json/logos": "catalog:",
+    "@iconify-json/ph": "catalog:",
+    "@lightproject/backend": "workspace:*",
+    "@lightproject/common": "workspace:*",
+    "@lightproject/design-system": "workspace:*",
+    "@trpc/client": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "superjson": "catalog:",
+    "unocss": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
