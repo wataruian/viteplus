@@ -1,4 +1,4 @@
-import { type ServiceContext, isRequest, isResponse } from '../types/middlware';
+import { type ServiceContext, isRequest, isResponse } from '../middlewares/initialize-request';
 import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';

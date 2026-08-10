@@ -1,9 +1,36 @@
-import type { MakeTrcpRequestOptions, TestEnvironment, TrpcTestCase } from '../src/types/testing';
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+import type { AppRouterPaths } from '../src/utils/trpc-router';
+import type { TRPCProcedureType } from '@trpc/server';
 import { getTrpcRoutes } from '../src/utils/autogen/discovery/trpc-discovery';
 import request from 'supertest';
 import { transformer } from '../src/utils/trpc';
 import { trpcEndpoint } from '@lightproject/common/configs';
+
+interface MakeTrcpRequestOptions {
+  env?: 'other-test' | 'test';
+  input?: Record<string, unknown>;
+  ip?: string;
+  method?: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put';
+  path: AppRouterPaths | 'test.unknown';
+  type: TRPCProcedureType;
+}
+
+interface TrpcTestCase {
+  description?: string;
+  endpoint?: string;
+  env?: 'other-test' | 'test';
+  expected: {
+    code: number;
+    data?: unknown;
+    error?: unknown;
+    message?: string | undefined;
+    success: boolean;
+    trpcError?: string | undefined;
+  };
+  input?: null | Record<string, unknown> | undefined;
+  path: AppRouterPaths | 'test.unknown';
+  type: TRPCProcedureType;
+}
 
 const makeRequest = async ({ input = {}, path, type }: MakeTrcpRequestOptions) => {
   const method = type === 'query' ? 'get' : 'post';
@@ -338,7 +365,7 @@ const cases: Record<string, TrpcTestCase[]> = {
   ],
 };
 
-const runTests = (env: TestEnvironment, testCases: TrpcTestCase[]) => {
+const runTests = (env: 'other-test' | 'test', testCases: TrpcTestCase[]) => {
   beforeAll(() => {
     let blockAllIps = false;
     if (env === 'other-test') {

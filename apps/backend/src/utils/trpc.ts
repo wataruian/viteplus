@@ -1,4 +1,9 @@
-import type { ErrorDetails, Request, Response, ServiceContext } from '../types/middlware';
+import type {
+  ErrorDetails,
+  Request,
+  Response,
+  ServiceContext,
+} from '../middlewares/initialize-request';
 import { type TRPCError, initTRPC } from '@trpc/server';
 import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import';
 import type { OpenApiMeta } from 'trpc-openapi';

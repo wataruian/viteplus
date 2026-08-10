@@ -1,4 +1,4 @@
-import type { LogStream, RotationOptions } from '../types/log';
+import type { LogStream, RotationOptions } from './log';
 
 const createRotationStream = async (
   outputPath: string,

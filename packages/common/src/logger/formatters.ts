@@ -1,5 +1,5 @@
 import { chalkInstance, defaultColor } from '../utils/color';
-import type { LogEntry } from '../types/log';
+import type { LogEntry } from './log';
 import { getColor } from './context';
 
 const formatColors = {

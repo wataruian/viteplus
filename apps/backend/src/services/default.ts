@@ -1,4 +1,4 @@
-import type { InputArgs, ServiceContext } from '../types/middlware';
+import type { InputArgs, ServiceContext } from '../middlewares/initialize-request';
 import { BaseService } from './base';
 import type { InferSchemaMap } from '../utils/autogen/utils/zod';
 import z from 'zod';

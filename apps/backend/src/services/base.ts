@@ -1,4 +1,4 @@
-import type { InputArgs, ServiceContext } from '../types/middlware';
+import type { InputArgs, ServiceContext } from '../middlewares/initialize-request';
 
 const assertIsGetInstanceFn: (fn: unknown) => asserts fn is () => BaseServiceInterface = (
   _fn: unknown,

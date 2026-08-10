@@ -5,7 +5,7 @@ import type {
   NextFunction,
   Request,
   Response,
-} from '../types/middlware';
+} from './initialize-request';
 import { type JsonValue, safeSerialize } from '@lightproject/common/utils';
 import { getEnv, isProduction, isTrue } from '@lightproject/common/environment';
 import { Buffer } from 'node:buffer';

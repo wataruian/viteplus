@@ -1,4 +1,4 @@
-import type { RouteHandler } from '../types/middlware';
+import type { RouteHandler } from '../middlewares/initialize-request';
 
 const publicHttp = {
   delete: (handlerFactory: () => RouteHandler) => ({

@@ -1,5 +1,5 @@
 import { isCallable, isRecord } from '../validators/validate';
-import type { RedactFn } from '../types/log';
+import type { RedactFn } from './log';
 import redactObj from 'redact-object';
 
 const defaultRedactValue = '[REDACTED]';

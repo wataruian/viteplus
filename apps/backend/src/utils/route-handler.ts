@@ -5,7 +5,7 @@ import type {
   RouteHandler,
   RouteHandlerParams,
   ServiceContext,
-} from '../types/middlware';
+} from '../middlewares/initialize-request';
 import { isRecord, isRecordArray } from '@lightproject/common/validators';
 import type { BaseService } from '../services/base';
 import type { JsonValue } from '@lightproject/common/utils';

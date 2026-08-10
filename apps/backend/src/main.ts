@@ -6,12 +6,11 @@ import {
 } from '@lightproject/common/configs';
 import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
 import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
-import { isRequest, isResponse } from './types/middlware';
+import { initializeRequest, isRequest, isResponse } from './middlewares/initialize-request';
 import { build } from './utils/autogen';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
 import express from 'express';
-import { initializeRequest } from './middlewares/initialize-request';
 import { logger } from '@lightproject/common/logger';
 import { notFoundHandler } from './middlewares/not-found-handler';
 import { padEmoji } from '@lightproject/common/utils';

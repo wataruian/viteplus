@@ -1,5 +1,5 @@
 import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
-import type { RouteHandler } from '../../types/middlware';
+import type { RouteHandler } from '../../middlewares/initialize-request';
 import defaultRoutes from './routes/default';
 import testRoutes from './routes/test';
 

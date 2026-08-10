@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from '../types/middlware';
+import type { NextFunction, Request, Response } from './initialize-request';
 import {
   getEnv,
   isCi,

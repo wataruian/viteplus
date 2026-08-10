@@ -1,5 +1,9 @@
-/* eslint-disable typescript/no-explicit-any, typescript/no-unsafe-type-assertion */
-import type { Locals, Request, Response, ServiceContext } from '../src/types/middlware';
+import type {
+  Locals,
+  Request,
+  Response,
+  ServiceContext,
+} from '../src/middlewares/initialize-request';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
@@ -51,18 +55,26 @@ describe('tRPC Integration Tests', () => {
       sessionId: 'test',
     };
 
-    const requestRaw: any = {
-      locals,
-      method: 'GET',
-      originalUrl: trpcEndpoint,
-      url: trpcEndpoint,
-    };
-    const request = requestRaw as Request;
+    const requestBase: Partial<Request> = {};
+    const request: Request = Object.assign(
+      requestBase,
+      {
+        locals,
+        method: 'GET',
+        originalUrl: trpcEndpoint,
+        url: trpcEndpoint,
+      },
+      vi.fn<() => Request>()(),
+    );
 
-    const responseRaw: any = {
-      locals,
-    };
-    const response = responseRaw as Response;
+    const responseBase: Partial<Response> = {};
+    const response: Response = Object.assign(
+      responseBase,
+      {
+        locals,
+      },
+      vi.fn<() => Response>()(),
+    );
 
     const ctx: ServiceContext = {
       req: request,

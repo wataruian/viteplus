@@ -1,8 +1,30 @@
-import type { HttpTestCase, MakeHttpRequestOptions, TestEnvironment } from '../src/types/testing';
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { apiEndpoint } from '@lightproject/common/configs';
 import { getHttpRoutes } from '../src/utils/autogen/discovery/http-discovery';
 import request from 'supertest';
+
+interface HttpTestCase {
+  description?: string;
+  endpoint: string;
+  env?: 'other-test' | 'test';
+  expected: {
+    code: number;
+    data?: unknown;
+    error?: unknown;
+    message?: string;
+    success: boolean;
+  };
+  input?: null | Record<string, unknown>;
+  method: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put';
+}
+
+interface MakeHttpRequestOptions {
+  endpoint: string;
+  env?: 'other-test' | 'test';
+  input?: Record<string, unknown>;
+  ip?: string;
+  method?: 'delete' | 'get' | 'head' | 'options' | 'patch' | 'post' | 'put';
+}
 
 const makeRequest = async ({ endpoint, input = {}, method = 'get' }: MakeHttpRequestOptions) => {
   const normalizedEndpoint = endpoint.startsWith(apiEndpoint)
@@ -325,7 +347,7 @@ const cases: Record<string, HttpTestCase[]> = {
   ],
 };
 
-const runTests = (env: TestEnvironment, testCases: HttpTestCase[]) => {
+const runTests = (env: 'other-test' | 'test', testCases: HttpTestCase[]) => {
   beforeAll(() => {
     let blockAllIps = false;
     if (env === 'other-test') {

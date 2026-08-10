@@ -1,4 +1,4 @@
-import type { BaseResponse } from '../types/middlware';
+import type { BaseResponse } from '../middlewares/initialize-request';
 import type { Express } from 'express';
 import { apiEndpoint } from '@lightproject/common/configs';
 import { httpRouter } from '../routers/http';

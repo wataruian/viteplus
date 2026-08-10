@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import type { Response } from '../types/middlware';
+import type { Response } from './initialize-request';
 import type express from 'express';
 import { logger } from '@lightproject/common/logger';
 
