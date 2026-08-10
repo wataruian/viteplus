@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@lightproject/common/*": ["packages/common/src/*"],
+      "@lightproject/design-system/*": ["packages/design-system/src/*"],
+      "@lightproject/library/*": ["packages/library/src/*"],
+      "@lightproject/backend/*": ["apps/backend/src/*"],
+      "@lightproject/frontend/*": ["apps/frontend/src/*"],
+      "vite-plus/test": ["package.json"],
+      "vite-plus/pack": ["package.json"],
+      "@vitejs/plugin-react": ["package.json"],
+      "virtual:*": ["package.json"]
+    }
+  }
+}

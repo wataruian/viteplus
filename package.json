@@ -12,6 +12,7 @@
     "setup": "./install.sh",
     "init": "vp install && vp run ready",
     "debug": "vp cache clean && vp run ready",
+    "madge": "madge --circular --warning --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
     "prepare": "vp config",
     "serve:dev": "vp run -r --parallel dev",
     "serve:prod": "vp run -r --parallel start"
@@ -21,6 +22,7 @@
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",
+    "madge": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

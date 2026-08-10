@@ -60,6 +60,7 @@ catalog:
   fast-glob: npm:fast-glob@3.3.3
   helmet: npm:helmet@8.1.0
   lodash.isplainobject: npm:lodash.isplainobject@4.0.6
+  madge: npm:madge@8.0.0
   openapi-trpc: npm:openapi-trpc@0.2.1
   openapi-types: npm:openapi-types@12.1.3
   picocolors: npm:picocolors@1.1.1

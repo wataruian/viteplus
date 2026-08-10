@@ -1,4 +1,4 @@
-import * as registry from './';
+import * as registry from './registry';
 import { Container, Section } from './layout';
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
@@ -332,7 +332,7 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                             : null;
                                           const defs = isRecord(defObj)
                                             ? Object.entries(defObj)
-                                                .map(([k, v]) => `${k}: ${String(v)}`)
+                                                .map(([k, v]) => `${k}: ${v}`)
                                                 .join(', ')
                                             : '';
                                           return `Default${defs ? ` (${defs})` : ''}`;

@@ -1,17 +1,17 @@
 ~/packages/library$ vp fmt ◉ cache hit, replaying
-Finished in 153ms on 7 files using 8 threads.
+Finished in 148ms on 7 files using 8 threads.
 
 ~/packages/design-system$ vp fmt ◉ cache hit, replaying
-Finished in 176ms on 45 files using 8 threads.
+Finished in 173ms on 46 files using 8 threads.
 
 ~/packages/common$ vp fmt ◉ cache hit, replaying
-Finished in 127ms on 33 files using 8 threads.
+Finished in 214ms on 33 files using 8 threads.
 
 ~/apps/backend$ vp fmt ◉ cache hit, replaying
-Finished in 119ms on 57 files using 8 threads.
+Finished in 132ms on 57 files using 8 threads.
 
 ~/apps/frontend$ vp fmt ◉ cache hit, replaying
-Finished in 175ms on 9 files using 8 threads.
+Finished in 191ms on 9 files using 8 threads.
 
 ---
-vp run: 5/5 cache hit (100%), 1.32s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 1.44s saved. (Run `vp run --last-details` for full details)

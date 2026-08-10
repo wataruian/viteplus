@@ -22,6 +22,9 @@ function executeCommand() {
   local commandName="${arguments[*]}"
 
   case "${commandName}" in
+    "vp run -r madge")
+      commandOutputFile="madge.output"
+      ;;
     "vp run -r root")
       commandOutputFile="root.output"
       ;;
@@ -152,6 +155,7 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
+executeCommand vp run -r madge
 executeCommand vp run -r root
 
 executeCommand vp run -r check

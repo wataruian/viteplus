@@ -1,4 +1,4 @@
-import { build } from './autogen';
+import { build } from './autogen/index';
 import fs from 'node:fs';
 import { logger } from '@lightproject/common/logger';
 import path from 'node:path';
