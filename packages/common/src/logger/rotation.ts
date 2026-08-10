@@ -1,4 +1,12 @@
-import type { LogStream, RotationOptions } from './log';
+interface LogStream {
+  write: (data: string) => void;
+}
+
+interface RotationOptions {
+  compress?: string | boolean;
+  interval?: string;
+  size?: string;
+}
 
 const createRotationStream = async (
   outputPath: string,
@@ -26,4 +34,5 @@ const createRotationStream = async (
   };
 };
 
+export type { LogStream, RotationOptions };
 export { createRotationStream };

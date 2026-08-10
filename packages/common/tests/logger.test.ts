@@ -1,6 +1,7 @@
-import { type LogLevel, Logger, type LoggerOptions } from '../src/logger/log';
+import { Logger, type LoggerOptions } from '../src/logger/log';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 import { defaultRedactValue, redact } from '../src/logger/redactor';
+import type { LogLevel } from '../src/logger/formatters';
 
 const customRedactValue = '[SENSITIVE]';
 

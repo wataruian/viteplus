@@ -1,6 +1,7 @@
 import { isCallable, isRecord } from '../validators/validate';
-import type { RedactFn } from './log';
 import redactObj from 'redact-object';
+
+type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;
 
 const defaultRedactValue = '[REDACTED]';
 
@@ -70,4 +71,5 @@ const redact = (
   }
 };
 
+export type { RedactFn };
 export { defaultRedactValue, defaultMaskFields, getRedactFn, redact };

@@ -1,18 +1,10 @@
+import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
+import type { LogStream, RotationOptions } from './rotation';
 import { SeverityNumber, logs } from '@opentelemetry/api-logs';
-import { formatJSON, formatPretty } from './formatters';
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
 import { getSessionId } from './context';
 import { isRecord } from '../validators/validate';
 import { redact } from './redactor';
-
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-type LogMode = 'pretty' | 'json';
-
-interface RotationOptions {
-  compress?: string | boolean;
-  interval?: string;
-  size?: string;
-}
 
 interface LoggerOptions {
   color: boolean;
@@ -24,20 +16,6 @@ interface LoggerOptions {
   silent?: boolean;
   timestamp: boolean;
 }
-
-interface LogStream {
-  write: (data: string) => void;
-}
-
-interface LogEntry {
-  [key: string]: unknown;
-  level: LogLevel;
-  message: string;
-  timestamp: string;
-  metadata?: Record<string, unknown> | object;
-}
-
-type RedactFn = (target: unknown, fields: string[], redactValue: string) => unknown;
 
 const logLevelPriority: Record<LogLevel, number> = {
   debug: 0,
@@ -193,5 +171,5 @@ class Logger {
 
 const logger = new Logger();
 
-export type { LogLevel, LogMode, RotationOptions, LoggerOptions, LogStream, LogEntry, RedactFn };
+export type { LoggerOptions };
 export { logLevelPriority, otelSeverity, Logger, logger };

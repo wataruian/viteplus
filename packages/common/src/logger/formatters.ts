@@ -1,6 +1,16 @@
 import { chalkInstance, defaultColor } from '../utils/color';
-import type { LogEntry } from './log';
 import { getColor } from './context';
+
+type LogMode = 'pretty' | 'json';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+interface LogEntry {
+  [key: string]: unknown;
+  level: LogLevel;
+  message: string;
+  timestamp: string;
+  metadata?: Record<string, unknown> | object;
+}
 
 const formatColors = {
   debug: chalkInstance.gray,
@@ -35,4 +45,5 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
 
 const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
 
+export type { LogMode, LogLevel, LogEntry };
 export { formatColors, formatPretty, formatJSON };
