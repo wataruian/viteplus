@@ -13,7 +13,7 @@ install="${3:-"false"}"
 function executeCommand() {
   local arguments=("${@}")
 
-  local outputsDir="${scriptDir}/outputs"
+  local outputsDir="${scriptDir}/.outputs"
   mkdir -p "${outputsDir}"
 
   local isCompileCommand="false"
@@ -156,6 +156,7 @@ if [[ "${install}" == "true" ]]; then
 fi
 
 executeCommand vp run -r madge
+
 executeCommand vp run -r root
 
 executeCommand vp run -r check

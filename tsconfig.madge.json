@@ -3,10 +3,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@lightproject/common": ["packages/common/src/index.ts"],
       "@lightproject/common/*": ["packages/common/src/*"],
+      "@lightproject/design-system": ["packages/design-system/src/index.ts"],
       "@lightproject/design-system/*": ["packages/design-system/src/*"],
+      "@lightproject/library": ["packages/library/src/index.ts"],
       "@lightproject/library/*": ["packages/library/src/*"],
+      "@lightproject/backend": ["apps/backend/src/index.ts"],
       "@lightproject/backend/*": ["apps/backend/src/*"],
+      "@lightproject/frontend": ["apps/frontend/src/index.ts"],
       "@lightproject/frontend/*": ["apps/frontend/src/*"],
       "vite-plus/test": ["package.json"],
       "vite-plus/pack": ["package.json"],

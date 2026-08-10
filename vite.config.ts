@@ -93,6 +93,22 @@ const getDotenvKeys = (rootDir: string): string[] => {
   return [...keys];
 };
 
+const getCommonRunProps = (rootDir: string, mode: string) => {
+  const dotenvKeys = getDotenvKeys(rootDir);
+  const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
+  const envArray = Object.keys(env).map((key) => key);
+
+  const input = [
+    ...commonRunInputs,
+    '!.outputs',
+    '!**/.outputs',
+    '!.outputs/**',
+    '!**/.outputs/**',
+  ];
+
+  return { env: envArray, input };
+};
+
 const getCommonViteConfig = ({
   dir = import.meta.dirname,
   isRoot = false,
@@ -260,10 +276,7 @@ const getPackageViteConfig = ({
     rootDir = path.resolve(dir, '../..');
   }
 
-  const dotenvKeys = getDotenvKeys(rootDir);
-  const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
-  const envArray = Object.keys(env).map((key) => key);
-  const commonProps = { env: envArray, input: commonRunInputs };
+  const commonProps = getCommonRunProps(rootDir, mode);
 
   return {
     ...getCommonViteConfig({ dir, isRoot, mode }),
@@ -271,6 +284,7 @@ const getPackageViteConfig = ({
       tasks: {
         build: {
           command: `vp ${buildType}`,
+          output: ['dist'],
           ...commonProps,
         },
         check: {
@@ -288,10 +302,12 @@ const getPackageViteConfig = ({
         test: {
           command: 'vp test',
           ...commonProps,
+          output: ['coverage'],
         },
         'type-check': {
           command: 'tsc',
           ...commonProps,
+          output: ['tsconfig.tsbuildinfo'],
         },
         ...(!excludeDevCommand && devCommand
           ? {
@@ -314,44 +330,64 @@ const getPackageViteConfig = ({
   };
 };
 
-const getRootViteConfig = (): UserConfig => ({
-  ...getCommonViteConfig({
-    dir: import.meta.dirname,
-    isRoot: true,
-    mode: globalThis.process.env['NODE_ENV'] ?? 'development',
-  }),
-  create: {
-    templates: [
-      {
-        description: 'New backend application',
-        name: 'backend',
-        template: './.templates/backend',
-      },
-      {
-        description: 'New frontend application',
-        name: 'frontend',
-        template: './.templates/frontend',
-      },
-      {
-        description: 'New shared package or library',
-        name: 'library',
-        template: './.templates/library',
-      },
-    ],
-  },
-  run: {
-    cache: {
-      scripts: true,
-      tasks: true,
+const getRootViteConfig = (): UserConfig => {
+  const dir = import.meta.dirname;
+  const isRoot = true;
+  const mode = globalThis.process.env['NODE_ENV'] ?? 'development';
+
+  const commonProps = getCommonRunProps(dir, mode);
+
+  return {
+    ...getCommonViteConfig({
+      dir,
+      isRoot,
+      mode,
+    }),
+    create: {
+      templates: [
+        {
+          description: 'New backend application',
+          name: 'backend',
+          template: './.templates/backend',
+        },
+        {
+          description: 'New frontend application',
+          name: 'frontend',
+          template: './.templates/frontend',
+        },
+        {
+          description: 'New shared package or library',
+          name: 'library',
+          template: './.templates/library',
+        },
+      ],
     },
-  },
-  staged: {
-    '*': 'vp check --fix',
-  },
-});
+    run: {
+      cache: {
+        scripts: true,
+        tasks: true,
+      },
+      tasks: {
+        madge: {
+          command:
+            "madge --circular --warning --exclude '(dist|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+          ...commonProps,
+        },
+        root: {
+          command: 'vp check',
+          ...commonProps,
+        },
+      },
+    },
+    staged: {
+      '*': 'vp check --fix',
+    },
+  };
+};
 
 export {
   getDotenvKeys,
+  getCommonRunProps,
   commonIgnorePatterns,
   commonRunInputs,
   getCommonViteConfig,
