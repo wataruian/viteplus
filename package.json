@@ -13,10 +13,11 @@
     "init": "vp install && vp run ready",
     "debug": "vp cache clean && vp run ready",
     "prepare": "vp config",
-    "serve:dev": "vp run -r dev",
-    "serve:prod": "vp run -r start"
+    "serve:dev": "vp run -r --parallel dev",
+    "serve:prod": "vp run -r --parallel start"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",

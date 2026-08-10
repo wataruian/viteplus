@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "display": "Backend Template",
+  "display": "Library",
   "compilerOptions": {
     "types": ["node"]
   },

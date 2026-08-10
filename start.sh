@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-mode="${1:-dev}"
+mode="${1:-"dev"}"
 
 if [[ "${mode}" != "dev" && "${mode}" != "prod" ]]; then
   echo "Invalid mode: ${mode}"

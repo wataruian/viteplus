@@ -17,7 +17,6 @@ const commonIgnorePatterns = [
     '.gitignore',
     '.vite-hooks',
     '.vscode',
-    '.templates',
     'AGENTS.md',
     'CLAUDE.md',
     'GEMINI.md',

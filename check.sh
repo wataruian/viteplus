@@ -164,4 +164,5 @@ executeCommand vp run -r test
 executeCommand vp run -r compile "${debug}"
 executeCommand vp run -r autogen "${debug}"
 
-echo "✅ All commands executed successfully"
+echo ""
+echo "✅ Commands executed successfully"

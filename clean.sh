@@ -12,3 +12,6 @@ if [[ "${ai}" == "true" ]]; then
 fi
 
 vp run --no-cache clean:build
+
+echo ""
+echo "✅ All good!"

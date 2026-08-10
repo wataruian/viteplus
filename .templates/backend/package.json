@@ -1,9 +1,6 @@
 {
-  "name": "@lightproject/template-backend-generator",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
   "bin": {
-    "create-backend": "./index.ts"
-  }
+    "create": "./index.ts"
+  },
+  "type": "module"
 }

@@ -1,208 +1,37 @@
-~/packages/common$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/samples/hello.ts, src/samples/index.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts, src/types/index.ts, src/types/log.ts, src/typecast/index.ts, src/typecast/tc.ts
-ℹ [@lightproject/common] tsconfig: tsconfig.json
+~/packages/library$ vp pack ◉ cache hit, replaying
+ℹ [@lightproject/library] entry: src/index.ts, src/samples/hello.ts, src/samples/index.ts
+ℹ [@lightproject/library] tsconfig: tsconfig.json
 ℹ Build start
-ℹ Cleaning 201 files
+ℹ Cleaning 23 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
-ℹ [@lightproject/common] [CJS] dist/utils/index.cjs                  7.80 kB │ gzip: 1.50 kB
-ℹ [@lightproject/common] [CJS] dist/utils/directory.cjs              7.61 kB │ gzip: 1.87 kB
-ℹ [@lightproject/common] [CJS] dist/logger/log.cjs                   4.38 kB │ gzip: 1.47 kB
-ℹ [@lightproject/common] [CJS] dist/utils/telemetry.cjs              4.15 kB │ gzip: 1.35 kB
-ℹ [@lightproject/common] [CJS] dist/utils/color.cjs                  2.97 kB │ gzip: 1.01 kB
-ℹ [@lightproject/common] [CJS] dist/environment/index.cjs            2.89 kB │ gzip: 0.65 kB
-ℹ [@lightproject/common] [CJS] dist/environment/env.cjs              2.61 kB │ gzip: 0.80 kB
-ℹ [@lightproject/common] [CJS] dist/configs/index.cjs                2.56 kB │ gzip: 0.59 kB
-ℹ [@lightproject/common] [CJS] dist/utils/text.cjs                   2.53 kB │ gzip: 1.02 kB
-ℹ [@lightproject/common] [CJS] dist/logger/index.cjs                 2.43 kB │ gzip: 0.64 kB
-ℹ [@lightproject/common] [CJS] dist/configs/endpoints.cjs            1.99 kB │ gzip: 0.62 kB
-ℹ [@lightproject/common] [CJS] dist/validators/validate.cjs          1.92 kB │ gzip: 0.72 kB
-ℹ [@lightproject/common] [CJS] dist/utils/date.cjs                   1.75 kB │ gzip: 0.63 kB
-ℹ [@lightproject/common] [CJS] dist/logger/redactor.cjs              1.74 kB │ gzip: 0.72 kB
-ℹ [@lightproject/common] [CJS] dist/utils/serialize.cjs              1.66 kB │ gzip: 0.71 kB
-ℹ [@lightproject/common] [CJS] dist/index.cjs                        1.53 kB │ gzip: 0.33 kB
-ℹ [@lightproject/common] [CJS] dist/logger/formatters.cjs            1.48 kB │ gzip: 0.61 kB
-ℹ [@lightproject/common] [CJS] dist/validators/index.cjs             1.44 kB │ gzip: 0.45 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/tc.cjs                  1.13 kB │ gzip: 0.51 kB
-ℹ [@lightproject/common] [CJS] dist/utils/time.cjs                   0.91 kB │ gzip: 0.44 kB
-ℹ [@lightproject/common] [CJS] dist/logger/context.cjs               0.87 kB │ gzip: 0.39 kB
-ℹ [@lightproject/common] [CJS] dist/logger/rotation.cjs              0.82 kB │ gzip: 0.42 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/index.cjs               0.80 kB │ gzip: 0.37 kB
-ℹ [@lightproject/common] [CJS] dist/utils/base.cjs                   0.79 kB │ gzip: 0.43 kB
-ℹ [@lightproject/common] [CJS] dist/samples/index.cjs                0.56 kB │ gzip: 0.32 kB
-ℹ [@lightproject/common] [CJS] dist/samples/hello.cjs                0.21 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [CJS] dist/types/index.cjs                  0.00 kB │ gzip: 0.02 kB
-ℹ [@lightproject/common] [CJS] dist/types/log.cjs                    0.00 kB │ gzip: 0.02 kB
-ℹ [@lightproject/common] [CJS] dist/utils/directory.cjs.map         12.67 kB │ gzip: 3.07 kB
-ℹ [@lightproject/common] [CJS] dist/logger/log.cjs.map               7.73 kB │ gzip: 2.51 kB
-ℹ [@lightproject/common] [CJS] dist/utils/telemetry.cjs.map          5.43 kB │ gzip: 1.93 kB
-ℹ [@lightproject/common] [CJS] dist/utils/color.cjs.map              4.27 kB │ gzip: 1.55 kB
-ℹ [@lightproject/common] [CJS] dist/utils/text.cjs.map               3.92 kB │ gzip: 1.51 kB
-ℹ [@lightproject/common] [CJS] dist/environment/env.cjs.map          3.61 kB │ gzip: 1.20 kB
-ℹ [@lightproject/common] [CJS] dist/validators/validate.cjs.map      3.47 kB │ gzip: 1.23 kB
-ℹ [@lightproject/common] [CJS] dist/utils/serialize.cjs.map          3.36 kB │ gzip: 1.34 kB
-ℹ [@lightproject/common] [CJS] dist/utils/date.cjs.map               3.10 kB │ gzip: 1.01 kB
-ℹ [@lightproject/common] [CJS] dist/configs/endpoints.cjs.map        2.45 kB │ gzip: 0.87 kB
-ℹ [@lightproject/common] [CJS] dist/logger/redactor.cjs.map          2.39 kB │ gzip: 0.98 kB
-ℹ [@lightproject/common] [CJS] dist/logger/formatters.cjs.map        2.07 kB │ gzip: 0.88 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/tc.cjs.map              1.99 kB │ gzip: 0.85 kB
-ℹ [@lightproject/common] [CJS] dist/utils/time.cjs.map               1.57 kB │ gzip: 0.73 kB
-ℹ [@lightproject/common] [CJS] dist/logger/rotation.cjs.map          1.37 kB │ gzip: 0.65 kB
-ℹ [@lightproject/common] [CJS] dist/_virtual/_rolldown/runtime.cjs   1.33 kB │ gzip: 0.62 kB
-ℹ [@lightproject/common] [CJS] dist/logger/context.cjs.map           1.31 kB │ gzip: 0.59 kB
-ℹ [@lightproject/common] [CJS] dist/utils/base.cjs.map               1.31 kB │ gzip: 0.66 kB
-ℹ [@lightproject/common] [CJS] dist/utils/index.cjs.map              0.33 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [CJS] dist/logger/index.cjs.map             0.29 kB │ gzip: 0.19 kB
-ℹ [@lightproject/common] [CJS] dist/samples/hello.cjs.map            0.20 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [CJS] dist/validators/index.cjs.map         0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [CJS] dist/configs/index.cjs.map            0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [CJS] dist/environment/index.cjs.map        0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [CJS] dist/samples/index.cjs.map            0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/index.cjs.map           0.14 kB │ gzip: 0.13 kB
-ℹ [@lightproject/common] [CJS] dist/logger/formatters.d.cts          0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/telemetry.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/serialize.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/directory.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/configs/endpoints.d.cts          0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/logger/rotation.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/validators/validate.d.cts        0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/logger/redactor.d.cts            0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/logger/context.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/color.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/index.d.cts                      0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/samples/hello.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/types/index.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/logger/index.d.cts               0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/validators/index.d.cts           0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/samples/index.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/environment/index.d.cts          0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/configs/index.d.cts              0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/index.d.cts                0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/index.d.cts             0.04 kB │ gzip: 0.06 kB
-ℹ [@lightproject/common] [CJS] dist/utils/text.d.cts                 0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/utils/time.d.cts                 0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/utils/date.d.cts                 0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/utils/base.d.cts                 0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/types/log.d.cts                  0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/logger/log.d.cts                 0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] 82 files, total: 125.48 kB
-✔ [@lightproject/common] Build complete in 246ms
-ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs              6.89 kB │ gzip: 1.77 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                  4.55 kB │ gzip: 1.28 kB
-ℹ [@lightproject/common] [ESM] dist/logger/log.mjs                   4.06 kB │ gzip: 1.47 kB
-ℹ [@lightproject/common] [ESM] dist/utils/telemetry.mjs              3.44 kB │ gzip: 1.29 kB
-ℹ [@lightproject/common] [ESM] dist/utils/color.mjs                  2.60 kB │ gzip: 0.98 kB
-ℹ [@lightproject/common] [ESM] dist/environment/env.mjs              2.38 kB │ gzip: 0.82 kB
-ℹ [@lightproject/common] [ESM] dist/utils/text.mjs                   2.34 kB │ gzip: 1.00 kB
-ℹ [@lightproject/common] [ESM] dist/validators/validate.mjs          1.97 kB │ gzip: 0.77 kB
-ℹ [@lightproject/common] [ESM] dist/utils/date.mjs                   1.90 kB │ gzip: 0.70 kB
-ℹ [@lightproject/common] [ESM] dist/environment/index.mjs            1.76 kB │ gzip: 0.58 kB
-ℹ [@lightproject/common] [ESM] dist/utils/serialize.mjs              1.75 kB │ gzip: 0.76 kB
-ℹ [@lightproject/common] [ESM] dist/configs/endpoints.mjs            1.74 kB │ gzip: 0.64 kB
-ℹ [@lightproject/common] [ESM] dist/configs/index.mjs                1.61 kB │ gzip: 0.53 kB
-ℹ [@lightproject/common] [ESM] dist/logger/index.mjs                 1.60 kB │ gzip: 0.58 kB
-ℹ [@lightproject/common] [ESM] dist/logger/redactor.mjs              1.60 kB │ gzip: 0.71 kB
-ℹ [@lightproject/common] [ESM] dist/logger/formatters.mjs            1.47 kB │ gzip: 0.66 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/tc.mjs                  1.19 kB │ gzip: 0.56 kB
-ℹ [@lightproject/common] [ESM] dist/validators/index.mjs             1.04 kB │ gzip: 0.42 kB
-ℹ [@lightproject/common] [ESM] dist/utils/time.mjs                   1.03 kB │ gzip: 0.51 kB
-ℹ [@lightproject/common] [ESM] dist/logger/rotation.mjs              1.01 kB │ gzip: 0.49 kB
-ℹ [@lightproject/common] [ESM] dist/logger/context.mjs               0.96 kB │ gzip: 0.43 kB
-ℹ [@lightproject/common] [ESM] dist/utils/base.mjs                   0.95 kB │ gzip: 0.49 kB
-ℹ [@lightproject/common] [ESM] dist/index.mjs                        0.90 kB │ gzip: 0.32 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/index.mjs               0.73 kB │ gzip: 0.35 kB
-ℹ [@lightproject/common] [ESM] dist/samples/index.mjs                0.58 kB │ gzip: 0.31 kB
-ℹ [@lightproject/common] [ESM] dist/samples/hello.mjs                0.42 kB │ gzip: 0.26 kB
-ℹ [@lightproject/common] [ESM] dist/types/index.mjs                  0.30 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/types/log.mjs                    0.30 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs.map         12.68 kB │ gzip: 3.06 kB
-ℹ [@lightproject/common] [ESM] dist/logger/log.mjs.map               7.58 kB │ gzip: 2.44 kB
-ℹ [@lightproject/common] [ESM] dist/utils/telemetry.mjs.map          5.21 kB │ gzip: 1.86 kB
-ℹ [@lightproject/common] [ESM] dist/utils/color.mjs.map              4.26 kB │ gzip: 1.54 kB
-ℹ [@lightproject/common] [ESM] dist/utils/text.mjs.map               3.92 kB │ gzip: 1.50 kB
-ℹ [@lightproject/common] [ESM] dist/environment/env.mjs.map          3.62 kB │ gzip: 1.20 kB
-ℹ [@lightproject/common] [ESM] dist/validators/validate.mjs.map      3.48 kB │ gzip: 1.23 kB
-ℹ [@lightproject/common] [ESM] dist/utils/serialize.mjs.map          3.35 kB │ gzip: 1.33 kB
-ℹ [@lightproject/common] [ESM] dist/utils/date.mjs.map               3.11 kB │ gzip: 1.01 kB
-ℹ [@lightproject/common] [ESM] dist/configs/endpoints.mjs.map        2.44 kB │ gzip: 0.86 kB
-ℹ [@lightproject/common] [ESM] dist/logger/redactor.mjs.map          2.35 kB │ gzip: 0.96 kB
-ℹ [@lightproject/common] [ESM] dist/logger/formatters.mjs.map        2.02 kB │ gzip: 0.85 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/tc.mjs.map              1.98 kB │ gzip: 0.85 kB
-ℹ [@lightproject/common] [ESM] dist/utils/time.mjs.map               1.57 kB │ gzip: 0.74 kB
-ℹ [@lightproject/common] [ESM] dist/logger/rotation.mjs.map          1.38 kB │ gzip: 0.65 kB
-ℹ [@lightproject/common] [ESM] dist/utils/base.mjs.map               1.31 kB │ gzip: 0.66 kB
-ℹ [@lightproject/common] [ESM] dist/logger/context.mjs.map           1.28 kB │ gzip: 0.58 kB
-ℹ [@lightproject/common] [ESM] dist/_virtual/_rolldown/runtime.mjs   0.66 kB │ gzip: 0.38 kB
-ℹ [@lightproject/common] [ESM] dist/utils/directory.d.mts.map        0.59 kB │ gzip: 0.27 kB
-ℹ [@lightproject/common] [ESM] dist/logger/log.d.mts.map             0.36 kB │ gzip: 0.24 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.mjs.map              0.33 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/logger/index.mjs.map             0.29 kB │ gzip: 0.19 kB
-ℹ [@lightproject/common] [ESM] dist/validators/validate.d.mts.map    0.29 kB │ gzip: 0.20 kB
-ℹ [@lightproject/common] [ESM] dist/utils/serialize.d.mts.map        0.28 kB │ gzip: 0.21 kB
-ℹ [@lightproject/common] [ESM] dist/types/log.d.mts.map              0.27 kB │ gzip: 0.19 kB
-ℹ [@lightproject/common] [ESM] dist/utils/color.d.mts.map            0.27 kB │ gzip: 0.21 kB
-ℹ [@lightproject/common] [ESM] dist/configs/endpoints.d.mts.map      0.26 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/tc.d.mts.map            0.24 kB │ gzip: 0.20 kB
-ℹ [@lightproject/common] [ESM] dist/environment/env.d.mts.map        0.23 kB │ gzip: 0.16 kB
-ℹ [@lightproject/common] [ESM] dist/samples/hello.mjs.map            0.21 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/utils/text.d.mts.map             0.20 kB │ gzip: 0.17 kB
-ℹ [@lightproject/common] [ESM] dist/logger/formatters.d.mts.map      0.20 kB │ gzip: 0.17 kB
-ℹ [@lightproject/common] [ESM] dist/logger/context.d.mts.map         0.20 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/utils/time.d.mts.map             0.19 kB │ gzip: 0.17 kB
-ℹ [@lightproject/common] [ESM] dist/utils/telemetry.d.mts.map        0.17 kB │ gzip: 0.16 kB
-ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts.map             0.17 kB │ gzip: 0.15 kB
-ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts.map        0.16 kB │ gzip: 0.15 kB
-ℹ [@lightproject/common] [ESM] dist/validators/index.mjs.map         0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [ESM] dist/configs/index.mjs.map            0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [ESM] dist/environment/index.mjs.map        0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [ESM] dist/samples/index.mjs.map            0.15 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/index.mjs.map           0.14 kB │ gzip: 0.13 kB
-ℹ [@lightproject/common] [ESM] dist/logger/rotation.d.mts.map        0.14 kB │ gzip: 0.14 kB
-ℹ [@lightproject/common] [ESM] dist/utils/date.d.mts.map             0.13 kB │ gzip: 0.13 kB
-ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts.map          0.11 kB │ gzip: 0.11 kB
-ℹ [@lightproject/common] [ESM] dist/environment/index.d.mts.map      0.10 kB │ gzip: 0.11 kB
-ℹ [@lightproject/common] [ESM] dist/validators/index.d.mts.map       0.10 kB │ gzip: 0.11 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/index.d.mts.map         0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/configs/index.d.mts.map          0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts.map          0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/logger/index.d.mts.map           0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/types/index.d.mts.map            0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts.map            0.10 kB │ gzip: 0.10 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts                3.21 kB │ gzip: 0.78 kB
-ℹ [@lightproject/common] [ESM] dist/utils/directory.d.mts            2.51 kB │ gzip: 0.57 kB
-ℹ [@lightproject/common] [ESM] dist/environment/env.d.mts            1.44 kB │ gzip: 0.42 kB
-ℹ [@lightproject/common] [ESM] dist/utils/color.d.mts                1.35 kB │ gzip: 0.47 kB
-ℹ [@lightproject/common] [ESM] dist/configs/endpoints.d.mts          1.30 kB │ gzip: 0.44 kB
-ℹ [@lightproject/common] [ESM] dist/logger/log.d.mts                 1.17 kB │ gzip: 0.47 kB
-ℹ [@lightproject/common] [ESM] dist/logger/index.d.mts               1.04 kB │ gzip: 0.35 kB
-ℹ [@lightproject/common] [ESM] dist/environment/index.d.mts          1.04 kB │ gzip: 0.30 kB
-ℹ [@lightproject/common] [ESM] dist/configs/index.d.mts              1.01 kB │ gzip: 0.28 kB
-ℹ [@lightproject/common] [ESM] dist/types/log.d.mts                  0.97 kB │ gzip: 0.47 kB
-ℹ [@lightproject/common] [ESM] dist/validators/validate.d.mts        0.95 kB │ gzip: 0.35 kB
-ℹ [@lightproject/common] [ESM] dist/index.d.mts                      0.93 kB │ gzip: 0.24 kB
-ℹ [@lightproject/common] [ESM] dist/logger/context.d.mts             0.82 kB │ gzip: 0.40 kB
-ℹ [@lightproject/common] [ESM] dist/utils/text.d.mts                 0.81 kB │ gzip: 0.35 kB
-ℹ [@lightproject/common] [ESM] dist/utils/serialize.d.mts            0.74 kB │ gzip: 0.39 kB
-ℹ [@lightproject/common] [ESM] dist/validators/index.d.mts           0.63 kB │ gzip: 0.25 kB
-ℹ [@lightproject/common] [ESM] dist/utils/telemetry.d.mts            0.61 kB │ gzip: 0.32 kB
-ℹ [@lightproject/common] [ESM] dist/logger/formatters.d.mts          0.60 kB │ gzip: 0.30 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/tc.d.mts                0.56 kB │ gzip: 0.30 kB
-ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts            0.54 kB │ gzip: 0.29 kB
-ℹ [@lightproject/common] [ESM] dist/types/index.d.mts                0.53 kB │ gzip: 0.25 kB
-ℹ [@lightproject/common] [ESM] dist/utils/time.d.mts                 0.53 kB │ gzip: 0.28 kB
-ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts                 0.46 kB │ gzip: 0.28 kB
-ℹ [@lightproject/common] [ESM] dist/utils/date.d.mts                 0.42 kB │ gzip: 0.23 kB
-ℹ [@lightproject/common] [ESM] dist/logger/rotation.d.mts            0.38 kB │ gzip: 0.24 kB
-ℹ [@lightproject/common] [ESM] dist/typecast/index.d.mts             0.36 kB │ gzip: 0.20 kB
-ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts              0.27 kB │ gzip: 0.18 kB
-ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts              0.22 kB │ gzip: 0.17 kB
-ℹ [@lightproject/common] [ESM] 109 files, total: 145.53 kB
-✔ [@lightproject/common] Build complete in 399ms
+ℹ [@lightproject/library] [CJS] dist/samples/index.cjs               0.56 kB │ gzip: 0.32 kB
+ℹ [@lightproject/library] [CJS] dist/index.cjs                       0.28 kB │ gzip: 0.19 kB
+ℹ [@lightproject/library] [CJS] dist/samples/hello.cjs               0.21 kB │ gzip: 0.18 kB
+ℹ [@lightproject/library] [CJS] dist/_virtual/_rolldown/runtime.cjs  0.38 kB │ gzip: 0.26 kB
+ℹ [@lightproject/library] [CJS] dist/samples/hello.cjs.map           0.20 kB │ gzip: 0.18 kB
+ℹ [@lightproject/library] [CJS] dist/samples/index.cjs.map           0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/library] [CJS] dist/index.d.cts                     0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/library] [CJS] dist/samples/hello.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/library] [CJS] dist/samples/index.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/library] [CJS] 9 files, total: 1.89 kB
+✔ [@lightproject/library] Build complete in 87ms
+ℹ [@lightproject/library] [ESM] dist/samples/index.mjs               0.58 kB │ gzip: 0.31 kB
+ℹ [@lightproject/library] [ESM] dist/samples/hello.mjs               0.42 kB │ gzip: 0.26 kB
+ℹ [@lightproject/library] [ESM] dist/index.mjs                       0.38 kB │ gzip: 0.21 kB
+ℹ [@lightproject/library] [ESM] dist/_virtual/_rolldown/runtime.mjs  0.66 kB │ gzip: 0.38 kB
+ℹ [@lightproject/library] [ESM] dist/samples/hello.mjs.map           0.21 kB │ gzip: 0.18 kB
+ℹ [@lightproject/library] [ESM] dist/samples/index.mjs.map           0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/library] [ESM] dist/samples/hello.d.mts.map         0.11 kB │ gzip: 0.11 kB
+ℹ [@lightproject/library] [ESM] dist/samples/index.d.mts.map         0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/library] [ESM] dist/samples/index.d.mts             0.27 kB │ gzip: 0.18 kB
+ℹ [@lightproject/library] [ESM] dist/samples/hello.d.mts             0.22 kB │ gzip: 0.17 kB
+ℹ [@lightproject/library] [ESM] dist/index.d.mts                     0.18 kB │ gzip: 0.12 kB
+ℹ [@lightproject/library] [ESM] 11 files, total: 3.28 kB
+✔ [@lightproject/library] Build complete in 343ms
 
 ~/packages/design-system$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/types/component.ts, src/types/index.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
+ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/colors.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/types/component.ts, src/types/index.ts, src/utils/compile.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts
 ℹ [@lightproject/design-system] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 283 files
@@ -327,7 +156,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/icon.d.cts               0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] 118 files, total: 236.65 kB
-✔ [@lightproject/design-system] Build complete in 234ms
+✔ [@lightproject/design-system] Build complete in 349ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs               14.48 kB │ gzip: 3.90 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs             9.32 kB │ gzip: 2.64 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/colors.mjs                     6.79 kB │ gzip: 0.92 kB
@@ -486,10 +315,213 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/tokens/icons.d.mts                    0.29 kB │ gzip: 0.19 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                 0.28 kB │ gzip: 0.18 kB
 ℹ [@lightproject/design-system] [ESM] 157 files, total: 300.63 kB
-✔ [@lightproject/design-system] Build complete in 432ms
+✔ [@lightproject/design-system] Build complete in 501ms
+
+~/packages/common$ vp pack ◉ cache hit, replaying
+ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/logger/rotation.ts, src/environment/env.ts, src/environment/index.ts, src/types/index.ts, src/types/log.ts, src/samples/hello.ts, src/samples/index.ts, src/validators/index.ts, src/validators/validate.ts, src/typecast/index.ts, src/typecast/tc.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/directory.ts, src/utils/index.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts
+ℹ [@lightproject/common] tsconfig: tsconfig.json
+ℹ Build start
+ℹ Cleaning 201 files
+warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
+ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
+ℹ [@lightproject/common] [CJS] dist/utils/index.cjs                  7.80 kB │ gzip: 1.50 kB
+ℹ [@lightproject/common] [CJS] dist/utils/directory.cjs              7.61 kB │ gzip: 1.87 kB
+ℹ [@lightproject/common] [CJS] dist/logger/log.cjs                   4.38 kB │ gzip: 1.47 kB
+ℹ [@lightproject/common] [CJS] dist/utils/telemetry.cjs              4.15 kB │ gzip: 1.35 kB
+ℹ [@lightproject/common] [CJS] dist/utils/color.cjs                  2.97 kB │ gzip: 1.01 kB
+ℹ [@lightproject/common] [CJS] dist/environment/index.cjs            2.89 kB │ gzip: 0.65 kB
+ℹ [@lightproject/common] [CJS] dist/environment/env.cjs              2.61 kB │ gzip: 0.80 kB
+ℹ [@lightproject/common] [CJS] dist/configs/index.cjs                2.56 kB │ gzip: 0.59 kB
+ℹ [@lightproject/common] [CJS] dist/utils/text.cjs                   2.53 kB │ gzip: 1.02 kB
+ℹ [@lightproject/common] [CJS] dist/logger/index.cjs                 2.43 kB │ gzip: 0.64 kB
+ℹ [@lightproject/common] [CJS] dist/configs/endpoints.cjs            1.99 kB │ gzip: 0.62 kB
+ℹ [@lightproject/common] [CJS] dist/validators/validate.cjs          1.92 kB │ gzip: 0.72 kB
+ℹ [@lightproject/common] [CJS] dist/utils/date.cjs                   1.75 kB │ gzip: 0.63 kB
+ℹ [@lightproject/common] [CJS] dist/logger/redactor.cjs              1.74 kB │ gzip: 0.72 kB
+ℹ [@lightproject/common] [CJS] dist/utils/serialize.cjs              1.66 kB │ gzip: 0.71 kB
+ℹ [@lightproject/common] [CJS] dist/index.cjs                        1.53 kB │ gzip: 0.33 kB
+ℹ [@lightproject/common] [CJS] dist/logger/formatters.cjs            1.48 kB │ gzip: 0.61 kB
+ℹ [@lightproject/common] [CJS] dist/validators/index.cjs             1.44 kB │ gzip: 0.45 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/tc.cjs                  1.13 kB │ gzip: 0.51 kB
+ℹ [@lightproject/common] [CJS] dist/utils/time.cjs                   0.91 kB │ gzip: 0.44 kB
+ℹ [@lightproject/common] [CJS] dist/logger/context.cjs               0.87 kB │ gzip: 0.39 kB
+ℹ [@lightproject/common] [CJS] dist/logger/rotation.cjs              0.82 kB │ gzip: 0.42 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/index.cjs               0.80 kB │ gzip: 0.37 kB
+ℹ [@lightproject/common] [CJS] dist/utils/base.cjs                   0.79 kB │ gzip: 0.43 kB
+ℹ [@lightproject/common] [CJS] dist/samples/index.cjs                0.56 kB │ gzip: 0.32 kB
+ℹ [@lightproject/common] [CJS] dist/samples/hello.cjs                0.21 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [CJS] dist/types/index.cjs                  0.00 kB │ gzip: 0.02 kB
+ℹ [@lightproject/common] [CJS] dist/types/log.cjs                    0.00 kB │ gzip: 0.02 kB
+ℹ [@lightproject/common] [CJS] dist/utils/directory.cjs.map         12.67 kB │ gzip: 3.07 kB
+ℹ [@lightproject/common] [CJS] dist/logger/log.cjs.map               7.73 kB │ gzip: 2.51 kB
+ℹ [@lightproject/common] [CJS] dist/utils/telemetry.cjs.map          5.43 kB │ gzip: 1.93 kB
+ℹ [@lightproject/common] [CJS] dist/utils/color.cjs.map              4.27 kB │ gzip: 1.55 kB
+ℹ [@lightproject/common] [CJS] dist/utils/text.cjs.map               3.92 kB │ gzip: 1.51 kB
+ℹ [@lightproject/common] [CJS] dist/environment/env.cjs.map          3.61 kB │ gzip: 1.20 kB
+ℹ [@lightproject/common] [CJS] dist/validators/validate.cjs.map      3.47 kB │ gzip: 1.23 kB
+ℹ [@lightproject/common] [CJS] dist/utils/serialize.cjs.map          3.36 kB │ gzip: 1.34 kB
+ℹ [@lightproject/common] [CJS] dist/utils/date.cjs.map               3.10 kB │ gzip: 1.01 kB
+ℹ [@lightproject/common] [CJS] dist/configs/endpoints.cjs.map        2.45 kB │ gzip: 0.87 kB
+ℹ [@lightproject/common] [CJS] dist/logger/redactor.cjs.map          2.39 kB │ gzip: 0.98 kB
+ℹ [@lightproject/common] [CJS] dist/logger/formatters.cjs.map        2.07 kB │ gzip: 0.88 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/tc.cjs.map              1.99 kB │ gzip: 0.85 kB
+ℹ [@lightproject/common] [CJS] dist/utils/time.cjs.map               1.57 kB │ gzip: 0.73 kB
+ℹ [@lightproject/common] [CJS] dist/logger/rotation.cjs.map          1.37 kB │ gzip: 0.65 kB
+ℹ [@lightproject/common] [CJS] dist/_virtual/_rolldown/runtime.cjs   1.33 kB │ gzip: 0.62 kB
+ℹ [@lightproject/common] [CJS] dist/logger/context.cjs.map           1.31 kB │ gzip: 0.59 kB
+ℹ [@lightproject/common] [CJS] dist/utils/base.cjs.map               1.31 kB │ gzip: 0.66 kB
+ℹ [@lightproject/common] [CJS] dist/utils/index.cjs.map              0.33 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [CJS] dist/logger/index.cjs.map             0.29 kB │ gzip: 0.19 kB
+ℹ [@lightproject/common] [CJS] dist/samples/hello.cjs.map            0.20 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [CJS] dist/validators/index.cjs.map         0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [CJS] dist/configs/index.cjs.map            0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [CJS] dist/environment/index.cjs.map        0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [CJS] dist/samples/index.cjs.map            0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/index.cjs.map           0.14 kB │ gzip: 0.13 kB
+ℹ [@lightproject/common] [CJS] dist/logger/formatters.d.cts          0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/telemetry.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/serialize.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/directory.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/configs/endpoints.d.cts          0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/logger/rotation.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/validators/validate.d.cts        0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/logger/redactor.d.cts            0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/logger/context.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/color.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/index.d.cts                      0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/samples/hello.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/types/index.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/logger/index.d.cts               0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/validators/index.d.cts           0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/samples/index.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/environment/index.d.cts          0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/configs/index.d.cts              0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/index.d.cts                0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/index.d.cts             0.04 kB │ gzip: 0.06 kB
+ℹ [@lightproject/common] [CJS] dist/utils/text.d.cts                 0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/utils/time.d.cts                 0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/utils/date.d.cts                 0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/utils/base.d.cts                 0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/types/log.d.cts                  0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/logger/log.d.cts                 0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip: 0.05 kB
+ℹ [@lightproject/common] [CJS] 82 files, total: 125.48 kB
+✔ [@lightproject/common] Build complete in 307ms
+ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs              6.89 kB │ gzip: 1.77 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                  4.55 kB │ gzip: 1.28 kB
+ℹ [@lightproject/common] [ESM] dist/logger/log.mjs                   4.06 kB │ gzip: 1.47 kB
+ℹ [@lightproject/common] [ESM] dist/utils/telemetry.mjs              3.44 kB │ gzip: 1.29 kB
+ℹ [@lightproject/common] [ESM] dist/utils/color.mjs                  2.60 kB │ gzip: 0.98 kB
+ℹ [@lightproject/common] [ESM] dist/environment/env.mjs              2.38 kB │ gzip: 0.82 kB
+ℹ [@lightproject/common] [ESM] dist/utils/text.mjs                   2.34 kB │ gzip: 1.00 kB
+ℹ [@lightproject/common] [ESM] dist/validators/validate.mjs          1.97 kB │ gzip: 0.77 kB
+ℹ [@lightproject/common] [ESM] dist/utils/date.mjs                   1.90 kB │ gzip: 0.70 kB
+ℹ [@lightproject/common] [ESM] dist/environment/index.mjs            1.76 kB │ gzip: 0.58 kB
+ℹ [@lightproject/common] [ESM] dist/utils/serialize.mjs              1.75 kB │ gzip: 0.76 kB
+ℹ [@lightproject/common] [ESM] dist/configs/endpoints.mjs            1.74 kB │ gzip: 0.64 kB
+ℹ [@lightproject/common] [ESM] dist/configs/index.mjs                1.61 kB │ gzip: 0.53 kB
+ℹ [@lightproject/common] [ESM] dist/logger/index.mjs                 1.60 kB │ gzip: 0.58 kB
+ℹ [@lightproject/common] [ESM] dist/logger/redactor.mjs              1.60 kB │ gzip: 0.71 kB
+ℹ [@lightproject/common] [ESM] dist/logger/formatters.mjs            1.47 kB │ gzip: 0.66 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/tc.mjs                  1.19 kB │ gzip: 0.56 kB
+ℹ [@lightproject/common] [ESM] dist/validators/index.mjs             1.04 kB │ gzip: 0.42 kB
+ℹ [@lightproject/common] [ESM] dist/utils/time.mjs                   1.03 kB │ gzip: 0.51 kB
+ℹ [@lightproject/common] [ESM] dist/logger/rotation.mjs              1.01 kB │ gzip: 0.49 kB
+ℹ [@lightproject/common] [ESM] dist/logger/context.mjs               0.96 kB │ gzip: 0.43 kB
+ℹ [@lightproject/common] [ESM] dist/utils/base.mjs                   0.95 kB │ gzip: 0.49 kB
+ℹ [@lightproject/common] [ESM] dist/index.mjs                        0.90 kB │ gzip: 0.32 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/index.mjs               0.73 kB │ gzip: 0.35 kB
+ℹ [@lightproject/common] [ESM] dist/samples/index.mjs                0.58 kB │ gzip: 0.31 kB
+ℹ [@lightproject/common] [ESM] dist/samples/hello.mjs                0.42 kB │ gzip: 0.26 kB
+ℹ [@lightproject/common] [ESM] dist/types/index.mjs                  0.30 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/types/log.mjs                    0.30 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/utils/directory.mjs.map         12.68 kB │ gzip: 3.06 kB
+ℹ [@lightproject/common] [ESM] dist/logger/log.mjs.map               7.58 kB │ gzip: 2.44 kB
+ℹ [@lightproject/common] [ESM] dist/utils/telemetry.mjs.map          5.21 kB │ gzip: 1.86 kB
+ℹ [@lightproject/common] [ESM] dist/utils/color.mjs.map              4.26 kB │ gzip: 1.54 kB
+ℹ [@lightproject/common] [ESM] dist/utils/text.mjs.map               3.92 kB │ gzip: 1.50 kB
+ℹ [@lightproject/common] [ESM] dist/environment/env.mjs.map          3.62 kB │ gzip: 1.20 kB
+ℹ [@lightproject/common] [ESM] dist/validators/validate.mjs.map      3.48 kB │ gzip: 1.23 kB
+ℹ [@lightproject/common] [ESM] dist/utils/serialize.mjs.map          3.35 kB │ gzip: 1.33 kB
+ℹ [@lightproject/common] [ESM] dist/utils/date.mjs.map               3.11 kB │ gzip: 1.01 kB
+ℹ [@lightproject/common] [ESM] dist/configs/endpoints.mjs.map        2.44 kB │ gzip: 0.86 kB
+ℹ [@lightproject/common] [ESM] dist/logger/redactor.mjs.map          2.35 kB │ gzip: 0.96 kB
+ℹ [@lightproject/common] [ESM] dist/logger/formatters.mjs.map        2.02 kB │ gzip: 0.85 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/tc.mjs.map              1.98 kB │ gzip: 0.85 kB
+ℹ [@lightproject/common] [ESM] dist/utils/time.mjs.map               1.57 kB │ gzip: 0.74 kB
+ℹ [@lightproject/common] [ESM] dist/logger/rotation.mjs.map          1.38 kB │ gzip: 0.65 kB
+ℹ [@lightproject/common] [ESM] dist/utils/base.mjs.map               1.31 kB │ gzip: 0.66 kB
+ℹ [@lightproject/common] [ESM] dist/logger/context.mjs.map           1.28 kB │ gzip: 0.58 kB
+ℹ [@lightproject/common] [ESM] dist/_virtual/_rolldown/runtime.mjs   0.66 kB │ gzip: 0.38 kB
+ℹ [@lightproject/common] [ESM] dist/utils/directory.d.mts.map        0.59 kB │ gzip: 0.27 kB
+ℹ [@lightproject/common] [ESM] dist/logger/log.d.mts.map             0.36 kB │ gzip: 0.24 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.mjs.map              0.33 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/logger/index.mjs.map             0.29 kB │ gzip: 0.19 kB
+ℹ [@lightproject/common] [ESM] dist/validators/validate.d.mts.map    0.29 kB │ gzip: 0.20 kB
+ℹ [@lightproject/common] [ESM] dist/utils/serialize.d.mts.map        0.28 kB │ gzip: 0.21 kB
+ℹ [@lightproject/common] [ESM] dist/types/log.d.mts.map              0.27 kB │ gzip: 0.19 kB
+ℹ [@lightproject/common] [ESM] dist/utils/color.d.mts.map            0.27 kB │ gzip: 0.21 kB
+ℹ [@lightproject/common] [ESM] dist/configs/endpoints.d.mts.map      0.26 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/tc.d.mts.map            0.24 kB │ gzip: 0.20 kB
+ℹ [@lightproject/common] [ESM] dist/environment/env.d.mts.map        0.23 kB │ gzip: 0.16 kB
+ℹ [@lightproject/common] [ESM] dist/samples/hello.mjs.map            0.21 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/utils/text.d.mts.map             0.20 kB │ gzip: 0.17 kB
+ℹ [@lightproject/common] [ESM] dist/logger/formatters.d.mts.map      0.20 kB │ gzip: 0.17 kB
+ℹ [@lightproject/common] [ESM] dist/logger/context.d.mts.map         0.20 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/utils/time.d.mts.map             0.19 kB │ gzip: 0.17 kB
+ℹ [@lightproject/common] [ESM] dist/utils/telemetry.d.mts.map        0.17 kB │ gzip: 0.16 kB
+ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts.map             0.17 kB │ gzip: 0.15 kB
+ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts.map        0.16 kB │ gzip: 0.15 kB
+ℹ [@lightproject/common] [ESM] dist/validators/index.mjs.map         0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/configs/index.mjs.map            0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/environment/index.mjs.map        0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/samples/index.mjs.map            0.15 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/index.mjs.map           0.14 kB │ gzip: 0.13 kB
+ℹ [@lightproject/common] [ESM] dist/logger/rotation.d.mts.map        0.14 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/utils/date.d.mts.map             0.13 kB │ gzip: 0.13 kB
+ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts.map          0.11 kB │ gzip: 0.11 kB
+ℹ [@lightproject/common] [ESM] dist/environment/index.d.mts.map      0.10 kB │ gzip: 0.11 kB
+ℹ [@lightproject/common] [ESM] dist/validators/index.d.mts.map       0.10 kB │ gzip: 0.11 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/index.d.mts.map         0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/configs/index.d.mts.map          0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts.map          0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/logger/index.d.mts.map           0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/types/index.d.mts.map            0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts.map            0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts                3.21 kB │ gzip: 0.78 kB
+ℹ [@lightproject/common] [ESM] dist/utils/directory.d.mts            2.51 kB │ gzip: 0.57 kB
+ℹ [@lightproject/common] [ESM] dist/environment/env.d.mts            1.44 kB │ gzip: 0.42 kB
+ℹ [@lightproject/common] [ESM] dist/utils/color.d.mts                1.35 kB │ gzip: 0.47 kB
+ℹ [@lightproject/common] [ESM] dist/configs/endpoints.d.mts          1.30 kB │ gzip: 0.44 kB
+ℹ [@lightproject/common] [ESM] dist/logger/log.d.mts                 1.17 kB │ gzip: 0.47 kB
+ℹ [@lightproject/common] [ESM] dist/logger/index.d.mts               1.04 kB │ gzip: 0.35 kB
+ℹ [@lightproject/common] [ESM] dist/environment/index.d.mts          1.04 kB │ gzip: 0.30 kB
+ℹ [@lightproject/common] [ESM] dist/configs/index.d.mts              1.01 kB │ gzip: 0.28 kB
+ℹ [@lightproject/common] [ESM] dist/types/log.d.mts                  0.97 kB │ gzip: 0.47 kB
+ℹ [@lightproject/common] [ESM] dist/validators/validate.d.mts        0.95 kB │ gzip: 0.35 kB
+ℹ [@lightproject/common] [ESM] dist/index.d.mts                      0.93 kB │ gzip: 0.24 kB
+ℹ [@lightproject/common] [ESM] dist/logger/context.d.mts             0.82 kB │ gzip: 0.40 kB
+ℹ [@lightproject/common] [ESM] dist/utils/text.d.mts                 0.81 kB │ gzip: 0.35 kB
+ℹ [@lightproject/common] [ESM] dist/utils/serialize.d.mts            0.74 kB │ gzip: 0.39 kB
+ℹ [@lightproject/common] [ESM] dist/validators/index.d.mts           0.63 kB │ gzip: 0.25 kB
+ℹ [@lightproject/common] [ESM] dist/utils/telemetry.d.mts            0.61 kB │ gzip: 0.32 kB
+ℹ [@lightproject/common] [ESM] dist/logger/formatters.d.mts          0.60 kB │ gzip: 0.30 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/tc.d.mts                0.56 kB │ gzip: 0.30 kB
+ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts            0.54 kB │ gzip: 0.29 kB
+ℹ [@lightproject/common] [ESM] dist/types/index.d.mts                0.53 kB │ gzip: 0.25 kB
+ℹ [@lightproject/common] [ESM] dist/utils/time.d.mts                 0.53 kB │ gzip: 0.28 kB
+ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts                 0.46 kB │ gzip: 0.28 kB
+ℹ [@lightproject/common] [ESM] dist/utils/date.d.mts                 0.42 kB │ gzip: 0.23 kB
+ℹ [@lightproject/common] [ESM] dist/logger/rotation.d.mts            0.38 kB │ gzip: 0.24 kB
+ℹ [@lightproject/common] [ESM] dist/typecast/index.d.mts             0.36 kB │ gzip: 0.20 kB
+ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts              0.27 kB │ gzip: 0.18 kB
+ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts              0.22 kB │ gzip: 0.17 kB
+ℹ [@lightproject/common] [ESM] 109 files, total: 145.53 kB
+✔ [@lightproject/common] Build complete in 433ms
 
 ~/apps/backend$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/types/middlware.ts, src/types/testing.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/index.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/validators/route-validator.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts
+ℹ [@lightproject/backend] entry: src/client.ts, src/index.ts, src/main.ts, src/sample.ts, src/middlewares/capture-response.ts, src/middlewares/csp.ts, src/middlewares/gateway-middleware.ts, src/middlewares/initialize-request.ts, src/middlewares/not-found-handler.ts, src/middlewares/swagger-openapi.ts, src/middlewares/trpc-playground.ts, src/middlewares/trust-proxy.ts, src/services/base.ts, src/services/default.ts, src/services/test.ts, src/types/middlware.ts, src/types/testing.ts, src/utils/autogen.ts, src/utils/cors.ts, src/utils/filters.ts, src/utils/http-router.ts, src/utils/http.ts, src/utils/openapi.ts, src/utils/route-handler.ts, src/utils/trpc-router.ts, src/utils/trpc.ts, src/routers/http/index.ts, src/routers/trpc/index.ts, src/utils/autogen/config.ts, src/utils/autogen/index.ts, src/utils/autogen/types.ts, src/routers/http/routes/default.ts, src/routers/http/routes/test.ts, src/routers/trpc/routes/default.ts, src/routers/trpc/routes/test.ts, src/utils/autogen/generators/openapi-generator.ts, src/utils/autogen/discovery/http-discovery.ts, src/utils/autogen/discovery/trpc-discovery.ts, src/utils/autogen/parsers/http-parser.ts, src/utils/autogen/parsers/service-parser.ts, src/utils/autogen/parsers/trpc-parser.ts, src/utils/autogen/validators/route-validator.ts, src/utils/autogen/utils/cache.ts, src/utils/autogen/utils/performance.ts, src/utils/autogen/utils/zod.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
 ℹ Cleaning 328 files
@@ -631,7 +663,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [CJS] dist/utils/autogen/utils/zod.d.cts                        0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/middlewares/csp.d.cts                                0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 135 files, total: 359.07 kB
-✔ [@lightproject/backend] Build complete in 206ms
+✔ [@lightproject/backend] Build complete in 241ms
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/generators/openapi-generator.mjs        14.87 kB │ gzip: 4.02 kB
 ℹ [@lightproject/backend] [ESM] dist/utils/autogen/validators/route-validator.mjs          10.63 kB │ gzip: 2.60 kB
 ℹ [@lightproject/backend] [ESM] dist/services/test.mjs                                      9.65 kB │ gzip: 1.63 kB
@@ -809,7 +841,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [ESM] dist/client.d.mts                                           0.17 kB │ gzip: 0.13 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                                            0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 176 files, total: 464.16 kB
-✔ [@lightproject/backend] Build complete in 697ms
+✔ [@lightproject/backend] Build complete in 603ms
 
 ~/apps/frontend$ vp build ◉ cache hit, replaying
 transforming...[plugin rolldown:vite-resolve] Module "node:async_hooks" has been externalized for browser compatibility, imported by "/Users/wataru/lightproject/viteplus/packages/common/src/logger/context.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
@@ -832,7 +864,7 @@ dist/assets/rotation-Udc72nPZ.js    1.23 kB │ gzip:   0.58 kB │ map:     1.4
 dist/assets/esm-BDSWRmzp.js        17.42 kB │ gzip:   4.72 kB │ map:    35.35 kB
 dist/assets/index-BRGf_g3p.js     741.95 kB │ gzip: 153.69 kB │ map: 1,473.56 kB
 
-✓ built in 1.22s
+✓ built in 743ms
 
 ---
-vp run: 4/4 cache hit (100%), 5.05s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 5.75s saved. (Run `vp run --last-details` for full details)
