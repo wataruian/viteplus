@@ -149,6 +149,24 @@ const getCommonViteConfig = ({
       emptyOutDir: true,
       minify: !isLocal,
       outDir: 'dist',
+      rolldownOptions: {
+        external: [
+          'node:async_hooks',
+          'node:crypto',
+          'node:fs',
+          'node:path',
+          'node:url',
+          'node_util',
+          'child_process',
+          'fs',
+          'fs/promises',
+          'path',
+          'stream',
+          'timers',
+          'util',
+          'zlib',
+        ],
+      },
       sourcemap: isLocal,
     },
     fmt: {
@@ -227,6 +245,9 @@ const getCommonViteConfig = ({
       sourcemap: isLocal,
       treeshake: true,
       unbundle: isLocal,
+    },
+    resolve: {
+      conditions: ['typescript'],
     },
     test: {
       coverage: {

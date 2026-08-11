@@ -10,16 +10,21 @@ const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;
 
+  const baseConfig = getPackageViteConfig({
+    buildType: 'build',
+    devCommand: 'vp dev',
+    dir,
+    excludeDevCommand: false,
+    excludeStartCommand: false,
+    mode,
+    startCommand: 'vp preview',
+  });
+
+  const baseResolve =
+    baseConfig.resolve && !Array.isArray(baseConfig.resolve) ? baseConfig.resolve : {};
+
   return {
-    ...getPackageViteConfig({
-      buildType: 'build',
-      devCommand: 'vp dev',
-      dir,
-      excludeDevCommand: false,
-      excludeStartCommand: false,
-      mode,
-      startCommand: 'vp preview',
-    }),
+    ...baseConfig,
     plugins: [
       react(),
       unoCss({
@@ -36,13 +41,14 @@ export default defineConfig(({ mode }) => {
     preview: {
       port,
     },
-    // resolve: {
-    //   alias: {
-    //     '@lightproject/backend': path.resolve(dir, '../../apps/backend/src'),
-    //     '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
-    //     '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
-    //   },
-    // },
+    resolve: {
+      ...baseResolve,
+      // alias: {
+      //   '@lightproject/backend': path.resolve(dir, '../../apps/backend/src'),
+      //   '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
+      //   '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
+      // },
+    },
     server: {
       port,
     },

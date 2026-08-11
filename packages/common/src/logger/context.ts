@@ -8,7 +8,17 @@ interface RequestContext {
   metadata?: Record<string, unknown> | object;
 }
 
-const requestContextStorage = new AsyncLocalStorage<RequestContext>();
+const requestContextStorage: Pick<
+  AsyncLocalStorage<RequestContext>,
+  'getStore' | 'run'
+> = (AsyncLocalStorage as unknown) === undefined
+  ? {
+      getStore: () => undefined,
+      run: (_store: RequestContext, callback: () => void) => {
+        callback();
+      },
+    }
+  : new AsyncLocalStorage<RequestContext>();
 
 const getSessionId = (): string => {
   const store = requestContextStorage.getStore();
