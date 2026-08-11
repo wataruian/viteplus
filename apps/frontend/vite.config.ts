@@ -36,13 +36,13 @@ export default defineConfig(({ mode }) => {
     preview: {
       port,
     },
-    resolve: {
-      alias: {
-        '@lightproject/backend': path.resolve(dir, '../../apps/backend/src'),
-        '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
-        '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
-      },
-    },
+    // resolve: {
+    //   alias: {
+    //     '@lightproject/backend': path.resolve(dir, '../../apps/backend/src'),
+    //     '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
+    //     '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
+    //   },
+    // },
     server: {
       port,
     },

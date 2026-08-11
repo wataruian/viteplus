@@ -40,9 +40,6 @@
     },
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "compile": "tsx --conditions=typescript ./src/utils/compile.ts"
-  },
   "dependencies": {
     "@iconify-json/logos": "catalog:",
     "@iconify-json/ph": "catalog:",

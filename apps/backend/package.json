@@ -25,9 +25,6 @@
       }
     }
   },
-  "scripts": {
-    "autogen": "tsx --conditions=typescript ./src/utils/autogen.ts"
-  },
   "dependencies": {
     "@lightproject/common": "workspace:*",
     "@trpc/client": "catalog:",
