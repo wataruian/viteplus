@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => {
         compile: {
           command: 'tsx --conditions=typescript ./src/utils/compile.ts',
           ...commonProps,
+          output: ['tmp/compile'],
         },
       },
     },

@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => {
         autogen: {
           command: 'tsx --conditions=typescript ./src/utils/autogen.ts',
           ...commonProps,
+          output: ['tmp/autogen'],
         },
       },
     },

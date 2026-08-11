@@ -7,8 +7,8 @@
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  13:53:17
-   Duration  145ms (transform 15ms, setup 0ms, import 24ms, tests 2ms, environment 0ms)
+   Start at  14:02:55
+   Duration  143ms (transform 14ms, setup 0ms, import 24ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -31,8 +31,8 @@ All files    |     100 |      100 |     100 |     100 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  13:53:17
-   Duration  323ms (transform 27ms, setup 0ms, import 46ms, tests 2ms, environment 0ms)
+   Start at  14:02:55
+   Duration  249ms (transform 23ms, setup 0ms, import 40ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -101,8 +101,8 @@ All files          |    2.15 |        0 |    2.08 |    2.18 |
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  13:53:17
-   Duration  496ms (transform 130ms, setup 0ms, import 297ms, tests 23ms, environment 0ms)
+   Start at  14:02:55
+   Duration  376ms (transform 69ms, setup 0ms, import 189ms, tests 23ms, environment 0ms)
 
  % Coverage report from v8
 -----------------|---------|----------|---------|---------|---------------------
@@ -150,12 +150,12 @@ All files        |   31.07 |    22.52 |   30.17 |   30.52 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/autogen/index.test.ts (49 tests) 2510ms
+ ✓ tests/autogen/index.test.ts (49 tests) 2512ms
  ✓ tests/autogen/parsers/service-parser.test.ts (35 tests) 81ms
- ✓ tests/sample.trpc.test.ts (20 tests) 373ms
- ✓ tests/sample.http.test.ts (20 tests) 100ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 380ms
+ ✓ tests/sample.http.test.ts (20 tests) 116ms
  ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 2ms
- ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 340ms
+ ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 339ms
  ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 312ms
  ✓ tests/autogen/types.test.ts (9 tests) 1ms
  ✓ tests/trpc.caller.test.ts (2 tests) 20ms
@@ -164,8 +164,8 @@ All files        |   31.07 |    22.52 |   30.17 |   30.52 |
 
  Test Files  11 passed (11)
       Tests  194 passed (194)
-   Start at  13:53:17
-   Duration  4.81s (transform 235ms, setup 0ms, import 732ms, tests 3.74s, environment 0ms)
+   Start at  14:02:56
+   Duration  4.81s (transform 214ms, setup 0ms, import 684ms, tests 3.76s, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -240,8 +240,8 @@ All files          |   60.09 |    50.31 |   64.87 |   60.22 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  13:53:23
-   Duration  179ms (transform 40ms, setup 0ms, import 66ms, tests 2ms, environment 0ms)
+   Start at  14:03:02
+   Duration  181ms (transform 39ms, setup 0ms, import 64ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 ------------|---------|----------|---------|---------|-------------------
@@ -254,4 +254,4 @@ All files   |      10 |        0 |       0 |      10 |
 ------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 9.73s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 9.56s saved. (Run `vp run --last-details` for full details)
