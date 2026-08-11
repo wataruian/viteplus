@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 
   const rootDir = path.resolve(dir, '../..');
 
-  const commonProps = getCommonRunProps(rootDir, mode);
+  const commonRunProps = getCommonRunProps(rootDir, mode);
 
   const baseConfig = getPackageViteConfig({
     dir,
@@ -35,8 +35,13 @@ export default defineConfig(({ mode }) => {
         ...baseRunTasks,
         autogen: {
           command: 'tsx --conditions=typescript ./src/utils/autogen.ts',
-          ...commonProps,
-          output: ['tmp/autogen'],
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'tmp/autogen/**/*',
+            },
+          ],
         },
       },
     },

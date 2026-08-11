@@ -2,73 +2,15 @@ import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const commonIgnorePatterns = [
-  ...new Set([
-    '*.tsbuildinfo',
-    '__unconfig_vite.config.ts',
-    '.agents',
-    '.ai-data',
-    '.aiassistant',
-    '.antigravity',
-    '.claude',
-    '.cursor',
-    '.git',
-    '.github',
-    '.gitignore',
-    '.vite-hooks',
-    '.vscode',
-    'AGENTS.md',
-    'CLAUDE.md',
-    'GEMINI.md',
-    'README.md',
-    'bak',
-    'check.sh',
-    'clean.sh',
-    'coverage',
-    'dist',
-    'dist-ssr',
-    'init.sh',
-    'node_modules',
-    'prompt.txt',
-    'root.txt',
-    'start.sh',
-    'tmp',
-    'tsconfig.reference.json',
-    'vite.config.d.ts',
-    'vite.config.d.ts.map',
-  ]),
-];
-
-const commonRunInputs = [
-  ...new Set([
-    '**',
-    { base: 'workspace' as const, pattern: '.env' },
-    { base: 'workspace' as const, pattern: '.env.example' },
-    { base: 'workspace' as const, pattern: '.envrc' },
-    { base: 'workspace' as const, pattern: '.npmrc' },
-    { base: 'workspace' as const, pattern: '.tool-versions' },
-    { base: 'workspace' as const, pattern: 'package.json' },
-    { base: 'workspace' as const, pattern: 'pnpm-lock.yaml' },
-    { base: 'workspace' as const, pattern: 'pnpm-workspace.yaml' },
-    { base: 'workspace' as const, pattern: 'tsconfig.base.json' },
-    { base: 'workspace' as const, pattern: 'tsconfig.json' },
-    { base: 'workspace' as const, pattern: 'vite.config.ts' },
-    ...commonIgnorePatterns.flatMap((pattern) => {
-      const isGlob = pattern.includes('*');
-      const hasRelativePrefix = pattern.startsWith('**/');
-      const results = [`!${pattern}`];
-      if (!hasRelativePrefix) {
-        results.push(`!**/${pattern}`);
-      }
-      if (!isGlob) {
-        results.push(`!${pattern}/**`);
-        if (!hasRelativePrefix) {
-          results.push(`!**/${pattern}/**`);
-        }
-      }
-      return results;
-    }),
-  ]),
+const ignorePatterns = [
+  'node_modules',
+  'bak',
+  'dist',
+  'coverage',
+  'tmp',
+  'vite.config.d.ts',
+  'vite.config.d.ts.map',
+  'tsconfig.tsbuildinfo',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -93,19 +35,15 @@ const getDotenvKeys = (rootDir: string): string[] => {
   return [...keys];
 };
 
-const getCommonRunProps = (rootDir: string, mode: string) => {
+const getEnvArray = (rootDir: string, mode: string) => {
   const dotenvKeys = getDotenvKeys(rootDir);
   const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
-  const envArray = Object.keys(env).map((key) => key);
+  return Object.keys(env).map((key) => key);
+};
 
-  const input = [
-    ...commonRunInputs,
-    '!.outputs',
-    '!**/.outputs',
-    '!.outputs/**',
-    '!**/.outputs/**',
-  ];
-
+const getCommonRunProps = (rootDir: string, mode: string) => {
+  const envArray = getEnvArray(rootDir, mode);
+  const input = ignorePatterns.map((pattern) => `!${pattern}`);
   return { env: envArray, input };
 };
 
@@ -174,7 +112,7 @@ const getCommonViteConfig = ({
       bracketSameLine: false,
       bracketSpacing: true,
       endOfLine: 'lf',
-      ignorePatterns: commonIgnorePatterns,
+      ignorePatterns,
       insertFinalNewline: true,
       jsxSingleQuote: true,
       quoteProps: 'as-needed',
@@ -194,7 +132,7 @@ const getCommonViteConfig = ({
         style: 'error',
         suspicious: 'error',
       },
-      ignorePatterns: commonIgnorePatterns,
+      ignorePatterns,
       options: { typeAware: true, typeCheck: true },
       rules: {
         // 'vite-plus/prefer-vite-plus-imports': 'error',
@@ -297,7 +235,7 @@ const getPackageViteConfig = ({
     rootDir = path.resolve(dir, '../..');
   }
 
-  const commonProps = getCommonRunProps(rootDir, mode);
+  const commonRunProps = getCommonRunProps(rootDir, mode);
 
   return {
     ...getCommonViteConfig({ dir, isRoot, mode }),
@@ -305,30 +243,45 @@ const getPackageViteConfig = ({
       tasks: {
         build: {
           command: `vp ${buildType}`,
-          output: ['dist'],
-          ...commonProps,
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'dist/**/*',
+            },
+          ],
         },
         check: {
           command: 'vp check',
-          ...commonProps,
+          ...commonRunProps,
         },
         format: {
           command: 'vp fmt',
-          ...commonProps,
+          ...commonRunProps,
         },
         lint: {
           command: 'vp lint',
-          ...commonProps,
+          ...commonRunProps,
         },
         test: {
           command: 'vp test',
-          ...commonProps,
-          output: ['coverage'],
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'coverage/**/*',
+            },
+          ],
         },
         'type-check': {
           command: 'tsc',
-          ...commonProps,
-          output: ['tsconfig.tsbuildinfo'],
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'tsconfig.tsbuildinfo',
+            },
+          ],
         },
         ...(!excludeDevCommand && devCommand
           ? {
@@ -356,7 +309,7 @@ const getRootViteConfig = (): UserConfig => {
   const isRoot = true;
   const mode = globalThis.process.env['NODE_ENV'] ?? 'development';
 
-  const commonProps = getCommonRunProps(dir, mode);
+  const commonRunProps = getCommonRunProps(dir, mode);
 
   return {
     ...getCommonViteConfig({
@@ -392,11 +345,11 @@ const getRootViteConfig = (): UserConfig => {
         madge: {
           command:
             "madge --circular --warning --exclude '(dist|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
-          ...commonProps,
+          ...commonRunProps,
         },
         root: {
           command: 'vp check',
-          ...commonProps,
+          ...commonRunProps,
         },
       },
     },
@@ -408,9 +361,9 @@ const getRootViteConfig = (): UserConfig => {
 
 export {
   getDotenvKeys,
+  ignorePatterns,
+  getEnvArray,
   getCommonRunProps,
-  commonIgnorePatterns,
-  commonRunInputs,
   getCommonViteConfig,
   getPackageViteConfig,
   getRootViteConfig,

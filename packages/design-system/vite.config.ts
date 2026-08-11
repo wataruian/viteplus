@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 
   const rootDir = path.resolve(dir, '../..');
 
-  const commonProps = getCommonRunProps(rootDir, mode);
+  const commonRunProps = getCommonRunProps(rootDir, mode);
 
   const baseConfig = getPackageViteConfig({
     dir,
@@ -32,8 +32,13 @@ export default defineConfig(({ mode }) => {
         ...baseRunTasks,
         compile: {
           command: 'tsx --conditions=typescript ./src/utils/compile.ts',
-          ...commonProps,
-          output: ['tmp/compile'],
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'tmp/compile/**/*',
+            },
+          ],
         },
       },
     },
