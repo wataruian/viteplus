@@ -7,8 +7,8 @@
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  18:17:40
-   Duration  235ms (transform 30ms, setup 0ms, import 48ms, tests 5ms, environment 0ms)
+   Start at  18:41:03
+   Duration  224ms (transform 29ms, setup 0ms, import 48ms, tests 5ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -31,8 +31,8 @@ All files    |     100 |      100 |     100 |     100 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  18:17:40
-   Duration  415ms (transform 44ms, setup 0ms, import 76ms, tests 3ms, environment 0ms)
+   Start at  18:41:03
+   Duration  399ms (transform 40ms, setup 0ms, import 66ms, tests 3ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -94,15 +94,15 @@ All files          |    2.15 |        0 |    2.08 |    2.18 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/logger.test.ts (20 tests) 30ms
- ✓ tests/env.test.ts (17 tests) 2ms
- ✓ tests/telemetry.test.ts (1 test) 3ms
+ ✓ tests/logger.test.ts (20 tests) 23ms
+ ✓ tests/env.test.ts (17 tests) 3ms
+ ✓ tests/telemetry.test.ts (1 test) 4ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  18:17:40
-   Duration  652ms (transform 138ms, setup 0ms, import 322ms, tests 35ms, environment 0ms)
+   Start at  18:41:03
+   Duration  609ms (transform 121ms, setup 0ms, import 302ms, tests 30ms, environment 0ms)
 
  % Coverage report from v8
 -----------------|---------|----------|---------|---------|---------------------
@@ -150,23 +150,23 @@ All files        |   31.07 |    22.52 |   30.17 |   30.52 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/autogen/index.test.ts (49 tests) 3786ms
- ✓ tests/autogen/parsers/service-parser.test.ts (35 tests) 124ms
- ✓ tests/sample.trpc.test.ts (20 tests) 541ms
-       ✓ should handle GET /trpc/test.asyncFailReject  363ms
- ✓ tests/sample.http.test.ts (20 tests) 138ms
+ ✓ tests/autogen/index.test.ts (49 tests) 3563ms
+ ✓ tests/autogen/parsers/service-parser.test.ts (35 tests) 116ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 522ms
+       ✓ should handle GET /trpc/test.asyncFailReject  353ms
+ ✓ tests/sample.http.test.ts (20 tests) 129ms
  ✓ tests/autogen/validators/route-validator.test.ts (21 tests) 3ms
- ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 492ms
- ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 459ms
+ ✓ tests/autogen/discovery/trpc-discovery.test.ts (14 tests) 480ms
+ ✓ tests/autogen/discovery/http-discovery.test.ts (13 tests) 455ms
  ✓ tests/autogen/types.test.ts (9 tests) 1ms
- ✓ tests/trpc.caller.test.ts (2 tests) 40ms
+ ✓ tests/trpc.caller.test.ts (2 tests) 32ms
  ✓ tests/autogen/config.test.ts (10 tests) 1ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  11 passed (11)
       Tests  194 passed (194)
-   Start at  18:17:41
-   Duration  7.24s (transform 402ms, setup 0ms, import 1.08s, tests 5.59s, environment 0ms)
+   Start at  18:41:04
+   Duration  6.89s (transform 373ms, setup 0ms, import 1.10s, tests 5.30s, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -241,8 +241,8 @@ All files          |   60.09 |    50.31 |   64.87 |   60.22 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  18:17:50
-   Duration  290ms (transform 61ms, setup 0ms, import 109ms, tests 2ms, environment 0ms)
+   Start at  18:41:12
+   Duration  279ms (transform 65ms, setup 0ms, import 102ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 ------------|---------|----------|---------|---------|-------------------
@@ -255,4 +255,4 @@ All files   |      10 |        0 |       0 |      10 |
 ------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 13.48s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 12.98s saved. (Run `vp run --last-details` for full details)

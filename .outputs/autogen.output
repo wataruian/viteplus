@@ -1,5 +1,5 @@
 ~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true ◉ cache hit, replaying
-[2026-08-11T10:17:57.142Z] INFO : 🚀 Starting autogen build process...
+[2026-08-11T10:41:19.997Z] INFO : 🚀 Starting autogen build process...
 allRoutes [
   {
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
@@ -2782,23 +2782,23 @@ allRoutes [
     type: 'query'
   }
 ]
-[2026-08-11T10:17:57.368Z] INFO : ✅ Route Extraction completed in 217ms
-[2026-08-11T10:17:57.368Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
-[2026-08-11T10:17:57.368Z] INFO : Validating 32 routes...
-[2026-08-11T10:17:57.368Z] INFO : ✅ All routes passed validation (0 warnings)
-[2026-08-11T10:17:57.369Z] INFO : 📋 Validation Summary: 0 issues found
-[2026-08-11T10:17:57.369Z] INFO : 🔄 Validating routes: [████████████████████] 32/32 (100%)
-[2026-08-11T10:17:57.369Z] INFO : ✅ Route Validation completed in 1ms
-[2026-08-11T10:17:57.372Z] INFO : ✅ OpenAPI Generation completed in 4ms
-[2026-08-11T10:17:57.376Z] INFO : ✅ File Operations completed in 3ms
-[2026-08-11T10:17:57.376Z] INFO : ✅ OpenAPI spec generated with 32 paths
-[2026-08-11T10:17:57.376Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
-[2026-08-11T10:17:57.376Z] INFO : 📊 Performance Summary (Total: 234ms)
-[2026-08-11T10:17:57.376Z] INFO :   Route Extraction             217ms (92.8%)
-[2026-08-11T10:17:57.376Z] INFO :   OpenAPI Generation             4ms (1.6%)
-[2026-08-11T10:17:57.376Z] INFO :   File Operations                3ms (1.4%)
-[2026-08-11T10:17:57.376Z] INFO :   Route Validation               1ms (0.3%)
-[2026-08-11T10:17:57.376Z] INFO : 🎉 OpenAPI specification generation completed successfully!
+[2026-08-11T10:41:20.181Z] INFO : ✅ Route Extraction completed in 182ms
+[2026-08-11T10:41:20.181Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
+[2026-08-11T10:41:20.181Z] INFO : Validating 32 routes...
+[2026-08-11T10:41:20.181Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-11T10:41:20.181Z] INFO : 📋 Validation Summary: 0 issues found
+[2026-08-11T10:41:20.181Z] INFO : 🔄 Validating routes: [████████████████████] 32/32 (100%)
+[2026-08-11T10:41:20.181Z] INFO : ✅ Route Validation completed in 1ms
+[2026-08-11T10:41:20.185Z] INFO : ✅ OpenAPI Generation completed in 4ms
+[2026-08-11T10:41:20.189Z] INFO : ✅ File Operations completed in 3ms
+[2026-08-11T10:41:20.189Z] INFO : ✅ OpenAPI spec generated with 32 paths
+[2026-08-11T10:41:20.189Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-08-11T10:41:20.189Z] INFO : 📊 Performance Summary (Total: 191ms)
+[2026-08-11T10:41:20.189Z] INFO :   Route Extraction             182ms (94.8%)
+[2026-08-11T10:41:20.189Z] INFO :   OpenAPI Generation             4ms (2.0%)
+[2026-08-11T10:41:20.189Z] INFO :   File Operations                3ms (1.7%)
+[2026-08-11T10:41:20.189Z] INFO :   Route Validation               1ms (0.4%)
+[2026-08-11T10:41:20.189Z] INFO : 🎉 OpenAPI specification generation completed successfully!
 
 ---
-vp run: cache hit, 1.54s saved.
+vp run: cache hit, 1.48s saved.
