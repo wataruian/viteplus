@@ -13,39 +13,81 @@ We adhere to **The Vite+ Way**, which emphasizes:
 - **Design System Sovereignty**: A single source of truth in `packages/design-system` for all components, styles, and decorative elements, ensuring 100% visual consistency across the monorepo.
 - **Monoculture**: Consistency across every package and app through unified patterns and a central configuration hub.
 
+## 🏗 Monorepo Architecture & Structure
+
+### Applications (`apps/`)
+
+- **`frontend`**: Vite-powered Single Page Application (SPA).
+- **`backend`**: Node.js Express API.
+
+### Shared Libraries (`packages/`)
+
+- **`common`**: Foundational library providing isomorphic environment management and structured logging.
+- **`design-system`**: Shared UI component library using UnoCSS and React.
+- **`library`**: General purpose shared library templates.
+
+### AI Context (`.ai-data/`)
+
+- **Persistent Memory**: The `.ai-data` directory stores architectural decisions, guidelines, and context for AI agents. This directory should be checked into version control to share knowledge across the team.
+- **Scratchpads**: The `.ai-data/artifacts/` directory is ignored by Git and used by agents for temporary outputs, drafts, and implementation plans.
+
+## 📊 Observability & Docker Setup
+
+We use a complete open-source telemetry stack configured via `docker-compose.yml`. The local stack leverages the Grafana LGTM stack alongside OpenTelemetry:
+
+- **Grafana**: Dashboards and UI visualization (Port 3300).
+- **Loki**: Log aggregation (Port 3100).
+- **Tempo**: Distributed tracing (Port 3200).
+- **Mimir**: Metrics storage (Ports 9009/9095).
+- **OpenTelemetry Collector**: Standardized ingestion of traces, metrics, and logs (Ports 4317/4318).
+
+Backend services are expected to emit telemetry to the OpenTelemetry Collector.
+
 ## 🚀 Getting Started
-
-### Quick Start Checklist
-
-1.  **Node.js**: Ensure you are using `v24.14.1` (check `.tool-versions`).
-2.  **Vite+ CLI**: Install globally: `npm i -g vite-plus`.
-3.  **Install dependencies**: Run `vp install`.
-4.  **Initialize**: Run `vp run init` to build, format, and test everything.
-5.  **Develop**: Run `vp dev` to start the frontend application.
-6.  **Backend**: Run `vp run dev --filter @lightproject/backend` to start the backend API.
-
-> [!TIP]
-> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test` runs tests for all packages and apps.
 
 ### Prerequisites
 
 | Tool    | Version    | Notes                         |
 | :------ | :--------- | :---------------------------- |
 | Node.js | `^24.14.1` | Defined in `.tool-versions`   |
+| mise    | `latest`   | Task runner and env manager   |
 | Vite+   | `latest`   | Global CLI for all operations |
 | pnpm    | `latest`   | Managed automatically by `vp` |
 
 > [!NOTE]
 > You do not need to install `pnpm` manually; `vp` wraps it and ensures the correct version is used based on `package.json`.
 
+### Quick Start Checklist
+
+1.  **Node.js**: Ensure you are using `v24.14.1` (check `.tool-versions`).
+2.  **Mise**: Install globally for task execution.
+3.  **Vite+ CLI**: Install globally: `npm i -g vite-plus`.
+4.  **Install dependencies**: Run `vp install`.
+5.  **Initialize**: Run `mise run init` to build, format, and test everything.
+6.  **Develop**: Run `mise run start dev` or `vp dev` to start the local development environment.
+
+> [!TIP]
+> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test` runs tests for all packages and apps.
+
 ## 🛠 Development Workflow
+
+### Mise Automation Tasks
+
+We use `mise` as the primary task runner for high-level repository automation. Tasks are defined in `.mise/tasks/`.
+
+| Command           | Description                                                 |
+| :---------------- | :---------------------------------------------------------- |
+| `mise run check`  | Run type checking, formatting, linting, building, and tests |
+| `mise run clean`  | Clean up build artifacts, tools, and AI caches              |
+| `mise run create` | Create standard backend, frontend, and library templates    |
+| `mise run init`   | Initialize the workspace                                    |
+| `mise run start`  | Start the dev or prod server                                |
 
 ### The `vp` Command Reference
 
 | Category     | Command          | Description                                       |
 | :----------- | :--------------- | :------------------------------------------------ |
 | **Start**    | `vp install`     | Install dependencies and setup hooks.             |
-|              | `vp run init`    | One-time project initialization script.           |
 | **Develop**  | `vp run dev`     | Start the development server for all apps.        |
 |              | `vp check`       | Run format, lint, and type checks.                |
 |              | `vp test`        | Run all tests in the workspace recursively.       |
@@ -55,14 +97,14 @@ We adhere to **The Vite+ Way**, which emphasizes:
 
 ### App Specific Scripts
 
-| Application                                   | Command    | Description                           |
-| :-------------------------------------------- | :--------- | :------------------------------------ |
-| **Frontend** (`/apps/frontend`)               | `vp dev`   | Start Vite development server.        |
-|                                               | `vp build` | Build production bundle.              |
-| **Backend** (`/apps/backend`)                 | `vp dev`   | Start Express via `vite-plugin-node`. |
-|                                               | `vp pack`  | Build optimized CJS/ESM library.      |
-| **Common** (`/packages/common`)               | `vp pack`  | Build shared library modules.         |
-| **Design System** (`/packages/design-system`) | `vp pack`  | Build UI library components.          |
+| Application                                   | Command    | Description                      |
+| :-------------------------------------------- | :--------- | :------------------------------- |
+| **Frontend** (`/apps/frontend`)               | `vp dev`   | Start Vite development server.   |
+|                                               | `vp build` | Build production bundle.         |
+| **Backend** (`/apps/backend`)                 | `vp dev`   | Start Express API.               |
+|                                               | `vp pack`  | Build optimized CJS/ESM library. |
+| **Common** (`/packages/common`)               | `vp pack`  | Build shared library modules.    |
+| **Design System** (`/packages/design-system`) | `vp pack`  | Build UI library components.     |
 
 ### ⚓️ Git Hooks
 
@@ -75,16 +117,6 @@ We use `vp staged` as a pre-commit hook. It automatically runs:
 Only code that passes these checks can be committed.
 
 ## 🏗 Monorepo Conventions
-
-### Structure
-
-- **`apps/`**: Deployable units:
-  - `frontend`: Vite-powered SPA.
-  - `backend`: Node.js backend service.
-- **`packages/`**: Shared libraries:
-  - `common`: Shared internal utilities and types.
-  - `design-system`: Shared UI component library using UnoCSS.
-- **`vite.config.ts`**: The **Configuration Hub**. This single file controls linting, formatting, building, and testing for the entire monorepo.
 
 ### Dependency Management
 

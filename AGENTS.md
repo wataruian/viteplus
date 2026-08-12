@@ -34,16 +34,26 @@ This document outlines the goals, guidelines, and best practices for AI agents w
 - **Zero-Volatility Build**: Ensure repeatable builds through strict dependency management and task caching.
 - **High-Speed Iteration**: Leverage `vp`'s task cache to minimize redundant work.
 
+## AI Experience & Context Management
+
+- **Persistent Context**: Always mandate the use of the `.ai-data` directory as a persistent scratchpad for architectural decisions, knowledge items, and context sharing between agent sessions.
+- **Concise Communication**: Keep conversational responses extremely concise. Prioritize action over exposition.
+- **Codebase Primacy**: Always prioritize specific codebase patterns and abstractions found in this repository (e.g., `packages/common`) over generic knowledge or standard library implementations.
+- **Ambiguity Resolution**: If a user's design intent is ambiguous or underspecified, stop and ask clarifying questions rather than guessing.
+- **Artifact Generation**: When drafting plans, outlining architectures, or documenting significant changes, use `.md` artifacts so state can be retained and reviewed easily.
+
 ## Guidelines
 
-- **Tooling**: Always use the `vp` CLI for any task (install, dev, test, build, lint, fmt). Never use `npm`, `pnpm`, or `yarn` directly.
+- **Tooling**: Always use the `vp` CLI for any build/dev task, and `mise` for high-level repository automation. Never use `npm`, `pnpm`, or `yarn` directly.
 - **Monorepo Structure**:
   - `apps/`: Dedicated to deployable applications:
     - `apps/frontend`: Frontend application built with Vite.
-    - `apps/backend`: Backend service.
+    - `apps/backend`: Node.js Express API.
   - `packages/`: Dedicated to shared libraries and utilities:
-    - `packages/common`: Shared internal library.
+    - `packages/common`: Shared internal library (logging, environment).
     - `packages/design-system`: Shared UI component library using UnoCSS.
+    - `packages/library`: General purpose library templates.
+- **Observability**: A Grafana LGTM stack (Loki, Grafana, Tempo, Mimir) + OpenTelemetry Collector is configured in `docker-compose.yml`. Backend services must emit metrics, logs, and traces to the OTEL collector.
 - **Imports**:
   - Always import from `vite-plus` or `vite-plus/test` instead of `vite` or `vitest`.
   - Use `workspace:*` for internal package dependencies.
@@ -52,6 +62,7 @@ This document outlines the goals, guidelines, and best practices for AI agents w
   - Maintain `tsconfig.json` references between workspace projects.
 - **Configuration**: Use `defineConfig` from `vite-plus` for all configuration files.
 - **Command Selection**:
+  - Use `mise run <task>` for high-level automation (defined in `.mise/tasks/`).
   - Use `vp run <script>` for custom scripts defined in `package.json`.
   - Use `vp <command>` (e.g., `vp dev`, `vp test`) for built-in Vite+ functionality.
 - **Configuration Hub**: Treat `vite.config.ts` as the source of truth for formatting, linting, and building.
@@ -60,10 +71,10 @@ This document outlines the goals, guidelines, and best practices for AI agents w
 
 When first entering the repository or a new package:
 
-1. **Root Analysis**: Start with `package.json` and `vite.config.ts` to understand the global configuration and available custom scripts (e.g., `vp run init`, `vp run ready`).
+1. **Root Analysis**: Start by checking `.mise/tasks/` for high-level automation scripts and `vite.config.ts` / `package.json` for global configurations.
 2. **Dependency Graph**: Check `pnpm-workspace.yaml` and internal `package.json` files to map project relationships. Note the use of `catalog:` for shared external dependencies.
-3. **Task Discovery**: Run `vp help` and `vp run --help` to identify available tools and tasks. Note that `vp run <command>` at the root level executes recursively across all workspace projects.
-4. **Validation Check**: Run `vp install` followed by `vp run ready` to ensure the local environment is healthy before making changes.
+3. **Task Discovery**: Run `mise tasks` to list all available root commands. Run `vp help` and `vp run --help` to identify available tooling commands.
+4. **Validation Check**: Run `vp install` followed by `mise run check` or `vp run ready` to ensure the local environment is healthy before making changes.
 
 ## Environment Management
 
@@ -101,6 +112,8 @@ When first entering the repository or a new package:
   - **Shortcuts**: Use standardized UnoCSS shortcuts for common elements (e.g., `btn-primary`, `btn-ghost`, `glass-nav`).
   - **Header Safety**: When using the sticky `Header`, always add a `pt-20` (80px) buffer to the main content area in the app to prevent overlapping.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
-- **AI Data**: AI agents should store data in `./.ai-data` directory and use it for reference and knowledge sharing.
+- **AI Data & Context Management**:
+  - The `./.ai-data` directory is the persistent, version-controlled knowledge base for the monorepo. Agents MUST always review the context files here (e.g., `architecture.md`, `coding-guidelines.md`) when starting a new task to align with repository standards.
+  - The `./.ai-data/artifacts` directory is `.gitignore`d and must be used as a temporary scratchpad. Agents should write all drafts, implementation plans, generated code snippets, and temporary task output here before finalizing them.
 
 <!--AI AGENT END-->

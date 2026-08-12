@@ -35,5 +35,5 @@ __unconfig_vite.config.ts
 tmp
 
 # AI
-.ai-data
-.claude/worktrees
+.ai-data/artifacts/*
+!.ai-data/artifacts/.gitkeep
