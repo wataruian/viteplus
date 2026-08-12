@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import type { AppRouterPaths } from '../src/utils/trpc-router';
+import type { RouteInfo } from '../src/middlewares/initialize-request';
 import type { TRPCProcedureType } from '@trpc/server';
-import { getTrpcRoutes } from '../src/utils/autogen/discovery/trpc-discovery';
+import { getTrpcRoutes } from '../src/utils/autogen/discovery';
 import request from 'supertest';
 import { transformer } from '../src/utils/trpc';
 import { trpcEndpoint } from '@lightproject/common/configs';
@@ -453,7 +454,7 @@ describe('tRPC', () => {
 
 describe('tRPC Output Schema', () => {
   it('should have output schemas extracted for tRPC routes', async () => {
-    const routes = await getTrpcRoutes();
+    const routes: RouteInfo[] = await getTrpcRoutes();
 
     const serviceRoutes = routes.filter(
       (r) =>
@@ -482,7 +483,7 @@ describe('tRPC Output Schema', () => {
   });
 
   it('should handle different output types in tRPC routes', async () => {
-    const routes = await getTrpcRoutes();
+    const routes: RouteInfo[] = await getTrpcRoutes();
 
     const outputTypes = new Set<string>();
     for (const route of routes) {

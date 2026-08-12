@@ -1,7 +1,7 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { baseStyles, intentSoft } from '../tokens/base';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 
 const badgeStyles = {
   base: 'inline-flex items-center justify-center font-black uppercase tracking-widest transition-all duration-300 shadow-sm backdrop-blur-sm',

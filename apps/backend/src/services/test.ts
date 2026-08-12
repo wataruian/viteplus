@@ -1,6 +1,5 @@
-import type { InputArgs, ServiceContext } from '../middlewares/initialize-request';
+import type { InferSchemaMap, InputArgs, ServiceContext } from '../middlewares/initialize-request';
 import { BaseService } from './base';
-import type { InferSchemaMap } from '../utils/autogen/utils/zod';
 import { sleep } from '@lightproject/common/utils';
 import z from 'zod';
 

@@ -2,7 +2,7 @@ import * as registry from './registry';
 import { Container, Section } from './layout';
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { ErrorBoundary } from './error-boundary';
 import { ModeProvider } from '../context/mode-provider';
 import { ModeSwitcher } from './mode-switcher';

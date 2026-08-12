@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { Card } from './card';
 import { Icon } from './icon';
 import { Typography } from './typography';

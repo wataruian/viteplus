@@ -14,6 +14,7 @@ import {
 import { type RequestContext, logger, requestContextStorage } from '@lightproject/common/logger';
 import { type RequestType, getRequestType } from '@lightproject/common/configs';
 import type express from 'express';
+import type { z } from 'zod';
 
 interface ErrorDetails {
   name: string;
@@ -90,6 +91,53 @@ type RouteHandlerParams<TInput = never> =
 type RouteHandler<T = unknown> = <TInput>(
   params: RouteHandlerParams<TInput>,
 ) => BaseResponse<T> | Promise<BaseResponse<T>>;
+
+interface ParsedType {
+  base?: string;
+  itemType?: ParsedType | string;
+  kind: 'array' | 'object' | 'primitive' | 'union';
+  properties?: Record<string, ParsedType | string>;
+  types?: (ParsedType | string)[];
+  required?: boolean;
+}
+
+interface ParameterMetadata {
+  name: string;
+  defaultValue?: boolean | number | string | undefined | unknown[] | Record<string, unknown>;
+  description?: string | undefined;
+  properties?: ParameterMetadata[] | undefined;
+  required?: boolean | undefined;
+  type: string | ParsedType | Record<string, unknown>;
+}
+
+interface RouteHandlerInfo {
+  handlerFilePath: string;
+  path: string;
+  procedureType?: 'mutation' | 'query' | undefined;
+  serviceClass: string | undefined;
+  serviceMethod: string | undefined;
+}
+
+interface RouteInfo {
+  handlerFilePath?: string | undefined;
+  input?: ParameterMetadata[] | undefined;
+  method?: string | undefined;
+  output?: ParameterMetadata | undefined;
+  path: string;
+  requestType: string;
+  serviceClass?: string | undefined;
+  serviceFilePath?: string | undefined;
+  serviceMethod?: string | undefined;
+  type?: string | undefined;
+}
+
+interface ServiceMetadata {
+  input: ParameterMetadata[] | undefined;
+  output: ParameterMetadata | undefined;
+  serviceFilePath: string | undefined;
+}
+
+type InferSchemaMap<T extends Record<string, z.ZodType>> = { [K in keyof T]: z.infer<T[K]> };
 
 const isRequest = (req: ExpressRequest): req is Request => 'locals' in req;
 const isResponse = (res: ExpressResponse): res is Response => 'locals' in res;
@@ -170,5 +218,11 @@ export type {
   InputArgs,
   RouteHandler,
   RouteHandlerParams,
+  ParsedType,
+  ParameterMetadata,
+  RouteHandlerInfo,
+  RouteInfo,
+  ServiceMetadata,
+  InferSchemaMap,
 };
 export { isRequest, isResponse, initializeRequest };

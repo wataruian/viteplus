@@ -1,6 +1,6 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 
 const iconStyles = {
   base: 'inline-block shrink-0',

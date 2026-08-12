@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import { baseStyles, intentSolid } from '../tokens/base';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { Button } from './button';
 import { Icon } from './icon';
 import { forwardRef } from 'react';

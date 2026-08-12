@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from './button';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { baseStyles } from '../tokens/base';
 import { forwardRef } from 'react';
 import { themes } from '../utils/theme-generator';

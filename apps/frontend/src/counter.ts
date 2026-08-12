@@ -3,7 +3,7 @@ import { logger } from '@lightproject/common/logger';
 const INITIAL_COUNT = 0;
 const INCREMENT_STEP = 1;
 
-export const setupCounter = (element: HTMLButtonElement): (() => void) => {
+const setupCounter = (element: HTMLButtonElement): (() => void) => {
   let counter = INITIAL_COUNT;
   const setCounter = (count: number): void => {
     counter = count;
@@ -26,3 +26,5 @@ export const setupCounter = (element: HTMLButtonElement): (() => void) => {
     element.removeEventListener('click', onHandleClick);
   };
 };
+
+export { setupCounter };

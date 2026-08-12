@@ -1,6 +1,6 @@
 import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { combineClasses } from '../utils/helpers';
 
 const marqueeStyles = {

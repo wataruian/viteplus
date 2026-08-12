@@ -1,42 +1,31 @@
-import { ProgressIndicator, performanceTimer } from './utils/performance';
 import { autogenDir, routesFile } from './config';
 import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
-import type { RouteInfo } from './types';
-import { generateOpenApiSpec } from './generators/openapi-generator';
-import { getHttpRoutes } from './discovery/http-discovery';
-import { getTrpcRoutes } from './discovery/trpc-discovery';
+import { getHttpRoutes, getTrpcRoutes } from './discovery';
+import type { RouteInfo } from '../../middlewares/initialize-request';
+import fs from 'node:fs/promises';
+import { generateOpenApiSpec } from './schema';
 import { inspect } from 'node:util';
 import { logger } from '@lightproject/common/logger';
-import { validateRoutesWithLogging } from './validators/route-validator';
+import path from 'node:path';
+import { validateRoutes } from './validators';
 
 const extractAllRoutes = async (): Promise<RouteInfo[]> => {
-  const allRoutes: RouteInfo[] = [];
-
   const httpRoutes = await getHttpRoutes();
   const trpcRoutes = await getTrpcRoutes();
+  const allRoutes = [...httpRoutes, ...trpcRoutes];
 
-  allRoutes.push(...httpRoutes, ...trpcRoutes);
-
-  const fs = await import('node:fs/promises');
-
-  await Promise.resolve(fs.mkdir(autogenDir, { recursive: true }));
-  await Promise.resolve(fs.writeFile(routesFile, JSON.stringify(allRoutes, undefined, 2)));
+  await fs.mkdir(autogenDir, { recursive: true });
+  await fs.writeFile(routesFile, JSON.stringify(allRoutes, undefined, 2));
 
   if (isTrue(getEnv('AUTOGEN_DEBUG'))) {
-    globalThis.console.log(
-      'allRoutes',
-      inspect(allRoutes, {
-        colors: true,
-        depth: null,
-      }),
-    );
+    globalThis.console.log('allRoutes', inspect(allRoutes, { colors: true, depth: null }));
   }
 
   return allRoutes;
 };
 
 const build = async () => {
-  performanceTimer.start();
+  const startTime = Date.now();
 
   try {
     if (isTest() || isTrue(getEnv('SKIP_AUTOGEN'))) {
@@ -46,11 +35,10 @@ const build = async () => {
 
     logger.info('🚀 Starting autogen build process...');
 
-    performanceTimer.mark('Route Extraction');
     const allRoutes = await extractAllRoutes();
-    performanceTimer.measure('Route Extraction');
 
     const routeTypes: Record<string, number> = {};
+
     for (const route of allRoutes) {
       routeTypes[route.requestType] = (routeTypes[route.requestType] || 0) + 1;
     }
@@ -61,64 +49,40 @@ const build = async () => {
         .join(', ')}`,
     );
 
-    performanceTimer.mark('Route Validation');
-    const progress = new ProgressIndicator('Validating routes', allRoutes.length);
-    const validationResult = validateRoutesWithLogging(allRoutes);
-    progress.complete();
-    performanceTimer.measure('Route Validation');
+    logger.info(`Validating ${allRoutes.length} routes...`);
+    const validationResult = validateRoutes(allRoutes);
 
     if (!validationResult.isValid) {
       logger.error('Route validation failed. Please fix errors before continuing.');
       throw new Error('Route validation failed');
     }
 
-    performanceTimer.mark('OpenAPI Generation');
-    const openApiSpec = generateOpenApiSpec(allRoutes, {
-      description: 'Auto-generated API documentation for Pancake platform',
-      serverUrl: 'http://localhost:3000',
-      title: 'Pancake API',
-      version: '1.0.0',
-    });
-    performanceTimer.measure('OpenAPI Generation');
+    const openApiSpec = generateOpenApiSpec(allRoutes);
+    const outputFile = path.resolve(autogenDir, 'openapi.json');
 
-    performanceTimer.mark('File Operations');
-    const fs = await import('node:fs/promises');
-    const { default: path } = await import('node:path');
-
-    const outputDir = autogenDir;
-    const outputFile = path.resolve(outputDir, 'openapi.json');
-
-    await Promise.resolve(fs.mkdir(outputDir, { recursive: true }));
-    await Promise.resolve(fs.writeFile(outputFile, JSON.stringify(openApiSpec, undefined, 2)));
-    performanceTimer.measure('File Operations');
+    await fs.mkdir(autogenDir, { recursive: true });
+    await fs.writeFile(outputFile, JSON.stringify(openApiSpec, undefined, 2));
 
     const pathCount = Object.keys(openApiSpec.paths).length;
+
     logger.info(`✅ OpenAPI spec generated with ${pathCount} paths`);
     logger.info(`📄 Saved to: ${outputFile}`);
-
-    performanceTimer.showSummary();
-
-    logger.info('🎉 OpenAPI specification generation completed successfully!');
+    logger.info(
+      `🎉 OpenAPI specification generation completed successfully! (${Date.now() - startTime}ms)`,
+    );
   } catch (error) {
-    const totalTime = performanceTimer.getTotal();
     logger.error(
-      `❌ Error after ${Math.round(totalTime)}ms:`,
+      `❌ Error after ${Date.now() - startTime}ms:`,
       error instanceof Error ? { message: error.message, stack: error.stack } : { error },
     );
     throw error;
   }
 };
 
-export { extractAllRoutes, build };
+export { build, extractAllRoutes };
 
 export * from './config';
-export * from './discovery/http-discovery';
-export * from './discovery/trpc-discovery';
-export * from './generators/openapi-generator';
-export * from './parsers/http-parser';
-export * from './parsers/service-parser';
-export * from './parsers/trpc-parser';
-export * from './utils/cache';
-export * from './utils/performance';
-export type * from './types';
-export * from './validators/route-validator';
+export * from './discovery';
+export * from './project';
+export * from './schema';
+export * from './validators';

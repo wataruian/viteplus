@@ -1,6 +1,5 @@
 import { getCallerDir } from '@lightproject/common/utils';
 import path from 'node:path';
-import { projectCache } from './utils/cache';
 
 const projectDir = getCallerDir();
 const servicesDir = path.resolve(projectDir, 'src/services');
@@ -14,8 +13,6 @@ const routesFile = path.resolve(autogenDir, 'routes.json');
 
 const swaggerEndpointFiles = [swaggerRoutesFile];
 
-const getProject = () => projectCache.getProject();
-
 export {
   routesFile,
   projectDir,
@@ -26,5 +23,4 @@ export {
   templateFile,
   openApiSpecFile,
   swaggerEndpointFiles,
-  getProject,
 };

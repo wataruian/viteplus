@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+import type { RouteInfo } from '../src/middlewares/initialize-request';
 import { apiEndpoint } from '@lightproject/common/configs';
-import { getHttpRoutes } from '../src/utils/autogen/discovery/http-discovery';
+import { getHttpRoutes } from '../src/utils/autogen/discovery';
 import request from 'supertest';
 
 interface HttpTestCase {
@@ -411,7 +412,7 @@ describe('HTTP', () => {
 
 describe('HTTP Output Schema', () => {
   it('should have output schemas extracted for HTTP routes', async () => {
-    const routes = await getHttpRoutes();
+    const routes: RouteInfo[] = await getHttpRoutes();
 
     const serviceRoutes = routes.filter(
       (r) =>
@@ -440,7 +441,7 @@ describe('HTTP Output Schema', () => {
   });
 
   it('should handle different output types in routes', async () => {
-    const routes = await getHttpRoutes();
+    const routes: RouteInfo[] = await getHttpRoutes();
 
     const outputTypes = new Set<string>();
     for (const route of routes) {

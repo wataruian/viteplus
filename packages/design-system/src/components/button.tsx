@@ -1,7 +1,7 @@
 import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { baseStyles, intentSolid } from '../tokens/base';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 
 const buttonStyles = {
   base: 'inline-flex items-center justify-center font-bold tracking-tight transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none',

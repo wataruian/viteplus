@@ -1,6 +1,6 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from '../types/component';
+import type { BaseComponentProps } from './base';
 import { Logo } from './logo';
 import { ModeSwitcher } from './mode-switcher';
 import { ThemeSwitcher } from './theme-switcher';
