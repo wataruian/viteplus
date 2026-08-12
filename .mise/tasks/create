@@ -1,8 +1,19 @@
 #!/usr/bin/env bash
+#MISE description="Create standard backend, frontend, and library templates"
 
-vp create backend -- backend-template
-vp create frontend -- frontend-template
-vp create library -- library-template
+set -o errexit # Bail out on any error
+
+type="${1:-"backend"}"
+name="${2:-"sample"}"
+
+if [[ "${type}" != "backend" && "${type}" != "frontend" && "${type}" != "library" ]]; then
+  echo "Invalid type: ${type}"
+  exit 1
+fi
+
+echo "Type: ${type}, Name: ${name}"
+
+vp create "${type}" -- "${name}"
 
 echo ""
 echo "✅ All good!"

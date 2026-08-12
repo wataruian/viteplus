@@ -23,4 +23,4 @@ pnpm = "11.10.0"
 _.file = ".env"
 
 [tasks]
-hello = "echo hello from mise: ${TEST_VAR}"
+hello = { description = "A simple hello task for testing", run = "echo hello from mise: ${TEST_VAR}" }

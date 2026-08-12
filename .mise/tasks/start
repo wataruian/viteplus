@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#MISE description="Start the dev or prod server"
+
+set -o errexit # Bail out on any error
 
 mode="${1:-"dev"}"
 

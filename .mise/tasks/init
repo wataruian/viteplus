@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#MISE description="Initialize the workspace"
+
+set -o errexit # Bail out on any error
 
 vp run --no-cache init
 

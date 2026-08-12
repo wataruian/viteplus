@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#MISE description="Clean up build artifacts, tools, and AI caches"
+
+set -o errexit # Bail out on any error
 
 tools="${1:-"false"}"
 ai="${2:-"false"}"

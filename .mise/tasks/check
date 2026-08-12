@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#MISE description="Run type checking, formatting, linting, building, and tests"
 
 set -o errexit # Bail out on any error
 
@@ -11,6 +12,8 @@ debug="${2:-"true"}"
 install="${3:-"false"}"
 
 rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+rootDir="$(pwd)"
 
 function executeCommand() {
   local arguments=("${@}")

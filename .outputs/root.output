@@ -1,6 +1,6 @@
 $ vp check ◉ cache hit, replaying
-pass: All 167 files are correctly formatted (536ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 132 files (1.6s, 8 threads)
+pass: All 167 files are correctly formatted (574ms, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 132 files (2.6s, 8 threads)
 
 ---
-vp run: cache hit, 2.64s saved.
+vp run: cache hit, 4.94s saved.
