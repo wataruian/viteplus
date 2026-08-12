@@ -1,3 +1,4 @@
+import { SessionProvider } from '@lightproject/design-system/context';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -8,7 +9,9 @@ const container = globalThis.document.querySelector('#root');
 if (container) {
   createRoot(container).render(
     <StrictMode>
-      <App />
+      <SessionProvider>
+        <App />
+      </SessionProvider>
     </StrictMode>,
   );
 }

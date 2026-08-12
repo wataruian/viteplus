@@ -171,6 +171,9 @@ const getCommonViteConfig = ({
     },
     pack: {
       clean: true,
+      define: {
+        'import.meta': '{}',
+      },
       dts: {
         cjsReexport: true,
         sourcemap: isLocal,

@@ -1,8 +1,25 @@
+const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
+  'env' in obj;
+
 const getEnv = (key: string, defaultValue?: string): string | undefined => {
-  const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
-  if (envGlobal.process?.env !== undefined && envGlobal.process.env[key] !== undefined) {
-    return envGlobal.process.env[key];
+  try {
+    const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
+    if (envGlobal.process?.env !== undefined && envGlobal.process.env[key] !== undefined) {
+      return envGlobal.process.env[key];
+    }
+  } catch {
+    // Ignore error
   }
+
+  try {
+    const metaEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+    if (metaEnv?.[key] !== undefined) {
+      return metaEnv[key];
+    }
+  } catch {
+    // Ignore error
+  }
+
   return defaultValue;
 };
 
@@ -24,7 +41,8 @@ const isFalse = (value = '') => {
   return false;
 };
 
-const getEnvName = () => getEnv('ENV')?.toLowerCase() ?? 'local';
+const getEnvName = () =>
+  getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'localz';
 const getNodeEnv = () => getEnv('NODE_ENV');
 const isNodeEnvTest = () => getNodeEnv() === 'test';
 const isLocal = () => getEnvName() === 'local';
@@ -61,6 +79,7 @@ export {
   getLogFormat,
   getLogLevel,
   getNodeEnv,
+  hasEnvProperty,
   isBrowser,
   isCi,
   isDebug,

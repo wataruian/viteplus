@@ -68,6 +68,7 @@ class Logger {
     if (isBrowser()) {
       return this;
     }
+
     if (this.options.outputPath !== undefined) {
       try {
         const { createRotationStream } = await import('./rotation');
@@ -77,6 +78,7 @@ class Logger {
         globalThis.console.error('Failed to initialize log rotation stream:', error);
       }
     }
+
     return this;
   }
 

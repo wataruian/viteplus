@@ -1,19 +1,20 @@
 import type { TrpcRouter } from '@lightproject/backend';
 import { trpcUrl } from '@lightproject/common/configs';
+import { getEnv, isNodeEnvTest, isTest, isTrue, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { Preview } from '@lightproject/design-system/components';
+import { useSession } from '@lightproject/design-system/context';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useEffect } from 'react';
 import superjson from 'superjson';
 
 const App = () => {
+  const { sessionId } = useSession();
+
   useEffect(() => {
     const run = async () => {
       const isEnableTestRoutes =
-        import.meta.env['VITE_ENABLE_TEST_ROUTES'] === 'true' ||
-        import.meta.env['VITE_ENV'] === 'test' ||
-        import.meta.env['VITEST'] === 'true' ||
-        import.meta.env['NODE_ENV'] === 'test';
+        isTrue(getEnv('VITE_ENABLE_TEST_ROUTES')) || isTest() || isVitest() || isNodeEnvTest();
 
       if (isEnableTestRoutes) {
         const trpcClient = createTRPCClient<TrpcRouter>({
@@ -35,6 +36,7 @@ const App = () => {
       }
 
       logger.info('Frontend Start', {
+        clientId: sessionId,
         platform: globalThis.navigator.userAgent,
         timestamp: new Date().toISOString(),
       });
@@ -43,7 +45,7 @@ const App = () => {
     run().catch((error: unknown) => {
       logger.error('Failed to initialize frontend', { error });
     });
-  }, [logger]);
+  }, [logger, sessionId]);
 
   return (
     <>

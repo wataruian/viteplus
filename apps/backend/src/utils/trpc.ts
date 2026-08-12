@@ -1,4 +1,4 @@
-import { isProduction } from '@lightproject/common/environment';
+import { getEnv, isProduction, isTrue } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { generateUuid } from '@lightproject/common/utils';
 import { type TRPCError, initTRPC } from '@trpc/server';
@@ -64,8 +64,7 @@ const errorFormatter = ({
     success: false,
   };
 
-  const isErrorStackEnabled =
-    globalThis.process.env['ENABLE_ERROR_STACK'] === 'true' ? true : !isProduction();
+  const isErrorStackEnabled = isTrue(getEnv('ENABLE_ERROR_STACK')) || !isProduction();
 
   if (!isErrorStackEnabled) {
     formattedError.error.stack = undefined;
