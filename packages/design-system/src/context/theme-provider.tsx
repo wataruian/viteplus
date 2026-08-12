@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { ThemeContext } from './theme-context';
+
 import { themes } from '../utils/theme-generator';
+import { ThemeContext } from './theme-context';
 
 const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const themeList = Object.keys(themes);

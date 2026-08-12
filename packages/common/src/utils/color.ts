@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+
 import { getEnv } from '../environment/env';
 import { getRandomText } from './text';
 
@@ -88,19 +89,19 @@ const getAnsiEscapeCodes = (colorFunction: (text: string) => string) => {
   return { close: '', open: '' };
 };
 
-export type { ColorFunction };
 export {
+  ansiEscapeCodeRegex,
   chalkInstance,
   chalkLevelEnv,
-  defaultChalkLevel,
   colors,
+  defaultChalkLevel,
   defaultColor,
-  parsedLevel,
-  normalizedChalkLevel,
   getAnsiEscapeCodes,
   getNextRandomColor,
   getRandomColor,
+  normalizedChalkLevel,
+  parsedLevel,
   resetColor,
-  ansiEscapeCodeRegex,
   resetColorAnsiEscapeCode,
 };
+export type { ColorFunction };

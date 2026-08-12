@@ -1,6 +1,7 @@
 import { getEnv, isTrue } from '@lightproject/common/environment';
-import { initializeTelemetry } from '@lightproject/common/utils';
 import { logger } from '@lightproject/common/logger';
+import { initializeTelemetry } from '@lightproject/common/utils';
+
 import packageJson from '../package.json' with { type: 'json' };
 
 const init = async () => {

@@ -34,5 +34,5 @@ const createRotationStream = async (
   };
 };
 
-export type { LogStream, RotationOptions };
 export { createRotationStream };
+export type { LogStream, RotationOptions };

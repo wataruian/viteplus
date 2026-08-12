@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g \".ai-data/artifacts/**/*\" \".ai-data/artifacts/!(*.gitkeep)\"",
-    "clean:tools": "rimraf -g **/tmp/**",
     "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
-    "ready": "vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
-    "setup": "./install.sh",
-    "init": "vp install && vp run ready",
+    "clean:tools": "rimraf -g **/tmp/**",
     "debug": "vp cache clean && vp run ready",
+    "init": "vp install && vp run ready",
     "prepare": "vp config",
+    "ready": "vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
     "serve:dev": "vp run -r --parallel dev",
-    "serve:prod": "vp run -r --parallel start"
+    "serve:prod": "vp run -r --parallel start",
+    "setup": "./install.sh"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -30,8 +30,8 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "11.10.0",
-      "onFail": "download"
+      "onFail": "download",
+      "version": "11.10.0"
     }
   },
   "engines": {

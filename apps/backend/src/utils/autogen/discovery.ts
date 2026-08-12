@@ -1,10 +1,12 @@
-import { extractServiceMetadata, getServiceNameFromHandlerFile } from './schema';
+import path from 'node:path';
+
 import { getEnv, isTest, isTrue, isVitest } from '@lightproject/common/environment';
 import { Node } from 'ts-morph';
+
 import type { RouteInfo } from '../../middlewares/initialize-request';
-import { getProject } from './project';
-import path from 'node:path';
 import { projectDir } from './config';
+import { getProject } from './project';
+import { extractServiceMetadata, getServiceNameFromHandlerFile } from './schema';
 
 // -----------------------------------------------------------------------------
 // HTTP Discovery
@@ -445,14 +447,14 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
   }
 };
 
-export type { ExtractedTrpcRoute };
 export {
   extractHttpMethod,
-  extractMethod,
   extractHttpServiceMethod,
-  getHttpRoutes,
+  extractMethod,
   extractProcedureType,
-  findHandler,
   extractTrpcRoutesFromFile,
+  findHandler,
+  getHttpRoutes,
   getTrpcRoutes,
 };
+export type { ExtractedTrpcRoute };

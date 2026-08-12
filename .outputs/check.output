@@ -1,22 +1,22 @@
-~/packages/library$ vp check ◉ cache hit, replaying
-pass: All 7 files are correctly formatted (431ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 5 files (579ms, 8 threads)
+~/packages/library$ vp check --fix ◉ cache hit, replaying
+pass: Formatting completed for checked files (2.1s)
+pass: Found no warnings, lint errors, or type errors in 5 files (740ms, 8 threads)
 
-~/packages/design-system$ vp check ◉ cache hit, replaying
-pass: All 45 files are correctly formatted (533ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 43 files (951ms, 8 threads)
+~/packages/design-system$ vp check --fix ◉ cache hit, replaying
+pass: Formatting completed for checked files (2.5s)
+pass: Found no warnings, lint errors, or type errors in 43 files (1.1s, 8 threads)
 
-~/packages/common$ vp check ◉ cache hit, replaying
-pass: All 33 files are correctly formatted (429ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 31 files (821ms, 8 threads)
+~/packages/common$ vp check --fix ◉ cache hit, replaying
+pass: Formatting completed for checked files (2.2s)
+pass: Found no warnings, lint errors, or type errors in 31 files (938ms, 8 threads)
 
-~/apps/backend$ vp check ◉ cache hit, replaying
-pass: All 44 files are correctly formatted (311ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 42 files (990ms, 8 threads)
+~/apps/backend$ vp check --fix ◉ cache hit, replaying
+pass: Formatting completed for checked files (2.3s)
+pass: Found no warnings, lint errors, or type errors in 42 files (1.2s, 8 threads)
 
-~/apps/frontend$ vp check ◉ cache hit, replaying
-pass: All 9 files are correctly formatted (356ms, 8 threads)
-pass: Found no warnings, lint errors, or type errors in 6 files (955ms, 8 threads)
+~/apps/frontend$ vp check --fix ◉ cache hit, replaying
+pass: Formatting completed for checked files (2.1s)
+pass: Found no warnings, lint errors, or type errors in 6 files (794ms, 8 threads)
 
 ---
-vp run: 5/5 cache hit (100%), 9.75s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 13.41s saved. (Run `vp run --last-details` for full details)

@@ -3,8 +3,8 @@ import {
   TestServiceInputSchemas,
   TestServiceOutputSchemas,
 } from '../../../services/test';
-import { createRouteHandler } from '../../../utils/route-handler';
 import { publicHttp } from '../../../utils/http';
+import { createRouteHandler } from '../../../utils/route-handler';
 
 const routes = {
   '/test/async-fail-reject': publicHttp.get(() =>

@@ -34,4 +34,4 @@ const getStyles = (...styles: unknown[]): string => {
   return uniqueClasses.filter(Boolean).join(' ');
 };
 
-export { classPrefix, combineClasses, getStyles, extract };
+export { classPrefix, combineClasses, extract, getStyles };

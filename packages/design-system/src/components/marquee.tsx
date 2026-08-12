@@ -1,7 +1,8 @@
-import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
+import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
+
 import { combineClasses } from '../utils/helpers';
+import type { BaseComponentProps } from './base';
 
 const marqueeStyles = {
   base: 'flex w-full select-none overflow-hidden',
@@ -87,5 +88,5 @@ const Marquee = forwardRef<HTMLDivElement, MarqueeProps>(
 
 Marquee.displayName = 'Marquee';
 
-export type { MarqueeProps, MarqueeVariants };
 export { Marquee, marqueeStyles };
+export type { MarqueeProps, MarqueeVariants };

@@ -45,5 +45,5 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
 
 const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
 
-export type { LogMode, LogLevel, LogEntry };
-export { formatColors, formatPretty, formatJSON };
+export { formatColors, formatJSON, formatPretty };
+export type { LogEntry, LogLevel, LogMode };

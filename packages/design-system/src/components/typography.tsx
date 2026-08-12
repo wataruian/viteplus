@@ -1,7 +1,8 @@
-import { type HTMLAttributes, createElement, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
+import { type HTMLAttributes, createElement, forwardRef } from 'react';
+
 import { baseStyles } from '../tokens/base';
+import type { BaseComponentProps } from './base';
 
 const typographyStyles = {
   base: '',
@@ -49,5 +50,5 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = 'Typography';
 
-export type { TypographyProps, TypographyVariants };
 export { Typography, typographyStyles };
+export type { TypographyProps, TypographyVariants };

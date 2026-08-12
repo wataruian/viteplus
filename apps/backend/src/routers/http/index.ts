@@ -1,4 +1,5 @@
 import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
+
 import type { RouteHandler } from '../../middlewares/initialize-request';
 import defaultRoutes from './routes/default';
 import testRoutes from './routes/test';
@@ -13,5 +14,5 @@ if (includeTestRoutes) {
 
 type HttpRouter = typeof httpRouter;
 
+export { httpRouter, includeTestRoutes };
 export type { HttpRouter };
-export { includeTestRoutes, httpRouter };

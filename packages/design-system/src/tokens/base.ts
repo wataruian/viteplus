@@ -44,5 +44,5 @@ const intentSolid = (color: ColorKeyMap) =>
 const intentInput = (color: 'danger' | 'success') =>
   `${baseStyles.colors.border[color]}/50 focus:${baseStyles.colors.ring[color]}/20 focus:${baseStyles.colors.border[color]}/50`;
 
-export type { ColorKeyMap };
 export { baseStyles, createColorMap, intentInput, intentSoft, intentSolid };
+export type { ColorKeyMap };

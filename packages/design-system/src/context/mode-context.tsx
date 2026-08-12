@@ -18,5 +18,5 @@ const useMode = () => {
   return context;
 };
 
-export type { Mode, ModeContextValue };
 export { ModeContext, useMode };
+export type { Mode, ModeContextValue };

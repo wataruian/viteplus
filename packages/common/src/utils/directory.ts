@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import np from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const pathExists = (path: string): boolean => {
   try {
@@ -325,23 +325,23 @@ const backupPath = ({
 };
 
 export {
-  pathExists,
-  getScriptDir,
-  getScriptFileName,
-  getScriptFilePath,
-  getImporterDir,
-  getImporterFilePath,
-  getImporterFileName,
-  getCallerDir,
-  getCallerFilePath,
-  getCallerFileName,
-  isDirectory,
-  getProjectRoot,
-  readFile,
+  backupPath,
+  copyPath,
   createDir,
   createFile,
   deletePath,
-  copyPath,
+  getCallerDir,
+  getCallerFileName,
+  getCallerFilePath,
+  getImporterDir,
+  getImporterFileName,
+  getImporterFilePath,
+  getProjectRoot,
+  getScriptDir,
+  getScriptFileName,
+  getScriptFilePath,
+  isDirectory,
   movePath,
-  backupPath,
+  pathExists,
+  readFile,
 };

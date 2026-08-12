@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
+
 import { getRandomColor } from '../utils/color';
 
 interface RequestContext {
@@ -36,5 +37,5 @@ const getColor = () => {
 
 const getRequestContext = (): RequestContext | undefined => requestContextStorage.getStore();
 
+export { getColor, getRequestContext, getSessionId, requestContextStorage };
 export type { RequestContext };
-export { getSessionId, getRequestContext, getColor, requestContextStorage };

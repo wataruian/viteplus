@@ -1,5 +1,6 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import type { BaseComponentProps } from './base';
 
 const iconStyles = {
@@ -38,5 +39,5 @@ const Icon = forwardRef<HTMLSpanElement, IconProps>(
 
 Icon.displayName = 'Icon';
 
-export type { IconProps, IconVariants };
 export { Icon, iconStyles };
+export type { IconProps, IconVariants };

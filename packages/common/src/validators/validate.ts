@@ -58,13 +58,13 @@ const checkDuplicateExports = (
   }
 };
 
-export type { ModuleExports };
 export {
   checkDuplicateExports,
+  isCallable,
+  isModuleExports,
+  isNonNullObject,
   isPlainObject,
   isRecord,
   isRecordArray,
-  isCallable,
-  isNonNullObject,
-  isModuleExports,
 };
+export type { ModuleExports };

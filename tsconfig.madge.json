@@ -1,22 +1,22 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@lightproject/backend": ["apps/backend/src/index.ts"],
+      "@lightproject/backend/*": ["apps/backend/src/*"],
       "@lightproject/common": ["packages/common/src/index.ts"],
       "@lightproject/common/*": ["packages/common/src/*"],
       "@lightproject/design-system": ["packages/design-system/src/index.ts"],
       "@lightproject/design-system/*": ["packages/design-system/src/*"],
-      "@lightproject/library": ["packages/library/src/index.ts"],
-      "@lightproject/library/*": ["packages/library/src/*"],
-      "@lightproject/backend": ["apps/backend/src/index.ts"],
-      "@lightproject/backend/*": ["apps/backend/src/*"],
       "@lightproject/frontend": ["apps/frontend/src/index.ts"],
       "@lightproject/frontend/*": ["apps/frontend/src/*"],
-      "vite-plus/test": ["package.json"],
-      "vite-plus/pack": ["package.json"],
+      "@lightproject/library": ["packages/library/src/index.ts"],
+      "@lightproject/library/*": ["packages/library/src/*"],
       "@vitejs/plugin-react": ["package.json"],
-      "virtual:*": ["package.json"]
+      "virtual:*": ["package.json"],
+      "vite-plus/pack": ["package.json"],
+      "vite-plus/test": ["package.json"]
     }
-  }
+  },
+  "extends": "./tsconfig.base.json"
 }

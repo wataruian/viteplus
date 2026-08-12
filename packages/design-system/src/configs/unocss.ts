@@ -1,4 +1,3 @@
-import { type ColorKeyMap, baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import {
   type UserConfig,
   defineConfig,
@@ -10,13 +9,15 @@ import {
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss';
-import { getCSS, getThemes } from '../utils/theme-generator';
+
 import { animation } from '../tokens/animation';
-import { getStyles } from '../utils/helpers';
+import { type ColorKeyMap, baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import { iconsOptions } from '../tokens/icons';
-import { shortcuts } from '../utils/shortcuts';
-import { stylesRegistry } from '../utils/compile';
 import { webFontsOptions } from '../tokens/typography';
+import { stylesRegistry } from '../utils/compile';
+import { getStyles } from '../utils/helpers';
+import { shortcuts } from '../utils/shortcuts';
+import { getCSS, getThemes } from '../utils/theme-generator';
 
 const themes = getThemes();
 

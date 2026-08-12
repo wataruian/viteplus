@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite-plus';
 import fs from 'node:fs';
-import { getPackageViteConfig } from '../../vite.config';
 import path from 'node:path';
+
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
+import { defineConfig } from 'vite-plus';
+
+import { getPackageViteConfig } from '../../vite.config';
 
 const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 

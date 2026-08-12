@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from './initialize-request';
+import { isTrpcEndpoint } from '@lightproject/common/configs';
 import {
   getEnv,
   isCi,
@@ -9,9 +9,10 @@ import {
   isTest,
   isTrue,
 } from '@lightproject/common/environment';
-import { errorHandler } from './gateway-middleware';
-import { isTrpcEndpoint } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
+
+import { errorHandler } from './gateway-middleware';
+import type { NextFunction, Request, Response } from './initialize-request';
 
 const logDebugTruthTable = (
   isIpAllowed: boolean,
@@ -96,4 +97,4 @@ const trustProxyMiddleware = (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export { logDebugTruthTable, handleAccessDenied, trustProxyMiddleware };
+export { handleAccessDenied, logDebugTruthTable, trustProxyMiddleware };

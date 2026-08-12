@@ -1,6 +1,8 @@
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
-import { defineConfig } from 'vite-plus';
 import path from 'node:path';
+
+import { defineConfig } from 'vite-plus';
+
+import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
 
 export default defineConfig(({ mode }) => {
   const dir = import.meta.dirname;

@@ -1,12 +1,14 @@
-import { autogenDir, routesFile } from './config';
-import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
-import { getHttpRoutes, getTrpcRoutes } from './discovery';
-import type { RouteInfo } from '../../middlewares/initialize-request';
 import fs from 'node:fs/promises';
-import { generateOpenApiSpec } from './schema';
-import { inspect } from 'node:util';
-import { logger } from '@lightproject/common/logger';
 import path from 'node:path';
+import { inspect } from 'node:util';
+
+import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
+import { logger } from '@lightproject/common/logger';
+
+import type { RouteInfo } from '../../middlewares/initialize-request';
+import { autogenDir, routesFile } from './config';
+import { getHttpRoutes, getTrpcRoutes } from './discovery';
+import { generateOpenApiSpec } from './schema';
 import { validateRoutes } from './validators';
 
 const extractAllRoutes = async (): Promise<RouteInfo[]> => {

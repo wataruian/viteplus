@@ -1,5 +1,6 @@
-import type { RouteInfo } from '../../middlewares/initialize-request';
 import { logger } from '@lightproject/common/logger';
+
+import type { RouteInfo } from '../../middlewares/initialize-request';
 
 const validateRoute = (route: RouteInfo): { errors: number; warnings: number } => {
   let errors = 0;

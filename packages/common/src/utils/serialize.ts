@@ -78,5 +78,5 @@ const safeClone = <T extends JsonValue>(source: T): T => {
   throw new Error('Unreachable');
 };
 
-export type { Primitive, JsonValue };
-export { isT, defaultIgnoredKeys, safeClone, safeSerialize };
+export { defaultIgnoredKeys, isT, safeClone, safeSerialize };
+export type { JsonValue, Primitive };

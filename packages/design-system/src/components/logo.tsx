@@ -1,7 +1,8 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import { baseStyles } from '../tokens/base';
+import type { BaseComponentProps } from './base';
 import { typographyStyles } from './typography';
 
 const logoStyles = {
@@ -58,5 +59,5 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
 
 Logo.displayName = 'Logo';
 
-export type { LogoProps, LogoVariants };
 export { Logo, logoStyles };
+export type { LogoProps, LogoVariants };

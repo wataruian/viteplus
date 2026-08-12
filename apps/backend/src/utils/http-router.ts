@@ -1,8 +1,9 @@
-import type { BaseResponse } from '../middlewares/initialize-request';
-import type { Express } from 'express';
 import { apiEndpoint } from '@lightproject/common/configs';
-import { httpRouter } from '../routers/http';
 import { logger } from '@lightproject/common/logger';
+import type { Express } from 'express';
+
+import type { BaseResponse } from '../middlewares/initialize-request';
+import { httpRouter } from '../routers/http';
 
 const HTTP_METHODS = new Set(['get', 'post', 'put', 'delete', 'patch', 'options', 'head']);
 
@@ -61,4 +62,4 @@ const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void 
   }
 };
 
-export { HTTP_METHODS, isServiceHandler, isHttpMethod, joinPaths, registerHttpRoutes };
+export { HTTP_METHODS, isHttpMethod, isServiceHandler, joinPaths, registerHttpRoutes };

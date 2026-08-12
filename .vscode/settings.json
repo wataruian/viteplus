@@ -1,6 +1,4 @@
 {
-  "npm.scriptRunner": "vp",
-  "editor.defaultFormatter": "oxc.oxc-vscode",
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
@@ -13,22 +11,28 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
-  "oxc.fmt.configPath": "./vite.config.ts",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit",
+    "source.organizeImports": "explicit",
+    "source.organizeLinkDefinitions": "explicit",
+    "source.sort.json": "explicit",
+    "source.sortImports": "explicit"
+  },
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "explicit"
-  },
-  "unocss.root": ["./packages/design-system"],
-  "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
-  "unocss.exclude": ["**/node_modules/**", "**/dist/**"],
-  "unocss.disable": false,
+  // "npm.scriptRunner": "vp",
+  "oxc.fmt.configPath": "./vite.config.ts",
   "unocss.autocomplete.strict": true,
-  "unocss.strictAnnotationMatch": true,
   "unocss.colorPreview": true,
   "unocss.colorPreviewRadius": "50%",
+  "unocss.disable": false,
+  "unocss.exclude": ["**/node_modules/**", "**/dist/**"],
+  "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
   "unocss.remToPxPreview": true,
   "unocss.remToPxRatio": 16,
+  "unocss.root": ["./packages/design-system"],
   "unocss.selectionStyle": true,
+  "unocss.strictAnnotationMatch": true,
   "unocss.underline": true
 }

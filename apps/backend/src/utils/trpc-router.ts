@@ -1,13 +1,15 @@
+import { URL } from 'node:url';
+
+import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
+import { logger } from '@lightproject/common/logger';
+import { isRecord } from '@lightproject/common/validators';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import type { Express } from 'express';
+
 import { type ServiceContext, isRequest, isResponse } from '../middlewares/initialize-request';
 import { type TrpcRouter, trpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
-import type { Express } from 'express';
-import { URL } from 'node:url';
-import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { isRecord } from '@lightproject/common/validators';
-import { logger } from '@lightproject/common/logger';
 
 const createCaller = (ctx: ServiceContext) => trpcRouter.createCaller(ctx);
 
@@ -106,5 +108,5 @@ type TrpcRouterPaths<T> = T extends object
     }[keyof T]
   : never;
 
-export type { AppRouterCaller, AppRouterPaths, TrpcRouterPaths, ExtractRouterPaths };
-export { createCaller, trpcClient, registerTrpcRoutes };
+export { createCaller, registerTrpcRoutes, trpcClient };
+export type { AppRouterCaller, AppRouterPaths, ExtractRouterPaths, TrpcRouterPaths };

@@ -1,10 +1,11 @@
-import { Component, type ErrorInfo, type ReactNode, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { Component, type ErrorInfo, type ReactNode, forwardRef } from 'react';
+
+import { baseStyles } from '../tokens/base';
 import type { BaseComponentProps } from './base';
 import { Card } from './card';
 import { Icon } from './icon';
 import { Typography } from './typography';
-import { baseStyles } from '../tokens/base';
 
 const errorBoundaryStyles = {
   base: 'p-12 rounded-3xl flex flex-col items-center text-center backdrop-blur-sm',
@@ -135,5 +136,5 @@ const ErrorBoundary = forwardRef<ErrorBoundaryBase, ErrorBoundaryProps>((props, 
 
 ErrorBoundary.displayName = 'ErrorBoundary';
 
-export type { ErrorBoundaryProps, ErrorBoundaryState, ErrorBoundaryVariants };
 export { ErrorBoundary, ErrorBoundaryBase, errorBoundaryStyles };
+export type { ErrorBoundaryProps, ErrorBoundaryState, ErrorBoundaryVariants };

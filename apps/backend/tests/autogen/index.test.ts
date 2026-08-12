@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test';
+
 import { extractAllRoutes, validateRoutes } from '../../src/utils/autogen';
 
 describe('Autogen Refactored', () => {

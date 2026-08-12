@@ -15,5 +15,5 @@ const useTheme = () => {
   return context;
 };
 
-export type { ThemeContextValue };
 export { ThemeContext, useTheme };
+export type { ThemeContextValue };

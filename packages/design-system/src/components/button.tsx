@@ -1,5 +1,6 @@
-import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, forwardRef } from 'react';
+
 import { baseStyles, intentSolid } from '../tokens/base';
 import type { BaseComponentProps } from './base';
 
@@ -89,5 +90,5 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
 
 Button.displayName = 'Button';
 
-export type { ButtonBaseProps, ButtonProps, ButtonVariants };
 export { Button, buttonStyles };
+export type { ButtonBaseProps, ButtonProps, ButtonVariants };

@@ -1,18 +1,20 @@
+import type { Server } from 'node:http';
+import { URL } from 'node:url';
+
+import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+
+import { createApp } from '../src/main';
 import type {
   Locals,
   Request,
   Response,
   ServiceContext,
 } from '../src/middlewares/initialize-request';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vite-plus/test';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { trpcEndpoint, trpcUrl } from '@lightproject/common/configs';
-import type { Server } from 'node:http';
 import type { TrpcRouter } from '../src/routers/trpc';
-import { URL } from 'node:url';
-import { createApp } from '../src/main';
-import { createCaller } from '../src/utils/trpc-router';
 import { transformer } from '../src/utils/trpc';
+import { createCaller } from '../src/utils/trpc-router';
 
 describe('tRPC Integration Tests', () => {
   let server: Server | undefined = undefined;

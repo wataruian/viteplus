@@ -1,10 +1,11 @@
-import { Button, type ButtonProps } from './button';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
-import { baseStyles } from '../tokens/base';
 import { forwardRef } from 'react';
-import { themes } from '../utils/theme-generator';
+
 import { useTheme } from '../context/theme-context';
+import { baseStyles } from '../tokens/base';
+import { themes } from '../utils/theme-generator';
+import type { BaseComponentProps } from './base';
+import { Button, type ButtonProps } from './button';
 
 const themeSwitcherStyles = {
   base: `flex flex-wrap gap-1 ${baseStyles.colors.bg.adaptiveSurface} p-1 rounded-xl border ${baseStyles.colors.border.inverseSurface}/10 shadow-sm w-fit`,
@@ -86,5 +87,5 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
 
 ThemeSwitcher.displayName = 'ThemeSwitcher';
 
-export type { ThemeSwitcherProps, ThemeSwitcherVariants };
 export { ThemeSwitcher, themeSwitcherStyles };
+export type { ThemeSwitcherProps, ThemeSwitcherVariants };

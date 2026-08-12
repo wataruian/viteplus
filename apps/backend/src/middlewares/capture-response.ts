@@ -1,7 +1,9 @@
 import { Buffer } from 'node:buffer';
-import type { Response } from './initialize-request';
-import type express from 'express';
+
 import { logger } from '@lightproject/common/logger';
+import type express from 'express';
+
+import type { Response } from './initialize-request';
 
 type ResponseChunk = string | Buffer | Uint8Array;
 type ChunkParameter = ResponseChunk | (() => void) | undefined;
@@ -90,5 +92,5 @@ const captureResponse = (res: Response): void => {
   });
 };
 
-export type { ResponseChunk, ChunkParameter };
-export { isDataChunk, getCallbackAndEncoding, captureResponse };
+export { captureResponse, getCallbackAndEncoding, isDataChunk };
+export type { ChunkParameter, ResponseChunk };

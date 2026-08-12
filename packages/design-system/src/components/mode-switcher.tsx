@@ -1,10 +1,11 @@
 import { type VariantProps, cva } from 'class-variance-authority';
+import { forwardRef } from 'react';
+
+import { useMode } from '../context/mode-context';
 import { baseStyles, intentSolid } from '../tokens/base';
 import type { BaseComponentProps } from './base';
 import { Button } from './button';
 import { Icon } from './icon';
-import { forwardRef } from 'react';
-import { useMode } from '../context/mode-context';
 
 const modeSwitcherStyles = {
   base: 'aspect-square flex items-center justify-center !p-0',
@@ -90,5 +91,5 @@ const ModeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ModeSwitc
 
 ModeSwitcher.displayName = 'ModeSwitcher';
 
-export type { ModeSwitcherProps, ModeSwitcherVariants };
 export { ModeSwitcher, modeSwitcherStyles };
+export type { ModeSwitcherProps, ModeSwitcherVariants };

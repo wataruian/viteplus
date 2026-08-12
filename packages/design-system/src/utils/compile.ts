@@ -1,8 +1,10 @@
-import { type ASTNode, compileStylesRegistry, extractStylesFromFile } from './style-compiler';
-import fg from 'fast-glob';
 import fs from 'node:fs';
-import { inspect } from 'node:util';
 import path from 'node:path';
+import { inspect } from 'node:util';
+
+import fg from 'fast-glob';
+
+import { type ASTNode, compileStylesRegistry, extractStylesFromFile } from './style-compiler';
 
 const envPath = path.resolve(import.meta.dirname, '../../../../.env');
 
@@ -54,4 +56,4 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
   }
 }
 
-export { componentsGlob, files, raw, stylesRegistry, styles };
+export { componentsGlob, files, raw, styles, stylesRegistry };

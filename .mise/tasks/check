@@ -27,28 +27,28 @@ function executeCommand() {
   local commandName="${arguments[*]}"
 
   case "${commandName}" in
-    "vp run -r madge")
+    "vp run -r madge"*)
       commandOutputFile="madge.output"
       ;;
-    "vp run -r root")
+    "vp run -r root"*)
       commandOutputFile="root.output"
       ;;
-    "vp run -r check")
+    "vp run -r check"*)
       commandOutputFile="check.output"
       ;;
-    "vp run -r format")
+    "vp run -r format"*)
       commandOutputFile="format.output"
       ;;
-    "vp run -r lint")
+    "vp run -r lint"*)
       commandOutputFile="lint.output"
       ;;
-    "vp run -r type-check")
+    "vp run -r type-check"*)
       commandOutputFile="type-check.output"
       ;;
-    "vp run -r build")
+    "vp run -r build"*)
       commandOutputFile="build.output"
       ;;
-    "vp run -r test")
+    "vp run -r test"*)
       commandOutputFile="test.output"
       ;;
     "vp run -r compile"*)
@@ -162,11 +162,11 @@ fi
 
 executeCommand vp run -r madge
 
-executeCommand vp run -r root
+executeCommand vp run -r root --fix
 
-executeCommand vp run -r check
-executeCommand vp run -r format
-executeCommand vp run -r lint
+executeCommand vp run -r check --fix
+executeCommand vp run -r format --write
+executeCommand vp run -r lint --fix
 executeCommand vp run -r type-check
 executeCommand vp run -r build
 executeCommand vp run -r test

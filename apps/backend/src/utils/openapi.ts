@@ -1,8 +1,9 @@
+// import { generateOpenApiDocument } from 'trpc-openapi';
+import { trpcEndpoint } from '@lightproject/common/configs';
 // import { trpcDocsUrl, trpcUrl } from '@lightproject/common/configs';
 import { generateOpenAPIDocumentFromTRPCRouter } from 'openapi-trpc';
-// import { generateOpenApiDocument } from 'trpc-openapi';
 import type openApiTypes from 'openapi-types';
-import { trpcEndpoint } from '@lightproject/common/configs';
+
 import { trpcRouter } from '../routers/trpc';
 
 // const openApiDocument: openApiTypes.OpenAPI.Document = generateOpenApiDocument(trpcRouter, {

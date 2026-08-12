@@ -1,9 +1,10 @@
-import type { Express } from 'express';
 import { docsEndpoint } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
-import { openApiSpecFile } from '../utils/autogen';
 import { readFile } from '@lightproject/common/utils';
+import type { Express } from 'express';
 import swaggerUi from 'swagger-ui-express';
+
+import { openApiSpecFile } from '../utils/autogen';
 
 const swaggerOpenApiMiddleware = (app: Express) => {
   app.use(

@@ -1,5 +1,6 @@
-import { getCallerDir } from '@lightproject/common/utils';
 import path from 'node:path';
+
+import { getCallerDir } from '@lightproject/common/utils';
 
 const projectDir = getCallerDir();
 const servicesDir = path.resolve(projectDir, 'src/services');
@@ -14,13 +15,13 @@ const routesFile = path.resolve(autogenDir, 'routes.json');
 const swaggerEndpointFiles = [swaggerRoutesFile];
 
 export {
-  routesFile,
-  projectDir,
-  servicesDir,
   autogenDir,
-  swaggerRoutesFile,
-  swaggerJsonOutputFile,
-  templateFile,
   openApiSpecFile,
+  projectDir,
+  routesFile,
+  servicesDir,
   swaggerEndpointFiles,
+  swaggerJsonOutputFile,
+  swaggerRoutesFile,
+  templateFile,
 };

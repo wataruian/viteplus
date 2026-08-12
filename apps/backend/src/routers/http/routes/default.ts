@@ -3,8 +3,8 @@ import {
   DefaultServiceInputSchemas,
   DefaultServiceOutputSchemas,
 } from '../../../services/default';
-import { createRouteHandler } from '../../../utils/route-handler';
 import { publicHttp } from '../../../utils/http';
+import { createRouteHandler } from '../../../utils/route-handler';
 
 const routes = {
   '': publicHttp.get(() =>

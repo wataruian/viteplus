@@ -1,7 +1,8 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import { baseStyles } from '../tokens/base';
+import type { BaseComponentProps } from './base';
 
 const cardStyles = {
   base: 'rounded-2xl overflow-hidden transition-all duration-300 p-6',
@@ -41,5 +42,5 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = 'Card';
 
-export type { CardProps, CardVariants };
 export { Card, cardStyles };
+export type { CardProps, CardVariants };

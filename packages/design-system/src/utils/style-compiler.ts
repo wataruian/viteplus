@@ -1,5 +1,6 @@
-import { baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import ts from 'typescript';
+
+import { baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 
 type ASTNode =
   | { kind: 'string'; value: string }
@@ -256,14 +257,14 @@ const compileStylesRegistry = (registry: Record<string, ASTNode>) => {
   return Object.fromEntries(Object.entries(registry).map(([k, v]) => [k, resolveValue(v, ctx)]));
 };
 
-export type { ASTNode, Ctx };
 export {
+  compileStylesRegistry,
+  extractStylesFromFile,
   getKey,
-  unwrap,
-  stripTemplate,
   parseValue,
   resolvePath,
   resolveValue,
-  compileStylesRegistry,
-  extractStylesFromFile,
+  stripTemplate,
+  unwrap,
 };
+export type { ASTNode, Ctx };

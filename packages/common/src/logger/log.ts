@@ -1,10 +1,11 @@
-import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
-import type { LogStream, RotationOptions } from './rotation';
 import { SeverityNumber, logs } from '@opentelemetry/api-logs';
+
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
-import { getSessionId } from './context';
 import { isRecord } from '../validators/validate';
+import { getSessionId } from './context';
+import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
 import { redact } from './redactor';
+import type { LogStream, RotationOptions } from './rotation';
 
 interface LoggerOptions {
   color: boolean;
@@ -171,5 +172,5 @@ class Logger {
 
 const logger = new Logger();
 
+export { Logger, logLevelPriority, logger, otelSeverity };
 export type { LoggerOptions };
-export { logLevelPriority, otelSeverity, Logger, logger };

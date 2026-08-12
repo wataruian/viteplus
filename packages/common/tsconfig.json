@@ -1,9 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
-  "display": "Common",
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["./**/*.ts", "../../vite.config.ts"],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "display": "Common",
+  "exclude": ["node_modules", "dist", "coverage"],
+  "extends": "../../tsconfig.json",
+  "include": ["./**/*.ts", "../../vite.config.ts"]
 }

@@ -1,5 +1,6 @@
-import { type Mode, ModeContext } from './mode-context';
 import { type ReactNode, useEffect, useState } from 'react';
+
+import { type Mode, ModeContext } from './mode-context';
 
 const ModeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<Mode>('dark');

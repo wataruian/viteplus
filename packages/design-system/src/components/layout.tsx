@@ -1,5 +1,6 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import type { BaseComponentProps } from './base';
 
 const layoutStyles = {
@@ -73,5 +74,5 @@ Section.displayName = 'Section';
 
 // ─── Exports ─────────────────────────────────────────────────────────────────
 
-export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };
 export { Container, Section, layoutStyles };
+export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };

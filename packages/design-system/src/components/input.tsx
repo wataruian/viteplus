@@ -1,5 +1,6 @@
-import { type InputHTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type InputHTMLAttributes, forwardRef } from 'react';
+
 import { baseStyles, intentInput } from '../tokens/base';
 import type { BaseComponentProps } from './base';
 
@@ -37,5 +38,5 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export type { InputProps, InputVariants };
 export { Input, inputStyles };
+export type { InputProps, InputVariants };

@@ -11,17 +11,17 @@
   "types": "./dist/client.d.mts",
   "exports": {
     ".": {
-      "typescript": {
-        "types": "./src/client.ts",
-        "default": "./src/client.ts"
+      "import": {
+        "default": "./dist/client.mjs",
+        "types": "./dist/client.d.mts"
       },
       "require": {
-        "types": "./dist/client.d.cts",
-        "default": "./dist/client.cjs"
+        "default": "./dist/client.cjs",
+        "types": "./dist/client.d.cts"
       },
-      "import": {
-        "types": "./dist/client.d.mts",
-        "default": "./dist/client.mjs"
+      "typescript": {
+        "default": "./src/client.ts",
+        "types": "./src/client.ts"
       }
     }
   },

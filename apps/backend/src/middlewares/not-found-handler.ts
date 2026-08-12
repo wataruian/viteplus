@@ -1,13 +1,14 @@
-import type { NextFunction, Request, Response } from './initialize-request';
 import {
   apiEndpoint,
   docsEndpoint,
   trpcEndpoint,
   trpcPlaygroundEndpoint,
 } from '@lightproject/common/configs';
-import { httpRouter } from '../routers/http';
 import { isLocal } from '@lightproject/common/environment';
+
+import { httpRouter } from '../routers/http';
 import { trpcRouter } from '../routers/trpc';
+import type { NextFunction, Request, Response } from './initialize-request';
 
 const stripTrailingSlashes = (str: string) => str.replace(/\/+$/u, '');
 
@@ -94,9 +95,9 @@ const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export {
-  stripTrailingSlashes,
-  prefixPath,
   getHttpRouterPaths,
   getTrpcProcedureKeys,
   notFoundHandler,
+  prefixPath,
+  stripTrailingSlashes,
 };

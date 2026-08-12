@@ -1,9 +1,9 @@
 $ madge --circular --warning --exclude '(dist|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps ◉ cache hit, replaying
 - Finding files
-Processed 130 files (1.1s) 
+Processed 130 files (1.2s) 
 
 ✔ No circular dependency found!
 
 
 ---
-vp run: cache hit, 1.36s saved.
+vp run: cache hit, 1.54s saved.

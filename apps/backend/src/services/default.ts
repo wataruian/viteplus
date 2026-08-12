@@ -1,6 +1,7 @@
+import z from 'zod';
+
 import type { InferSchemaMap, InputArgs, ServiceContext } from '../middlewares/initialize-request';
 import { BaseService } from './base';
-import z from 'zod';
 
 const DefaultServiceInputSchemas = {
   root: z.void(),
@@ -25,5 +26,5 @@ class DefaultService extends BaseService {
 type DefaultServiceInputs = InferSchemaMap<typeof DefaultServiceInputSchemas>;
 type DefaultServiceOutputs = InferSchemaMap<typeof DefaultServiceOutputSchemas>;
 
+export { DefaultService, DefaultServiceInputSchemas, DefaultServiceOutputSchemas };
 export type { DefaultServiceInputs, DefaultServiceOutputs };
-export { DefaultServiceInputSchemas, DefaultServiceOutputSchemas, DefaultService };

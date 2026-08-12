@@ -1,6 +1,6 @@
 import { adminUrl, apiBaseUrl, siteUrl } from '@lightproject/common/configs';
-import type { CorsOptions } from 'cors';
 import { getEnv } from '@lightproject/common/environment';
+import type { CorsOptions } from 'cors';
 
 const allowedOrigins: string[] = [];
 

@@ -1,7 +1,9 @@
-import { build } from './autogen/index';
 import fs from 'node:fs';
-import { logger } from '@lightproject/common/logger';
 import path from 'node:path';
+
+import { logger } from '@lightproject/common/logger';
+
+import { build } from './autogen/index';
 
 const envPath = path.resolve(import.meta.dirname, '../../../../.env');
 

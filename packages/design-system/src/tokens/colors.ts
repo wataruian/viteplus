@@ -139,5 +139,5 @@ const colors = {
   },
 } as const;
 
-export type { ColorKey };
 export { colorPalettes, colors };
+export type { ColorKey };

@@ -1,5 +1,5 @@
-import type { NextFunction, Request, Response } from './initialize-request';
 import { uniqueOrigins } from '../utils/cors';
+import type { NextFunction, Request, Response } from './initialize-request';
 
 const allowedCsp = [...uniqueOrigins];
 

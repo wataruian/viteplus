@@ -1,4 +1,4 @@
 {
-  "extends": "./tsconfig.base.json",
-  "display": "Root"
+  "display": "Root",
+  "extends": "./tsconfig.base.json"
 }

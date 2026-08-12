@@ -1,16 +1,17 @@
-import * as registry from './registry';
-import { Container, Section } from './layout';
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
-import type { BaseComponentProps } from './base';
-import { ErrorBoundary } from './error-boundary';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import { ModeProvider } from '../context/mode-provider';
-import { ModeSwitcher } from './mode-switcher';
 import { ThemeProvider } from '../context/theme-provider';
-import { ThemeSwitcher } from './theme-switcher';
-import { Typography } from './typography';
 import { baseStyles } from '../tokens/base';
 import { classPrefix } from '../utils/helpers';
+import type { BaseComponentProps } from './base';
+import { ErrorBoundary } from './error-boundary';
+import { Container, Section } from './layout';
+import { ModeSwitcher } from './mode-switcher';
+import * as registry from './registry';
+import { ThemeSwitcher } from './theme-switcher';
+import { Typography } from './typography';
 
 const previewStyles = {
   base: 'pt-2 md:pt-4',
@@ -426,5 +427,5 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
 
 Preview.displayName = 'Preview';
 
-export type { PreviewVariants, PreviewProps };
 export { Preview, previewStyles };
+export type { PreviewProps, PreviewVariants };

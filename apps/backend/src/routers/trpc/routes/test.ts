@@ -1,10 +1,11 @@
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
+
 import {
   TestService,
   TestServiceInputSchemas,
   TestServiceOutputSchemas,
 } from '../../../services/test';
 import { createBaseResponseSchema, createRouteHandler } from '../../../utils/route-handler';
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { publicProcedure, router } from '../../../utils/trpc';
 
 const testRouter = router({

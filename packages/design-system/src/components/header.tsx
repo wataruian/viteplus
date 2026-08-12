@@ -1,10 +1,11 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import type { BaseComponentProps } from './base';
+import { layoutStyles } from './layout';
 import { Logo } from './logo';
 import { ModeSwitcher } from './mode-switcher';
 import { ThemeSwitcher } from './theme-switcher';
-import { layoutStyles } from './layout';
 
 const headerStyles = {
   base: 'fixed top-0 left-0 right-0 z-50 h-20 bg-black/40 backdrop-blur-xl border-b border-white/5',
@@ -66,5 +67,5 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
 Header.displayName = 'Header';
 
-export type { HeaderProps, HeaderVariants };
 export { Header, headerStyles };
+export type { HeaderProps, HeaderVariants };

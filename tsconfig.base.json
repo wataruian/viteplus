@@ -1,9 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Base",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "allowArbitraryExtensions": false,
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "allowUmdGlobalAccess": true,
@@ -16,6 +15,7 @@
     "declaration": true,
     "declarationMap": true,
     "emitDecoratorMetadata": true,
+    "erasableSyntaxOnly": true,
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
@@ -39,6 +39,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedSideEffectImports": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "preserveConstEnums": true,
@@ -60,8 +61,7 @@
     "traceResolution": false,
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": true,
-    "verbatimModuleSyntax": true,
-    "erasableSyntaxOnly": true,
-    "noUncheckedSideEffectImports": true
-  }
+    "verbatimModuleSyntax": true
+  },
+  "display": "Base"
 }

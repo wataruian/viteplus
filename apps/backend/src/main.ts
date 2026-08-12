@@ -4,21 +4,22 @@ import {
   trpcEndpoint,
   trpcPlaygroundUrl,
 } from '@lightproject/common/configs';
-import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
 import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
-import { initializeRequest, isRequest, isResponse } from './middlewares/initialize-request';
-import { build } from './utils/autogen';
-import cors from 'cors';
-import { corsOptions } from './utils/cors';
-import express from 'express';
 import { logger } from '@lightproject/common/logger';
-import { notFoundHandler } from './middlewares/not-found-handler';
 import { padEmoji } from '@lightproject/common/utils';
-import { registerHttpRoutes } from './utils/http-router';
-import { registerTrpcRoutes } from './utils/trpc-router';
+import cors from 'cors';
+import express from 'express';
+
+import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
+import { initializeRequest, isRequest, isResponse } from './middlewares/initialize-request';
+import { notFoundHandler } from './middlewares/not-found-handler';
 import { swaggerOpenApiMiddleware } from './middlewares/swagger-openapi';
 import { trpcPlayground } from './middlewares/trpc-playground';
 import { trustProxyMiddleware } from './middlewares/trust-proxy';
+import { build } from './utils/autogen';
+import { corsOptions } from './utils/cors';
+import { registerHttpRoutes } from './utils/http-router';
+import { registerTrpcRoutes } from './utils/trpc-router';
 
 const createApp = async (shouldAutogen = false) => {
   if (shouldAutogen) {

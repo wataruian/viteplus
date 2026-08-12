@@ -1,10 +1,10 @@
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { Preview } from '@lightproject/design-system/components';
 import type { TrpcRouter } from '@lightproject/backend';
-import { logger } from '@lightproject/common/logger';
-import superjson from 'superjson';
 import { trpcUrl } from '@lightproject/common/configs';
+import { logger } from '@lightproject/common/logger';
+import { Preview } from '@lightproject/design-system/components';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useEffect } from 'react';
+import superjson from 'superjson';
 
 const App = () => {
   useEffect(() => {

@@ -1,6 +1,7 @@
-import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 import fs from 'node:fs';
 import path from 'node:path';
+
+import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 
 const ignorePatterns = [
   'node_modules',
@@ -118,6 +119,7 @@ const getCommonViteConfig = ({
       quoteProps: 'as-needed',
       semi: true,
       singleQuote: true,
+      sortImports: true,
       trailingComma: 'all',
       useTabs: false,
     },
@@ -156,6 +158,7 @@ const getCommonViteConfig = ({
         'oxc/no-async-await': 'off',
         'oxc/no-optional-chaining': 'off',
         'oxc/no-rest-spread-properties': 'off',
+        'sort-imports': ['error', { ignoreDeclarationSort: true }],
         'typescript/explicit-function-return-type': 'off',
         'typescript/explicit-module-boundary-types': 'off',
         'typescript/prefer-readonly-parameter-types': 'off',
@@ -360,13 +363,13 @@ const getRootViteConfig = (): UserConfig => {
 };
 
 export {
-  getDotenvKeys,
-  ignorePatterns,
-  getEnvArray,
   getCommonRunProps,
   getCommonViteConfig,
+  getDotenvKeys,
+  getEnvArray,
   getPackageViteConfig,
   getRootViteConfig,
+  ignorePatterns,
 };
 
 export default defineConfig(getRootViteConfig());

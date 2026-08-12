@@ -1,5 +1,6 @@
-import { type HTMLAttributes, forwardRef } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
+import { type HTMLAttributes, forwardRef } from 'react';
+
 import { baseStyles, intentSoft } from '../tokens/base';
 import type { BaseComponentProps } from './base';
 
@@ -51,5 +52,5 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 
 Badge.displayName = 'Badge';
 
-export type { BadgeProps, BadgeVariants };
 export { Badge, badgeStyles };
+export type { BadgeProps, BadgeVariants };

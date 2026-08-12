@@ -1,7 +1,8 @@
-import type { InferSchemaMap, InputArgs, ServiceContext } from '../middlewares/initialize-request';
-import { BaseService } from './base';
 import { sleep } from '@lightproject/common/utils';
 import z from 'zod';
+
+import type { InferSchemaMap, InputArgs, ServiceContext } from '../middlewares/initialize-request';
+import { BaseService } from './base';
 
 const TestServiceInputSchemas = {
   asyncFailReject: z.void(),
@@ -456,5 +457,5 @@ class TestService extends BaseService {
 type TestServiceInputs = InferSchemaMap<typeof TestServiceInputSchemas>;
 type TestServiceOutputs = InferSchemaMap<typeof TestServiceOutputSchemas>;
 
+export { TestService, TestServiceInputSchemas, TestServiceOutputSchemas };
 export type { TestServiceInputs, TestServiceOutputs };
-export { TestServiceInputSchemas, TestServiceOutputSchemas, TestService };
