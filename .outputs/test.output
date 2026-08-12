@@ -3,12 +3,12 @@
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/library
       Coverage enabled with v8
 
- ✓ tests/index.test.ts (1 test) 5ms
+ ✓ tests/index.test.ts (1 test) 6ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  21:27:17
-   Duration  313ms (transform 33ms, setup 0ms, import 59ms, tests 5ms, environment 0ms)
+   Start at  21:38:25
+   Duration  303ms (transform 31ms, setup 0ms, import 56ms, tests 6ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -27,12 +27,12 @@ All files    |     100 |      100 |     100 |     100 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
- ✓ tests/button.test.ts (1 test) 4ms
+ ✓ tests/button.test.ts (1 test) 5ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  21:27:17
-   Duration  585ms (transform 58ms, setup 0ms, import 93ms, tests 4ms, environment 0ms)
+   Start at  21:38:25
+   Duration  549ms (transform 53ms, setup 0ms, import 90ms, tests 5ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -92,15 +92,15 @@ All files          |    2.15 |        0 |    2.08 |    2.18 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/logger.test.ts (20 tests) 37ms
- ✓ tests/env.test.ts (17 tests) 4ms
- ✓ tests/telemetry.test.ts (1 test) 6ms
+ ✓ tests/logger.test.ts (20 tests) 47ms
+ ✓ tests/env.test.ts (17 tests) 3ms
+ ✓ tests/telemetry.test.ts (1 test) 9ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  21:27:17
-   Duration  911ms (transform 209ms, setup 0ms, import 485ms, tests 47ms, environment 0ms)
+   Start at  21:38:25
+   Duration  865ms (transform 180ms, setup 0ms, import 421ms, tests 59ms, environment 0ms)
 
  % Coverage report from v8
 -----------------|---------|----------|---------|---------|---------------------
@@ -148,17 +148,17 @@ All files        |   31.07 |    22.52 |   30.17 |   30.52 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/sample.trpc.test.ts (20 tests) 1244ms
-       ✓ should handle GET /trpc/test.asyncFailReject  705ms
- ✓ tests/sample.http.test.ts (20 tests) 250ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 1145ms
+       ✓ should handle GET /trpc/test.asyncFailReject  669ms
+ ✓ tests/sample.http.test.ts (20 tests) 230ms
  ✓ tests/trpc.caller.test.ts (2 tests) 42ms
- ✓ tests/autogen/index.test.ts (5 tests) 116ms
+ ✓ tests/autogen/index.test.ts (5 tests) 104ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  5 passed (5)
       Tests  48 passed (48)
-   Start at  21:27:18
-   Duration  3.75s (transform 481ms, setup 0ms, import 1.41s, tests 1.65s, environment 0ms)
+   Start at  21:38:27
+   Duration  3.44s (transform 460ms, setup 0ms, import 1.34s, tests 1.52s, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -217,12 +217,12 @@ All files          |   60.72 |    45.29 |   68.22 |   60.64 |
  RUN  v4.1.10 /Users/wataru/lightproject/viteplus/apps/frontend
       Coverage enabled with v8
 
- ✓ tests/index.test.ts (1 test) 5ms
+ ✓ tests/index.test.ts (1 test) 4ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  21:27:24
-   Duration  466ms (transform 126ms, setup 0ms, import 197ms, tests 5ms, environment 0ms)
+   Start at  21:38:32
+   Duration  435ms (transform 119ms, setup 0ms, import 183ms, tests 4ms, environment 0ms)
 
  % Coverage report from v8
 ------------|---------|----------|---------|---------|-------------------
@@ -235,4 +235,4 @@ All files   |      10 |        0 |       0 |      10 |
 ------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 11.80s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 11.23s saved. (Run `vp run --last-details` for full details)
