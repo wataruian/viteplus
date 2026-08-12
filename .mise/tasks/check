@@ -10,10 +10,12 @@ cache="${1:-"true"}"
 debug="${2:-"true"}"
 install="${3:-"false"}"
 
+rootDir="${scriptDir}/../.."
+
 function executeCommand() {
   local arguments=("${@}")
 
-  local outputsDir="${scriptDir}/.outputs"
+  local outputsDir="${rootDir}/.outputs"
   mkdir -p "${outputsDir}"
 
   local isCompileCommand="false"
@@ -111,7 +113,7 @@ function executeCommand() {
 
   if [[ "${commandSuccess}" == "true" ]]; then
     if [[ "${isAutogenCommand}" == "true" ]]; then
-      local routesGeneratedJsonFile="${scriptDir}/apps/backend/tmp/autogen/routes.json"
+      local routesGeneratedJsonFile="${rootDir}/apps/backend/tmp/autogen/routes.json"
       local routesMasterJsonFile="${outputsDir}/routes.json"
       
       if [[ -f "${routesGeneratedJsonFile}" ]]; then
@@ -120,7 +122,7 @@ function executeCommand() {
         echo "✅ Saved routes to ${routesMasterJsonFile}"
       fi
 
-      local openApiGeneratedJsonFile="${scriptDir}/apps/backend/tmp/autogen/openapi.json"
+      local openApiGeneratedJsonFile="${rootDir}/apps/backend/tmp/autogen/openapi.json"
       local openApiMasterJsonFile="${outputsDir}/openapi.json"
       if [[ -f "${openApiGeneratedJsonFile}" ]]; then
         cp "${openApiGeneratedJsonFile}" "${openApiMasterJsonFile}"
@@ -130,7 +132,7 @@ function executeCommand() {
     fi
 
     if [[ "${isCompileCommand}" == "true" ]]; then
-      local stylesGeneratedJsonFile="${scriptDir}/packages/design-system/tmp/compile/styles.json"
+      local stylesGeneratedJsonFile="${rootDir}/packages/design-system/tmp/compile/styles.json"
       local stylesMasterJsonFile="${outputsDir}/styles.json"
       
       if [[ -f "${stylesGeneratedJsonFile}" ]]; then
