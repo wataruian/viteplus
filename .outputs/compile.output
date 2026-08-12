@@ -1112,4 +1112,4 @@ styles {
 }
 
 ---
-vp run: cache hit, 1.35s saved.
+vp run: cache hit, 910ms saved.
