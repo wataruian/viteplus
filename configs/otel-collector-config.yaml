@@ -5,6 +5,21 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - 'http://*'
+            - 'https://*'
+          allowed_headers:
+            - '*'
+
+  faro:
+    endpoint: 0.0.0.0:12347
+    cors:
+      allowed_origins:
+        - 'http://*'
+        - 'https://*'
+      allowed_headers:
+        - '*'
 
 processors:
   resource/metrics:
@@ -63,6 +78,7 @@ service:
         - batch
       receivers:
         - otlp
+        - faro
 
     traces:
       exporters:
@@ -73,3 +89,4 @@ service:
         - batch
       receivers:
         - otlp
+        - faro

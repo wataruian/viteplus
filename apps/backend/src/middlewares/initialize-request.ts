@@ -1,9 +1,11 @@
 import { type RequestType, getRequestType } from '@lightproject/common/configs';
 import { type RequestContext, logger, requestContextStorage } from '@lightproject/common/logger';
 import {
+  type Counter,
   type JsonValue,
   context,
   generateUuid,
+  getMeter,
   getNextRandomColor,
   trace,
   tracer,
@@ -143,6 +145,7 @@ const isRequest = (req: ExpressRequest): req is Request => 'locals' in req;
 const isResponse = (res: ExpressResponse): res is Response => 'locals' in res;
 
 let lastColor: ((text: string) => string) | undefined = undefined;
+let requestHitsCounter: Counter | undefined = undefined;
 
 const initializeRequest = (
   req: express.Request,
@@ -173,7 +176,18 @@ const initializeRequest = (
         'http.url': req.originalUrl,
         'session.id': sessionId,
       },
+      root: true,
     });
+
+    try {
+      requestHitsCounter ??= getMeter().createCounter('request_hits', {
+        description: 'request_hits',
+      });
+      requestHitsCounter.add(1);
+      logger.info('Pushed request_hits metric');
+    } catch {
+      // Skip metric counter if it fails
+    }
 
     res.on('finish', () => {
       span.setAttribute('http.status_code', res.statusCode);

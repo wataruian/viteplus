@@ -49,11 +49,15 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@grafana/faro-react": "catalog:",
+    "@grafana/faro-web-sdk": "catalog:",
+    "@grafana/faro-web-tracing": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/api-logs": "catalog:",
     "@opentelemetry/auto-instrumentations-node": "catalog:",
     "@opentelemetry/exporter-logs-otlp-http": "catalog:",
     "@opentelemetry/exporter-metrics-otlp-http": "catalog:",
+    "@opentelemetry/exporter-prometheus": "catalog:",
     "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/instrumentation-express": "catalog:",
     "@opentelemetry/instrumentation-http": "catalog:",

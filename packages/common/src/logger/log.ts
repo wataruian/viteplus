@@ -1,3 +1,4 @@
+import * as faroSdk from '@grafana/faro-web-sdk';
 import { SeverityNumber, logs } from '@opentelemetry/api-logs';
 
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
@@ -6,6 +7,8 @@ import { getSessionId } from './context';
 import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
 import { redact } from './redactor';
 import type { LogStream, RotationOptions } from './rotation';
+
+const isFaroLogLevel = (level: unknown): level is faroSdk.LogLevel => typeof level === 'string';
 
 interface LoggerOptions {
   color: boolean;
@@ -65,11 +68,7 @@ class Logger {
   }
 
   public async init(): Promise<this> {
-    if (isBrowser()) {
-      return this;
-    }
-
-    if (this.options.outputPath !== undefined) {
+    if (!isBrowser() && this.options.outputPath !== undefined) {
       try {
         const { createRotationStream } = await import('./rotation');
         const stream = await createRotationStream(this.options.outputPath, this.options.rotation);
@@ -123,7 +122,7 @@ class Logger {
     const entry: LogEntry = {
       level,
       message,
-      ...(Object.keys(resolvedMetadata).length > 0 ? { metadata: resolvedMetadata } : {}),
+      ...(Object.keys(resolvedMetadata).length > 0 ? { context: resolvedMetadata } : {}),
       timestamp: this.options.timestamp ? new Date().toISOString() : '',
     };
 
@@ -131,12 +130,16 @@ class Logger {
   }
 
   private writeToOtel(entry: LogEntry): void {
-    const metadata = entry.metadata ?? {};
+    if (isBrowser() || this.silent) {
+      return;
+    }
+
+    const context = entry.context ?? {};
 
     this.otelLogger.emit({
       attributes: {
+        context: Object.keys(context).length > 0 ? JSON.stringify(context) : undefined,
         logger: 'application',
-        metadata: Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : undefined,
         timestamp: entry.timestamp,
       },
       body: JSON.stringify(entry),
@@ -145,11 +148,31 @@ class Logger {
     });
   }
 
+  private writeToFaro(entry: LogEntry): void {
+    if (!isBrowser() || this.silent) {
+      return;
+    }
+
+    const options: faroSdk.PushLogOptions = {};
+
+    if (isFaroLogLevel(entry.level)) {
+      options.level = entry.level;
+    }
+
+    faroSdk.faro.api.pushLog([JSON.stringify(entry)], options);
+  }
+
   private writeToOutputs(entry: LogEntry): void {
+    try {
+      this.writeToFaro(entry);
+    } catch {
+      // Skip Faro logging if it fails
+    }
+
     try {
       this.writeToOtel(entry);
     } catch {
-      // Skip OpenTelemetry logging if it fails`
+      // Skip OpenTelemetry logging if it fails
     }
 
     if (this.options.mode === 'pretty') {
@@ -158,7 +181,7 @@ class Logger {
       globalThis.console.log(formatJSON(entry));
     }
 
-    if (this.stream !== undefined) {
+    if (!isBrowser() && this.stream !== undefined) {
       const fileEntry =
         this.options.mode === 'pretty' ? formatPretty(entry, false) : formatJSON(entry);
       this.stream.write(`${fileEntry}\n`);
@@ -174,5 +197,5 @@ class Logger {
 
 const logger = new Logger();
 
-export { Logger, logLevelPriority, logger, otelSeverity };
+export { Logger, isFaroLogLevel, logLevelPriority, logger, otelSeverity };
 export type { LoggerOptions };

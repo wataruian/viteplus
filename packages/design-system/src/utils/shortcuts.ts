@@ -1,5 +1,5 @@
 import type { UserShortcuts } from 'unocss';
 
-const shortcuts: UserShortcuts = [];
+const shortcuts: UserShortcuts = {};
 
 export { shortcuts };

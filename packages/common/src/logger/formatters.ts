@@ -9,7 +9,7 @@ interface LogEntry {
   level: LogLevel;
   message: string;
   timestamp: string;
-  metadata?: Record<string, unknown> | object;
+  context?: Record<string, unknown> | object;
 }
 
 const formatColors = {
@@ -35,9 +35,9 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
 
   let output = `[${timestamp}] ${coloredLevel}: ${messageText}`;
 
-  if (entry.metadata !== undefined && Object.keys(entry.metadata).length > 0) {
-    const metadataStr = JSON.stringify(entry.metadata, undefined, 5);
-    output += `\n${useColor ? chalkInstance.gray(metadataStr) : metadataStr}`;
+  if (entry.context !== undefined && Object.keys(entry.context).length > 0) {
+    const contextStr = JSON.stringify(entry.context, undefined, 5);
+    output += `\n${useColor ? chalkInstance.gray(contextStr) : contextStr}`;
   }
 
   return output;

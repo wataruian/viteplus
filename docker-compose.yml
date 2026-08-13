@@ -55,6 +55,7 @@ services:
     ports:
       - '4317:4317'
       - '4318:4318'
+      - '12347:12347'
     command:
       - --config=/etc/otelcol/config.yaml
     volumes:

@@ -1,12 +1,8 @@
-import { DiagConsoleLogger, DiagLogLevel, diag, trace } from '@opentelemetry/api';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+import { DiagConsoleLogger, DiagLogLevel, diag, metrics, trace } from '@opentelemetry/api';
+import type { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import type { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 import { getEnv } from '../environment';
@@ -21,6 +17,19 @@ interface TelemetryOptions {
 let sdk: NodeSDK | undefined = undefined;
 let shutdownRegistered = false;
 const tracer = trace.getTracer(getEnv('OTEL_SERVICE_NAME') ?? 'application');
+const getMeter = () => metrics.getMeter(getEnv('OTEL_SERVICE_NAME') ?? 'application');
+let prometheusExporterInstance: PrometheusExporter | undefined = undefined;
+
+const prometheusExporter = {
+  getMetricsRequestHandler: (req: IncomingMessage, res: ServerResponse) => {
+    if (prometheusExporterInstance) {
+      prometheusExporterInstance.getMetricsRequestHandler(req, res);
+      return;
+    }
+    res.statusCode = 503;
+    res.end('Metrics not initialized');
+  },
+};
 
 const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   await Promise.resolve();
@@ -28,8 +37,6 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   if (sdk) {
     return sdk;
   }
-
-  const span = tracer.startSpan('opentelemetry.initialize');
 
   const endpoint =
     options.otlpEndpoint ?? getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ?? 'http://localhost:4318';
@@ -41,7 +48,20 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   const serviceName = options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app';
   const serviceVersion = options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0';
 
-  sdk = new NodeSDK({
+  const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node');
+  const { OTLPLogExporter } = await import('@opentelemetry/exporter-logs-otlp-http');
+  const { OTLPMetricExporter } = await import('@opentelemetry/exporter-metrics-otlp-http');
+  const { PrometheusExporter: DynPrometheusExporter } =
+    await import('@opentelemetry/exporter-prometheus');
+  const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
+  const { resourceFromAttributes } = await import('@opentelemetry/resources');
+  const { BatchLogRecordProcessor } = await import('@opentelemetry/sdk-logs');
+  const { PeriodicExportingMetricReader } = await import('@opentelemetry/sdk-metrics');
+  const { NodeSDK: DynNodeSDK } = await import('@opentelemetry/sdk-node');
+
+  prometheusExporterInstance = new DynPrometheusExporter({ preventServerStart: true });
+
+  sdk = new DynNodeSDK({
     instrumentations: [
       getNodeAutoInstrumentations({
         '@opentelemetry/instrumentation-express': {
@@ -68,6 +88,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
           url: `${endpoint}/v1/metrics`,
         }),
       }),
+      prometheusExporterInstance,
     ],
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: serviceName,
@@ -104,12 +125,16 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     shutdownRegistered = true;
   }
 
-  span.setAttributes({
-    initialized: true,
-    'otel.endpoint': endpoint,
-    'otel.service.name': serviceName,
-    'otel.service.version': serviceVersion,
+  const span = tracer.startSpan('opentelemetry.initialize', {
+    attributes: {
+      initialized: true,
+      'otel.endpoint': endpoint,
+      'otel.service.name': serviceName,
+      'otel.service.version': serviceVersion,
+    },
+    root: true,
   });
+
   span.end();
 
   logger.info('OpenTelemetry initialized', {
@@ -121,6 +146,6 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   return sdk;
 };
 
-export { context, trace } from '@opentelemetry/api';
-export { initializeTelemetry, tracer };
+export { context, metrics, trace, type Counter } from '@opentelemetry/api';
+export { getMeter, initializeTelemetry, prometheusExporter, tracer };
 export type { TelemetryOptions };

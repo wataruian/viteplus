@@ -12,6 +12,9 @@ allowBuilds:
 catalog:
   '@emnapi/core': npm:@emnapi/core@1.9.2
   '@emnapi/runtime': npm:@emnapi/runtime@1.9.2
+  '@grafana/faro-react': npm:@grafana/faro-react@2.9.0
+  '@grafana/faro-web-sdk': npm:@grafana/faro-web-sdk@2.9.0
+  '@grafana/faro-web-tracing': npm:@grafana/faro-web-tracing@2.9.0
   '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
   '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
   '@opentelemetry/api': npm:@opentelemetry/api@1.9.1
@@ -19,6 +22,7 @@ catalog:
   '@opentelemetry/auto-instrumentations-node': npm:@opentelemetry/auto-instrumentations-node@0.79.0
   '@opentelemetry/exporter-logs-otlp-http': npm:@opentelemetry/exporter-logs-otlp-http@0.221.0
   '@opentelemetry/exporter-metrics-otlp-http': npm:@opentelemetry/exporter-metrics-otlp-http@0.221.0
+  '@opentelemetry/exporter-prometheus': npm:@opentelemetry/exporter-prometheus@0.221.0
   '@opentelemetry/exporter-trace-otlp-http': npm:@opentelemetry/exporter-trace-otlp-http@0.221.0
   '@opentelemetry/instrumentation-express': npm:@opentelemetry/instrumentation-express@0.69.0
   '@opentelemetry/instrumentation-fs': npm:@opentelemetry/instrumentation-fs@0.40.0

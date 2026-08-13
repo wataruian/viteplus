@@ -13,6 +13,7 @@ import {
 import { animation } from '../tokens/animation';
 import { type ColorKeyMap, baseStyles, intentInput, intentSoft, intentSolid } from '../tokens/base';
 import { iconsOptions } from '../tokens/icons';
+import { borderRadius, spacing } from '../tokens/spacing';
 import { webFontsOptions } from '../tokens/typography';
 import { stylesRegistry } from '../utils/compile';
 import { getStyles } from '../utils/helpers';
@@ -64,6 +65,8 @@ const unoCssBaseConfig: UserConfig = {
   theme: {
     ...themes,
     animation,
+    borderRadius,
+    spacing,
   },
   transformers: [transformerDirectives(), transformerVariantGroup()],
 };

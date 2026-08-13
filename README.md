@@ -43,6 +43,18 @@ We use a complete open-source telemetry stack configured via `docker-compose.yml
 
 Backend services are expected to emit telemetry to the OpenTelemetry Collector.
 
+### Querying Logs in Grafana (Loki)
+
+When viewing logs in Grafana, you can use the following LogQL query to natively format and filter the JSON log payloads:
+
+```logql
+{service_name="@lightproject/backend"} |= ``
+```
+
+```logql
+{service_name="@lightproject/frontend"} |~ "kind=(log|exception)" | logfmt | line_format "{{ if .message }}{{.message}}{{ else }}{{.type}}: {{.value}}{{ end }}"
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites

@@ -6,7 +6,7 @@ import {
 } from '@lightproject/common/configs';
 import { isLocal, isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
-import { padEmoji } from '@lightproject/common/utils';
+import { padEmoji, prometheusExporter } from '@lightproject/common/utils';
 import cors from 'cors';
 import express from 'express';
 
@@ -61,6 +61,10 @@ const createApp = async (shouldAutogen = false) => {
 
   app.get(['', '/'], (_req, res) => {
     res.json({ message: 'OK' });
+  });
+
+  app.get('/metrics', (req, res) => {
+    prometheusExporter.getMetricsRequestHandler(req, res);
   });
 
   registerHttpRoutes(app, apiEndpoint);
