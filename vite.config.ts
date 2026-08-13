@@ -42,10 +42,44 @@ const getEnvArray = (rootDir: string, mode: string) => {
   return Object.keys(env).map((key) => key);
 };
 
-const getCommonRunProps = (rootDir: string, mode: string) => {
+const getCommonRunProps = (rootDir: string, mode: string, isPackage = true) => {
   const envArray = getEnvArray(rootDir, mode);
-  const input = ignorePatterns.map((pattern) => `!${pattern}`);
-  return { env: envArray, input };
+
+  const rootInputs = [
+    '.env',
+    '.npmrc',
+    'package.json',
+    'pnpm-lock.yaml',
+    'pnpm-workspace.yaml',
+    'tsconfig.base.json',
+    'tsconfig.json',
+    'tsconfig.madge.json',
+    'vite.config.ts',
+  ];
+
+  const input: (string | { base: 'package' | 'workspace'; pattern: string })[] = isPackage
+    ? [
+        ...rootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
+        {
+          base: 'package',
+          pattern: 'src/**/*',
+        },
+      ]
+    : [
+        ...rootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
+        {
+          base: 'workspace',
+          pattern: '**/*.ts',
+        },
+        {
+          base: 'workspace',
+          pattern: '**/*.tsx',
+        },
+      ];
+
+  const allInput = [...input, ...ignorePatterns.map((pattern) => `!${pattern}`)];
+
+  return { env: envArray, input: allInput };
 };
 
 const getCommonViteConfig = ({
@@ -294,7 +328,7 @@ const getRootViteConfig = (): UserConfig => {
   const isRoot = true;
   const mode = globalThis.process.env['NODE_ENV'] ?? 'development';
 
-  const commonRunProps = getCommonRunProps(dir, mode);
+  const commonRunProps = getCommonRunProps(dir, mode, false);
 
   return {
     ...getCommonViteConfig({
