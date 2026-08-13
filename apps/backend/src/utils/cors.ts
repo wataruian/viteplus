@@ -1,6 +1,7 @@
 import { adminUrl, apiBaseUrl, siteUrl } from '@lightproject/common/configs';
-import { getEnv } from '@lightproject/common/environment';
 import type { CorsOptions } from 'cors';
+
+import { config } from '../config';
 
 const allowedOrigins: string[] = [];
 
@@ -16,7 +17,7 @@ if (siteUrl !== undefined) {
   allowedOrigins.push(siteUrl);
 }
 
-const additionalOrigins = getEnv('ADDITIONAL_CORS_ORIGINS');
+const additionalOrigins = config.additionalCorsOrigins;
 if (additionalOrigins !== undefined && additionalOrigins !== '') {
   const origins = additionalOrigins.split(',');
   if (origins.length > 0) {

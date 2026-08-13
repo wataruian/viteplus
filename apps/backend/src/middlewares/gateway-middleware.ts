@@ -1,11 +1,12 @@
 import { Buffer } from 'node:buffer';
 
 import { isTrpcEndpoint } from '@lightproject/common/configs';
-import { getEnv, isProduction, isTrue } from '@lightproject/common/environment';
+import { isProduction } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { type JsonValue, safeSerialize } from '@lightproject/common/utils';
 import type { TRPCError } from '@trpc/server';
 
+import { config } from '../config';
 import { captureResponse } from './capture-response';
 import type {
   BaseResponse,
@@ -23,7 +24,7 @@ const loggingOptions: MiddlewareLoggingOptions = {
   query: false,
 };
 
-const isErrorStackEnabled = isTrue(getEnv('ENABLE_ERROR_STACK')) || !isProduction();
+const isErrorStackEnabled = config.enableErrorStack || !isProduction();
 
 const getStatusCode = (statusCode?: number): number => {
   if (statusCode === undefined || statusCode === 0) {

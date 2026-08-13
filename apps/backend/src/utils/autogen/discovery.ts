@@ -1,8 +1,9 @@
 import path from 'node:path';
 
-import { getEnv, isTest, isTrue, isVitest } from '@lightproject/common/environment';
+import { isTest, isVitest } from '@lightproject/common/environment';
 import { Node } from 'ts-morph';
 
+import { config } from '../../config';
 import type { RouteInfo } from '../../middlewares/initialize-request';
 import { projectDir } from './config';
 import { getProject } from './project';
@@ -145,7 +146,7 @@ const getHttpRoutes = async (): Promise<RouteInfo[]> => {
     .filter((name): name is string => name !== undefined);
 
   const importedRouteNames =
-    isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest() || isVitest()
+    config.enableTestRoutes || isTest() || isVitest()
       ? rawImportedRouteNames
       : rawImportedRouteNames.filter((name) => name !== 'testRoutes');
 
@@ -382,7 +383,7 @@ const getTrpcRoutes = async (): Promise<RouteInfo[]> => {
     const fs = await import('node:fs/promises');
     const rawRouteFiles = await fs.readdir(trpcRouterDir);
     const routeFiles =
-      isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest() || isVitest()
+      config.enableTestRoutes || isTest() || isVitest()
         ? rawRouteFiles
         : rawRouteFiles.filter((f) => f !== 'test.ts');
 

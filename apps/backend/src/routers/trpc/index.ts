@@ -1,12 +1,13 @@
-import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
+import { isTest } from '@lightproject/common/environment';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 
+import { config } from '../../config';
 import { router } from '../../utils/trpc';
 import defaultRoutes from './routes/default';
 import testRoutes from './routes/test';
 
 const getTrpcRouter = () => {
-  const includeTestRoutes = isTrue(getEnv('ENABLE_TEST_ROUTES')) || isTest();
+  const includeTestRoutes = config.enableTestRoutes || isTest();
   return router({
     default: defaultRoutes,
     ...(includeTestRoutes ? { test: testRoutes } : {}),

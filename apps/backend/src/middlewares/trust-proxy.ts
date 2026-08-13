@@ -1,16 +1,15 @@
 import { isTrpcEndpoint } from '@lightproject/common/configs';
 import {
-  getEnv,
   isCi,
   isDebug,
   isLocal,
   isNonProduction,
   isOtherEnvironment,
   isTest,
-  isTrue,
 } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 
+import { config } from '../config';
 import { errorHandler } from './gateway-middleware';
 import type { NextFunction, Request, Response } from './initialize-request';
 
@@ -68,7 +67,7 @@ const handleAccessDenied = (req: Request, res: Response, next: NextFunction) => 
 const trustProxyMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const allowedIps = new Set(['127.0.0.1', '::1']);
 
-  const additionalIps = getEnv('ALLOWED_IPS');
+  const additionalIps = config.allowedIps;
   if (additionalIps !== undefined && additionalIps !== '') {
     for (const ip of additionalIps.split(',')) {
       const trimmed = ip.trim();
@@ -82,8 +81,8 @@ const trustProxyMiddleware = (req: Request, res: Response, next: NextFunction) =
 
   const isIpAllowed = requestIp !== undefined && requestIp !== '' && allowedIps.has(requestIp);
   const inSafeEnv = isLocal() || isTest() || isCi() || isOtherEnvironment();
-  const allowAll = isTrue(getEnv('ALLOW_ALL_IPS'));
-  const blockAll = isTrue(getEnv('BLOCK_ALL_IPS'));
+  const allowAll = config.allowAllIps;
+  const blockAll = config.blockAllIps;
 
   // Precedence: blockAll > allowAll > (isIpAllowed || inSafeEnv)
   const isAllowed = !blockAll && (allowAll || isIpAllowed || inSafeEnv);

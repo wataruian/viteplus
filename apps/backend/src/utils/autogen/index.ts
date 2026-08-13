@@ -2,9 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { inspect } from 'node:util';
 
-import { getEnv, isTest, isTrue } from '@lightproject/common/environment';
+import { isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 
+import { config } from '../../config';
 import type { RouteInfo } from '../../middlewares/initialize-request';
 import { autogenDir, routesFile } from './config';
 import { getHttpRoutes, getTrpcRoutes } from './discovery';
@@ -19,7 +20,7 @@ const extractAllRoutes = async (): Promise<RouteInfo[]> => {
   await fs.mkdir(autogenDir, { recursive: true });
   await fs.writeFile(routesFile, JSON.stringify(allRoutes, undefined, 2));
 
-  if (isTrue(getEnv('AUTOGEN_DEBUG'))) {
+  if (config.autogenDebug) {
     globalThis.console.log('allRoutes', inspect(allRoutes, { colors: true, depth: null }));
   }
 
@@ -30,7 +31,7 @@ const build = async () => {
   const startTime = Date.now();
 
   try {
-    if (isTest() || isTrue(getEnv('SKIP_AUTOGEN'))) {
+    if (isTest() || config.skipAutogen) {
       logger.info('Skipping swagger build during tests or SKIP_AUTOGEN is true');
       return;
     }

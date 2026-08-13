@@ -1,11 +1,11 @@
-import { getEnv, isTrue } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { initializeTelemetry } from '@lightproject/common/utils';
 
 import packageJson from '../package.json' with { type: 'json' };
+import { config } from './config';
 
 const init = async () => {
-  if (isTrue(getEnv('SKIP_OPENTELEMETRY'))) {
+  if (config.skipOpenTelemetry) {
     logger.info('Skipping telemetry initialization when SKIP_OPENTELEMETRY is true');
   } else {
     await initializeTelemetry({

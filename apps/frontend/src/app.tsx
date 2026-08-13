@@ -1,6 +1,6 @@
 import type { TrpcRouter } from '@lightproject/backend';
 import { apiBaseUrl, trpcUrl } from '@lightproject/common/configs';
-import { getEnv, isNodeEnvTest, isTest, isTrue, isVitest } from '@lightproject/common/environment';
+import { isNodeEnvTest, isTest, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { Preview } from '@lightproject/design-system/components';
 import { useSession } from '@lightproject/design-system/context';
@@ -8,13 +8,15 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useEffect } from 'react';
 import superjson from 'superjson';
 
+import { config } from './config';
+
 const App = () => {
   const { sessionId } = useSession();
 
   useEffect(() => {
     const run = async () => {
       const isEnableTestRoutes =
-        isTrue(getEnv('VITE_ENABLE_TEST_ROUTES')) || isTest() || isVitest() || isNodeEnvTest();
+        config.viteEnableTestRoutes || isTest() || isVitest() || isNodeEnvTest();
 
       if (isEnableTestRoutes) {
         try {
@@ -42,10 +44,10 @@ const App = () => {
       }
 
       let viteApiUrl = apiBaseUrl;
-      if (getEnv('VITE_API_URL') === undefined) {
+      if (config.viteApiUrl === undefined) {
         logger.info(`VITE_API_URL is not set, using default URL: ${viteApiUrl}`);
       } else {
-        viteApiUrl = getEnv('VITE_API_URL');
+        ({ viteApiUrl } = config);
         logger.info(`VITE_API_URL is set: ${viteApiUrl}`);
       }
 

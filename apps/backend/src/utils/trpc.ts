@@ -1,4 +1,4 @@
-import { getEnv, isProduction, isTrue } from '@lightproject/common/environment';
+import { isProduction } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { generateUuid } from '@lightproject/common/utils';
 import { type TRPCError, initTRPC } from '@trpc/server';
@@ -6,6 +6,7 @@ import type { DefaultErrorShape } from '@trpc/server/unstable-core-do-not-import
 import superjson from 'superjson';
 import type { OpenApiMeta } from 'trpc-openapi';
 
+import { config } from '../config';
 import { getErrorDetails } from '../middlewares/gateway-middleware';
 import type {
   ErrorDetails,
@@ -64,7 +65,7 @@ const errorFormatter = ({
     success: false,
   };
 
-  const isErrorStackEnabled = isTrue(getEnv('ENABLE_ERROR_STACK')) || !isProduction();
+  const isErrorStackEnabled = config.enableErrorStack || !isProduction();
 
   if (!isErrorStackEnabled) {
     formattedError.error.stack = undefined;

@@ -152,7 +152,6 @@ const getCommonViteConfig = ({
       useTabs: false,
     },
     lint: {
-      // jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
       categories: {
         correctness: 'error',
         nursery: 'error',
@@ -163,9 +162,9 @@ const getCommonViteConfig = ({
         suspicious: 'error',
       },
       ignorePatterns,
+      jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
       options: { typeAware: true, typeCheck: true },
       rules: {
-        // 'vite-plus/prefer-vite-plus-imports': 'error',
         'capitalized-comments': 'off',
         'id-length': 'off',
         'max-classes-per-file': 'off',
@@ -195,6 +194,7 @@ const getCommonViteConfig = ({
         'unicorn/no-null': 'off',
         'unicorn/no-object-as-default-parameter': 'off',
         'unicorn/no-useless-undefined': 'off',
+        'vite-plus/prefer-vite-plus-imports': 'error',
       },
     },
     pack: {

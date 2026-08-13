@@ -4,12 +4,13 @@ import {
   trpcEndpoint,
   trpcPlaygroundUrl,
 } from '@lightproject/common/configs';
-import { getEnv, isLocal, isTest } from '@lightproject/common/environment';
+import { isLocal, isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { padEmoji } from '@lightproject/common/utils';
 import cors from 'cors';
 import express from 'express';
 
+import { config } from './config';
 import { errorHandler, gatewayMiddleware } from './middlewares/gateway-middleware';
 import { initializeRequest, isRequest, isResponse } from './middlewares/initialize-request';
 import { notFoundHandler } from './middlewares/not-found-handler';
@@ -112,10 +113,10 @@ const startServer = async () => {
   const app = isTest() ? await createTestApp() : await createApp(isLocal());
 
   let port = 3000;
-  if (getEnv('API_PORT') === undefined) {
+  if (config.apiPort === undefined) {
     logger.info(`API_PORT is not set, using default port: ${port}`);
   } else {
-    port = Math.trunc(Number(getEnv('API_PORT')));
+    port = config.apiPort;
     logger.info(`API_PORT is set: ${port}`);
   }
 
