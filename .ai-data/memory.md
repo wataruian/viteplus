@@ -17,3 +17,12 @@ This file acts as a chronological ledger for major architectural shifts, context
 
 - **Decision**: Designated `.ai-data` as the persistent, version-controlled knowledge base for all AI interactions and architectural context.
 - **Structure**: Core knowledge is stored directly in `.ai-data/`, while temporary agent scratchpads, outputs, and generated artifacts are routed to `.ai-data/artifacts/` (which is `.gitignore`d).
+
+## 2026-08-13: Fixing Environment Variable Loading in Sub-Packages
+
+- **Context**: `process.env['ENV']` was returning `undefined` when running `vp build` in sub-packages (e.g., `packages/common`, `apps/frontend`).
+- **Decision**: Added `envDir` configuration to `vite.config.ts` (pointing to the root directory) and invoked `loadEnv` at the top of the file. This ensures `isLocalViteEnv()` operates correctly during module evaluation for all builds.
+
+## 2026-08-13: Architecture Documentation
+
+- **Decision**: Completed a comprehensive `architecture_analysis.md` describing the Vite+ integration, observability stack, and shared foundation. Stored in `.ai-data/artifacts/` for persistent agent memory.

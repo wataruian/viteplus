@@ -1,5 +1,5 @@
 import { logger } from '@lightproject/common/logger';
-import { initializeTelemetry } from '@lightproject/common/utils';
+import { initializeTelemetry } from '@lightproject/common/server';
 
 import packageJson from '../package.json' with { type: 'json' };
 import { config } from './config';

@@ -6,7 +6,8 @@ import {
 } from '@lightproject/common/configs';
 import { isLocal, isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
-import { padEmoji, prometheusExporter } from '@lightproject/common/utils';
+import { prometheusExporter } from '@lightproject/common/server';
+import { padEmoji } from '@lightproject/common/utils';
 import cors from 'cors';
 import express from 'express';
 

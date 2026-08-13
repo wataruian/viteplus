@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g \".ai-data/artifacts/**/*\" \".ai-data/artifacts/!(*.gitkeep)\"",
-    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/node_modules/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "clean:modules": "rimraf -g --max-retries=10 --retry-delay=100 **/node_modules/**",
     "clean:tools": "rimraf -g **/tmp/**",
     "debug": "vp cache clean && vp run ready",
     "init": "vp install && vp run ready",

@@ -73,7 +73,7 @@ When first entering the repository or a new package:
 
 1. **Root Analysis**: Start by checking `.mise/tasks/` for high-level automation scripts and `vite.config.ts` / `package.json` for global configurations.
 2. **Dependency Graph**: Check `pnpm-workspace.yaml` and internal `package.json` files to map project relationships. Note the use of `catalog:` for shared external dependencies.
-3. **Task Discovery**: Run `mise tasks` to list all available root commands. Run `vp help` and `vp run --help` to identify available tooling commands.
+3. **Task Discovery**: Run `mise tasks` to list all available root commands, or check `package.json` scripts. Run `vp help` and `vp run --help` to identify available tooling commands.
 4. **Validation Check**: Run `vp install` followed by `mise run check` or `vp run ready` to ensure the local environment is healthy before making changes.
 
 ## Environment Management
@@ -113,7 +113,7 @@ When first entering the repository or a new package:
   - **Header Safety**: When using the sticky `Header`, always add a `pt-20` (80px) buffer to the main content area in the app to prevent overlapping.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
 - **AI Data & Context Management**:
-  - The `./.ai-data` directory is the persistent, version-controlled knowledge base for the monorepo. Agents MUST always review the context files here (e.g., `architecture.md`, `coding-guidelines.md`) when starting a new task to align with repository standards.
+  - The `./.ai-data` directory is the persistent, version-controlled knowledge base for the monorepo. Agents MUST always review the context files here (e.g., `architecture.md`, `coding-guidelines.md`, and `artifacts/architecture_analysis.md`) when starting a new task to align with repository standards.
   - The `./.ai-data/artifacts` directory is `.gitignore`d and must be used as a temporary scratchpad. Agents should write all drafts, implementation plans, generated code snippets, and temporary task output here before finalizing them.
 
 <!--AI AGENT END-->

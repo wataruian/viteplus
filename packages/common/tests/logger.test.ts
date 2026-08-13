@@ -172,7 +172,7 @@ describe('Logger Integration - Redaction Output', () => {
       options: { ...options, mode: 'json' },
     });
 
-    expect(JSON.parse(output)).toMatchObject({ metadata: expected });
+    expect(JSON.parse(output)).toMatchObject({ context: expected });
   });
 
   test.each(testCases)(

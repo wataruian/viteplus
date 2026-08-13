@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
+import { initializeTelemetry } from '../src/server/telemetry';
+
 const { startMock, shutdownMock, resourceFromAttributesMock } = vi.hoisted(() => ({
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   shutdownMock: vi.fn(),
@@ -54,8 +56,6 @@ vi.mock('@lightproject/common/logger', () => ({
 vi.mock('../src/environment', () => ({
   getEnv: vi.fn(() => undefined),
 }));
-
-import { initializeTelemetry } from '../src/utils/telemetry';
 
 describe('initializeTelemetry', () => {
   beforeEach(() => {
