@@ -1,22 +1,22 @@
 ~/packages/library$ vp lint --fix ◉ cache hit, replaying
 Found 0 warnings and 0 errors.
-Finished in 692ms on 5 files with 431 rules using 8 threads.
+Finished in 715ms on 5 files with 431 rules using 8 threads.
 
 ~/packages/design-system$ vp lint --fix ◉ cache hit, replaying
 Found 0 warnings and 0 errors.
-Finished in 1.0s on 45 files with 431 rules using 8 threads.
+Finished in 1.1s on 45 files with 431 rules using 8 threads.
 
 ~/packages/common$ vp lint --fix ◉ cache hit, replaying
 Found 0 warnings and 0 errors.
-Finished in 998ms on 31 files with 431 rules using 8 threads.
+Finished in 900ms on 31 files with 431 rules using 8 threads.
 
 ~/apps/backend$ vp lint --fix ◉ cache hit, replaying
 Found 0 warnings and 0 errors.
-Finished in 1.2s on 42 files with 431 rules using 8 threads.
+Finished in 1.1s on 42 files with 431 rules using 8 threads.
 
 ~/apps/frontend$ vp lint --fix ◉ cache hit, replaying
 Found 0 warnings and 0 errors.
-Finished in 936ms on 6 files with 431 rules using 8 threads.
+Finished in 932ms on 6 files with 431 rules using 8 threads.
 
 ---
-vp run: 5/5 cache hit (100%), 5.28s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 5.40s saved. (Run `vp run --last-details` for full details)

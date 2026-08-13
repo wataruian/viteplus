@@ -45,7 +45,7 @@ const getEnvArray = (rootDir: string, mode: string) => {
 const getCommonRunProps = (rootDir: string, mode: string, isPackage = true) => {
   const envArray = getEnvArray(rootDir, mode);
 
-  const rootInputs = [
+  const commonRootInputs = [
     '.env',
     '.npmrc',
     'package.json',
@@ -57,27 +57,39 @@ const getCommonRunProps = (rootDir: string, mode: string, isPackage = true) => {
     'vite.config.ts',
   ];
 
+  const rootInputs = ['**/*.ts', '**/*.tsx'];
+
+  const packageInputs = [
+    'package.json',
+    'tsconfig.json',
+    'vite.config.ts',
+    'uno.config.ts',
+    '**/*.html',
+    '**/*.css',
+    '**/*.svg',
+    '**/*.ts',
+    '**/*.tsx',
+  ];
+
   const input: (string | { base: 'package' | 'workspace'; pattern: string })[] = isPackage
     ? [
-        ...rootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
-        {
-          base: 'package',
-          pattern: 'src/**/*',
-        },
+        ...commonRootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
+        ...packageInputs.map((pattern) => ({ base: 'package' as const, pattern })),
       ]
     : [
+        ...commonRootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
         ...rootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
-        {
-          base: 'workspace',
-          pattern: '**/*.ts',
-        },
-        {
-          base: 'workspace',
-          pattern: '**/*.tsx',
-        },
+        ...packageInputs.map((pattern) => ({
+          base: 'workspace' as const,
+          pattern: `packages/**/*/${pattern}`,
+        })),
+        ...packageInputs.map((pattern) => ({
+          base: 'workspace' as const,
+          pattern: `apps/**/*/${pattern}`,
+        })),
       ];
 
-  const allInput = [...input, ...ignorePatterns.map((pattern) => `!${pattern}`)];
+  const allInput = [...input, ...ignorePatterns.map((pattern) => `!**/${pattern}/**`)];
 
   return { env: envArray, input: allInput };
 };
