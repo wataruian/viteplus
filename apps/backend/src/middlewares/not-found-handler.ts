@@ -6,8 +6,8 @@ import {
 } from '@lightproject/common/configs';
 import { isLocal } from '@lightproject/common/environment';
 
-import { httpRouter } from '../routers/http';
-import { trpcRouter } from '../routers/trpc';
+import { getHttpRouter } from '../routers/http';
+import { getTrpcRouter } from '../routers/trpc';
 import type { NextFunction, Request, Response } from './initialize-request';
 
 const stripTrailingSlashes = (str: string) => str.replace(/\/+$/u, '');
@@ -55,7 +55,7 @@ const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   const normalizedApiEndpoint = stripTrailingSlashes(apiEndpoint);
   const normalizedTrpcEndpoint = stripTrailingSlashes(trpcEndpoint);
 
-  const httpPathsRaw = getHttpRouterPaths(httpRouter).map((p) =>
+  const httpPathsRaw = getHttpRouterPaths(getHttpRouter()).map((p) =>
     prefixPath(p, normalizedApiEndpoint),
   );
   const httpPaths = new Set(
@@ -68,7 +68,7 @@ const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
   );
 
   const trpcPaths = new Set(
-    getTrpcProcedureKeys(trpcRouter).map((p) => prefixPath(p, normalizedTrpcEndpoint)),
+    getTrpcProcedureKeys(getTrpcRouter()).map((p) => prefixPath(p, normalizedTrpcEndpoint)),
   );
 
   const { pathname } = new globalThis.URL(req.originalUrl, 'http://localhost');

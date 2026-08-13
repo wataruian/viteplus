@@ -27,6 +27,22 @@ export default defineConfig(({ mode }) => {
 
   return {
     ...baseConfig,
+    build: {
+      ...baseConfig.build,
+      rolldownOptions: {
+        ...baseConfig.build?.rolldownOptions,
+        external: [
+          'child_process',
+          'fs',
+          'fs/promises',
+          'path',
+          'stream',
+          'timers',
+          'util',
+          'zlib',
+        ],
+      },
+    },
     plugins: [
       react(),
       unoCss({

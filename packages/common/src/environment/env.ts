@@ -42,7 +42,7 @@ const isFalse = (value = '') => {
 };
 
 const getEnvName = () =>
-  getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'localz';
+  getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'local';
 const getNodeEnv = () => getEnv('NODE_ENV');
 const isNodeEnvTest = () => getNodeEnv() === 'test';
 const isLocal = () => getEnvName() === 'local';

@@ -8,10 +8,10 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Express } from 'express';
 
 import { type ServiceContext, isRequest, isResponse } from '../middlewares/initialize-request';
-import { type TrpcRouter, trpcRouter } from '../routers/trpc';
+import { type TrpcRouter, getTrpcRouter } from '../routers/trpc';
 import { createContext, transformer } from './trpc';
 
-const createCaller = (ctx: ServiceContext) => trpcRouter.createCaller(ctx);
+const createCaller = (ctx: ServiceContext) => getTrpcRouter().createCaller(ctx);
 
 const trpcClient = createTRPCClient<TrpcRouter>({
   links: [
@@ -69,7 +69,7 @@ const registerTrpcRoutes = (app: Express, rootPath: string = trpcEndpoint): void
           }
           return createContext(req, res);
         },
-        router: trpcRouter,
+        router: getTrpcRouter(),
       }),
     );
   } catch (error) {

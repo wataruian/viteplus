@@ -3,7 +3,7 @@ import { logger } from '@lightproject/common/logger';
 import type { Express } from 'express';
 
 import type { BaseResponse } from '../middlewares/initialize-request';
-import { httpRouter } from '../routers/http';
+import { getHttpRouter } from '../routers/http';
 
 const HTTP_METHODS = new Set(['get', 'post', 'put', 'delete', 'patch', 'options', 'head']);
 
@@ -22,7 +22,7 @@ const isServiceHandler = (
 
 const registerHttpRoutes = (app: Express, rootPath: string = apiEndpoint): void => {
   try {
-    for (const route of httpRouter) {
+    for (const route of getHttpRouter()) {
       for (const [path, { handler, method }] of Object.entries(route)) {
         const methodLower = method.toLowerCase();
         if (!isHttpMethod(methodLower)) {

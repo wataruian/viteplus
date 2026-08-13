@@ -111,7 +111,13 @@ const createTestApp = async () => {
 const startServer = async () => {
   const app = isTest() ? await createTestApp() : await createApp(isLocal());
 
-  const port = Math.trunc(Number(getEnv('API_PORT') ?? '3000'));
+  let port = 3000;
+  if (getEnv('API_PORT') === undefined) {
+    logger.info(`API_PORT is not set, using default port: ${port}`);
+  } else {
+    port = Math.trunc(Number(getEnv('API_PORT')));
+    logger.info(`API_PORT is set: ${port}`);
+  }
 
   const emojiPadding = 3;
 

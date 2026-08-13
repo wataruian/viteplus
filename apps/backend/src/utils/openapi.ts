@@ -4,7 +4,7 @@ import { trpcEndpoint } from '@lightproject/common/configs';
 import { generateOpenAPIDocumentFromTRPCRouter } from 'openapi-trpc';
 import type openApiTypes from 'openapi-types';
 
-import { trpcRouter } from '../routers/trpc';
+import { getTrpcRouter } from '../routers/trpc';
 
 // const openApiDocument: openApiTypes.OpenAPI.Document = generateOpenApiDocument(trpcRouter, {
 //   baseUrl: trpcUrl,
@@ -13,11 +13,9 @@ import { trpcRouter } from '../routers/trpc';
 //   version: '1.0.0',
 // });
 
-const openApiDocument: openApiTypes.OpenAPI.Document = generateOpenAPIDocumentFromTRPCRouter(
-  trpcRouter,
-  {
+const getOpenApiDocument = (): openApiTypes.OpenAPI.Document =>
+  generateOpenAPIDocumentFromTRPCRouter(getTrpcRouter(), {
     pathPrefix: trpcEndpoint,
-  },
-);
+  });
 
-export { openApiDocument };
+export { getOpenApiDocument };

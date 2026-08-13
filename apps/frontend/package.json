@@ -6,6 +6,9 @@
     "dist"
   ],
   "type": "module",
+  "scripts": {
+    "nginx": "./docker.sh"
+  },
   "dependencies": {
     "@iconify-json/logos": "catalog:",
     "@iconify-json/ph": "catalog:",

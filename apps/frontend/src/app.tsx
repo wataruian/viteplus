@@ -1,5 +1,5 @@
 import type { TrpcRouter } from '@lightproject/backend';
-import { trpcUrl } from '@lightproject/common/configs';
+import { apiBaseUrl, trpcUrl } from '@lightproject/common/configs';
 import { getEnv, isNodeEnvTest, isTest, isTrue, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { Preview } from '@lightproject/design-system/components';
@@ -17,22 +17,36 @@ const App = () => {
         isTrue(getEnv('VITE_ENABLE_TEST_ROUTES')) || isTest() || isVitest() || isNodeEnvTest();
 
       if (isEnableTestRoutes) {
-        const trpcClient = createTRPCClient<TrpcRouter>({
-          links: [
-            httpBatchLink({
-              transformer: superjson,
-              url: trpcUrl,
-            }),
-          ],
-        });
+        try {
+          const trpcClient = createTRPCClient<TrpcRouter>({
+            links: [
+              httpBatchLink({
+                transformer: superjson,
+                url: trpcUrl,
+              }),
+            ],
+          });
 
-        const result = await trpcClient.test.hello.mutate({
-          firstName: 'Test',
-        });
+          const result = await trpcClient.test.hello.mutate({
+            firstName: 'Test',
+          });
 
-        logger.info('tRPC Sample Result', {
-          result,
-        });
+          logger.info('tRPC Sample Result', {
+            result,
+          });
+        } catch (error: unknown) {
+          logger.error('Failed to call tRPC server', {
+            error,
+          });
+        }
+      }
+
+      let viteApiUrl = apiBaseUrl;
+      if (getEnv('VITE_API_URL') === undefined) {
+        logger.info(`VITE_API_URL is not set, using default URL: ${viteApiUrl}`);
+      } else {
+        viteApiUrl = getEnv('VITE_API_URL');
+        logger.info(`VITE_API_URL is set: ${viteApiUrl}`);
       }
 
       logger.info('Frontend Start', {

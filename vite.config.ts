@@ -88,24 +88,6 @@ const getCommonViteConfig = ({
       emptyOutDir: true,
       minify: !isLocal,
       outDir: 'dist',
-      rolldownOptions: {
-        external: [
-          'node:async_hooks',
-          'node:crypto',
-          'node:fs',
-          'node:path',
-          'node:url',
-          'node_util',
-          'child_process',
-          'fs',
-          'fs/promises',
-          'path',
-          'stream',
-          'timers',
-          'util',
-          'zlib',
-        ],
-      },
       sourcemap: isLocal,
     },
     fmt: {
@@ -171,9 +153,6 @@ const getCommonViteConfig = ({
     },
     pack: {
       clean: true,
-      define: {
-        'import.meta': '{}',
-      },
       dts: {
         cjsReexport: true,
         sourcemap: isLocal,
