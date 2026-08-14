@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g \".ai-data/artifacts/**/*\" \".ai-data/artifacts/!(*.gitkeep)\"",
-    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/dist/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/dist/** */storybook-static/** **/coverage/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
     "clean:modules": "rimraf -g --max-retries=10 --retry-delay=100 **/node_modules/**",
     "clean:tools": "rimraf -g **/tmp/**",
     "debug": "vp cache clean && vp run ready",
@@ -17,16 +17,27 @@
     "setup": "./install.sh"
   },
   "devDependencies": {
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@commitlint/types": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "bumpp": "catalog:",
+    "commitizen": "catalog:",
+    "cz-conventional-changelog": "catalog:",
     "madge": "catalog:",
+    "plop": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "devEngines": {
     "packageManager": {

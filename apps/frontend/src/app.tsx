@@ -1,15 +1,13 @@
-import type { TrpcRouter } from '@lightproject/backend';
-import { apiBaseUrl, trpcUrl } from '@lightproject/common/configs';
+import { apiBaseUrl } from '@lightproject/common/configs';
 import { isNodeEnvTest, isTest, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { type Counter, getMeter, tracer } from '@lightproject/common/utils';
 import { Button, Container, Preview } from '@lightproject/design-system/components';
 import { useSession } from '@lightproject/design-system/context';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { useEffect } from 'react';
-import superjson from 'superjson';
 
 import { config } from './config';
+import { trpcClient } from './providers/trpc-provider';
 
 let buttonClicksCounter: Counter | undefined = undefined;
 
@@ -43,15 +41,6 @@ const App = () => {
 
         if (isEnableTestRoutes) {
           try {
-            const trpcClient = createTRPCClient<TrpcRouter>({
-              links: [
-                httpBatchLink({
-                  transformer: superjson,
-                  url: trpcUrl,
-                }),
-              ],
-            });
-
             span.addEvent('Executing tRPC test mutation');
 
             const result = await trpcClient.test.hello.mutate({

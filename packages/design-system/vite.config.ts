@@ -12,8 +12,12 @@ export default defineConfig(({ mode }) => {
   const commonRunProps = getCommonRunProps(rootDir, mode);
 
   const baseConfig = getPackageViteConfig({
+    devCommand: 'storybook dev -p 6006',
     dir,
+    excludeDevCommand: false,
+    excludeStartCommand: false,
     mode,
+    startCommand: 'storybook dev -p 6006',
   });
 
   const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
@@ -39,6 +43,16 @@ export default defineConfig(({ mode }) => {
             {
               base: 'package',
               pattern: 'tmp/compile/**/*',
+            },
+          ],
+        },
+        'storybook-build': {
+          command: 'storybook build',
+          ...commonRunProps,
+          output: [
+            {
+              base: 'package',
+              pattern: 'storybook-static/**/*',
             },
           ],
         },

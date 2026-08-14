@@ -4,6 +4,7 @@ import path from 'node:path';
 import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 
 const ignorePatterns = [
+  '.templates/plop',
   'node_modules',
   'bak',
   'dist',
@@ -12,6 +13,7 @@ const ignorePatterns = [
   'vite.config.d.ts',
   'vite.config.d.ts.map',
   'tsconfig.tsbuildinfo',
+  'storybook-static',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -55,6 +57,8 @@ const getCommonRunProps = (rootDir: string, mode: string, isPackage = true) => {
     'tsconfig.json',
     'tsconfig.madge.json',
     'vite.config.ts',
+    'commitlint.config.ts',
+    'plopfile.ts',
   ];
 
   const rootInputs = ['**/*.ts', '**/*.tsx'];
@@ -129,6 +133,7 @@ const getCommonViteConfig = ({
 
   return {
     build: {
+      chunkSizeWarningLimit: 2500,
       cssCodeSplit: !isLocal,
       cssMinify: !isLocal,
       emptyOutDir: true,
@@ -204,7 +209,7 @@ const getCommonViteConfig = ({
         sourcemap: isLocal,
         tsgo: true,
       },
-      entry: ['src/**/*.ts', 'src/**/*.tsx'],
+      entry: ['src/**/*.ts', 'src/**/*.tsx', '!src/**/*.stories.ts', '!src/**/*.stories.tsx'],
       exports: false,
       format: ['esm', 'cjs'],
       minify: !isLocal,
@@ -373,10 +378,18 @@ const getRootViteConfig = (): UserConfig => {
         tasks: true,
       },
       tasks: {
+        commit: {
+          cache: false,
+          command: 'cz',
+        },
         madge: {
           command:
             "madge --circular --warning --exclude '(dist|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
           ...commonRunProps,
+        },
+        plop: {
+          cache: false,
+          command: 'plop',
         },
         root: {
           command: 'vp check',

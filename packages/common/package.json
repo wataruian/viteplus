@@ -73,7 +73,8 @@
     "rotating-file-stream": "catalog:",
     "ts-morph": "catalog:",
     "uuid": "catalog:",
-    "wcwidth": "catalog:"
+    "wcwidth": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

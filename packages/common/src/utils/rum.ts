@@ -12,7 +12,8 @@ interface RumOptions {
   serviceName?: string;
   serviceVersion?: string;
   environment?: string;
-  endpoint?: string;
+  faroEndpoint?: string;
+  otlpEndpoint?: string;
 }
 
 let isInitialized = false;
@@ -38,21 +39,23 @@ const initializeRum = (options: RumOptions = {}) => {
 
   const environment = options.environment ?? getEnv('ENV') ?? getEnv('VITE_ENV') ?? 'local';
 
-  const endpoint =
-    options.endpoint ??
+  const faroEndpoint =
+    options.faroEndpoint ??
     getEnv('FARO_ENDPOINT') ??
     getEnv('VITE_FARO_ENDPOINT') ??
-    'http://localhost:12347/collect';
+    'http://localhost:12347';
 
   const otlpEndpoint =
-    getEnv('OTLP_ENDPOINT') ?? getEnv('VITE_OTLP_ENDPOINT') ?? 'http://localhost:4318/v1/metrics';
+    options.otlpEndpoint ??
+    getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ??
+    getEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT') ??
+    'http://localhost:4318';
 
   const meterProvider = new MeterProvider({
     readers: [
       new PeriodicExportingMetricReader({
-        exportIntervalMillis: 5000,
         exporter: new OTLPMetricExporter({
-          url: otlpEndpoint,
+          url: `${otlpEndpoint}/v1/metrics`,
         }),
       }),
     ],
@@ -76,7 +79,7 @@ const initializeRum = (options: RumOptions = {}) => {
       }),
       new TracingInstrumentation(),
     ],
-    url: endpoint,
+    url: `${faroEndpoint}/collect`,
   });
 };
 

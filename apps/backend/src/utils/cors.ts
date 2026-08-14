@@ -5,15 +5,15 @@ import { config } from '../config';
 
 const allowedOrigins: string[] = [];
 
-if (apiBaseUrl !== undefined) {
+if (apiBaseUrl) {
   allowedOrigins.push(apiBaseUrl);
 }
 
-if (adminUrl !== undefined) {
+if (adminUrl) {
   allowedOrigins.push(adminUrl);
 }
 
-if (siteUrl !== undefined) {
+if (siteUrl) {
   allowedOrigins.push(siteUrl);
 }
 

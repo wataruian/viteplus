@@ -1,0 +1,12 @@
+import type { ComponentProps } from 'react';
+
+type {{pascalCase name}}Props = ComponentProps<'div'>;
+
+const {{pascalCase name}} = ({ className, ...props }: {{pascalCase name}}Props) => (
+  <div className={className} {...props}>
+    {{pascalCase name}} Component
+  </div>
+);
+
+export { {{pascalCase name}} };
+export type { {{pascalCase name}}Props };

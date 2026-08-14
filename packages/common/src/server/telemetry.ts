@@ -37,7 +37,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     return sdk;
   }
 
-  const endpoint =
+  const otlpEndpoint =
     options.otlpEndpoint ?? getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ?? 'http://localhost:4318';
 
   if (getEnv('TELEMETRY_DEBUG') === 'true') {
@@ -77,14 +77,14 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     logRecordProcessors: [
       new BatchLogRecordProcessor({
         exporter: new OTLPLogExporter({
-          url: `${endpoint}/v1/logs`,
+          url: `${otlpEndpoint}/v1/logs`,
         }),
       }),
     ],
     metricReaders: [
       new PeriodicExportingMetricReader({
         exporter: new OTLPMetricExporter({
-          url: `${endpoint}/v1/metrics`,
+          url: `${otlpEndpoint}/v1/metrics`,
         }),
       }),
       prometheusExporterInstance,
@@ -94,7 +94,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
       [ATTR_SERVICE_VERSION]: serviceVersion,
     }),
     traceExporter: new OTLPTraceExporter({
-      url: `${endpoint}/v1/traces`,
+      url: `${otlpEndpoint}/v1/traces`,
     }),
   });
 
@@ -127,7 +127,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   const span = tracer.startSpan('opentelemetry.initialize', {
     attributes: {
       initialized: true,
-      'otel.endpoint': endpoint,
+      'otel.endpoint': otlpEndpoint,
       'otel.service.name': serviceName,
       'otel.service.version': serviceVersion,
     },
@@ -137,7 +137,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   span.end();
 
   logger.info('OpenTelemetry initialized', {
-    endpoint,
+    otlpEndpoint,
     serviceName,
     serviceVersion,
   });

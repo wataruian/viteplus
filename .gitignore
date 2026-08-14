@@ -37,3 +37,4 @@ tmp
 # AI
 .ai-data/artifacts/*
 !.ai-data/artifacts/.gitkeep
+storybook-static
