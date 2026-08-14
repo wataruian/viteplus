@@ -48,11 +48,11 @@ function executeCommand() {
     "vp run -r build"*)
       commandOutputFile="build.output"
       ;;
-    "vp run -r test"*)
-      commandOutputFile="test.output"
-      ;;
     "vp run -r storybook-build"*)
       commandOutputFile="storybook-build.output"
+      ;;
+    "vp run -r test"*)
+      commandOutputFile="test.output"
       ;;
     "vp run -r compile"*)
       isCompileCommand="true"
@@ -164,17 +164,14 @@ if [[ "${install}" == "true" ]]; then
 fi
 
 executeCommand vp run -r madge
-
 executeCommand vp run -r root --fix
-
 executeCommand vp run -r check --fix
 executeCommand vp run -r format --write
 executeCommand vp run -r lint --fix
 executeCommand vp run -r type-check
 executeCommand vp run -r build
-executeCommand vp run -r test
-
 executeCommand vp run -r storybook-build
+executeCommand vp run -r test
 executeCommand vp run -r compile "${debug}"
 executeCommand vp run -r autogen "${debug}"
 

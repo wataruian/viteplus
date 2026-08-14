@@ -4,117 +4,11 @@
 info => Cleaning outputDir: storybook-static
 info => Loading presets
 info => Building manager..
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:24:8:
-      24 │         "types": "./dist/index.d.mts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:23:8:
-      23 │         "default": "./dist/index.mjs",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:28:8:
-      28 │         "types": "./dist/index.d.cts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:27:8:
-      27 │         "default": "./dist/index.cjs",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:32:8:
-      32 │         "types": "./src/index.ts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:31:8:
-      31 │         "default": "./src/index.ts",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "typescript" here will never be used as it comes after both "import" and "require" [package.json]
-
-    package.json:30:6:
-      30 │       "typescript": {
-         ╵       ~~~~~~~~~~~~
-
-  The "import" condition comes earlier and will be used for all "import" statements:
-
-    package.json:22:6:
-      22 │       "import": {
-         ╵       ~~~~~~~~
-
-  The "require" condition comes earlier and will be used for all "require" calls:
-
-    package.json:26:6:
-      26 │       "require": {
-         ╵       ~~~~~~~~~
-
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:38:8:
-      38 │         "types": "./dist/*/index.d.mts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:37:8:
-      37 │         "default": "./dist/*/index.mjs",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:42:8:
-      42 │         "types": "./dist/*/index.d.cts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:41:8:
-      41 │         "default": "./dist/*/index.cjs",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "types" here will never be used as it comes after "default" [package.json]
-
-    package.json:46:8:
-      46 │         "types": "./src/*/index.ts"
-         ╵         ~~~~~~~
-
-  The "default" condition comes earlier and will always be chosen:
-
-    package.json:45:8:
-      45 │         "default": "./src/*/index.ts",
-         ╵         ~~~~~~~~~
-
-▲ [WARNING] The condition "typescript" here will never be used as it comes after both "import" and "require" [package.json]
-
-    package.json:44:6:
-      44 │       "typescript": {
-         ╵       ~~~~~~~~~~~~
-
-  The "import" condition comes earlier and will be used for all "import" statements:
-
-    package.json:36:6:
-      36 │       "import": {
-         ╵       ~~~~~~~~
-
-  The "require" condition comes earlier and will be used for all "require" calls:
-
-    package.json:40:6:
-      40 │       "require": {
-         ╵       ~~~~~~~~~
-
-info => Manager built (115 ms)
+info => Manager built (110 ms)
 info => Building preview..
 info Using tsconfig paths for react-docgen
+(node:69243) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
 transforming...✓ 245 modules transformed.
 rendering chunks...
 computing gzip size...
@@ -146,9 +40,15 @@ storybook-static/assets/entry-preview-docs-CLm-4AZR.js     254.52 kB │ gzip:  
 storybook-static/assets/dist-ChseaX4Y.js                   647.64 kB │ gzip: 149.60 kB
 storybook-static/assets/components-DXvs6WRN.js             706.13 kB │ gzip: 218.33 kB
 
-✓ built in 1.21s
-info => Preview built (2.45 s)
+✓ built in 1.27s
+info => Preview built (2.38 s)
 info => Output directory: /Users/wataru/lightproject/viteplus/packages/design-system/storybook-static
 
+attention => Storybook now collects completely anonymous telemetry regarding usage.
+This information is used to shape Storybook's roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://storybook.js.org/telemetry
+
+
 ---
-vp run: cache hit, 5.65s saved.
+vp run: cache hit, 5.60s saved.

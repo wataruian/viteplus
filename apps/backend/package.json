@@ -10,20 +10,22 @@
   "module": "./dist/client.mjs",
   "types": "./dist/client.d.mts",
   "exports": {
-    ".": {
-      "import": {
-        "default": "./dist/client.mjs",
-        "types": "./dist/client.d.mts"
+    ".": [
+      {
+        "typescript": "./src/client.ts"
       },
-      "require": {
-        "default": "./dist/client.cjs",
-        "types": "./dist/client.d.cts"
+      {
+        "types": {
+          "import": "./dist/client.d.mts",
+          "require": "./dist/client.d.cts"
+        }
       },
-      "typescript": {
-        "default": "./src/client.ts",
-        "types": "./src/client.ts"
+      {
+        "import": "./dist/client.mjs",
+        "require": "./dist/client.cjs"
       }
-    }
+    ],
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@lightproject/common": "workspace:*",

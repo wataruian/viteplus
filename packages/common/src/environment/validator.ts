@@ -15,7 +15,10 @@ const validateEnv = <T extends z.ZodType>(schema: T): z.infer<T> => {
   if (schema instanceof z.ZodObject) {
     const keys = Object.keys(schema.shape);
     for (const key of keys) {
-      envObj[key] = getEnv(key);
+      const val = getEnv(key);
+      if (val !== undefined && val !== '') {
+        envObj[key] = val;
+      }
     }
   }
 
