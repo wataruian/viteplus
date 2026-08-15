@@ -1,4 +1,4 @@
-import { commonEnvSchema, getEnv, isTrue, validateEnv } from '@lightproject/common/environment';
+import { commonEnvSchema, isTrue, validateEnv } from '@lightproject/common/environment';
 import { z } from 'zod';
 
 const schema = commonEnvSchema.extend({
@@ -6,14 +6,14 @@ const schema = commonEnvSchema.extend({
   VITE_ENABLE_TEST_ROUTES: z.enum(['true', 'false']).optional(),
 });
 
-const env = validateEnv(schema);
+const { get } = validateEnv(schema);
 
 const config = {
   get viteApiUrl() {
-    return getEnv('VITE_API_URL') ?? env.VITE_API_URL;
+    return get('VITE_API_URL');
   },
   get viteEnableTestRoutes() {
-    return isTrue(getEnv('VITE_ENABLE_TEST_ROUTES') ?? env.VITE_ENABLE_TEST_ROUTES);
+    return isTrue(get('VITE_ENABLE_TEST_ROUTES'));
   },
 };
 

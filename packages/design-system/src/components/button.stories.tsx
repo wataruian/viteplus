@@ -29,19 +29,19 @@ const meta = {
   title: 'Design System/Button',
 } satisfies Meta<typeof Button>;
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Primary: Story = {
+const Primary: StoryObj<typeof meta> = {
   args: {
     children: 'Primary Button',
     intent: 'primary',
   },
 };
 
-export const Secondary: Story = {
+const Secondary: StoryObj<typeof meta> = {
   args: {
     children: 'Secondary Button',
     intent: 'secondary',
   },
 };
+
+export { Primary, Secondary };
+export default meta;

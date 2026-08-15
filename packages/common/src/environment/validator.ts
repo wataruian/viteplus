@@ -9,7 +9,7 @@ const commonEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).optional(),
 });
 
-const validateEnv = <T extends z.ZodType>(schema: T): z.infer<T> => {
+const validateEnv = <T extends z.ZodType>(schema: T) => {
   const envObj: Record<string, string | undefined> = {};
 
   if (schema instanceof z.ZodObject) {
@@ -30,7 +30,18 @@ const validateEnv = <T extends z.ZodType>(schema: T): z.infer<T> => {
     );
   }
 
-  return result.data;
+  const env = result.data;
+
+  const get = (key: keyof typeof env & string): string | undefined => {
+    const val = getEnv(key);
+    if (val !== undefined && val !== '') {
+      return val;
+    }
+    const envVal = env[key];
+    return typeof envVal === 'string' ? envVal : undefined;
+  };
+
+  return { env, get };
 };
 
 export { commonEnvSchema, validateEnv };

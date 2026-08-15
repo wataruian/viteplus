@@ -1,4 +1,4 @@
-import { commonEnvSchema, getEnv, isTrue, validateEnv } from '@lightproject/common/environment';
+import { commonEnvSchema, isTrue, validateEnv } from '@lightproject/common/environment';
 import { z } from 'zod';
 
 const schema = commonEnvSchema.extend({
@@ -14,39 +14,39 @@ const schema = commonEnvSchema.extend({
   SKIP_OPENTELEMETRY: z.enum(['true', 'false']).optional(),
 });
 
-const env = validateEnv(schema);
+const { get } = validateEnv(schema);
 
 const config = {
   get additionalCorsOrigins() {
-    return getEnv('ADDITIONAL_CORS_ORIGINS') ?? env.ADDITIONAL_CORS_ORIGINS;
+    return get('ADDITIONAL_CORS_ORIGINS');
   },
   get allowAllIps() {
-    return isTrue(getEnv('ALLOW_ALL_IPS') ?? env.ALLOW_ALL_IPS);
+    return isTrue(get('ALLOW_ALL_IPS'));
   },
   get allowedIps() {
-    return getEnv('ALLOWED_IPS') ?? env.ALLOWED_IPS;
+    return get('ALLOWED_IPS');
   },
   get apiPort() {
-    const port = getEnv('API_PORT') ?? env.API_PORT;
+    const port = get('API_PORT');
     return port !== undefined && port !== '' ? Math.trunc(Number(port)) : undefined;
   },
   get autogenDebug() {
-    return isTrue(getEnv('AUTOGEN_DEBUG') ?? env.AUTOGEN_DEBUG);
+    return isTrue(get('AUTOGEN_DEBUG'));
   },
   get blockAllIps() {
-    return isTrue(getEnv('BLOCK_ALL_IPS') ?? env.BLOCK_ALL_IPS);
+    return isTrue(get('BLOCK_ALL_IPS'));
   },
   get enableErrorStack() {
-    return isTrue(getEnv('ENABLE_ERROR_STACK') ?? env.ENABLE_ERROR_STACK);
+    return isTrue(get('ENABLE_ERROR_STACK'));
   },
   get enableTestRoutes() {
-    return isTrue(getEnv('ENABLE_TEST_ROUTES') ?? env.ENABLE_TEST_ROUTES);
+    return isTrue(get('ENABLE_TEST_ROUTES'));
   },
   get skipAutogen() {
-    return isTrue(getEnv('SKIP_AUTOGEN') ?? env.SKIP_AUTOGEN);
+    return isTrue(get('SKIP_AUTOGEN'));
   },
   get skipOpenTelemetry() {
-    return isTrue(getEnv('SKIP_OPENTELEMETRY') ?? env.SKIP_OPENTELEMETRY);
+    return isTrue(get('SKIP_OPENTELEMETRY'));
   },
 };
 
