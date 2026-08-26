@@ -37,6 +37,7 @@ interface HeaderProps extends BaseComponentProps<HTMLAttributes<HTMLElement>>, H
 const Header = forwardRef<HTMLElement, HeaderProps>(
   (
     {
+      children,
       className = '',
       props,
       showLogo = true,
@@ -56,6 +57,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
         <div className={layoutStyles.variants.type.container}>
           <div className={lookStyles.inner}>
             {showLogo && <Logo />}
+            {children}
             {showThemeSwitcher && <ThemeSwitcher />}
             {showModeSwitcher && <ModeSwitcher />}
           </div>

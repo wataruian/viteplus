@@ -3,6 +3,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Header } from './header';
 
 const meta = {
+  argTypes: {
+    look: {
+      control: 'select',
+      options: ['default'],
+    },
+  },
   component: Header,
   tags: ['autodocs'],
   title: 'Design System/Header',
@@ -10,9 +16,10 @@ const meta = {
 
 const Default: StoryObj<typeof meta> = {
   args: {
-    showLogo: true,
-    showModeSwitcher: true,
-    showThemeSwitcher: true,
+    children: <span className='font-semibold text-lg'>Custom Header Text</span>,
+    showLogo: false,
+    showModeSwitcher: false,
+    showThemeSwitcher: false,
   },
 };
 

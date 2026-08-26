@@ -25,5 +25,40 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+const Body: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    type: 'body',
+  },
+};
+
+const Caption: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    type: 'caption',
+  },
+};
+
+const Display: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    type: 'display',
+  },
+};
+
+const Headline: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    type: 'headline',
+  },
+};
+
+const SubHeadline: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    type: 'subHeadline',
+  },
+};
+
+export { Default, Body, Caption, Display, Headline, SubHeadline };
 export default meta;

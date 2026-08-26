@@ -56,6 +56,10 @@ export default defineConfig(({ mode }) => {
             },
           ],
         },
+        'update-stories': {
+          command: 'tsx --conditions=typescript ./src/utils/update-stories.ts',
+          ...commonRunProps,
+        },
       },
     },
   };

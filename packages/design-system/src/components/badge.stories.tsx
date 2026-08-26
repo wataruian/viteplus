@@ -25,5 +25,82 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+const Accent: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'accent',
+  },
+};
+
+const Danger: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'danger',
+  },
+};
+
+const Glass: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'glass',
+  },
+};
+
+const Info: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'info',
+  },
+};
+
+const Outline: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'outline',
+  },
+};
+
+const Primary: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'primary',
+  },
+};
+
+const Success: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'success',
+  },
+};
+
+const Warning: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'warning',
+  },
+};
+
+const Lg: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'lg',
+  },
+};
+
+const Md: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'md',
+  },
+};
+
+const Sm: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'sm',
+  },
+};
+
+export { Default, Accent, Danger, Glass, Info, Outline, Primary, Success, Warning, Lg, Md, Sm };
 export default meta;

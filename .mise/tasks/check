@@ -27,6 +27,9 @@ function executeCommand() {
   local commandName="${arguments[*]}"
 
   case "${commandName}" in
+    "vp run -r update-stories"*)
+      commandOutputFile="update-stories.output"
+      ;;
     "vp run -r madge"*)
       commandOutputFile="madge.output"
       ;;
@@ -163,6 +166,7 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
+executeCommand vp run -r update-stories
 executeCommand vp run -r madge
 executeCommand vp run -r root --fix
 executeCommand vp run -r check --fix

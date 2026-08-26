@@ -21,5 +21,33 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+const Lg: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'lg',
+  },
+};
+
+const Md: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'md',
+  },
+};
+
+const Sm: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'sm',
+  },
+};
+
+const Xl: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    size: 'xl',
+  },
+};
+
+export { Default, Lg, Md, Sm, Xl };
 export default meta;

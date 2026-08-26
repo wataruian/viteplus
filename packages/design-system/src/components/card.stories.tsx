@@ -21,5 +21,33 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+const Glass: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'glass',
+  },
+};
+
+const Outline: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'outline',
+  },
+};
+
+const Premium: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'premium',
+  },
+};
+
+const Primary: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'primary',
+  },
+};
+
+export { Default, Glass, Outline, Premium, Primary };
 export default meta;

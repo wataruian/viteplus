@@ -23,5 +23,19 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+const Error: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    state: 'error',
+  },
+};
+
+const Success: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    state: 'success',
+  },
+};
+
+export { Default, Error, Success };
 export default meta;
