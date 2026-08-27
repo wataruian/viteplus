@@ -7,8 +7,8 @@
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  11:48:30
-   Duration  144ms (transform 13ms, setup 0ms, import 23ms, tests 2ms, environment 0ms)
+   Start at  12:00:40
+   Duration  146ms (transform 14ms, setup 0ms, import 23ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -31,8 +31,8 @@ All files    |     100 |      100 |     100 |     100 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  11:48:30
-   Duration  273ms (transform 22ms, setup 0ms, import 47ms, tests 2ms, environment 0ms)
+   Start at  12:00:40
+   Duration  282ms (transform 22ms, setup 0ms, import 46ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -108,15 +108,15 @@ All files          |    1.55 |        0 |    1.75 |    1.57 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/telemetry.test.ts (1 test) 73ms
+ ✓ tests/telemetry.test.ts (1 test) 76ms
  ✓ tests/logger.test.ts (20 tests) 14ms
  ✓ tests/env.test.ts (17 tests) 1ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  11:48:30
-   Duration  461ms (transform 77ms, setup 0ms, import 192ms, tests 89ms, environment 0ms)
+   Start at  12:00:40
+   Duration  462ms (transform 72ms, setup 0ms, import 190ms, tests 91ms, environment 0ms)
 
  % Coverage report from v8
 -----------------|---------|----------|---------|---------|---------------------
@@ -169,17 +169,17 @@ All files        |    31.1 |    21.49 |   29.03 |   30.81 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/sample.trpc.test.ts (20 tests) 559ms
-       ✓ should handle GET /trpc/test.asyncFailReject  316ms
- ✓ tests/sample.http.test.ts (20 tests) 117ms
- ✓ tests/autogen/index.test.ts (5 tests) 46ms
+ ✓ tests/sample.trpc.test.ts (20 tests) 549ms
+       ✓ should handle GET /trpc/test.asyncFailReject  311ms
+ ✓ tests/sample.http.test.ts (20 tests) 122ms
+ ✓ tests/autogen/index.test.ts (5 tests) 45ms
  ✓ tests/trpc.caller.test.ts (2 tests) 21ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  5 passed (5)
       Tests  48 passed (48)
-   Start at  11:48:30
-   Duration  1.55s (transform 168ms, setup 0ms, import 526ms, tests 743ms, environment 0ms)
+   Start at  12:00:41
+   Duration  1.55s (transform 174ms, setup 0ms, import 542ms, tests 736ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -243,8 +243,8 @@ All files          |    60.7 |    44.84 |   67.96 |   60.63 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  11:48:33
-   Duration  229ms (transform 57ms, setup 0ms, import 114ms, tests 2ms, environment 0ms)
+   Start at  12:00:44
+   Duration  218ms (transform 50ms, setup 0ms, import 104ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------

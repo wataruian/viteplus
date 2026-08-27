@@ -4,7 +4,7 @@
 info => Cleaning outputDir: storybook-static
 info => Loading presets
 info => Building manager..
-info => Manager built (87 ms)
+info => Manager built (76 ms)
 info => Building preview..
 info Using tsconfig paths for react-docgen
 transforming...
@@ -63,9 +63,9 @@ storybook-static/assets/entry-preview-docs-BkaVZI4C.js      254.47 kB │ gzip: 
 storybook-static/assets/dist-DeY4Jhbo.js                    647.56 kB │ gzip: 149.57 kB
 storybook-static/assets/dist-CfDj7PLP.js                    882.35 kB │ gzip: 271.71 kB
 
-✓ built in 1.10s
-info => Preview built (1.88 s)
+✓ built in 1.06s
+info => Preview built (1.85 s)
 info => Output directory: /Users/wataru/lightproject/viteplus/packages/design-system/storybook-static
 
 ---
-vp run: cache hit, 4.65s saved.
+vp run: cache hit, 4.38s saved.
