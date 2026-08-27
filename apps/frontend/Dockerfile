@@ -7,7 +7,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/
 
 # Copy built frontend assets
-COPY dist /usr/share/nginx/html
+COPY dist /usr/share/nginx/html/vite
 
 EXPOSE 80
 

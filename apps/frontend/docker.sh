@@ -2,9 +2,12 @@
 
 set -o errexit # Bail out on any error
 
+echo "Building Vite preview..."
+vp build
+
 docker build -t frontend-preview .
 
-docker rm -f frontend-preview
+docker rm -f frontend-preview || true
 
 adminPort="${ADMIN_PORT:-"3001"}"
 

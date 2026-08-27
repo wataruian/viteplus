@@ -1,30 +1,22 @@
 import { apiBaseUrl } from '@lightproject/common/configs';
 import { isNodeEnvTest, isTest, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
-import { type Counter, getMeter, tracer } from '@lightproject/common/utils';
-import { Button, Container, Preview } from '@lightproject/design-system/components';
+import { tracer } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
+import heroImg from './assets/hero.png';
+import typescriptLogo from './assets/typescript.svg';
+import viteLogo from './assets/vite.svg';
 import { config } from './config';
+import { setupCounter } from './counter';
 import { trpcClient } from './providers/trpc-provider';
 
-let buttonClicksCounter: Counter | undefined = undefined;
-
-const handleTestClick = () => {
-  try {
-    buttonClicksCounter ??= getMeter().createCounter('button_clicks', {
-      description: 'frontend button clicks',
-    });
-    buttonClicksCounter.add(1);
-    logger.info('Pushed button_clicks metric');
-  } catch {
-    // Skip metric counter if it fails
-  }
-};
+import './style.css';
 
 const App = () => {
   const { sessionId } = useSession();
+  const counterRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const run = async () => {
@@ -92,14 +84,102 @@ const App = () => {
     });
   }, [sessionId]);
 
+  useEffect(() => {
+    let cleanup: (() => void) | undefined = undefined;
+    if (counterRef.current) {
+      cleanup = setupCounter(counterRef.current);
+    }
+    return () => {
+      cleanup?.();
+    };
+  }, []);
+
   return (
     <>
-      <Container>
-        <div className='flex justify-end pt-layout-md'>
-          <Button props={{ onClick: handleTestClick }}>Test Counter Metric</Button>
+      <section id='center'>
+        <div className='hero'>
+          <img src={heroImg} className='base' width='170' height='179' />
+          <img src={typescriptLogo} className='framework' alt='TypeScript logo' />
+          <img src={viteLogo} className='vite' alt='Vite logo' />
         </div>
-      </Container>
-      <Preview showDefault={true} />
+        <div>
+          <h1>Get started</h1>
+          <p>
+            Edit <code>src/app.tsx</code> and save to test <code>HMR</code>
+          </p>
+        </div>
+        <button ref={counterRef} id='counter' type='button' className='counter'></button>
+      </section>
+
+      <div className='ticks'></div>
+
+      <section id='next-steps'>
+        <div id='docs'>
+          <svg className='icon' role='presentation' aria-hidden='true'>
+            <use href='/icons.svg#documentation-icon'></use>
+          </svg>
+          <h2>Documentation</h2>
+          <p>Your questions, answered</p>
+          <ul>
+            <li>
+              <a href='https://vite.dev/' target='_blank' rel='noreferrer'>
+                <img className='logo' src={viteLogo} alt='' />
+                Explore Vite
+              </a>
+            </li>
+            <li>
+              <a href='https://www.typescriptlang.org' target='_blank' rel='noreferrer'>
+                <img className='button-icon' src={typescriptLogo} alt='' />
+                Learn more
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div id='social'>
+          <svg className='icon' role='presentation' aria-hidden='true'>
+            <use href='/icons.svg#social-icon'></use>
+          </svg>
+          <h2>Connect with us</h2>
+          <p>Join the Vite community</p>
+          <ul>
+            <li>
+              <a href='https://github.com/vitejs/vite' target='_blank' rel='noreferrer'>
+                <svg className='button-icon' role='presentation' aria-hidden='true'>
+                  <use href='/icons.svg#github-icon'></use>
+                </svg>
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href='https://chat.vite.dev/' target='_blank' rel='noreferrer'>
+                <svg className='button-icon' role='presentation' aria-hidden='true'>
+                  <use href='/icons.svg#discord-icon'></use>
+                </svg>
+                Discord
+              </a>
+            </li>
+            <li>
+              <a href='https://x.com/vite_js' target='_blank' rel='noreferrer'>
+                <svg className='button-icon' role='presentation' aria-hidden='true'>
+                  <use href='/icons.svg#x-icon'></use>
+                </svg>
+                X.com
+              </a>
+            </li>
+            <li>
+              <a href='https://bsky.app/profile/vite.dev' target='_blank' rel='noreferrer'>
+                <svg className='button-icon' role='presentation' aria-hidden='true'>
+                  <use href='/icons.svg#bluesky-icon'></use>
+                </svg>
+                Bluesky
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <div className='ticks'></div>
+      <section id='spacer'></section>
     </>
   );
 };

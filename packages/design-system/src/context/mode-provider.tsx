@@ -4,7 +4,7 @@ import { type Mode, ModeContext } from './mode-context';
 
 const ModeProvider = ({
   children,
-  initialMode = 'light',
+  initialMode = 'dark',
 }: {
   children: ReactNode;
   initialMode?: Mode;

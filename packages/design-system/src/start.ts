@@ -16,14 +16,14 @@ const vite = spawn('vp', [viteCommand], {
   stdio: 'inherit',
 });
 
-const storybook = spawn(
-  'vp',
-  ['exec', 'storybook', 'dev', '-p', String(storybookPort), '--no-open'],
-  {
-    shell: true,
-    stdio: 'inherit',
-  },
-);
+const storybookCommand = isProd
+  ? ['preview', '--outDir', 'storybook-static', '--port', String(storybookPort)]
+  : ['exec', 'storybook', 'dev', '-p', String(storybookPort), '--no-open'];
+
+const storybook = spawn('vp', [...storybookCommand], {
+  shell: true,
+  stdio: 'inherit',
+});
 
 const cleanup = () => {
   vite.kill();
@@ -31,5 +31,10 @@ const cleanup = () => {
   globalThis.process.exit();
 };
 
-globalThis.process.on('SIGINT', cleanup);
-globalThis.process.on('SIGTERM', cleanup);
+const signals = ['SIGTERM', 'SIGINT', 'SIGHUP'];
+
+for (const signal of signals) {
+  globalThis.process.once(signal, () => {
+    cleanup();
+  });
+}

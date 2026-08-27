@@ -7,8 +7,9 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/
 
 # Copy built frontend assets
-COPY out /usr/share/nginx/html
+COPY out /usr/share/nginx/html/vite
+COPY storybook-static /usr/share/nginx/html/storybook
 
-EXPOSE 80
+EXPOSE 80 81
 
 CMD ["nginx", "-g", "daemon off;"]
