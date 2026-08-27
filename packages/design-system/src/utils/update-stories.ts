@@ -164,7 +164,7 @@ const updateStories = () => {
         if (err === null) {
           globalThis.process.stdout.write('Successfully updated and formatted story files.\n');
         } else {
-          throw new Error('Linting failed.');
+          throw new Error('Linting failed');
         }
       },
     );

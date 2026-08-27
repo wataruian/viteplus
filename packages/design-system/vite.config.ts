@@ -1,10 +1,15 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
-import { defineConfig } from 'vite-plus';
+import react from '@vitejs/plugin-react';
+import unoCss from 'unocss/vite';
+import { type UserConfig, defineConfig } from 'vite-plus';
 
 import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
 
-export default defineConfig(({ mode }) => {
+const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
+
+export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
 
   const rootDir = path.resolve(dir, '../..');
@@ -12,25 +17,72 @@ export default defineConfig(({ mode }) => {
   const commonRunProps = getCommonRunProps(rootDir, mode);
 
   const baseConfig = getPackageViteConfig({
-    devCommand: 'storybook dev -p 6006',
+    buildCommand: 'vp pack && vp build && storybook build',
+    buildType: 'custom',
+    devCommand: 'tsx watch --conditions=typescript ./src/start.ts false',
     dir,
     excludeDevCommand: false,
     excludeStartCommand: false,
     mode,
-    startCommand: 'storybook dev -p 6006',
+    startCommand: 'tsx watch --conditions=typescript ./src/start.ts true',
   });
 
+  const baseResolve =
+    baseConfig.resolve && !Array.isArray(baseConfig.resolve) ? baseConfig.resolve : {};
   const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
   const baseRun = baseConfig.run && !Array.isArray(baseConfig.run) ? baseConfig.run : {};
   const baseRunTasks = baseRun.tasks && !Array.isArray(baseRun.tasks) ? baseRun.tasks : {};
 
-  return {
-    ...baseConfig,
+  Object.assign(baseConfig, {
+    build: {
+      ...baseConfig.build,
+      outDir: 'out',
+      rolldownOptions: {
+        ...baseConfig.build?.rolldownOptions,
+        external: [
+          'child_process',
+          'fs',
+          'fs/promises',
+          'path',
+          'stream',
+          'timers',
+          'util',
+          'zlib',
+        ],
+      },
+    },
     pack: {
       ...basePack,
       deps: {
         neverBundle: ['typescript'],
       },
+      entry: [
+        ...(Array.isArray(basePack.entry) ? basePack.entry : []),
+        '!src/app.tsx',
+        '!src/main.tsx',
+        '!src/start.ts',
+        '!.storybook/main.ts',
+        '!.storybook/preview.tsx',
+      ],
+    },
+    plugins: [
+      react(),
+      unoCss({
+        configDeps: fs
+          .readdirSync(path.resolve(dir, './src'), {
+            recursive: true,
+          })
+          .map(String)
+          .filter((file) => file.endsWith('.ts') && !file.endsWith('.d.ts'))
+          .map((file) => path.resolve(dir, './src', file)),
+        configFile: path.resolve(dir, './uno.config.ts'),
+      }),
+    ],
+    preview: {
+      port: designSystemPort,
+    },
+    resolve: {
+      ...baseResolve,
     },
     run: {
       ...baseRun,
@@ -46,21 +98,16 @@ export default defineConfig(({ mode }) => {
             },
           ],
         },
-        'storybook-build': {
-          command: 'storybook build',
-          ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'storybook-static/**/*',
-            },
-          ],
-        },
         'update-stories': {
           command: 'tsx --conditions=typescript ./src/utils/update-stories.ts',
           ...commonRunProps,
         },
       },
     },
-  };
+    server: {
+      port: designSystemPort,
+    },
+  });
+
+  return baseConfig;
 });

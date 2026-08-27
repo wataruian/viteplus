@@ -8,6 +8,7 @@ const ignorePatterns = [
   'node_modules',
   'bak',
   'dist',
+  'out',
   'coverage',
   'tmp',
   'vite.config.d.ts',
@@ -253,6 +254,7 @@ const getPackageViteConfig = ({
   isRoot = false,
   buildType = 'pack',
   devCommand = 'tsx watch --conditions=typescript src/index.ts',
+  buildCommand = '',
   startCommand = 'node dist/index.mjs',
   excludeDevCommand = true,
   excludeStartCommand = true,
@@ -260,7 +262,8 @@ const getPackageViteConfig = ({
   dir?: string;
   isRoot?: boolean;
   mode?: string;
-  buildType?: 'build' | 'pack';
+  buildType?: 'build' | 'pack' | 'custom';
+  buildCommand?: string;
   devCommand?: string;
   startCommand?: string;
   excludeDevCommand?: boolean;
@@ -272,6 +275,15 @@ const getPackageViteConfig = ({
     rootDir = path.resolve(dir, '../..');
   }
 
+  if (buildType === 'custom' && (!buildCommand || buildCommand.trim() === '')) {
+    throw new Error('buildCommand is required for custom build type');
+  }
+
+  let resolvedBuildCommand = `vp ${buildType}`;
+  if (buildType === 'custom') {
+    resolvedBuildCommand = buildCommand;
+  }
+
   const commonRunProps = getCommonRunProps(rootDir, mode);
 
   return {
@@ -279,12 +291,20 @@ const getPackageViteConfig = ({
     run: {
       tasks: {
         build: {
-          command: `vp ${buildType}`,
+          command: resolvedBuildCommand,
           ...commonRunProps,
           output: [
             {
               base: 'package',
               pattern: 'dist/**/*',
+            },
+            {
+              base: 'package',
+              pattern: 'out/**/*',
+            },
+            {
+              base: 'package',
+              pattern: 'storybook-static/**/*',
             },
           ],
         },
@@ -385,7 +405,7 @@ const getRootViteConfig = (): UserConfig => {
         },
         madge: {
           command:
-            "madge --circular --warning --exclude '(dist|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
           ...commonRunProps,
         },
         plop: {

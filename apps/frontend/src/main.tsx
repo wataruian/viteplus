@@ -7,7 +7,7 @@ import packageJson from '../package.json' with { type: 'json' };
 
 import 'virtual:uno.css';
 
-import App from './app.tsx';
+import App from './app';
 
 initializeRum({
   serviceName: packageJson.name,

@@ -26,6 +26,8 @@ coverage
 node_modules
 dist
 dist-ssr
+out
+storybook-static
 *.local
 *.tsbuildinfo
 vite.config.d.ts
@@ -37,4 +39,3 @@ tmp
 # AI
 .ai-data/artifacts/*
 !.ai-data/artifacts/.gitkeep
-storybook-static

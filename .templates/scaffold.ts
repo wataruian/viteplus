@@ -32,7 +32,7 @@ const scaffold = (type: string) => {
     typeof targetArg === 'string' ? path.resolve(process.cwd(), targetArg) : process.cwd();
 
   if (fs.existsSync(targetDir)) {
-    throw new Error(`Target directory ${targetDir} already exists.`);
+    throw new Error(`Target directory ${targetDir} already exists`);
   }
 
   process.stdout.write(`Scaffolding ${type} template in ${targetDir}...\n`);
@@ -43,6 +43,8 @@ const scaffold = (type: string) => {
       return (
         base !== 'node_modules' &&
         base !== 'dist' &&
+        base !== 'out' &&
+        base !== 'storybook-static' &&
         base !== 'coverage' &&
         base !== 'tmp' &&
         base !== 'tsconfig.tsbuildinfo'

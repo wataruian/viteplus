@@ -116,7 +116,7 @@ const ScaleRow = forwardRef<HTMLDivElement, { name: string; title: string }>(
 ScaleRow.displayName = 'ScaleRow';
 
 const MockError = () => {
-  throw new Error('This is a preview error to demonstrate the ErrorBoundary UI.');
+  throw new Error('This is a preview error to demonstrate the ErrorBoundary UI');
 };
 
 const getExtraProps = (componentName: string, variant?: string, group?: string) => {

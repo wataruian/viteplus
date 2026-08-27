@@ -44,7 +44,13 @@ const safelist = [
 const unoCssBaseConfig: UserConfig = {
   content: {
     pipeline: {
-      exclude: [/[\\/]node_modules[\\/]/u, /[\\/]\.git[\\/]/u, /[\\/]dist[\\/]/u],
+      exclude: [
+        /[\\/]node_modules[\\/]/u,
+        /[\\/]\.git[\\/]/u,
+        /[\\/]dist[\\/]/u,
+        /[\\/]out[\\/]/u,
+        /[\\/]storybook-static[\\/]/u,
+      ],
       include: [/\.(?:vue|svelte|[jt]sx|mdx?|html)(?:$|\?)/u, '**/*.{js,ts,jsx,tsx}'],
     },
   },
