@@ -42,8 +42,8 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "onFail": "download",
-      "version": "11.10.0"
+      "version": "11.10.0",
+      "onFail": "download"
     }
   },
   "engines": {

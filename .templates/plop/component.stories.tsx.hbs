@@ -6,15 +6,16 @@ const meta = {
   argTypes: {
     // argTypes
   },
-  args: {
-    // args
-  },
   component: {{pascalCase name}},
   tags: ['autodocs'],
   title: 'Design System/{{pascalCase name}}',
 } satisfies Meta<typeof {{pascalCase name}}>;
 
-const Default: StoryObj<typeof meta> = {};
+const Default: StoryObj<typeof meta> = {
+  args: {
+    // args
+  },
+};
 
 export { Default };
 export default meta;

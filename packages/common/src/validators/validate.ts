@@ -44,7 +44,7 @@ const checkDuplicateExports = (
     deepTraverse(module, [moduleName]);
   }
 
-  const duplicates = [...allExports.entries()].filter(([_, sources]) => sources.length > 1);
+  const duplicates = [...allExports.entries()].filter(([, sources]) => sources.length > 1);
 
   if (duplicates.length > 0) {
     const duplicateMessage = duplicates

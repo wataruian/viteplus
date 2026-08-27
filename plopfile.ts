@@ -1,6 +1,6 @@
 import type { NodePlopAPI } from 'plop';
 
-export default function plopfile(plop: NodePlopAPI) {
+const plopfile = (plop: NodePlopAPI) => {
   plop.setGenerator('component', {
     actions: [
       {
@@ -34,4 +34,6 @@ export default function plopfile(plop: NodePlopAPI) {
       },
     ],
   });
-}
+};
+
+export default plopfile;

@@ -1,5 +1,5 @@
 ~/apps/backend$ tsx --conditions=typescript ./src/utils/autogen.ts true ◉ cache hit, replaying
-[2026-08-26T09:49:05.387Z] INFO : 🚀 Starting autogen build process...
+[2026-08-27T03:48:39.583Z] INFO : 🚀 Starting autogen build process...
 allRoutes [
   {
     handlerFilePath: '/Users/wataru/lightproject/viteplus/apps/backend/src/routers/http/routes/default.ts',
@@ -2782,12 +2782,12 @@ allRoutes [
     type: 'query'
   }
 ]
-[2026-08-26T09:49:05.531Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
-[2026-08-26T09:49:05.531Z] INFO : Validating 32 routes...
-[2026-08-26T09:49:05.531Z] INFO : ✅ All routes passed validation (0 warnings)
-[2026-08-26T09:49:05.535Z] INFO : ✅ OpenAPI spec generated with 32 paths
-[2026-08-26T09:49:05.535Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
-[2026-08-26T09:49:05.535Z] INFO : 🎉 OpenAPI specification generation completed successfully! (148ms)
+[2026-08-27T03:48:39.700Z] INFO : 📋 Discovered 32 routes: 16 HTTP, 16 tRPC
+[2026-08-27T03:48:39.700Z] INFO : Validating 32 routes...
+[2026-08-27T03:48:39.700Z] INFO : ✅ All routes passed validation (0 warnings)
+[2026-08-27T03:48:39.704Z] INFO : ✅ OpenAPI spec generated with 32 paths
+[2026-08-27T03:48:39.704Z] INFO : 📄 Saved to: /Users/wataru/lightproject/viteplus/apps/backend/tmp/autogen/openapi.json
+[2026-08-27T03:48:39.704Z] INFO : 🎉 OpenAPI specification generation completed successfully! (121ms)
 
 ---
-vp run: cache hit, 1.18s saved.
+vp run: cache hit, 1.39s saved.
