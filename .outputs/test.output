@@ -7,8 +7,8 @@
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  22:37:56
-   Duration  154ms (transform 15ms, setup 0ms, import 25ms, tests 2ms, environment 0ms)
+   Start at  03:44:48
+   Duration  149ms (transform 14ms, setup 0ms, import 24ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -31,8 +31,8 @@ All files    |     100 |      100 |     100 |     100 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  22:37:57
-   Duration  342ms (transform 27ms, setup 0ms, import 57ms, tests 2ms, environment 0ms)
+   Start at  03:44:48
+   Duration  301ms (transform 24ms, setup 0ms, import 49ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -113,19 +113,19 @@ All files          |     1.5 |        0 |     1.7 |    1.53 |
 
  ✓ tests/logger.test.ts (20 tests) 8ms
  ✓ tests/env.test.ts (17 tests) 1ms
- ✓ tests/telemetry.test.ts (1 test) 102ms
+ ✓ tests/telemetry.test.ts (1 test) 95ms
  ✓ tests/index.test.ts (1 test) 0ms
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  22:37:56
-   Duration  486ms (transform 77ms, setup 0ms, import 179ms, tests 111ms, environment 0ms)
+   Start at  03:44:48
+   Duration  513ms (transform 72ms, setup 0ms, import 175ms, tests 104ms, environment 0ms)
 
  % Coverage report from v8
 -----------------|---------|----------|---------|---------|---------------------
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s   
 -----------------|---------|----------|---------|---------|---------------------
-All files        |   32.92 |    22.72 |   28.57 |   32.85 |                     
+All files        |   32.73 |    22.72 |   28.57 |   32.65 |                     
  src             |       0 |        0 |       0 |       0 |                     
   index.ts       |       0 |        0 |       0 |       0 |                     
  src/configs     |       0 |        0 |       0 |       0 |                     
@@ -145,9 +145,9 @@ All files        |   32.92 |    22.72 |   28.57 |   32.85 |
  src/samples     |     100 |      100 |     100 |     100 |                     
   hello.ts       |     100 |      100 |     100 |     100 |                     
   index.ts       |       0 |        0 |       0 |       0 |                     
- src/server      |   61.72 |    34.61 |    7.69 |   63.29 |                     
+ src/server      |   60.75 |    34.61 |    7.69 |   62.33 |                     
   index.ts       |       0 |        0 |       0 |       0 |                     
-  telemetry.ts   |   61.72 |    34.61 |    7.69 |   63.29 | ...,184,193-200,208 
+  telemetry.ts   |   60.75 |    34.61 |    7.69 |   62.33 | ...,183,191-198,207 
  src/typecast    |       0 |        0 |       0 |       0 |                     
   index.ts       |       0 |        0 |       0 |       0 |                     
   tc.ts          |       0 |        0 |       0 |       0 | 3-47                
@@ -172,47 +172,52 @@ All files        |   32.92 |    22.72 |   28.57 |   32.85 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/routers/trpc-openapi.test.ts (2 tests) 3ms
- ✓ tests/routers/http-openapi.test.ts (2 tests) 0ms
- ✓ tests/index.test.ts (1 test) 0ms
+ ✓ tests/services.test.ts (12 tests) 289ms
+ ✓ tests/routers/trpc-openapi.test.ts (5 tests) 29ms
+ ✓ tests/routers/http-openapi.test.ts (5 tests) 20ms
+ ✓ tests/error-handling.test.ts (4 tests) 28ms
+ ✓ tests/trust-proxy.test.ts (12 tests) 70ms
+ ✓ tests/security-cors.test.ts (4 tests) 24ms
+ ✓ tests/security-csp.test.ts (3 tests) 17ms
+ ✓ tests/openapi-docs-availability.test.ts (3 tests) 24ms
 
- Test Files  3 passed (3)
-      Tests  5 passed (5)
-   Start at  23:04:40
-   Duration  363ms (transform 66ms, setup 0ms, import 201ms, tests 3ms, environment 0ms)
+ Test Files  8 passed (8)
+      Tests  48 passed (48)
+   Start at  03:44:49
+   Duration  973ms (transform 140ms, setup 0ms, import 214ms, tests 501ms, environment 0ms)
 
  % Coverage report from v8
--------------------|---------|----------|---------|---------|---------------------------------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                           
--------------------|---------|----------|---------|---------|---------------------------------------------
-All files          |   33.12 |    23.64 |   31.08 |   33.22 |                                             
- src               |    2.81 |        0 |    5.26 |    2.85 |                                             
-  app.ts           |       0 |        0 |       0 |       0 | 20-82                                       
-  client.ts        |       0 |        0 |       0 |       0 |                                             
-  config.ts        |       0 |        0 |       0 |       0 | 10-50                                       
-  edge.ts          |       0 |        0 |       0 |       0 |                                             
-  index.ts         |       0 |        0 |       0 |       0 | 15-46                                       
-  schema.ts        |     100 |      100 |     100 |     100 |                                             
- src/middlewares   |       0 |        0 |       0 |       0 |                                             
-  error-handler.ts |       0 |        0 |       0 |       0 | 9-77                                        
-  logger.ts        |       0 |        0 |       0 |       0 | 6-55                                        
-  security.ts      |       0 |        0 |       0 |       0 | 7-40                                        
-  trust-proxy.ts   |       0 |        0 |       0 |       0 | 13-67                                       
- src/routers       |   76.14 |    68.75 |   70.96 |   77.66 |                                             
-  docs.ts          |       0 |        0 |       0 |       0 | 12-36                                       
-  utils.ts         |   82.17 |    71.73 |   78.57 |   82.47 | 159-161,176-178,213-221,228-232,246,255-256 
- src/routers/http  |      90 |       50 |       0 |      90 |                                             
-  default.ts       |     100 |      100 |     100 |     100 |                                             
-  index.ts         |    87.5 |       50 |       0 |    87.5 | 30                                          
-  test.ts          |     100 |      100 |     100 |     100 |                                             
- src/routers/trpc  |   29.72 |        4 |       0 |   29.72 |                                             
-  default.ts       |     100 |      100 |     100 |     100 |                                             
-  index.ts         |   25.71 |        4 |       0 |   25.71 | 28-44,65,71-116                             
-  test.ts          |     100 |      100 |     100 |     100 |                                             
- src/services      |    37.5 |        0 |       0 |   42.85 |                                             
-  default.ts       |      50 |      100 |       0 |     100 |                                             
-  test.ts          |   33.33 |        0 |       0 |   33.33 | 8-9,24-40                                   
--------------------|---------|----------|---------|---------|---------------------------------------------
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |      87 |    81.16 |   86.84 |   86.91 |                   
+ src               |   63.38 |    35.71 |   52.63 |   64.28 |                   
+  app.ts           |   81.57 |       50 |      50 |   83.78 | 46,64-65,80-82    
+  client.ts        |       0 |        0 |       0 |       0 |                   
+  config.ts        |      75 |       40 |   71.42 |      75 | 33-34,45,50       
+  edge.ts          |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 | 15-46             
+  schema.ts        |     100 |      100 |     100 |     100 |                   
+ src/middlewares   |    91.2 |    78.18 |   93.75 |   91.01 |                   
+  error-handler.ts |      80 |     62.5 |   83.33 |   78.94 | 65-77             
+  logger.ts        |     100 |      100 |     100 |     100 |                   
+  security.ts      |     100 |    66.66 |     100 |     100 | 9-17,24           
+  trust-proxy.ts   |   87.87 |    84.84 |     100 |    87.5 | 20-23             
+ src/routers       |    99.1 |       92 |     100 |   99.05 |                   
+  docs.ts          |     100 |      100 |     100 |     100 |                   
+  utils.ts         |   99.03 |    91.66 |     100 |      99 | 247               
+ src/routers/http  |     100 |      100 |     100 |     100 |                   
+  default.ts       |     100 |      100 |     100 |     100 |                   
+  index.ts         |     100 |      100 |     100 |     100 |                   
+  test.ts          |     100 |      100 |     100 |     100 |                   
+ src/routers/trpc  |   79.48 |     86.2 |     100 |   79.48 |                   
+  default.ts       |     100 |      100 |     100 |     100 |                   
+  index.ts         |   78.37 |     86.2 |     100 |   78.37 | 34,80-86,103      
+  test.ts          |     100 |      100 |     100 |     100 |                   
+ src/services      |     100 |      100 |     100 |     100 |                   
+  default.ts       |     100 |      100 |     100 |     100 |                   
+  test.ts          |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
 
 ~/apps/frontend$ vp test ◉ cache hit, replaying
 
@@ -223,8 +228,8 @@ All files          |   33.12 |    23.64 |   31.08 |   33.22 |
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  22:38:00
-   Duration  364ms (transform 76ms, setup 0ms, import 236ms, tests 2ms, environment 0ms)
+   Start at  03:44:51
+   Duration  335ms (transform 66ms, setup 0ms, import 211ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -241,4 +246,4 @@ All files          |    6.15 |        0 |       0 |    6.15 |
 -------------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 7.71s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 8.36s saved. (Run `vp run --last-details` for full details)

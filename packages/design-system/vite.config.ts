@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
+import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
 

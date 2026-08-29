@@ -4,7 +4,7 @@ import { getEnv } from './env';
 
 const commonEnvSchema = z.object({
   CI: z.string().optional(),
-  ENV: z.enum(['local', 'develop', 'staging', 'production', 'test']).optional().default('local'),
+  ENV: z.string().optional().default('local'),
   LOG_LEVEL: z.enum(['silent', 'error', 'warn', 'info', 'debug', 'trace']).optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).optional(),
 });

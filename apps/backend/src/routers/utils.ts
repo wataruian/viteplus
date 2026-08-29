@@ -1,8 +1,9 @@
-import { OpenAPIHono, type RouteConfig, createRoute, z } from '@hono/zod-openapi';
+import { type Hook, OpenAPIHono, type RouteConfig, createRoute, z } from '@hono/zod-openapi';
 import { openApiVersion, requestTypes } from '@lightproject/common/configs';
 import { getSessionId } from '@lightproject/common/logger';
 import { type AnyTRPCProcedure, initTRPC } from '@trpc/server';
 import type { Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 
 import packageJson from '../../package.json' with { type: 'json' };
 import type { ServiceFn } from '../schema';
@@ -268,8 +269,14 @@ const buildRoute = (router: OpenAPIHono<HttpEnv>, definition: HttpRoute) => {
   router.openapi(route, handler);
 };
 
+const validationErrorHook: Hook<unknown, HttpEnv, string, unknown> = (result) => {
+  if (!result.success) {
+    throw new HTTPException(400, { message: result.error.message });
+  }
+};
+
 const createHttpRouter = (routesList: HttpRoute[]) => {
-  const router = new OpenAPIHono<HttpEnv>();
+  const router = new OpenAPIHono<HttpEnv>({ defaultHook: validationErrorHook });
   for (const r of routesList) {
     buildRoute(router, r);
   }
@@ -326,6 +333,7 @@ export {
   registerOpenApiRoute,
   t,
   trpcRouteMethods,
+  validationErrorHook,
   walkTrpcProcedureTree,
 };
 export type {

@@ -18,7 +18,6 @@ interface TelemetryOptions {
 }
 
 let initialized = false;
-let shutdownRegistered = false;
 let prometheusExporterInstance: PrometheusExporter | undefined = undefined;
 let shutdownFn: (() => Promise<void>) | undefined = undefined;
 let tracerProviderInstance: WebTracerProvider | undefined = undefined;
@@ -188,28 +187,26 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     ]);
   };
 
-  if (!shutdownRegistered) {
-    const shutdown = async () => {
-      try {
-        await shutdownFn?.();
-      } catch (error) {
-        logger.error('Failed to shutdown OpenTelemetry', {
-          error,
-        });
-      } finally {
-        globalThis.process.exit(0);
-      }
-    };
+  const shutdown = async () => {
+    try {
+      await shutdownFn?.();
+    } catch (error) {
+      logger.error('Failed to shutdown OpenTelemetry', {
+        error,
+      });
+    } finally {
+      globalThis.process.exit(0);
+    }
+  };
 
-    const signals = ['SIGTERM', 'SIGINT', 'SIGHUP'];
+  const signals = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 
-    for (const signal of signals) {
+  for (const signal of signals) {
+    if (globalThis.process.listenerCount(signal) === 0) {
       globalThis.process.once(signal, () => {
         shutdown().catch(() => {});
       });
     }
-
-    shutdownRegistered = true;
   }
 
   const span = tracer.startSpan('opentelemetry.initialize', {

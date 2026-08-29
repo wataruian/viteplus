@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config';
+import { getPackageViteConfig } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 

@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
+import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
 
