@@ -1,30 +1,12 @@
-import z from 'zod';
+import { z } from '@hono/zod-openapi';
 
-import type { InferSchemaMap, InputArgs, ServiceContext } from '../middlewares/initialize-request';
-import { BaseService } from './base';
+import { attachSchema } from '../schema';
 
-const DefaultServiceInputSchemas = {
-  root: z.void(),
-};
-
-const DefaultServiceOutputSchemas = {
-  root: z.object({ customMessage: z.string() }),
-};
-
-class DefaultService extends BaseService {
-  public constructor(ctx: ServiceContext, inputArgs: InputArgs = {}) {
-    super(ctx, inputArgs);
-  }
-
-  public static root(
-    _input: z.infer<typeof DefaultServiceInputSchemas.root>,
-  ): z.infer<typeof DefaultServiceOutputSchemas.root> {
-    return { customMessage: 'OK' };
-  }
+class DefaultService {
+  public static root = attachSchema(() => ({ status: 'OK' }), {
+    request: z.object({}),
+    response: z.object({ status: z.string() }).openapi('RootResponse'),
+  });
 }
 
-type DefaultServiceInputs = InferSchemaMap<typeof DefaultServiceInputSchemas>;
-type DefaultServiceOutputs = InferSchemaMap<typeof DefaultServiceOutputSchemas>;
-
-export { DefaultService, DefaultServiceInputSchemas, DefaultServiceOutputSchemas };
-export type { DefaultServiceInputs, DefaultServiceOutputs };
+export { DefaultService };

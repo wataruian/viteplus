@@ -1,6 +1,4 @@
-$ vp check --fix ◉ cache hit, replaying
-pass: Formatting completed for checked files (2.9s)
-pass: Found no warnings, lint errors, or type errors in 161 files (1.8s, 8 threads)
+$ vp check --fix
+pass: Formatting completed for checked files (2.3s)
+pass: Found no warnings, lint errors, or type errors in 142 files (1.5s, 8 threads)
 
----
-vp run: cache hit, 3.11s saved.

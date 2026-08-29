@@ -2,7 +2,9 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 
 import { DiagConsoleLogger, DiagLogLevel, diag } from '@opentelemetry/api';
 import type { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import type { NodeSDK } from '@opentelemetry/sdk-node';
+import type { LoggerProvider } from '@opentelemetry/sdk-logs';
+import type { MeterProvider } from '@opentelemetry/sdk-metrics';
+import type { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 import { getEnv } from '../environment';
@@ -15,9 +17,31 @@ interface TelemetryOptions {
   otlpEndpoint?: string;
 }
 
-let sdk: NodeSDK | undefined = undefined;
+let initialized = false;
 let shutdownRegistered = false;
 let prometheusExporterInstance: PrometheusExporter | undefined = undefined;
+let shutdownFn: (() => Promise<void>) | undefined = undefined;
+let tracerProviderInstance: WebTracerProvider | undefined = undefined;
+let meterProviderInstance: MeterProvider | undefined = undefined;
+let loggerProviderInstance: LoggerProvider | undefined = undefined;
+
+const flushTelemetry = async () => {
+  if (!initialized) {
+    return;
+  }
+  try {
+    await Promise.allSettled([
+      tracerProviderInstance?.forceFlush(),
+      meterProviderInstance?.forceFlush(),
+      loggerProviderInstance?.forceFlush(),
+    ]);
+  } catch (error) {
+    logger.error('Failed to flush telemetry', { error });
+  }
+};
+
+const isIncomingMessage = (_obj: unknown): _obj is IncomingMessage => true;
+const isServerResponse = (_obj: unknown): _obj is ServerResponse => true;
 
 const prometheusExporter = {
   getMetricsRequestHandler: (req: IncomingMessage, res: ServerResponse) => {
@@ -28,14 +52,56 @@ const prometheusExporter = {
     res.statusCode = 503;
     res.end('Metrics not initialized');
   },
+  getMetricsResponse: async (): Promise<Response> => {
+    if (!prometheusExporterInstance) {
+      return new globalThis.Response('Metrics not initialized', { status: 503 });
+    }
+
+    const response = await new Promise<Response>((resolve) => {
+      const mockRes: {
+        end: (data: string) => void;
+        headers: Record<string, string>;
+        setHeader: (name: string, value: string) => void;
+        statusCode: number;
+      } = {
+        end(data: string) {
+          resolve(
+            new globalThis.Response(data, {
+              headers: mockRes.headers,
+              status: mockRes.statusCode,
+            }),
+          );
+        },
+        headers: {},
+        setHeader(name: string, value: string) {
+          mockRes.headers[name] = value;
+        },
+        statusCode: 200,
+      };
+
+      const req: unknown = {
+        headers: {},
+        method: 'GET',
+        url: '/metrics',
+      };
+      const res: unknown = mockRes;
+
+      if (isIncomingMessage(req) && isServerResponse(res)) {
+        prometheusExporterInstance?.getMetricsRequestHandler(req, res);
+      }
+    });
+
+    return response;
+  },
 };
 
 const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   await Promise.resolve();
 
-  if (sdk) {
-    return sdk;
+  if (initialized) {
+    return;
   }
+  initialized = true;
 
   const otlpEndpoint =
     options.otlpEndpoint ?? getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ?? 'http://localhost:4318';
@@ -47,41 +113,46 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   const serviceName = options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app';
   const serviceVersion = options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0';
 
-  const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node');
   const { OTLPLogExporter } = await import('@opentelemetry/exporter-logs-otlp-http');
   const { OTLPMetricExporter } = await import('@opentelemetry/exporter-metrics-otlp-http');
   const { PrometheusExporter: DynPrometheusExporter } =
     await import('@opentelemetry/exporter-prometheus');
   const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
   const { resourceFromAttributes } = await import('@opentelemetry/resources');
-  const { BatchLogRecordProcessor } = await import('@opentelemetry/sdk-logs');
-  const { PeriodicExportingMetricReader } = await import('@opentelemetry/sdk-metrics');
-  const { NodeSDK: DynNodeSDK } = await import('@opentelemetry/sdk-node');
+
+  const { BatchLogRecordProcessor, LoggerProvider } = await import('@opentelemetry/sdk-logs');
+  const { logs } = await import('@opentelemetry/api-logs');
+
+  const { PeriodicExportingMetricReader, MeterProvider } =
+    await import('@opentelemetry/sdk-metrics');
+  const { metrics } = await import('@opentelemetry/api');
+
+  const { WebTracerProvider, BatchSpanProcessor } = await import('@opentelemetry/sdk-trace-web');
+  const { registerInstrumentations } = await import('@opentelemetry/instrumentation');
+
+  const { FetchInstrumentation } = await import('@opentelemetry/instrumentation-fetch');
+
+  const resource = resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: serviceName,
+    [ATTR_SERVICE_VERSION]: serviceVersion,
+  });
+
+  tracerProviderInstance = new WebTracerProvider({
+    resource,
+    spanProcessors: [
+      new BatchSpanProcessor(
+        new OTLPTraceExporter({
+          url: `${otlpEndpoint}/v1/traces`,
+        }),
+      ),
+    ],
+  });
+  tracerProviderInstance.register();
 
   prometheusExporterInstance = new DynPrometheusExporter({ preventServerStart: true });
 
-  sdk = new DynNodeSDK({
-    instrumentations: [
-      getNodeAutoInstrumentations({
-        '@opentelemetry/instrumentation-express': {
-          enabled: false,
-        },
-        '@opentelemetry/instrumentation-fs': {
-          enabled: false,
-        },
-        '@opentelemetry/instrumentation-http': {
-          enabled: false,
-        },
-      }),
-    ],
-    logRecordProcessors: [
-      new BatchLogRecordProcessor({
-        exporter: new OTLPLogExporter({
-          url: `${otlpEndpoint}/v1/logs`,
-        }),
-      }),
-    ],
-    metricReaders: [
+  meterProviderInstance = new MeterProvider({
+    readers: [
       new PeriodicExportingMetricReader({
         exporter: new OTLPMetricExporter({
           url: `${otlpEndpoint}/v1/metrics`,
@@ -89,21 +160,38 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
       }),
       prometheusExporterInstance,
     ],
-    resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: serviceName,
-      [ATTR_SERVICE_VERSION]: serviceVersion,
-    }),
-    traceExporter: new OTLPTraceExporter({
-      url: `${otlpEndpoint}/v1/traces`,
-    }),
+    resource,
+  });
+  metrics.setGlobalMeterProvider(meterProviderInstance);
+
+  loggerProviderInstance = new LoggerProvider({
+    processors: [
+      new BatchLogRecordProcessor({
+        exporter: new OTLPLogExporter({
+          url: `${otlpEndpoint}/v1/logs`,
+        }),
+      }),
+    ],
+    resource,
+  });
+  logs.setGlobalLoggerProvider(loggerProviderInstance);
+
+  registerInstrumentations({
+    instrumentations: [new FetchInstrumentation()],
   });
 
-  sdk.start();
+  shutdownFn = async () => {
+    await Promise.all([
+      tracerProviderInstance?.shutdown(),
+      meterProviderInstance?.shutdown(),
+      loggerProviderInstance?.shutdown(),
+    ]);
+  };
 
   if (!shutdownRegistered) {
     const shutdown = async () => {
       try {
-        await sdk?.shutdown();
+        await shutdownFn?.();
       } catch (error) {
         logger.error('Failed to shutdown OpenTelemetry', {
           error,
@@ -141,9 +229,13 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     serviceName,
     serviceVersion,
   });
-
-  return sdk;
 };
 
-export { initializeTelemetry, prometheusExporter };
+export {
+  flushTelemetry,
+  initializeTelemetry,
+  isIncomingMessage,
+  isServerResponse,
+  prometheusExporter,
+};
 export type { TelemetryOptions };

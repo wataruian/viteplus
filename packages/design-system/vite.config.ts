@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
-import { type UserConfig, defineConfig } from 'vite-plus';
+import { type PluginOption, type UserConfig, defineConfig } from 'vite-plus';
 
 import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
 
@@ -27,13 +27,24 @@ export default defineConfig(({ mode }): UserConfig => {
     startCommand: 'tsx watch --conditions=typescript ./src/start.ts true',
   });
 
-  const baseResolve =
-    baseConfig.resolve && !Array.isArray(baseConfig.resolve) ? baseConfig.resolve : {};
   const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
-  const baseRun = baseConfig.run && !Array.isArray(baseConfig.run) ? baseConfig.run : {};
-  const baseRunTasks = baseRun.tasks && !Array.isArray(baseRun.tasks) ? baseRun.tasks : {};
+
+  const plugins = [
+    react() as PluginOption[],
+    unoCss({
+      configDeps: fs
+        .readdirSync(path.resolve(dir, './src'), {
+          recursive: true,
+        })
+        .map(String)
+        .filter((file) => file.endsWith('.ts') && !file.endsWith('.d.ts'))
+        .map((file) => path.resolve(dir, './src', file)),
+      configFile: path.resolve(dir, './uno.config.ts'),
+    }),
+  ];
 
   Object.assign(baseConfig, {
+    ...baseConfig,
     build: {
       ...baseConfig.build,
       outDir: 'out',
@@ -65,29 +76,17 @@ export default defineConfig(({ mode }): UserConfig => {
         '!.storybook/preview.tsx',
       ],
     },
-    plugins: [
-      react(),
-      unoCss({
-        configDeps: fs
-          .readdirSync(path.resolve(dir, './src'), {
-            recursive: true,
-          })
-          .map(String)
-          .filter((file) => file.endsWith('.ts') && !file.endsWith('.d.ts'))
-          .map((file) => path.resolve(dir, './src', file)),
-        configFile: path.resolve(dir, './uno.config.ts'),
-      }),
-    ],
+    plugins,
     preview: {
       port: designSystemPort,
     },
     resolve: {
-      ...baseResolve,
+      ...baseConfig.resolve,
     },
     run: {
-      ...baseRun,
+      ...baseConfig.run,
       tasks: {
-        ...baseRunTasks,
+        ...baseConfig.run?.tasks,
         compile: {
           command: 'tsx --conditions=typescript ./src/utils/compile.ts',
           ...commonRunProps,

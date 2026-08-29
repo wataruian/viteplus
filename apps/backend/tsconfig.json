@@ -3,7 +3,7 @@
     "types": ["node"]
   },
   "display": "Backend",
-  "exclude": ["node_modules", "dist", "coverage"],
+  "exclude": ["node_modules", "dist", ".wrangler", "coverage"],
   "extends": "../../tsconfig.json",
   "include": ["./**/*.ts", "../../vite.config.ts"]
 }

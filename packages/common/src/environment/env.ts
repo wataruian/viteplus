@@ -35,8 +35,8 @@ const isTrue = (value = '') => {
 };
 
 const isFalse = (value = '') => {
-  if (value) {
-    return value.toLowerCase() === 'false' || value === '0';
+  if (!value || (value && (value.toLowerCase() === 'false' || value === '0'))) {
+    return true;
   }
   return false;
 };

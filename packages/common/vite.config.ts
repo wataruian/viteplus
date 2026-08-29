@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite-plus';
+import { type UserConfig, defineConfig } from 'vite-plus';
 
 import { getPackageViteConfig } from '../../vite.config';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
 
   const baseConfig = getPackageViteConfig({ dir, mode });
@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
       define: {
         'import.meta': '{}',
       },
+      shims: false,
     },
   };
 });

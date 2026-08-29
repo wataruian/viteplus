@@ -1,4 +1,4 @@
-import { chalkInstance, defaultColor } from '../utils/color';
+import { chalkInstance, defaultColor, getRandomColor } from '../utils/color';
 import { getColor } from './context';
 
 type LogMode = 'pretty' | 'json';
@@ -27,7 +27,12 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
 
   let messageText = entry.message;
   if (useColor) {
-    const sessionColor = getColor();
+    const explicitSessionId =
+      entry.context && 'sessionId' in entry.context ? entry.context['sessionId'] : undefined;
+
+    const sessionColor =
+      typeof explicitSessionId === 'string' ? getRandomColor(explicitSessionId) : getColor();
+
     if (sessionColor !== defaultColor) {
       messageText = sessionColor(messageText);
     }

@@ -15,6 +15,7 @@ const ignorePatterns = [
   'vite.config.d.ts.map',
   'tsconfig.tsbuildinfo',
   'storybook-static',
+  '.wrangler',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -188,6 +189,7 @@ const getCommonViteConfig = ({
         'no-magic-numbers': 'off',
         'no-ternary': 'off',
         'no-undefined': 'off',
+        'no-underscore-dangle': ['error', { allow: ['_def'] }],
         'one-var': 'off',
         'oxc/no-async-await': 'off',
         'oxc/no-optional-chaining': 'off',
@@ -195,6 +197,7 @@ const getCommonViteConfig = ({
         'sort-imports': ['error', { ignoreDeclarationSort: true }],
         'typescript/explicit-function-return-type': 'off',
         'typescript/explicit-module-boundary-types': 'off',
+        'typescript/no-extraneous-class': 'off',
         'typescript/prefer-readonly-parameter-types': 'off',
         'unicorn/max-nested-calls': 'off',
         'unicorn/no-array-reduce': 'off',
@@ -405,7 +408,7 @@ const getRootViteConfig = (): UserConfig => {
         },
         madge: {
           command:
-            "madge --circular --warning --exclude '(dist|out|storybook-static|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
           ...commonRunProps,
         },
         plop: {

@@ -6,6 +6,8 @@ const apiBaseUrl = getEnv('API_URL') ?? getEnv('VITE_API_URL') ?? 'http://localh
 const adminUrl = getEnv('ADMIN_URL') ?? getEnv('VITE_ADMIN_URL') ?? 'http://localhost:3001';
 const siteUrl = getEnv('SITE_URL') ?? getEnv('VITE_SITE_URL') ?? 'http://localhost:3002';
 
+const openApiVersion = '3.0.0';
+
 const healthCheckEndpoint = '/';
 const healthCheckUrl = `${apiBaseUrl}${healthCheckEndpoint}`;
 
@@ -13,13 +15,17 @@ const apiEndpoint = '/api';
 const apiUrl = `${apiBaseUrl}${apiEndpoint}`;
 
 const docsEndpoint = '/docs';
-const docsUrl = `${apiBaseUrl}${docsEndpoint}`;
+
+const docsHttpEndpoint = `${docsEndpoint}/http`;
+const docsHttpUrl = `${apiBaseUrl}${docsHttpEndpoint}`;
+const openApiHttpJsonEndpoint = `${docsEndpoint}/openapi-http.json`;
+
+const docsTrpcEndpoint = `${docsEndpoint}/trpc`;
+const docsTrpcUrl = `${apiBaseUrl}${docsTrpcEndpoint}`;
+const openApiTrpcJsonEndpoint = `${docsEndpoint}/openapi-trpc.json`;
 
 const trpcEndpoint = '/trpc';
 const trpcUrl = `${apiBaseUrl}${trpcEndpoint}`;
-
-const trpcPlaygroundEndpoint = '/trpc-playground';
-const trpcPlaygroundUrl = `${apiBaseUrl}${trpcPlaygroundEndpoint}`;
 
 const requestTypes = {
   http: 'HTTP',
@@ -27,8 +33,7 @@ const requestTypes = {
 } as const;
 
 const isTrpcEndpoint = (url: string): boolean =>
-  (url.startsWith(trpcEndpoint) && !url.startsWith(trpcPlaygroundEndpoint)) ||
-  (url.startsWith(trpcUrl) && !url.startsWith(trpcPlaygroundUrl));
+  url.startsWith(trpcEndpoint) || url.startsWith(trpcUrl);
 
 const getRequestType = (url: string): RequestType => {
   if (isTrpcEndpoint(url)) {
@@ -50,17 +55,21 @@ export {
   apiEndpoint,
   apiUrl,
   docsEndpoint,
-  docsUrl,
+  docsHttpEndpoint,
+  docsHttpUrl,
+  docsTrpcEndpoint,
+  docsTrpcUrl,
   getRequestType,
   healthCheckEndpoint,
   healthCheckUrl,
   isTrpcEndpoint,
   isTrpcRequest,
+  openApiHttpJsonEndpoint,
+  openApiTrpcJsonEndpoint,
+  openApiVersion,
   requestTypes,
   siteUrl,
   trpcEndpoint,
-  trpcPlaygroundEndpoint,
-  trpcPlaygroundUrl,
   trpcUrl,
 };
 export type { RequestType };

@@ -22,7 +22,6 @@ function executeCommand() {
   mkdir -p "${outputsDir}"
 
   local isCompileCommand="false"
-  local isAutogenCommand="false"
   local commandOutputFile=""
   local commandName="${arguments[*]}"
 
@@ -57,10 +56,6 @@ function executeCommand() {
     "vp run -r compile"*)
       isCompileCommand="true"
       commandOutputFile="compile.output"
-      ;;
-    "vp run -r autogen"*)
-      isAutogenCommand="true"
-      commandOutputFile="autogen.output"
       ;;
   esac
 
@@ -118,25 +113,6 @@ function executeCommand() {
   fi
 
   if [[ "${commandSuccess}" == "true" ]]; then
-    if [[ "${isAutogenCommand}" == "true" ]]; then
-      local routesGeneratedJsonFile="${rootDir}/apps/backend/tmp/autogen/routes.json"
-      local routesMasterJsonFile="${outputsDir}/routes.json"
-      
-      if [[ -f "${routesGeneratedJsonFile}" ]]; then
-        cp "${routesGeneratedJsonFile}" "${routesMasterJsonFile}"
-        vp fmt --write "${routesMasterJsonFile}"
-        echo "✅ Saved routes to ${routesMasterJsonFile}"
-      fi
-
-      local openApiGeneratedJsonFile="${rootDir}/apps/backend/tmp/autogen/openapi.json"
-      local openApiMasterJsonFile="${outputsDir}/openapi.json"
-      if [[ -f "${openApiGeneratedJsonFile}" ]]; then
-        cp "${openApiGeneratedJsonFile}" "${openApiMasterJsonFile}"
-        vp fmt --write "${openApiMasterJsonFile}"
-        echo "✅ Saved OpenAPI spec to ${openApiMasterJsonFile}"
-      fi
-    fi
-
     if [[ "${isCompileCommand}" == "true" ]]; then
       local stylesGeneratedJsonFile="${rootDir}/packages/design-system/tmp/compile/styles.json"
       local stylesMasterJsonFile="${outputsDir}/styles.json"
@@ -173,7 +149,6 @@ executeCommand vp run -r type-check
 executeCommand vp run -r build
 executeCommand vp run -r test
 executeCommand vp run -r compile "${debug}"
-executeCommand vp run -r autogen "${debug}"
 
 echo ""
 echo "✅ Commands executed successfully"

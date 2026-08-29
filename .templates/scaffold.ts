@@ -45,6 +45,7 @@ const scaffold = (type: string) => {
         base !== 'dist' &&
         base !== 'out' &&
         base !== 'storybook-static' &&
+        base !== '.wrangler' &&
         base !== 'coverage' &&
         base !== 'tmp' &&
         base !== 'tsconfig.tsbuildinfo'

@@ -1,5 +1,4 @@
 import { apiBaseUrl } from '@lightproject/common/configs';
-import { isNodeEnvTest, isTest, isVitest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { tracer } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
@@ -28,30 +27,23 @@ const App = () => {
       });
 
       try {
-        const isEnableTestRoutes =
-          config.viteEnableTestRoutes || isTest() || isVitest() || isNodeEnvTest();
+        try {
+          span.addEvent('Executing tRPC test mutation');
 
-        if (isEnableTestRoutes) {
-          try {
-            span.addEvent('Executing tRPC test mutation');
+          const result = await trpcClient.test.hello.query({ name: 'Test' });
 
-            const result = await trpcClient.test.hello.mutate({
-              firstName: 'Test',
-            });
+          span.setAttribute('trpc.test.success', true);
 
-            span.setAttribute('trpc.test.success', true);
+          logger.info('tRPC Sample Result', {
+            result,
+          });
+        } catch (error: unknown) {
+          span.recordException(error instanceof Error ? error : String(error));
+          span.setAttribute('trpc.test.success', false);
 
-            logger.info('tRPC Sample Result', {
-              result,
-            });
-          } catch (error: unknown) {
-            span.recordException(error instanceof Error ? error : String(error));
-            span.setAttribute('trpc.test.success', false);
-
-            logger.error('Failed to call tRPC server', {
-              error,
-            });
-          }
+          logger.error('Failed to call tRPC server', {
+            error,
+          });
         }
 
         let viteApiUrl = apiBaseUrl;

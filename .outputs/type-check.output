@@ -1,12 +1,12 @@
-~/packages/library$ tsc ◉ cache hit, replaying
+~/packages/library$ tsc
+~/packages/design-system$ tsc
+~/packages/common$ tsc
 
-~/packages/design-system$ tsc ◉ cache hit, replaying
 
-~/packages/common$ tsc ◉ cache hit, replaying
+~/apps/backend$ tsc ○ cache miss: envs 'ADDITIONAL_CORS_ORIGINS', 'ADMIN_PORT', 'ADMIN_URL', 'ALLOWED_IPS', 'ALLOW_ALL_IPS', 'API_PORT', 'API_URL', 'BLOCK_ALL_IPS', 'DEBUG', 'DESIGN_SYSTEM_PORT', 'ENABLE_ERROR_STACK', 'ENV', 'FARO_ENDPOINT', 'LOG_LEVEL', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'SITE_PORT', 'SITE_URL', 'SKIP_OPENTELEMETRY', 'STORYBOOK_PORT', 'STYLE_COMPILE_DEBUG', 'TELEMETRY_DEBUG', 'TEST_VAR', 'VITE_ADMIN_PORT', 'VITE_ADMIN_URL', 'VITE_API_PORT', 'VITE_API_URL', 'VITE_ENV', 'VITE_FARO_ENDPOINT', 'VITE_OTEL_EXPORTER_OTLP_ENDPOINT', 'VITE_SITE_PORT', 'VITE_SITE_URL' changed, executing
 
-~/apps/backend$ tsc ◉ cache hit, replaying
 
-~/apps/frontend$ tsc ◉ cache hit, replaying
+~/apps/frontend$ tsc
 
 ---
-vp run: 5/5 cache hit (100%), 10.61s saved. (Run `vp run --last-details` for full details)
+vp run: 0/5 cache hit (0%). (Run `vp run --last-details` for full details)

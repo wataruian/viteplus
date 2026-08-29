@@ -27,7 +27,13 @@
   "unocss.colorPreview": true,
   "unocss.colorPreviewRadius": "50%",
   "unocss.disable": false,
-  "unocss.exclude": ["**/node_modules/**", "**/dist/**", "**/out/**", "**/storybook-static/**"],
+  "unocss.exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/out/**",
+    "**/storybook-static/**",
+    "**/.wrangler/**"
+  ],
   "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
   "unocss.remToPxPreview": true,
   "unocss.remToPxRatio": 16,

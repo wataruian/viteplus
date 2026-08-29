@@ -1,13 +1,27 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
-import { defineConfig } from 'vite-plus';
+import { type UserConfig, defineConfig } from 'vite-plus';
 
 import { getCommonRunProps, getPackageViteConfig } from '../../vite.config';
 
-export default defineConfig(({ mode }) => {
+const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
+
+export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
 
   const rootDir = path.resolve(dir, '../..');
+
+  const packageEnvPath = path.resolve(dir, '.env');
+  const rootEnvPath = path.resolve(rootDir, '.env');
+
+  if (!fs.existsSync(packageEnvPath) && fs.existsSync(rootEnvPath)) {
+    try {
+      fs.symlinkSync(path.relative(dir, rootEnvPath), packageEnvPath);
+    } catch {
+      fs.copyFileSync(rootEnvPath, packageEnvPath);
+    }
+  }
 
   const commonRunProps = getCommonRunProps(rootDir, mode);
 
@@ -19,31 +33,15 @@ export default defineConfig(({ mode }) => {
     startCommand: 'node dist/index.mjs',
   });
 
-  const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
-  const baseRun = baseConfig.run && !Array.isArray(baseConfig.run) ? baseConfig.run : {};
-  const baseRunTasks = baseRun.tasks && !Array.isArray(baseRun.tasks) ? baseRun.tasks : {};
-
   return {
     ...baseConfig,
-    pack: {
-      ...basePack,
-      deps: {
-        neverBundle: ['express-serve-static-core', 'extend'],
-      },
-    },
     run: {
-      ...baseRun,
+      ...baseConfig.run,
       tasks: {
-        ...baseRunTasks,
-        autogen: {
-          command: 'tsx --conditions=typescript ./src/utils/autogen.ts',
+        ...baseConfig.run?.tasks,
+        wrangler: {
+          command: `wrangler dev --port ${port}`,
           ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'tmp/autogen/**/*',
-            },
-          ],
         },
       },
     },

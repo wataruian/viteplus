@@ -1,0 +1,6 @@
+name = "lightproject-backend"
+main = "src/edge.ts"
+
+compatibility_date = "2026-08-26"
+# uncomment when nodejs_compat is needed
+# compatibility_flags = ["nodejs_compat"]

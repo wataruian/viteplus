@@ -1,17 +1,43 @@
-import { isTest } from '@lightproject/common/environment';
+import { swaggerUI } from '@hono/swagger-ui';
+import { OpenAPIHono } from '@hono/zod-openapi';
+import {
+  apiEndpoint,
+  docsHttpEndpoint,
+  openApiHttpJsonEndpoint,
+  openApiVersion,
+  requestTypes,
+} from '@lightproject/common/configs';
+import { isLocal } from '@lightproject/common/environment';
 
-import { config } from '../../config';
-import type { RouteHandler } from '../../middlewares/initialize-request';
-import defaultRoutes from './routes/default';
-import testRoutes from './routes/test';
+import packageJson from '../../../package.json' with { type: 'json' };
+import { assertHttpRoutesDocumented, mergeHttpRouters } from '../utils';
+import { defaultRouter } from './default';
+import { testRouter } from './test';
 
-const getHttpRouter = () => {
-  const router: Record<string, { handler: RouteHandler; method: string }>[] = [defaultRoutes];
-  const includeTestRoutes = config.enableTestRoutes || isTest();
-  if (includeTestRoutes) {
-    router.push(testRoutes);
-  }
-  return router;
-};
+const httpRouter = new OpenAPIHono();
 
-export { getHttpRouter };
+const apiRouter = mergeHttpRouters({
+  default: defaultRouter,
+  test: testRouter,
+});
+
+httpRouter.route(apiEndpoint, apiRouter);
+
+if (isLocal()) {
+  assertHttpRoutesDocumented(apiRouter);
+
+  httpRouter.get(openApiHttpJsonEndpoint, (c) =>
+    c.json(
+      httpRouter.getOpenAPIDocument({
+        info: {
+          title: `${requestTypes.http} OpenAPI`,
+          version: packageJson.version,
+        },
+        openapi: openApiVersion,
+      }),
+    ),
+  );
+  httpRouter.get(docsHttpEndpoint, swaggerUI({ url: openApiHttpJsonEndpoint }));
+}
+
+export { apiRouter, httpRouter };

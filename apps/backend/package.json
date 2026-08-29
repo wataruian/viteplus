@@ -28,37 +28,20 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@hono/node-server": "catalog:",
+    "@hono/swagger-ui": "catalog:",
+    "@hono/trpc-server": "catalog:",
+    "@hono/zod-openapi": "catalog:",
     "@lightproject/common": "workspace:*",
-    "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
-    "axios": "catalog:",
-    "chalk": "catalog:",
-    "cors": "catalog:",
-    "crypto-js": "catalog:",
-    "express": "catalog:",
-    "express-list-endpoints": "catalog:",
-    "helmet": "catalog:",
-    "openapi-trpc": "catalog:",
-    "openapi-types": "catalog:",
-    "superjson": "catalog:",
-    "swagger-autogen": "catalog:",
-    "swagger-ui-express": "catalog:",
-    "trpc-openapi": "catalog:",
-    "trpc-playground": "catalog:",
-    "ts-morph": "catalog:",
+    "hono": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/cors": "catalog:",
-    "@types/crypto-js": "catalog:",
-    "@types/express": "catalog:",
-    "@types/express-serve-static-core": "catalog:",
     "@types/node": "catalog:",
-    "@types/supertest": "catalog:",
-    "@types/swagger-ui-express": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "supertest": "catalog:",
     "typescript": "catalog:",
-    "vite-plus": "catalog:"
+    "vite-plus": "catalog:",
+    "wrangler": "catalog:"
   }
 }

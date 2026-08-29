@@ -1,8 +1,3 @@
-import crypto from 'node:crypto';
-
-import { v4 as uuidv4 } from 'uuid';
-import wcwidth from 'wcwidth';
-
 const getRandomText = () =>
   Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15);
 
@@ -39,12 +34,15 @@ const safeToString = (value: unknown): string => {
   }
 };
 
-const generateUuid = () => uuidv4();
+const generateUuid = () => globalThis.crypto.randomUUID();
 
 const generateShortUuid = (length = 7) => {
-  const uuid = generateUuid();
-  const hash = crypto.createHash('sha1').update(uuid).digest('hex');
-  return hash.slice(0, Math.max(0, length));
+  const bytes = new Uint8Array(Math.ceil(length / 2));
+  globalThis.crypto.getRandomValues(bytes);
+  return [...bytes]
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, Math.max(0, length));
 };
 
 const padEmoji = (
@@ -61,7 +59,7 @@ const padEmoji = (
   const codePoint = emoji.codePointAt(0) ?? 0;
   const isLikelyEmoji = codePoint > 8000 || emoji.includes('️') || emoji.includes('‍');
 
-  const contentWidth = isLikelyEmoji ? 2 : wcwidth(emoji);
+  const contentWidth = isLikelyEmoji ? 2 : [...new Intl.Segmenter().segment(emoji)].length;
 
   const effectiveWidth = addSpace ? contentWidth + 1 : contentWidth;
   const padAmount = Math.max(0, targetWidth - effectiveWidth);
