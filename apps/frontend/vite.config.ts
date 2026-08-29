@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
-import { type PluginOption, type UserConfig, defineConfig } from 'vite-plus';
+import { type UserConfig, defineConfig } from 'vite-plus';
 
 import { getPackageViteConfig } from '../../vite.config';
 
@@ -23,7 +23,7 @@ export default defineConfig(({ mode }): UserConfig => {
   });
 
   const plugins = [
-    react() as PluginOption[],
+    react(),
     unoCss({
       configDeps: fs
         .readdirSync(path.resolve(dir, '../../packages/design-system/src'), {

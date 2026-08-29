@@ -1,113 +1,244 @@
-[34m~/packages/library$ vp test[0m
-[34m~/packages/design-system$ vp test[0m
-[34m~/packages/common$ vp test[0m
+~/packages/library$ vp test ◉ cache hit, replaying
 
-[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/Users/wataru/lightproject/viteplus/packages/common[39m
-      [2mCoverage enabled with [22m[33mv8[39m
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/library
+      Coverage enabled with v8
 
+ ✓ tests/index.test.ts (1 test) 2ms
 
-[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/Users/wataru/lightproject/viteplus/packages/library[39m
-      [2mCoverage enabled with [22m[33mv8[39m
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  22:37:56
+   Duration  154ms (transform 15ms, setup 0ms, import 25ms, tests 2ms, environment 0ms)
 
- [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
-
-[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
-[2m   Start at [22m 21:49:01
-[2m   Duration [22m 154ms[2m (transform 14ms, setup 0ms, import 24ms, tests 2ms, environment 0ms)[22m
-
-[34m % [39m[2mCoverage report from [22m[33mv8[39m
+ % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
 File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------|---------|----------|---------|---------|-------------------
-[32;1mAll files   [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
- src         |       0 |        0 |       0 |       0 | [31;1m                 [0m 
-  index.ts   |       0 |        0 |       0 |       0 | [31;1m                 [0m 
-[32;1m src/samples[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
-[32;1m  hello.ts  [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
-  index.ts   |       0 |        0 |       0 |       0 | [31;1m                 [0m 
+All files    |     100 |      100 |     100 |     100 |                   
+ src         |       0 |        0 |       0 |       0 |                   
+  index.ts   |       0 |        0 |       0 |       0 |                   
+ src/samples |     100 |      100 |     100 |     100 |                   
+  hello.ts   |     100 |      100 |     100 |     100 |                   
+  index.ts   |       0 |        0 |       0 |       0 |                   
 -------------|---------|----------|---------|---------|-------------------
 
- [31m❯[39m tests/telemetry.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 94[2mms[22m[39m
-[31m     [31m×[31m uses caller-supplied service metadata[39m[32m 93[2mms[22m[39m
- [31m❯[39m tests/logger.test.ts [2m([22m[2m20 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 10[2mms[22m[39m
-     [32m✓[39m 'should mask default fields using defa…'[32m 1[2mms[22m[39m
-     [32m✓[39m 'should mask default fields using cust…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should mask custom fields using defau…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should mask custom fields using custo…'[32m 0[2mms[22m[39m
-     [32m✓[39m should not mutate original object[32m 0[2mms[22m[39m
-     [32m✓[39m should redact deeply nested fields[32m 0[2mms[22m[39m
-     [32m✓[39m 'should default to pretty in local'[32m 1[2mms[22m[39m
-     [32m✓[39m 'should respect LOG_FORMAT=json in loc…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should prioritize options.mode in loc…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should force json in non-local'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should force json in non-local even i…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should force json in non-local regard…'[32m 0[2mms[22m[39m
-     [32m✓[39m 'should mask default fields' (JSON mode)[32m 2[2mms[22m[39m
-     [32m✓[39m 'should mask custom fields' (JSON mode)[32m 0[2mms[22m[39m
-     [32m✓[39m 'should redact deeply nested user info' (JSON mode)[32m 0[2mms[22m[39m
-     [32m✓[39m 'should mask default fields' (Pretty mode)[32m 0[2mms[22m[39m
-     [32m✓[39m 'should mask custom fields' (Pretty mode)[32m 0[2mms[22m[39m
-     [32m✓[39m 'should redact deeply nested user info' (Pretty mode)[32m 0[2mms[22m[39m
-     [32m✓[39m should not mutate original object during logging[32m 0[2mms[22m[39m
-[31m     [31m×[31m should format message with color based on sessionId and metadata with gray[39m[32m 4[2mms[22m[39m
- [32m✓[39m tests/env.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 1[2mms[22m[39m
- [32m✓[39m tests/index.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 0[2mms[22m[39m
+~/packages/design-system$ vp test ◉ cache hit, replaying
 
-[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/design-system
+      Coverage enabled with v8
 
-[41m[1m FAIL [22m[49m tests/logger.test.ts[2m > [22mLogger Integration - Session ID Color[2m > [22mshould format message with color based on sessionId and metadata with gray
-[31m[1mAssertionError[22m: expected '[\u001b[37m2026-08-29T13:49:02.224Z\u…' to contain '\u001b[38;2;46;204;113mhello from ses…'[39m
+ ✓ tests/button.test.ts (1 test) 2ms
 
-[32m- Expected[39m
-[31m+ Received[39m
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  22:37:57
+   Duration  342ms (transform 27ms, setup 0ms, import 57ms, tests 2ms, environment 0ms)
 
-[32m- [3[7m8;2;46;204;113mhello from session[27m[32m[39m
-[31m+ [7m[[27m[3[7m7m2026-08-29T13:49:02.224Z[31m] [34mINFO [31m: hello from session[27m[39m
-[31m+ [90m{[31m[39m
-[31m+ [90m     "foo": "bar"[31m[39m
-[31m+ [7m[90m}[27m[31m[39m
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     1.5 |        0 |     1.7 |    1.53 |                   
+ src               |       0 |        0 |       0 |       0 |                   
+  app.tsx          |       0 |      100 |       0 |       0 | 3-4               
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  main.tsx         |       0 |        0 |     100 |       0 | 8-10              
+  start.ts         |       0 |        0 |       0 |       0 | 3-38              
+ src/components    |    1.37 |        0 |       0 |    1.37 |                   
+  ...e.stories.tsx |       0 |      100 |     100 |       0 | 5-98              
+  badge.tsx        |       0 |        0 |       0 |       0 | 7-53              
+  base.ts          |       0 |        0 |       0 |       0 |                   
+  ...n.stories.tsx |       0 |      100 |     100 |       0 | 5-129             
+  button.tsx       |      25 |        0 |       0 |      25 | 51-79             
+  card.stories.tsx |       0 |      100 |     100 |       0 | 5-45              
+  card.tsx         |       0 |        0 |       0 |       0 | 7-43              
+  ...y.stories.tsx |       0 |      100 |     100 |       0 | 5-30              
+  ...-boundary.tsx |       0 |        0 |       0 |       0 | 10-137            
+  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-17              
+  header.tsx       |       0 |        0 |       0 |       0 | 10-70             
+  icon.stories.tsx |       0 |      100 |     100 |       0 | 5-45              
+  icon.tsx         |       0 |        0 |       0 |       0 | 6-40              
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  ...t.stories.tsx |       0 |      100 |     100 |       0 | 5-33              
+  input.tsx        |       0 |        0 |       0 |       0 | 7-39              
+  ...t.stories.tsx |       0 |      100 |       0 |       0 | 5-21              
+  layout.tsx       |       0 |        0 |       0 |       0 | 6-73              
+  logo.stories.tsx |       0 |      100 |     100 |       0 | 5-17              
+  logo.tsx         |       0 |        0 |       0 |       0 | 8-60              
+  ...e.stories.tsx |       0 |      100 |     100 |       0 | 5-70              
+  marquee.tsx      |       0 |        0 |       0 |       0 | 7-89              
+  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-127             
+  ...-switcher.tsx |       0 |        0 |       0 |       0 | 10-92             
+  preview.tsx      |       0 |        0 |       0 |       0 | 16-428            
+  registry.ts      |       0 |        0 |       0 |       0 |                   
+  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-34              
+  ...-switcher.tsx |       0 |        0 |       0 |       0 | 10-88             
+  ...y.stories.tsx |       0 |      100 |     100 |       0 | 5-56              
+  typography.tsx   |       0 |        0 |       0 |       0 | 7-51              
+ src/configs       |       0 |      100 |     100 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  unocss.ts        |       0 |      100 |     100 |       0 | 23-81             
+ src/context       |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  mode-context.tsx |       0 |        0 |       0 |       0 | 11-18             
+  ...-provider.tsx |       0 |        0 |       0 |       0 | 5-30              
+  ...n-context.tsx |       0 |        0 |       0 |       0 | 8-15              
+  ...-provider.tsx |       0 |      100 |       0 |       0 | 5-14              
+  ...e-context.tsx |       0 |        0 |       0 |       0 | 8-15              
+  ...-provider.tsx |       0 |        0 |       0 |       0 | 6-21              
+ src/tokens        |   24.13 |      100 |      40 |   24.13 |                   
+  animation.ts     |       0 |      100 |     100 |       0 | 1                 
+  base.ts          |   77.77 |      100 |      50 |   77.77 | 39,45             
+  breakpoints.ts   |       0 |      100 |     100 |       0 | 1                 
+  colors.ts        |       0 |      100 |     100 |       0 | 5-15              
+  effects.ts       |       0 |      100 |     100 |       0 | 1-58              
+  icons.ts         |       0 |      100 |       0 |       0 | 4-8               
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  spacing.ts       |       0 |      100 |     100 |       0 | 1-13              
+  typography.ts    |       0 |      100 |     100 |       0 | 3-59              
+ src/utils         |       0 |        0 |       0 |       0 |                   
+  compile.ts       |       0 |        0 |     100 |       0 | 9-49              
+  helpers.ts       |       0 |        0 |       0 |       0 | 1-34              
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  shortcuts.ts     |       0 |      100 |     100 |       0 | 3                 
+  ...e-compiler.ts |       0 |        0 |       0 |       0 | 18-257            
+  ...-generator.ts |       0 |        0 |       0 |       0 | 21-328            
+  ...te-stories.ts |       0 |        0 |       0 |       0 | 5-177             
+-------------------|---------|----------|---------|---------|-------------------
 
-[36m [2m❯[22m tests/logger.test.ts:[2m234:20[22m[39m
-    [90m232|[39m
-    [90m233|[39m     [35mconst[39m expectedColoredMessage [33m=[39m [34mcolor[39m([32m'hello from session'[39m)[33m;[39m
-    [90m234|[39m     [34mexpect[39m(output)[33m.[39m[34mtoContain[39m(expectedColoredMessage)[33m;[39m
-    [90m   |[39m                    [31m^[39m
-    [90m235|[39m
-    [90m236|[39m     const expectedMetadataStr = JSON.stringify({ foo: 'bar', sessionId…
+~/packages/common$ vp test ◉ cache hit, replaying
 
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/common
+      Coverage enabled with v8
 
-[41m[1m FAIL [22m[49m tests/telemetry.test.ts[2m > [22minitializeTelemetry[2m > [22muses caller-supplied service metadata
-[31m[1mError[22m: [vitest] No "MeterProvider" export is defined on the "@opentelemetry/sdk-metrics" mock. Did you forget to return it from "vi.mock"?
-If you need to partially mock a module, you can use "importOriginal" helper inside:
-[39m
-vi.mock(import("@opentelemetry/sdk-metrics"), async (importOriginal) => {
-  const actual = await importOriginal()
-  return {
-    ...actual,
-    // your mocked methods
-  }
-})
+ ✓ tests/logger.test.ts (20 tests) 8ms
+ ✓ tests/env.test.ts (17 tests) 1ms
+ ✓ tests/telemetry.test.ts (1 test) 102ms
+ ✓ tests/index.test.ts (1 test) 0ms
 
-[36m [2m❯[22m Module.initializeTelemetry src/server/telemetry.ts:[2m126:42[22m[39m
-    [90m124|[39m   [35mconst[39m { logs } [33m=[39m [35mawait[39m [35mimport[39m([32m'@opentelemetry/api-logs'[39m)[33m;[39m
-    [90m125|[39m
-    [90m126|[39m   [35mconst[39m { [33mPeriodicExportingMetricReader[39m[33m,[39m [33mMeterProvider[39m } [33m=[39m
-    [90m   |[39m                                          [31m^[39m
-    [90m127|[39m     [35mawait[39m [35mimport[39m([32m'@opentelemetry/sdk-metrics'[39m)[33m;[39m
-    [90m128|[39m   [35mconst[39m { metrics } [33m=[39m [35mawait[39m [35mimport[39m([32m'@opentelemetry/api'[39m)[33m;[39m
-[90m [2m❯[22m tests/telemetry.test.ts:[2m66:5[22m[39m
+ Test Files  4 passed (4)
+      Tests  39 passed (39)
+   Start at  22:37:56
+   Duration  486ms (transform 77ms, setup 0ms, import 179ms, tests 111ms, environment 0ms)
 
-[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+ % Coverage report from v8
+-----------------|---------|----------|---------|---------|---------------------
+File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s   
+-----------------|---------|----------|---------|---------|---------------------
+All files        |   32.92 |    22.72 |   28.57 |   32.85 |                     
+ src             |       0 |        0 |       0 |       0 |                     
+  index.ts       |       0 |        0 |       0 |       0 |                     
+ src/configs     |       0 |        0 |       0 |       0 |                     
+  endpoints.ts   |       0 |        0 |       0 |       0 | 5-49                
+  index.ts       |       0 |        0 |       0 |       0 |                     
+ src/environment |   55.84 |     29.5 |    62.5 |   50.79 |                     
+  env.ts         |   75.43 |    38.29 |   68.18 |   74.41 | ...4,38-41,61,66-73 
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  validator.ts   |       0 |        0 |       0 |       0 | 5-44                
+ src/logger      |    70.4 |    65.11 |      72 |   71.31 |                     
+  context.ts     |   88.88 |     90.9 |   83.33 |   94.11 | 35                  
+  formatters.ts  |     100 |    76.19 |     100 |     100 | 23-29,43-45         
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  log.ts         |   69.64 |       75 |   69.23 |    70.9 | ...,156-162,186-187 
+  redactor.ts    |    62.5 |    38.88 |     100 |    62.5 | 34-41,50,56,66,71   
+  rotation.ts    |       0 |        0 |       0 |       0 | 11-32               
+ src/samples     |     100 |      100 |     100 |     100 |                     
+  hello.ts       |     100 |      100 |     100 |     100 |                     
+  index.ts       |       0 |        0 |       0 |       0 |                     
+ src/server      |   61.72 |    34.61 |    7.69 |   63.29 |                     
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  telemetry.ts   |   61.72 |    34.61 |    7.69 |   63.29 | ...,184,193-200,208 
+ src/typecast    |       0 |        0 |       0 |       0 |                     
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  tc.ts          |       0 |        0 |       0 |       0 | 3-47                
+ src/utils       |   13.25 |     5.19 |    1.92 |   13.87 |                     
+  base.ts        |       0 |        0 |       0 |       0 | 3-30                
+  color.ts       |   63.33 |    45.16 |   33.33 |   63.33 | ...-66,74-89,93-105 
+  date.ts        |       0 |        0 |       0 |       0 | 1-53                
+  directory.ts   |       0 |        0 |       0 |       0 | 5-318               
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  rum.ts         |       0 |        0 |       0 |       0 | 19-70               
+  serialize.ts   |       0 |        0 |       0 |       0 | 7-78                
+  telemetry.ts   |   66.66 |       50 |       0 |     100 | 6                   
+  text.ts        |   19.04 |        0 |       0 |   21.05 | ...0-43,55-70,78-80 
+  time.ts        |       0 |        0 |       0 |       0 | 1-34                
+ src/validators  |   28.12 |    14.28 |   18.18 |      30 |                     
+  index.ts       |       0 |        0 |       0 |       0 |                     
+  validate.ts    |   28.12 |    14.28 |   18.18 |      30 | 4,10,16,19,25-57    
+-----------------|---------|----------|---------|---------|---------------------
 
+~/apps/backend$ vp test ◉ cache hit, replaying
 
-[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
-[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m37 passed[39m[22m[90m (39)[39m
-[2m   Start at [22m 21:49:01
-[2m   Duration [22m 539ms[2m (transform 93ms, setup 0ms, import 224ms, tests 105ms, environment 0ms)[22m
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
+      Coverage enabled with v8
 
+ ✓ tests/routers/trpc-openapi.test.ts (2 tests) 3ms
+ ✓ tests/routers/http-openapi.test.ts (2 tests) 0ms
+ ✓ tests/index.test.ts (1 test) 0ms
 
+ Test Files  3 passed (3)
+      Tests  5 passed (5)
+   Start at  23:04:40
+   Duration  363ms (transform 66ms, setup 0ms, import 201ms, tests 3ms, environment 0ms)
 
-[90m---[0m
-[34;1mvp run:[0m 0/3 cache hit (0%), [31m2[0m failed. [90m(Run [0m[34m`vp run --last-details`[0m[90m for full details)[0m
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|---------------------------------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                           
+-------------------|---------|----------|---------|---------|---------------------------------------------
+All files          |   33.12 |    23.64 |   31.08 |   33.22 |                                             
+ src               |    2.81 |        0 |    5.26 |    2.85 |                                             
+  app.ts           |       0 |        0 |       0 |       0 | 20-82                                       
+  client.ts        |       0 |        0 |       0 |       0 |                                             
+  config.ts        |       0 |        0 |       0 |       0 | 10-50                                       
+  edge.ts          |       0 |        0 |       0 |       0 |                                             
+  index.ts         |       0 |        0 |       0 |       0 | 15-46                                       
+  schema.ts        |     100 |      100 |     100 |     100 |                                             
+ src/middlewares   |       0 |        0 |       0 |       0 |                                             
+  error-handler.ts |       0 |        0 |       0 |       0 | 9-77                                        
+  logger.ts        |       0 |        0 |       0 |       0 | 6-55                                        
+  security.ts      |       0 |        0 |       0 |       0 | 7-40                                        
+  trust-proxy.ts   |       0 |        0 |       0 |       0 | 13-67                                       
+ src/routers       |   76.14 |    68.75 |   70.96 |   77.66 |                                             
+  docs.ts          |       0 |        0 |       0 |       0 | 12-36                                       
+  utils.ts         |   82.17 |    71.73 |   78.57 |   82.47 | 159-161,176-178,213-221,228-232,246,255-256 
+ src/routers/http  |      90 |       50 |       0 |      90 |                                             
+  default.ts       |     100 |      100 |     100 |     100 |                                             
+  index.ts         |    87.5 |       50 |       0 |    87.5 | 30                                          
+  test.ts          |     100 |      100 |     100 |     100 |                                             
+ src/routers/trpc  |   29.72 |        4 |       0 |   29.72 |                                             
+  default.ts       |     100 |      100 |     100 |     100 |                                             
+  index.ts         |   25.71 |        4 |       0 |   25.71 | 28-44,65,71-116                             
+  test.ts          |     100 |      100 |     100 |     100 |                                             
+ src/services      |    37.5 |        0 |       0 |   42.85 |                                             
+  default.ts       |      50 |      100 |       0 |     100 |                                             
+  test.ts          |   33.33 |        0 |       0 |   33.33 | 8-9,24-40                                   
+-------------------|---------|----------|---------|---------|---------------------------------------------
+
+~/apps/frontend$ vp test ◉ cache hit, replaying
+
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/frontend
+      Coverage enabled with v8
+
+ ✓ tests/index.test.ts (1 test) 2ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  22:38:00
+   Duration  364ms (transform 76ms, setup 0ms, import 236ms, tests 2ms, environment 0ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    6.15 |        0 |       0 |    6.15 |                   
+ src               |    6.25 |        0 |       0 |    6.25 |                   
+  app.tsx          |       0 |        0 |       0 |       0 | 16-89             
+  config.ts        |       0 |        0 |       0 |       0 | 4-18              
+  counter.ts       |      20 |      100 |       0 |      20 | 10-39             
+  main.tsx         |       0 |        0 |     100 |       0 | 12-19             
+ src/providers     |       0 |      100 |     100 |       0 |                   
+  ...-provider.tsx |       0 |      100 |     100 |       0 | 5                 
+-------------------|---------|----------|---------|---------|-------------------
+
+---
+vp run: 5/5 cache hit (100%), 7.71s saved. (Run `vp run --last-details` for full details)

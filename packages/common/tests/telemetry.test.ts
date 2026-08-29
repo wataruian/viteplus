@@ -2,27 +2,26 @@ import { beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { initializeTelemetry } from '../src/server/telemetry';
 
-const { startMock, shutdownMock, resourceFromAttributesMock } = vi.hoisted(() => ({
+const { registerMock, shutdownMock, resourceFromAttributesMock } = vi.hoisted(() => ({
+  registerMock: vi.fn(),
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   shutdownMock: vi.fn(),
-  startMock: vi.fn(),
 }));
 
-vi.mock('@opentelemetry/sdk-node', () => {
-  class MockNodeSDK {
-    public start() {
-      startMock();
-      return this;
-    }
+vi.mock('@opentelemetry/sdk-trace-web', () => {
+  class MockWebTracerProvider {
+    public forceFlush = vi.fn();
+    public shutdown = vi.fn(shutdownMock);
 
-    public shutdown() {
-      shutdownMock();
+    public register() {
+      registerMock();
       return this;
     }
   }
 
   return {
-    NodeSDK: MockNodeSDK,
+    BatchSpanProcessor: vi.fn(),
+    WebTracerProvider: MockWebTracerProvider,
   };
 });
 
@@ -34,9 +33,18 @@ vi.mock('@opentelemetry/exporter-trace-otlp-http', () => ({
   OTLPTraceExporter: vi.fn(),
 }));
 
-vi.mock('@opentelemetry/sdk-metrics', () => ({
-  PeriodicExportingMetricReader: vi.fn(),
-}));
+vi.mock('@opentelemetry/sdk-metrics', () => {
+  class MockMeterProvider {
+    public forceFlush = vi.fn();
+    public getMeter = vi.fn(() => ({}));
+    public shutdown = vi.fn();
+  }
+
+  return {
+    MeterProvider: MockMeterProvider,
+    PeriodicExportingMetricReader: vi.fn(),
+  };
+});
 
 vi.mock('@opentelemetry/auto-instrumentations-node', () => ({
   getNodeAutoInstrumentations: vi.fn(() => []),
@@ -71,6 +79,6 @@ describe('initializeTelemetry', () => {
         'service.version': '1.0.0',
       }),
     );
-    expect(startMock).toHaveBeenCalled();
+    expect(registerMock).toHaveBeenCalled();
   });
 });

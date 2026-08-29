@@ -1,8 +1,35 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
+import { AsyncLocalStorage } from 'node:async_hooks';
+
+import { type Context, type ContextManager, ROOT_CONTEXT, context } from '@opentelemetry/api';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vite-plus/test';
 
 import type { LogLevel } from '../src/logger/formatters';
 import { Logger, type LoggerOptions } from '../src/logger/log';
 import { defaultRedactValue, redact } from '../src/logger/redactor';
+
+const createAsyncHooksContextManager = (): ContextManager => {
+  const storage = new AsyncLocalStorage<Context>();
+
+  const manager: ContextManager = {
+    active: () => storage.getStore() ?? ROOT_CONTEXT,
+    bind: (_activeContext, target) => target,
+    disable: () => manager,
+    enable: () => manager,
+    with: (activeContext, fn, thisArg, ...args) =>
+      storage.run(activeContext, () => fn.call(thisArg, ...args)),
+  };
+
+  return manager;
+};
 
 const customRedactValue = '[SENSITIVE]';
 
@@ -204,6 +231,15 @@ describe('Logger Integration - Redaction Output', () => {
 });
 
 describe('Logger Integration - Session ID Color', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
   beforeEach(() => {
     vi.stubEnv('ENV', 'local');
     vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});

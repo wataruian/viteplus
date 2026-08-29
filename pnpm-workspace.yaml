@@ -5,9 +5,7 @@ packages:
 catalogMode: prefer
 
 allowBuilds:
-  '@scarf/scarf': true
   esbuild: true
-  protobufjs: true
   workerd: true
 
 catalog:
@@ -101,7 +99,3 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: '*'
-
-minimumReleaseAgeExclude:
-  - miniflare@5.20260826.0-alpha
-  - wrangler@4.127.0

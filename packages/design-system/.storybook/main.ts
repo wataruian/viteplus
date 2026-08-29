@@ -4,6 +4,9 @@ import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
   addons: ['@storybook/addon-essentials'],
+  core: {
+    disableTelemetry: true,
+  },
   framework: {
     name: '@storybook/react-vite',
     options: {},

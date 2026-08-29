@@ -1,7 +1,9 @@
-$ madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps
+$ madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps ◉ cache hit, replaying
 - Finding files
-Processed 131 files (676ms) 
+Processed 131 files (731ms) 
 
 ✔ No circular dependency found!
 
 
+---
+vp run: cache hit, 898ms saved.
