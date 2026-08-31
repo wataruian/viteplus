@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { DiagConsoleLogger, DiagLogLevel, diag } from '@opentelemetry/api';
+import { DiagConsoleLogger, DiagLogLevel, diag, metrics, trace } from '@opentelemetry/api';
+import { logs } from '@opentelemetry/api-logs';
 import type { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import type { LoggerProvider } from '@opentelemetry/sdk-logs';
 import type { MeterProvider } from '@opentelemetry/sdk-metrics';
@@ -120,11 +121,9 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   const { resourceFromAttributes } = await import('@opentelemetry/resources');
 
   const { BatchLogRecordProcessor, LoggerProvider } = await import('@opentelemetry/sdk-logs');
-  const { logs } = await import('@opentelemetry/api-logs');
 
   const { PeriodicExportingMetricReader, MeterProvider } =
     await import('@opentelemetry/sdk-metrics');
-  const { metrics } = await import('@opentelemetry/api');
 
   const { WebTracerProvider, BatchSpanProcessor } = await import('@opentelemetry/sdk-trace-web');
   const { registerInstrumentations } = await import('@opentelemetry/instrumentation');
@@ -228,11 +227,19 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   });
 };
 
+const resetTelemetryForTests = () => {
+  trace.disable();
+  metrics.disable();
+  logs.disable();
+  initialized = false;
+};
+
 export {
   flushTelemetry,
   initializeTelemetry,
   isIncomingMessage,
   isServerResponse,
   prometheusExporter,
+  resetTelemetryForTests,
 };
 export type { TelemetryOptions };

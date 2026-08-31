@@ -17,6 +17,7 @@ interface RumOptions {
 }
 
 let isInitialized = false;
+let meterProviderInstance: MeterProvider | undefined = undefined;
 
 const initializeRum = (options: RumOptions = {}) => {
   if (isInitialized) {
@@ -51,7 +52,7 @@ const initializeRum = (options: RumOptions = {}) => {
     getEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT') ??
     'http://localhost:4318';
 
-  const meterProvider = new MeterProvider({
+  meterProviderInstance = new MeterProvider({
     readers: [
       new PeriodicExportingMetricReader({
         exporter: new OTLPMetricExporter({
@@ -65,7 +66,7 @@ const initializeRum = (options: RumOptions = {}) => {
     }),
   });
 
-  metrics.setGlobalMeterProvider(meterProvider);
+  metrics.setGlobalMeterProvider(meterProviderInstance);
 
   return initializeFaro({
     app: {
@@ -83,6 +84,10 @@ const initializeRum = (options: RumOptions = {}) => {
   });
 };
 
+const flushRum = async () => {
+  await meterProviderInstance?.forceFlush();
+};
+
 export { faro } from '@grafana/faro-web-sdk';
-export { initializeRum };
+export { flushRum, initializeRum };
 export type { RumOptions };
