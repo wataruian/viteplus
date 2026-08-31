@@ -70,6 +70,7 @@ catalog:
   helmet: npm:helmet@8.1.0
   hono: npm:hono@4.6.12
   husky: npm:husky@9.1.7
+  jsdom: npm:jsdom@30.0.1
   madge: npm:madge@8.0.0
   openapi-trpc: npm:openapi-trpc@0.2.1
   openapi-types: npm:openapi-types@12.1.3

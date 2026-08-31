@@ -61,13 +61,18 @@ export default defineConfig(({ mode }): UserConfig => {
     resolve: {
       ...baseConfig.resolve,
       alias: {
-        '@lightproject/backend': path.resolve(dir, '../../apps/backend/src'),
+        '@lightproject/backend': path.resolve(dir, '../../apps/backend/src/'),
         '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
         '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
       },
     },
     server: {
       port,
+    },
+    test: {
+      ...baseConfig.test,
+      environment: 'jsdom',
+      globalSetup: ['tests/global-setup.ts'],
     },
   };
 });

@@ -106,6 +106,10 @@ export default defineConfig(({ mode }): UserConfig => {
     server: {
       port: designSystemPort,
     },
+    test: {
+      ...baseConfig.test,
+      environment: 'jsdom',
+    },
   });
 
   return baseConfig;
