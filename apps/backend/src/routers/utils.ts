@@ -22,17 +22,14 @@ interface RouteDefinition<S extends z.ZodRawShape, O extends Record<string, unkn
   schema?: { request?: z.ZodObject<S>; response: z.ZodType<O> };
 }
 
-interface OpenApiRouteDefinition {
-  method: RouteMethod;
-  path: `/${string}`;
-  schema: { request: z.ZodObject<z.ZodRawShape>; response: z.ZodType };
-  tag: string;
-}
-
 interface TrpcRouteMeta {
   method: RouteMethod;
   path: `/${string}`;
   schema: { request: z.ZodObject<z.ZodRawShape>; response: z.ZodType };
+}
+
+interface OpenApiRouteDefinition extends TrpcRouteMeta {
+  tag: string;
 }
 
 interface TrpcProcedureTree {
@@ -85,18 +82,13 @@ const defineHttpRoute = <S extends z.ZodRawShape, O extends Record<string, unkno
   };
 };
 
-const jsonResponse = <T extends z.ZodType>(schema: T, description = 'Success') =>
-  ({
-    200: {
-      content: { 'application/json': { schema } },
-      description,
-    },
-  }) as const;
-
-const jsonBody = <T extends z.ZodType>(schema: T) =>
-  ({
-    content: { 'application/json': { schema } },
-  }) as const;
+const successEnvelope = <T>(data: T, sessionId: string) => ({
+  code: 200,
+  data,
+  message: 'Success',
+  sessionId,
+  success: true,
+});
 
 const createProcedure = <S extends z.ZodRawShape, O extends Record<string, unknown>>(
   definition: RouteDefinition<S, O>,
@@ -159,13 +151,7 @@ const createQuery = <S extends z.ZodRawShape, O extends Record<string, unknown>>
   return createProcedure(definition).query(async ({ input, ctx }) => {
     const parsed = handlerFn.schema.request.parse(input ?? {});
     const result = await handlerFn(parsed);
-    return {
-      code: 200,
-      data: result,
-      message: 'Success',
-      sessionId: ctx.sessionId ?? getSessionId(),
-      success: true,
-    };
+    return successEnvelope(result, ctx.sessionId ?? getSessionId());
   });
 };
 
@@ -176,13 +162,7 @@ const createMutation = <S extends z.ZodRawShape, O extends Record<string, unknow
   return createProcedure(definition).mutation(async ({ input, ctx }) => {
     const parsed = handlerFn.schema.request.parse(input);
     const result = await handlerFn(parsed);
-    return {
-      code: 200,
-      data: result,
-      message: 'Success',
-      sessionId: ctx.sessionId ?? getSessionId(),
-      success: true,
-    };
+    return successEnvelope(result, ctx.sessionId ?? getSessionId());
   });
 };
 
@@ -205,68 +185,36 @@ const getRouteBase = (
   return {
     method,
     path,
-    responses: jsonResponse(finalResponseSchema),
+    responses: {
+      200: {
+        content: { 'application/json': { schema: finalResponseSchema } },
+        description: 'Success',
+      },
+    } as const,
     tags: [tag],
   };
 };
 
-const registerOpenApiRoute = (router: OpenAPIHono, definition: OpenApiRouteDefinition) => {
-  const { method, path, schema, tag } = definition;
-  const base = getRouteBase(method, path, schema.response, tag, true);
-
-  const route =
-    method === 'get'
-      ? createRoute({ ...base, request: { query: schema.request } })
-      : createRoute({ ...base, request: { body: jsonBody(schema.request) } });
-
-  router.openAPIRegistry.registerPath(route);
-};
+const buildRequestConfig = (method: RouteMethod, request: z.ZodObject<z.ZodRawShape>) =>
+  method === 'get'
+    ? { query: request }
+    : { body: { content: { 'application/json': { schema: request } } } as const };
 
 const getOpenApiDocument = (
   routes: OpenApiRouteDefinition[],
   serverUrl: string,
 ): ReturnType<OpenAPIHono['getOpenAPIDocument']> => {
   const router = new OpenAPIHono();
-  for (const route of routes) {
-    registerOpenApiRoute(router, route);
+  for (const { method, path, schema, tag } of routes) {
+    const base = getRouteBase(method, path, schema.response, tag, true);
+    const route = createRoute({ ...base, request: buildRequestConfig(method, schema.request) });
+    router.openAPIRegistry.registerPath(route);
   }
   return router.getOpenAPIDocument({
     info: { title: `${requestTypes.trpc} OpenAPI`, version: packageJson.version },
     openapi: openApiVersion,
     servers: [{ url: serverUrl }],
   });
-};
-
-const buildRoute = (router: OpenAPIHono<HttpEnv>, definition: HttpRoute) => {
-  const { method, path, schema, handle } = definition;
-  const tag = path.split('/').find((s) => s.length > 0) ?? 'default';
-  const base = getRouteBase(method, path, schema.response, tag);
-
-  const route: RouteConfig = (() => {
-    if (schema.request === undefined) {
-      return createRoute(base);
-    }
-    if (method === 'get') {
-      return createRoute({ ...base, request: { query: schema.request } });
-    }
-    return createRoute({ ...base, request: { body: jsonBody(schema.request) } });
-  })();
-
-  const handler = async (c: Context<HttpEnv>) => {
-    const result = await handle(method === 'get' ? c.req.query() : await c.req.json());
-    return c.json(
-      {
-        code: 200,
-        data: result,
-        message: 'Success',
-        sessionId: c.get('sessionId'),
-        success: true,
-      },
-      200,
-    );
-  };
-
-  router.openapi(route, handler);
 };
 
 const validationErrorHook: Hook<unknown, HttpEnv, string, unknown> = (result) => {
@@ -277,9 +225,24 @@ const validationErrorHook: Hook<unknown, HttpEnv, string, unknown> = (result) =>
 
 const createHttpRouter = (routesList: HttpRoute[]) => {
   const router = new OpenAPIHono<HttpEnv>({ defaultHook: validationErrorHook });
-  for (const r of routesList) {
-    buildRoute(router, r);
+
+  for (const { method, path, schema, handle } of routesList) {
+    const tag = path.split('/').find((s) => s.length > 0) ?? 'default';
+    const base = getRouteBase(method, path, schema.response, tag);
+
+    const route: RouteConfig =
+      schema.request === undefined
+        ? createRoute(base)
+        : createRoute({ ...base, request: buildRequestConfig(method, schema.request) });
+
+    const handler = async (c: Context<HttpEnv>) => {
+      const result = await handle(method === 'get' ? c.req.query() : await c.req.json());
+      return c.json(successEnvelope(result, c.get('sessionId')), 200);
+    };
+
+    router.openapi(route, handler);
   }
+
   return router;
 };
 
@@ -291,16 +254,14 @@ const mergeHttpRouters = (routers: Record<string, OpenAPIHono<HttpEnv>>) => {
   return app;
 };
 
-const isOpenApiRouteDefinition = (
-  definition: OpenApiRegistryDefinition,
-): definition is Extract<OpenApiRegistryDefinition, { type: 'route' }> =>
-  definition.type === 'route';
-
 const assertHttpRoutesDocumented = (router: OpenAPIHono<HttpEnv>) => {
   const registeredKeys = new Set(router.routes.map((route) => `${route.method} ${route.path}`));
   const documentedKeys = new Set(
     router.openAPIRegistry.definitions
-      .filter(isOpenApiRouteDefinition)
+      .filter(
+        (definition): definition is Extract<OpenApiRegistryDefinition, { type: 'route' }> =>
+          definition.type === 'route',
+      )
       .map((definition) => `${definition.route.method.toUpperCase()} ${definition.route.path}`),
   );
 
@@ -314,7 +275,7 @@ const assertHttpRoutesDocumented = (router: OpenAPIHono<HttpEnv>) => {
 
 export {
   assertHttpRoutesDocumented,
-  buildRoute,
+  buildRequestConfig,
   collectTrpcOpenApiRoutes,
   createHttpRouter,
   createMutation,
@@ -325,12 +286,9 @@ export {
   defineTrpcRoute,
   getOpenApiDocument,
   getRouteBase,
-  isOpenApiRouteDefinition,
   isTrpcRouteMeta,
-  jsonBody,
-  jsonResponse,
   mergeHttpRouters,
-  registerOpenApiRoute,
+  successEnvelope,
   t,
   trpcRouteMethods,
   validationErrorHook,

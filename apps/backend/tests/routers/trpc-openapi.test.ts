@@ -1,11 +1,11 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion } from '@lightproject/common/configs';
-import { expect, test } from 'vite-plus/test';
+import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { appRouter } from '../../src/routers/trpc';
 import { collectTrpcOpenApiRoutes, createQuery, defineTrpcRoute, t } from '../../src/routers/utils';
 import { DefaultService } from '../../src/services/default';
-import { importFreshApp, trpcEnvelope } from '../helpers/fresh-app';
+import { runtimes, trpcEnvelope } from '../helpers/utils';
 
 const openApiDocShape = z.object({
   components: z.object({ schemas: z.record(z.string(), z.unknown()) }),
@@ -51,68 +51,72 @@ test('a procedure built without route metadata throws instead of silently vanish
   expect(() => collectTrpcOpenApiRoutes(mixedRouter)).toThrow(/broken/u);
 });
 
-test('the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure', async () => {
-  const app = await importFreshApp();
-  const res = await app.request('/docs/openapi-trpc.json');
+describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+  afterAll(cleanup);
 
-  expect(res.status).toBe(successCode);
-  const doc = openApiDocShape.parse(await res.json());
+  test('the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure', async () => {
+    const app = await importApp();
+    const res = await app.request('/docs/openapi-trpc.json');
 
-  expect(doc.openapi).toBe(openApiVersion);
-  expect(doc.info.title).toBe('tRPC OpenAPI');
-  expect(doc.servers[0]?.url).toBe('/trpc');
+    expect(res.status).toBe(successCode);
+    const doc = openApiDocShape.parse(await res.json());
 
-  const pathKeys = Object.keys(doc.paths);
-  for (const path of ['/default.root', '/test.hello', '/test.profile']) {
-    expect(pathKeys).toContain(path);
-  }
-  expect(Object.keys(doc.paths['/default.root'] ?? {})).toContain('get');
-  expect(Object.keys(doc.paths['/test.hello'] ?? {})).toContain('get');
-  expect(Object.keys(doc.paths['/test.profile'] ?? {})).toContain('post');
+    expect(doc.openapi).toBe(openApiVersion);
+    expect(doc.info.title).toBe('tRPC OpenAPI');
+    expect(doc.servers[0]?.url).toBe('/trpc');
 
-  const schemaNames = Object.keys(doc.components.schemas);
-  for (const name of ['RootResponse', 'HelloResponse', 'CreateProfileResponse']) {
-    expect(schemaNames).toContain(name);
-  }
-});
+    const pathKeys = Object.keys(doc.paths);
+    for (const path of ['/default.root', '/test.hello', '/test.profile']) {
+      expect(pathKeys).toContain(path);
+    }
+    expect(Object.keys(doc.paths['/default.root'] ?? {})).toContain('get');
+    expect(Object.keys(doc.paths['/test.hello'] ?? {})).toContain('get');
+    expect(Object.keys(doc.paths['/test.profile'] ?? {})).toContain('post');
 
-test('the Swagger UI page for the tRPC docs is reachable', async () => {
-  const app = await importFreshApp();
-  const res = await app.request('/docs/trpc');
+    const schemaNames = Object.keys(doc.components.schemas);
+    for (const name of ['RootResponse', 'HelloResponse', 'CreateProfileResponse']) {
+      expect(schemaNames).toContain(name);
+    }
+  });
 
-  expect(res.status).toBe(successCode);
-  expect(res.headers.get('content-type')).toMatch(/text\/html/u);
-});
+  test('the Swagger UI page for the tRPC docs is reachable', async () => {
+    const app = await importApp();
+    const res = await app.request('/docs/trpc');
 
-test('every registered tRPC procedure has a working sample request that matches its documented response schema', async () => {
-  const routes = collectTrpcOpenApiRoutes(appRouter);
-  expect(Object.keys(trpcSampleInputs)).toHaveLength(routes.length);
+    expect(res.status).toBe(successCode);
+    expect(res.headers.get('content-type')).toMatch(/text\/html/u);
+  });
 
-  const app = await importFreshApp();
+  test('every registered tRPC procedure has a working sample request that matches its documented response schema', async () => {
+    const routes = collectTrpcOpenApiRoutes(appRouter);
+    expect(Object.keys(trpcSampleInputs)).toHaveLength(routes.length);
 
-  await Promise.all(
-    routes.map(async (route) => {
-      const sample = trpcSampleInputs[route.path];
-      const procedurePath = route.path.slice(1);
+    const app = await importApp();
 
-      const res =
-        route.method === 'get'
-          ? await app.request(
-              `/trpc/${procedurePath}${
-                sample === undefined ? '' : `?input=${encodeURIComponent(JSON.stringify(sample))}`
-              }`,
-            )
-          : await app.request(`/trpc/${procedurePath}`, {
-              body: JSON.stringify(sample),
-              headers: { 'Content-Type': 'application/json' },
-              method: 'POST',
-            });
+    await Promise.all(
+      routes.map(async (route) => {
+        const sample = trpcSampleInputs[route.path];
+        const procedurePath = route.path.slice(1);
 
-      expect(res.status, `expected ${route.path} to succeed`).toBe(successCode);
-      const body: unknown = await res.json();
-      expect(() => {
-        trpcEnvelope(route.schema.response).parse(body);
-      }, `expected ${route.path}'s response to match its documented schema`).not.toThrow();
-    }),
-  );
+        const res =
+          route.method === 'get'
+            ? await app.request(
+                `/trpc/${procedurePath}${
+                  sample === undefined ? '' : `?input=${encodeURIComponent(JSON.stringify(sample))}`
+                }`,
+              )
+            : await app.request(`/trpc/${procedurePath}`, {
+                body: JSON.stringify(sample),
+                headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+              });
+
+        expect(res.status, `expected ${route.path} to succeed`).toBe(successCode);
+        const body: unknown = await res.json();
+        expect(() => {
+          trpcEnvelope(route.schema.response).parse(body);
+        }, `expected ${route.path}'s response to match its documented schema`).not.toThrow();
+      }),
+    );
+  });
 });

@@ -20,10 +20,7 @@ if (siteUrl) {
 
 const additionalOrigins = config.additionalCorsOrigins;
 if (additionalOrigins !== undefined && additionalOrigins !== '') {
-  const origins = additionalOrigins.split(',');
-  if (origins.length > 0) {
-    allowedOrigins.push(...origins);
-  }
+  allowedOrigins.push(...additionalOrigins.split(','));
 }
 
 const uniqueOrigins = [...new Set(allowedOrigins)];

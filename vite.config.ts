@@ -241,7 +241,7 @@ const getCommonViteConfig = ({
       env: {
         LOG_LEVEL: 'silent',
       },
-      fileParallelism: false,
+      fileParallelism: true,
       include: ['tests/**/*.test.ts'],
       isolate: false,
       pool: 'forks',

@@ -20,7 +20,7 @@ const buildErrorBody = (
     code: errorCode,
     message,
     statusCode,
-    ...(stack === undefined || !config.enableErrorStack ? {} : { stack }),
+    ...(stack !== undefined && config.enableErrorStack ? { stack } : {}),
   },
   message,
   sessionId,

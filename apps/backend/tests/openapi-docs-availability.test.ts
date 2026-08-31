@@ -5,9 +5,9 @@ import {
   openApiHttpJsonEndpoint,
   openApiTrpcJsonEndpoint,
 } from '@lightproject/common/configs';
-import { afterEach, expect, test, vi } from 'vite-plus/test';
+import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-import { importFreshApp } from './helpers/fresh-app';
+import { runtimes } from './helpers/utils';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -21,48 +21,52 @@ const docPaths = [
   openApiTrpcJsonEndpoint,
 ];
 
-test('isLocal() ENV registers every doc/OpenAPI route', async () => {
-  const app = await importFreshApp({ ENV: 'local' });
+describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+  afterAll(cleanup);
 
-  const expectedCode = 200;
+  test('isLocal() ENV registers every doc/OpenAPI route', async () => {
+    const app = await importApp({ ENV: 'local' });
 
-  await Promise.all(
-    docPaths.map(async (path) => {
-      const res = await app.request(path);
-      expect(res.status, `expected successful response for ${path}`).toBe(expectedCode);
-    }),
-  );
-});
+    const expectedCode = 200;
 
-test('a non-local ENV never registers the doc/OpenAPI routes', async () => {
-  const app = await importFreshApp({ ENV: 'test' });
+    await Promise.all(
+      docPaths.map(async (path) => {
+        const res = await app.request(path);
+        expect(res.status, `expected successful response for ${path}`).toBe(expectedCode);
+      }),
+    );
+  });
 
-  const expectedCode = 404;
+  test('a non-local ENV never registers the doc/OpenAPI routes', async () => {
+    const app = await importApp({ ENV: 'test' });
 
-  await Promise.all(
-    docPaths.map(async (path) => {
-      const res = await app.request(path);
-      expect(res.status, `expected error response for ${path}`).toBe(expectedCode);
-      const body: unknown = await res.json();
-      expect(body).toMatchObject({ error: { code: 'NOT_FOUND', statusCode: expectedCode } });
-    }),
-  );
-});
+    const expectedCode = 404;
 
-test('regular routes keep working regardless of doc-route availability', async () => {
-  const localApp = await importFreshApp({ ENV: 'local' });
-  const testApp = await importFreshApp({ ENV: 'test' });
+    await Promise.all(
+      docPaths.map(async (path) => {
+        const res = await app.request(path);
+        expect(res.status, `expected error response for ${path}`).toBe(expectedCode);
+        const body: unknown = await res.json();
+        expect(body).toMatchObject({ error: { code: 'NOT_FOUND', statusCode: expectedCode } });
+      }),
+    );
+  });
 
-  const expectedCode = 200;
+  test('regular routes keep working regardless of doc-route availability', async () => {
+    const localApp = await importApp({ ENV: 'local' });
+    const testApp = await importApp({ ENV: 'test' });
 
-  await Promise.all(
-    [localApp, testApp].map(async (app) => {
-      const httpRes = await app.request('/api/test/hello');
-      const trpcRes = await app.request(
-        `/trpc/test.hello?input=${encodeURIComponent(JSON.stringify({}))}`,
-      );
-      expect(httpRes.status).toBe(expectedCode);
-      expect(trpcRes.status).toBe(expectedCode);
-    }),
-  );
+    const expectedCode = 200;
+
+    await Promise.all(
+      [localApp, testApp].map(async (app) => {
+        const httpRes = await app.request('/api/test/hello');
+        const trpcRes = await app.request(
+          `/trpc/test.hello?input=${encodeURIComponent(JSON.stringify({}))}`,
+        );
+        expect(httpRes.status).toBe(expectedCode);
+        expect(trpcRes.status).toBe(expectedCode);
+      }),
+    );
+  });
 });
