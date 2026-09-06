@@ -119,7 +119,7 @@ function executeCommand() {
       
       if [[ -f "${stylesGeneratedJsonFile}" ]]; then
         cp "${stylesGeneratedJsonFile}" "${stylesMasterJsonFile}"
-        vp fmt --write "${stylesMasterJsonFile}"
+        vp format --write "${stylesMasterJsonFile}"
         echo "✅ Saved styles to ${stylesMasterJsonFile}"
       fi
     fi

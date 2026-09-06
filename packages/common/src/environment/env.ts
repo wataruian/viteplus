@@ -34,6 +34,33 @@ const isTrue = (value = '') => {
   return false;
 };
 
+const isEdge = () => {
+  if (typeof globalThis === 'undefined') {
+    return false;
+  }
+
+  if ('EdgeRuntime' in globalThis) {
+    return true;
+  }
+  if ('Deno' in globalThis) {
+    return true;
+  }
+  if (
+    (globalThis as { navigator?: { userAgent?: string } }).navigator?.userAgent ===
+    'Cloudflare-Workers'
+  ) {
+    return true;
+  }
+
+  return !isBrowser() && typeof process === 'undefined';
+};
+
+const isNode = () =>
+  !isEdge() &&
+  typeof globalThis !== 'undefined' &&
+  (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
+    undefined;
+
 const isFalse = (value = '') => {
   if (!value || (value && (value.toLowerCase() === 'false' || value === '0'))) {
     return true;
@@ -85,9 +112,11 @@ export {
   isDebug,
   isDevelop,
   isDevelopOrStagingOrProduction,
+  isEdge,
   isFalse,
   isLocal,
   isLocalOrTest,
+  isNode,
   isNodeEnvTest,
   isNonProduction,
   isOtherEnvironment,

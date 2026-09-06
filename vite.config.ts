@@ -317,7 +317,7 @@ const getPackageViteConfig = ({
           ...commonRunProps,
         },
         format: {
-          command: 'vp fmt',
+          command: 'vp format',
           ...commonRunProps,
         },
         lint: {

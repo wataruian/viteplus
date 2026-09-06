@@ -23,6 +23,17 @@
   "editor.formatOnSaveMode": "file",
   // "npm.scriptRunner": "vp",
   "oxc.fmt.configPath": "./vite.config.ts",
+  "search.exclude": {
+    "**/.wrangler": true,
+    "**/bak": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/out": true,
+    "**/storybook-static": true,
+    "**/tmp": true,
+    "**/tsconfig.tsbuildinfo": true
+  },
   "unocss.autocomplete.strict": true,
   "unocss.colorPreview": true,
   "unocss.colorPreviewRadius": "50%",

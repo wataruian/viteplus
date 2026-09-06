@@ -1,9 +1,9 @@
 import { resetTelemetryForTests } from '@lightproject/common/server';
+import { startFakeOtelCollector } from '@lightproject/common/testing';
 import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
 
 import packageJson from '../package.json' with { type: 'json' };
-import { startFakeOtelCollector } from './helpers/otel-collector';
 import { runtimes } from './helpers/utils';
 
 const attributeValueSchema = z.object({ stringValue: z.string().optional() });

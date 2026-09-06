@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace <production-domain> with the deployed origin before enabling this in robots.txt. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://&lt;production-domain&gt;/</loc>
+  </url>
+</urlset>

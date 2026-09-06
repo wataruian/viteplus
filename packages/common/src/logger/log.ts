@@ -6,7 +6,6 @@ import { isRecord } from '../validators/validate';
 import { getSessionId } from './context';
 import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
 import { redact } from './redactor';
-import type { LogStream, RotationOptions } from './rotation';
 
 const isFaroLogLevel = (level: unknown): level is faroSdk.LogLevel => typeof level === 'string';
 
@@ -14,9 +13,7 @@ interface LoggerOptions {
   color: boolean;
   level: LogLevel;
   mode: LogMode;
-  outputPath?: string | undefined;
   redact: string[];
-  rotation?: RotationOptions | undefined;
   silent?: boolean;
   timestamp: boolean;
 }
@@ -38,7 +35,6 @@ const otelSeverity: Record<LogLevel, SeverityNumber> = {
 class Logger {
   private readonly options: LoggerOptions;
   private readonly silent: boolean;
-  private stream: LogStream | undefined;
   private readonly otelLogger = logs.getLogger('application');
 
   public constructor(options: Partial<LoggerOptions> = {}) {
@@ -56,29 +52,13 @@ class Logger {
       color: options.color ?? true,
       level: options.level ?? defaultLogLevel,
       mode: isLocal() ? (options.mode ?? (getLogFormat() === 'json' ? 'json' : 'pretty')) : 'json',
-      outputPath: options.outputPath ?? undefined,
       redact: options.redact ?? [],
-      rotation: options.rotation ?? undefined,
       timestamp: options.timestamp ?? true,
     };
   }
 
   public get mode(): 'pretty' | 'json' {
     return this.options.mode;
-  }
-
-  public async init(): Promise<this> {
-    if (!isBrowser() && this.options.outputPath !== undefined) {
-      try {
-        const { createRotationStream } = await import('./rotation');
-        const stream = await createRotationStream(this.options.outputPath, this.options.rotation);
-        this.stream = stream;
-      } catch (error) {
-        globalThis.console.error('Failed to initialize log rotation stream:', error);
-      }
-    }
-
-    return this;
   }
 
   public debug(message: string, metadata?: Record<string, unknown> | object): void {
@@ -180,18 +160,6 @@ class Logger {
     } else {
       globalThis.console.log(formatJSON(entry));
     }
-
-    if (!isBrowser() && this.stream !== undefined) {
-      const fileEntry =
-        this.options.mode === 'pretty' ? formatPretty(entry, false) : formatJSON(entry);
-      this.stream.write(`${fileEntry}\n`);
-    }
-  }
-
-  public static async create(options: Partial<LoggerOptions> = {}): Promise<Logger> {
-    const logger = new Logger(options);
-    await logger.init();
-    return logger;
   }
 }
 

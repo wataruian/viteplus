@@ -8,14 +8,6 @@
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "browser": {
-    "node:async_hooks": false,
-    "node:crypto": false,
-    "node:fs": false,
-    "node:path": false,
-    "node:url": false,
-    "node:util": false
-  },
   "types": "./dist/index.d.mts",
   "exports": {
     ".": [
@@ -54,6 +46,7 @@
     "@grafana/faro-react": "catalog:",
     "@grafana/faro-web-sdk": "catalog:",
     "@grafana/faro-web-tracing": "catalog:",
+    "@hono/node-server": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/api-logs": "catalog:",
     "@opentelemetry/exporter-logs-otlp-http": "catalog:",
@@ -70,7 +63,6 @@
     "chalk": "catalog:",
     "picocolors": "catalog:",
     "redact-object": "catalog:",
-    "rotating-file-stream": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

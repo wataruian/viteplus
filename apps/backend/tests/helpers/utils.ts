@@ -78,7 +78,7 @@ const importFreshApp = async (env: Record<string, string> = {}) => {
   return getApp();
 };
 
-const wranglerEntryPath = path.resolve(import.meta.dirname, '../../src/edge.ts');
+const wranglerEntryPath = path.resolve(import.meta.dirname, '../../src/runtimes/edge.ts');
 const wranglerConfigPath = path.resolve(import.meta.dirname, '../../wrangler.toml');
 
 const maxConcurrentWranglerWorkers = 4;

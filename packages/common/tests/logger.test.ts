@@ -38,7 +38,7 @@ const getLastConsoleLog = (): string => {
   return typeof calls[0]?.[0] === 'string' ? calls[0][0] : '';
 };
 
-const testLoggerCall = async ({
+const testLoggerCall = ({
   level,
   message,
   metadata,
@@ -49,7 +49,7 @@ const testLoggerCall = async ({
   metadata?: Record<string, unknown>;
   options?: Partial<LoggerOptions>;
 }) => {
-  const logger = await Logger.create({ silent: false, ...options });
+  const logger = new Logger({ silent: false, ...options });
   logger[level](message, metadata);
   return getLastConsoleLog();
 };
@@ -147,12 +147,12 @@ describe('Logger Format', () => {
       logFormat: 'pretty',
       title: 'should force json in non-local regardless of LOG_FORMAT',
     },
-  ] as const)('$title', async ({ env, expected, logFormat, optionsMode }) => {
+  ] as const)('$title', ({ env, expected, logFormat, optionsMode }) => {
     vi.stubEnv('ENV', env);
     if (logFormat) {
       vi.stubEnv('LOG_FORMAT', logFormat);
     }
-    const logger = await Logger.create(optionsMode ? { mode: optionsMode } : {});
+    const logger = new Logger(optionsMode ? { mode: optionsMode } : {});
     expect(logger.mode).toBe(expected);
   });
 });
@@ -191,8 +191,8 @@ describe('Logger Integration - Redaction Output', () => {
     },
   ];
 
-  test.each(testCases)('$title (JSON mode)', async ({ expected, metadata, options }) => {
-    const output = await testLoggerCall({
+  test.each(testCases)('$title (JSON mode)', ({ expected, metadata, options }) => {
+    const output = testLoggerCall({
       level: 'info',
       message: 'test',
       metadata,
@@ -202,29 +202,26 @@ describe('Logger Integration - Redaction Output', () => {
     expect(JSON.parse(output)).toMatchObject({ context: expected });
   });
 
-  test.each(testCases)(
-    '$title (Pretty mode)',
-    async ({ expected: _expected, metadata, options }) => {
-      const output = await testLoggerCall({
-        level: 'info',
-        message: 'test',
-        metadata,
-        options: { ...options, mode: 'pretty' },
-      });
+  test.each(testCases)('$title (Pretty mode)', ({ expected: _expected, metadata, options }) => {
+    const output = testLoggerCall({
+      level: 'info',
+      message: 'test',
+      metadata,
+      options: { ...options, mode: 'pretty' },
+    });
 
-      expect(output).toContain(defaultRedactValue);
-      if (metadata.user) {
-        expect(output).toContain('John');
-      }
-      expect(output).toContain(defaultRedactValue);
-    },
-  );
+    expect(output).toContain(defaultRedactValue);
+    if (metadata.user) {
+      expect(output).toContain('John');
+    }
+    expect(output).toContain(defaultRedactValue);
+  });
 
-  test('should not mutate original object during logging', async () => {
+  test('should not mutate original object during logging', () => {
     const metadata = { apiKey: 'someapikey', user: { name: 'John', password: 'somepassword' } };
     const original = globalThis.structuredClone(metadata);
 
-    await testLoggerCall({ level: 'info', message: 'test', metadata });
+    testLoggerCall({ level: 'info', message: 'test', metadata });
 
     expect(metadata).toEqual(original);
   });
@@ -257,8 +254,8 @@ describe('Logger Integration - Session ID Color', () => {
     const color = getRandomColor(sessionId);
 
     let output = '';
-    await requestContextStorage.run({ color, sessionId }, async () => {
-      output = await testLoggerCall({
+    requestContextStorage.run({ color, sessionId }, () => {
+      output = testLoggerCall({
         level: 'info',
         message: 'hello from session',
         metadata: { foo: 'bar' },

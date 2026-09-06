@@ -388,9 +388,6 @@ catalogs:
     rimraf:
       specifier: npm:rimraf@6.1.3
       version: 6.1.3
-    rotating-file-stream:
-      specifier: npm:rotating-file-stream@3.2.9
-      version: 3.2.9
     storybook:
       specifier: npm:storybook@8.6.14
       version: 8.6.14
@@ -590,6 +587,9 @@ importers:
       '@grafana/faro-web-tracing':
         specifier: 'catalog:'
         version: 2.9.0
+      '@hono/node-server':
+        specifier: 'catalog:'
+        version: 2.1.1(hono@4.6.12)
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.1
@@ -638,9 +638,6 @@ importers:
       redact-object:
         specifier: 'catalog:'
         version: 4.0.4
-      rotating-file-stream:
-        specifier: 'catalog:'
-        version: 3.2.9
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -4865,10 +4862,6 @@ packages:
     resolution: {integrity: sha512-LKg+Cr2ZF61fkcaK1UdkH2yEBBKnYjTyWzTJT6KNPcSPaiT7HSdhtMXQuN5wkTX0Xu72KQ1l8S42rlmexS2hSA==}
     engines: {node: 20 || >=22}
     hasBin: true
-
-  rotating-file-stream@3.2.9:
-    resolution: {integrity: sha512-i9i0KkHh12ryl4xtELg+0gyoFre2PJ9RcQQLzquWsiqygyYsrZLckrqqYrthhnJZGZb4g+KUHtcoWYVq34gaug==}
-    engines: {node: '>=14.0'}
 
   run-async@2.4.1:
     resolution: {integrity: sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==}
@@ -9482,8 +9475,6 @@ snapshots:
     dependencies:
       glob: 13.0.6
       package-json-from-dist: 1.0.1
-
-  rotating-file-stream@3.2.9: {}
 
   run-async@2.4.1: {}
 

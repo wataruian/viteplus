@@ -55,7 +55,7 @@ This document outlines the goals, guidelines, and best practices for AI agents w
 - **Monorepo Structure**:
   - `apps/`: Dedicated to deployable applications:
     - `apps/frontend`: Frontend application built with Vite.
-    - `apps/backend`: Node.js Express API.
+    - `apps/backend`: Hono API (Fetch-API/WinterCG-compatible), served via `@hono/node-server` locally and `wrangler` at the edge.
   - `packages/`: Dedicated to shared libraries and utilities:
     - `packages/common`: Shared internal library (logging, environment).
     - `packages/design-system`: Shared UI component library using UnoCSS.

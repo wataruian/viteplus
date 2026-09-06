@@ -8,13 +8,11 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState(themeList[0]);
 
   useEffect(() => {
-    const root = typeof globalThis === 'undefined' ? null : globalThis.document.documentElement;
-    if (root) {
-      root.classList.remove(...themeList.filter((t) => t !== 'default'));
+    const root = globalThis.document.documentElement;
+    root.classList.remove(...themeList.filter((t) => t !== 'default'));
 
-      if (theme !== 'default') {
-        root.classList.add(theme);
-      }
+    if (theme !== 'default') {
+      root.classList.add(theme);
     }
   }, [theme, themeList]);
 

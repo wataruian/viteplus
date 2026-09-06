@@ -27,7 +27,8 @@ const exit = ({ code = 1, message = '' }: { code?: number; message?: string }) =
   if (message) {
     logger.error(message);
   }
-  globalThis.process.exit(code);
+  const runtime = globalThis as { process?: { exit?: (code?: number) => void } };
+  runtime.process?.exit?.(code);
 };
 
 export { checks, exit };

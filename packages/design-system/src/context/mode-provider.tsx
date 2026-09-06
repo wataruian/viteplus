@@ -16,11 +16,9 @@ const ModeProvider = ({
   }, [initialMode]);
 
   useEffect(() => {
-    const root = typeof globalThis === 'undefined' ? null : globalThis.document.documentElement;
-    if (root) {
-      root.classList.remove('light', 'dark');
-      root.classList.add(mode);
-    }
+    const root = globalThis.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(mode);
   }, [mode]);
 
   const toggleMode = () => {

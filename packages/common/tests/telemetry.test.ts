@@ -21,7 +21,21 @@ vi.mock('@opentelemetry/sdk-trace-web', () => {
 
   return {
     BatchSpanProcessor: vi.fn(),
+    SimpleSpanProcessor: vi.fn(),
     WebTracerProvider: MockWebTracerProvider,
+  };
+});
+
+vi.mock('@opentelemetry/sdk-logs', () => {
+  class MockLoggerProvider {
+    public forceFlush = vi.fn();
+    public shutdown = vi.fn();
+    public getLogger = vi.fn(() => ({}));
+  }
+  return {
+    BatchLogRecordProcessor: vi.fn(),
+    LoggerProvider: MockLoggerProvider,
+    SimpleLogRecordProcessor: vi.fn(),
   };
 });
 
@@ -40,8 +54,11 @@ vi.mock('@opentelemetry/sdk-metrics', () => {
     public shutdown = vi.fn();
   }
 
+  class MockMetricReader {}
+
   return {
     MeterProvider: MockMeterProvider,
+    MetricReader: MockMetricReader,
     PeriodicExportingMetricReader: vi.fn(),
   };
 });

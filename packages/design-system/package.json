@@ -10,14 +10,6 @@
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "browser": {
-    "node:async_hooks": false,
-    "node:crypto": false,
-    "node:fs": false,
-    "node:path": false,
-    "node:url": false,
-    "node:util": false
-  },
   "types": "./dist/index.d.mts",
   "exports": {
     ".": [

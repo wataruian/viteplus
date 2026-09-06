@@ -2,6 +2,16 @@
   "name": "@lightproject/monorepo",
   "version": "1.0.0",
   "private": true,
+  "description": "A Vite+-powered monorepo starter with a Hono/Fetch-API backend, a React frontend, and a shared design system.",
+  "homepage": "https://github.com/wataruian/viteplus#readme",
+  "bugs": {
+    "url": "https://github.com/wataruian/viteplus/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wataruian/viteplus.git"
+  },
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g \".ai-data/artifacts/**/*\" \".ai-data/artifacts/!(*.gitkeep)\"",

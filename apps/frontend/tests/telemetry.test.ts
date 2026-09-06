@@ -1,8 +1,7 @@
+import { startFakeOtelCollector } from '@lightproject/common/testing';
 import { faro, flushRum, getMeter, initializeRum } from '@lightproject/common/utils';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
-
-import { startFakeOtelCollector } from './helpers/otel-collector';
 
 const metricBodySchema = z.object({
   resourceMetrics: z.array(

@@ -90,7 +90,7 @@ const App = () => {
     <>
       <section id='center'>
         <div className='hero'>
-          <img src={heroImg} className='base' width='170' height='179' />
+          <img src={heroImg} className='base' width='170' height='179' alt='' />
           <img src={typescriptLogo} className='framework' alt='TypeScript logo' />
           <img src={viteLogo} className='vite' alt='Vite logo' />
         </div>

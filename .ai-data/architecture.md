@@ -7,7 +7,11 @@ This document provides a comprehensive overview of the `@lightproject/monorepo` 
 The repository is structured as a **Vite+-powered Monorepo**.
 
 - **`apps/`**: Contains deployable units of the system.
-  - **`backend`**: Node.js Express API.
+  - **`backend`**: Hono API — a Fetch-API/WinterCG-compatible framework (`app.fetch`). The
+    portable core (`src/app.ts`) has no runtime-specific dependencies; `src/runtimes/` holds the
+    thin adapters that run it: `node.ts` (local dev via `@hono/node-server`) and `edge.ts` (the
+    `wrangler.toml` entry, deployed to Cloudflare Workers). Node-specific APIs are intentionally
+    confined to `runtimes/node.ts` and build/test tooling.
   - **`frontend`**: Modern SPA built with React and Vite.
 - **`packages/`**: Shared internal libraries and utilities.
   - **`common`**: The foundational library providing isomorphic environment management and structured logging.

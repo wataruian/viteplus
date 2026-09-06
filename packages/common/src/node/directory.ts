@@ -2,6 +2,12 @@ import fs from 'node:fs';
 import np from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+if (typeof globalThis.process.versions.node !== 'string') {
+  throw new TypeError(
+    '@lightproject/common/node/directory requires a Node.js-compatible runtime (Node.js, Bun, or Deno) and cannot run in a browser or on edge/Workers runtimes.',
+  );
+}
+
 const pathExists = (path: string): boolean => {
   try {
     return fs.existsSync(path);

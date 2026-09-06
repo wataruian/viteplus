@@ -7,8 +7,8 @@
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  03:44:48
-   Duration  149ms (transform 14ms, setup 0ms, import 24ms, tests 2ms, environment 0ms)
+   Start at  14:36:50
+   Duration  177ms (transform 21ms, setup 0ms, import 34ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 -------------|---------|----------|---------|---------|-------------------
@@ -27,23 +27,23 @@ All files    |     100 |      100 |     100 |     100 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
- ✓ tests/button.test.ts (1 test) 2ms
+ ✓ tests/button.test.ts (1 test) 5ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  03:44:48
-   Duration  301ms (transform 24ms, setup 0ms, import 49ms, tests 2ms, environment 0ms)
+   Start at  14:36:51
+   Duration  1.59s (transform 57ms, setup 0ms, import 117ms, tests 5ms, environment 701ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |     1.5 |        0 |     1.7 |    1.53 |                   
+All files          |     1.5 |        0 |     1.7 |    1.52 |                   
  src               |       0 |        0 |       0 |       0 |                   
   app.tsx          |       0 |      100 |       0 |       0 | 3-4               
   index.ts         |       0 |        0 |       0 |       0 |                   
   main.tsx         |       0 |        0 |     100 |       0 | 8-10              
-  start.ts         |       0 |        0 |       0 |       0 | 3-38              
+  start.ts         |       0 |        0 |       0 |       0 | 1-38              
  src/components    |    1.37 |        0 |       0 |    1.37 |                   
   ...e.stories.tsx |       0 |      100 |     100 |       0 | 5-98              
   badge.tsx        |       0 |        0 |       0 |       0 | 7-53              
@@ -81,11 +81,11 @@ All files          |     1.5 |        0 |     1.7 |    1.53 |
  src/context       |       0 |        0 |       0 |       0 |                   
   index.ts         |       0 |        0 |       0 |       0 |                   
   mode-context.tsx |       0 |        0 |       0 |       0 | 11-18             
-  ...-provider.tsx |       0 |        0 |       0 |       0 | 5-30              
+  ...-provider.tsx |       0 |        0 |       0 |       0 | 5-28              
   ...n-context.tsx |       0 |        0 |       0 |       0 | 8-15              
   ...-provider.tsx |       0 |      100 |       0 |       0 | 5-14              
   ...e-context.tsx |       0 |        0 |       0 |       0 | 8-15              
-  ...-provider.tsx |       0 |        0 |       0 |       0 | 6-21              
+  ...-provider.tsx |       0 |        0 |       0 |       0 | 6-19              
  src/tokens        |   24.13 |      100 |      40 |   24.13 |                   
   animation.ts     |       0 |      100 |     100 |       0 | 1                 
   base.ts          |   77.77 |      100 |      50 |   77.77 | 39,45             
@@ -97,13 +97,13 @@ All files          |     1.5 |        0 |     1.7 |    1.53 |
   spacing.ts       |       0 |      100 |     100 |       0 | 1-13              
   typography.ts    |       0 |      100 |     100 |       0 | 3-59              
  src/utils         |       0 |        0 |       0 |       0 |                   
-  compile.ts       |       0 |        0 |     100 |       0 | 9-49              
+  compile.ts       |       0 |        0 |     100 |       0 | 1-49              
   helpers.ts       |       0 |        0 |       0 |       0 | 1-34              
   index.ts         |       0 |        0 |       0 |       0 |                   
   shortcuts.ts     |       0 |      100 |     100 |       0 | 3                 
   ...e-compiler.ts |       0 |        0 |       0 |       0 | 18-257            
   ...-generator.ts |       0 |        0 |       0 |       0 | 21-328            
-  ...te-stories.ts |       0 |        0 |       0 |       0 | 5-177             
+  ...te-stories.ts |       0 |        0 |       0 |       0 | 1-177             
 -------------------|---------|----------|---------|---------|-------------------
 
 ~/packages/common$ vp test ◉ cache hit, replaying
@@ -111,101 +111,134 @@ All files          |     1.5 |        0 |     1.7 |    1.53 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/logger.test.ts (20 tests) 8ms
- ✓ tests/env.test.ts (17 tests) 1ms
- ✓ tests/telemetry.test.ts (1 test) 95ms
- ✓ tests/index.test.ts (1 test) 0ms
+ ✓ tests/index.test.ts (1 test) 3ms
+ ✓ tests/env.test.ts (17 tests) 6ms
+ ✓ tests/logger.test.ts (20 tests) 9ms
+ ✓ tests/telemetry.test.ts (1 test) 5ms
 
  Test Files  4 passed (4)
       Tests  39 passed (39)
-   Start at  03:44:48
-   Duration  513ms (transform 72ms, setup 0ms, import 175ms, tests 104ms, environment 0ms)
+   Start at  14:36:50
+   Duration  440ms (transform 156ms, setup 0ms, import 469ms, tests 23ms, environment 0ms)
 
  % Coverage report from v8
------------------|---------|----------|---------|---------|---------------------
-File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s   
------------------|---------|----------|---------|---------|---------------------
-All files        |   32.73 |    22.72 |   28.57 |   32.65 |                     
- src             |       0 |        0 |       0 |       0 |                     
-  index.ts       |       0 |        0 |       0 |       0 |                     
- src/configs     |       0 |        0 |       0 |       0 |                     
-  endpoints.ts   |       0 |        0 |       0 |       0 | 5-49                
-  index.ts       |       0 |        0 |       0 |       0 |                     
- src/environment |   55.84 |     29.5 |    62.5 |   50.79 |                     
-  env.ts         |   75.43 |    38.29 |   68.18 |   74.41 | ...4,38-41,61,66-73 
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  validator.ts   |       0 |        0 |       0 |       0 | 5-44                
- src/logger      |    70.4 |    65.11 |      72 |   71.31 |                     
-  context.ts     |   88.88 |     90.9 |   83.33 |   94.11 | 35                  
-  formatters.ts  |     100 |    76.19 |     100 |     100 | 23-29,43-45         
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  log.ts         |   69.64 |       75 |   69.23 |    70.9 | ...,156-162,186-187 
-  redactor.ts    |    62.5 |    38.88 |     100 |    62.5 | 34-41,50,56,66,71   
-  rotation.ts    |       0 |        0 |       0 |       0 | 11-32               
- src/samples     |     100 |      100 |     100 |     100 |                     
-  hello.ts       |     100 |      100 |     100 |     100 |                     
-  index.ts       |       0 |        0 |       0 |       0 |                     
- src/server      |   60.75 |    34.61 |    7.69 |   62.33 |                     
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  telemetry.ts   |   60.75 |    34.61 |    7.69 |   62.33 | ...,183,191-198,207 
- src/typecast    |       0 |        0 |       0 |       0 |                     
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  tc.ts          |       0 |        0 |       0 |       0 | 3-47                
- src/utils       |   13.25 |     5.19 |    1.92 |   13.87 |                     
-  base.ts        |       0 |        0 |       0 |       0 | 3-30                
-  color.ts       |   63.33 |    45.16 |   33.33 |   63.33 | ...-66,74-89,93-105 
-  date.ts        |       0 |        0 |       0 |       0 | 1-53                
-  directory.ts   |       0 |        0 |       0 |       0 | 5-318               
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  rum.ts         |       0 |        0 |       0 |       0 | 19-70               
-  serialize.ts   |       0 |        0 |       0 |       0 | 7-78                
-  telemetry.ts   |   66.66 |       50 |       0 |     100 | 6                   
-  text.ts        |   19.04 |        0 |       0 |   21.05 | ...0-43,55-70,78-80 
-  time.ts        |       0 |        0 |       0 |       0 | 1-34                
- src/validators  |   28.12 |    14.28 |   18.18 |      30 |                     
-  index.ts       |       0 |        0 |       0 |       0 |                     
-  validate.ts    |   28.12 |    14.28 |   18.18 |      30 | 4,10,16,19,25-57    
------------------|---------|----------|---------|---------|---------------------
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   29.23 |    20.48 |   25.35 |   29.01 |                   
+ src               |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/configs       |       0 |        0 |       0 |       0 |                   
+  endpoints.ts     |       0 |        0 |       0 |       0 | 5-49              
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/environment   |   50.56 |    24.32 |   57.69 |   45.33 |                   
+  env.ts           |   65.21 |       30 |    62.5 |   61.81 | ...5-68,88,93-100 
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  validator.ts     |       0 |        0 |       0 |       0 | 5-44              
+ src/logger        |   79.61 |    70.87 |   76.19 |      81 |                   
+  context.ts       |   88.88 |     90.9 |   83.33 |   94.11 | 35                
+  formatters.ts    |     100 |    76.19 |     100 |     100 | 23-29,43-45       
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  log.ts           |   76.74 |    75.47 |   63.63 |   78.57 | ...89,114,136-142 
+  redactor.ts      |    62.5 |    38.88 |     100 |    62.5 | 34-41,50,56,66,71 
+ src/node          |       0 |        0 |       0 |       0 |                   
+  directory.ts     |       0 |        0 |       0 |       0 | 5-324             
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/samples       |     100 |      100 |     100 |     100 |                   
+  hello.ts         |     100 |      100 |     100 |     100 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+ src/server        |   54.09 |    33.33 |   11.11 |   54.09 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  telemetry.ts     |   54.09 |    33.33 |   11.11 |   54.09 | ...85-191,198-201 
+ src/testing       |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  ...-collector.ts |       0 |        0 |       0 |       0 | 20-103            
+ src/typecast      |       0 |        0 |       0 |       0 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  tc.ts            |       0 |        0 |       0 |       0 | 3-47              
+ src/utils         |   20.77 |    10.19 |    2.94 |   21.42 |                   
+  base.ts          |       0 |        0 |       0 |       0 | 3-31              
+  color.ts         |   63.33 |    45.16 |   33.33 |   63.33 | ...6,74-89,93-105 
+  date.ts          |       0 |        0 |       0 |       0 | 1-53              
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  rum.ts           |       0 |        0 |       0 |       0 | 19-88             
+  serialize.ts     |       0 |        0 |       0 |       0 | 7-78              
+  telemetry.ts     |   66.66 |       50 |       0 |     100 | 6                 
+  text.ts          |   19.04 |        0 |       0 |   21.05 | ...43,55-70,78-80 
+  time.ts          |       0 |        0 |       0 |       0 | 1-34              
+ src/validators    |   28.12 |    14.28 |   18.18 |      30 |                   
+  index.ts         |       0 |        0 |       0 |       0 |                   
+  validate.ts      |   28.12 |    14.28 |   18.18 |      30 | 4,10,16,19,25-57  
+-------------------|---------|----------|---------|---------|-------------------
 
 ~/apps/backend$ vp test ◉ cache hit, replaying
 
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/services.test.ts (12 tests) 289ms
- ✓ tests/routers/trpc-openapi.test.ts (5 tests) 29ms
- ✓ tests/routers/http-openapi.test.ts (5 tests) 20ms
- ✓ tests/error-handling.test.ts (4 tests) 28ms
- ✓ tests/trust-proxy.test.ts (12 tests) 70ms
- ✓ tests/security-cors.test.ts (4 tests) 24ms
- ✓ tests/security-csp.test.ts (3 tests) 17ms
- ✓ tests/openapi-docs-availability.test.ts (3 tests) 24ms
+ ✓ tests/telemetry.test.ts (2 tests) 2424ms
+     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  2113ms
+ ✓ tests/routers/http-openapi.test.ts (8 tests) 2752ms
+     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  2315ms
+ ✓ tests/services.test.ts (24 tests) 2924ms
+       ✓ GET /api/ returns the standard envelope  311ms
+       ✓ GET /api/ returns the standard envelope  2036ms
+ ✓ tests/routers/trpc-openapi.test.ts (8 tests) 2920ms
+     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  308ms
+     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  2383ms
+ ✓ tests/security-cors.test.ts (8 tests) 3978ms
+     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  328ms
+     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  2290ms
+     ✓ ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded  1099ms
+ ✓ tests/error-handling.test.ts (8 tests) 4080ms
+     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  321ms
+     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  2619ms
+     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  905ms
+ ✓ tests/security-csp.test.ts (6 tests) 1984ms
+     ✓ the CSP header is present on both HTTP and tRPC responses and includes the default origins  331ms
+     ✓ the CSP header is present on both HTTP and tRPC responses and includes the default origins  784ms
+     ✓ ADDITIONAL_CORS_ORIGINS extends script-src/worker-src but not style-src  690ms
+ ✓ tests/openapi-docs-availability.test.ts (6 tests) 1720ms
+     ✓ isLocal() ENV registers every doc/OpenAPI route  926ms
+     ✓ a non-local ENV never registers the doc/OpenAPI routes  593ms
+ ✓ tests/trust-proxy.test.ts (24 tests) 8251ms
+       ✓ ENV=local is safe  428ms
+       ✓ ENV=local is safe  2596ms
+       ✓ ENV=test is safe  912ms
+       ✓ ENV=qa-random-unrecognized is safe  763ms
+       ✓ CI=true is safe regardless of ENV  393ms
+       ✓ ENV=develop blocks an unallowlisted IP  365ms
+       ✓ ENV=staging blocks an unallowlisted IP  439ms
+       ✓ ENV=production blocks an unallowlisted IP  386ms
+       ✓ a matching IP is allowed in an unsafe env  416ms
+     ✓ ALLOW_ALL_IPS=true allows any IP regardless of env  425ms
+     ✓ BLOCK_ALL_IPS=true blocks every request even in an otherwise-safe env  422ms
+     ✓ BLOCK_ALL_IPS=true wins over ALLOW_ALL_IPS=true  405ms
 
- Test Files  8 passed (8)
-      Tests  48 passed (48)
-   Start at  03:44:49
-   Duration  973ms (transform 140ms, setup 0ms, import 214ms, tests 501ms, environment 0ms)
+ Test Files  9 passed (9)
+      Tests  94 passed (94)
+   Start at  14:36:51
+   Duration  10.48s (transform 1.19s, setup 0ms, import 14.40s, tests 31.03s, environment 1ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |      87 |    81.16 |   86.84 |   86.91 |                   
- src               |   63.38 |    35.71 |   52.63 |   64.28 |                   
-  app.ts           |   81.57 |       50 |      50 |   83.78 | 46,64-65,80-82    
+All files          |   84.92 |    80.13 |   83.11 |   84.39 |                   
+ src               |    80.7 |    41.66 |   68.75 |   80.35 |                   
+  app.ts           |   84.21 |       50 |    62.5 |   83.78 | 46,64-65,80-82    
   client.ts        |       0 |        0 |       0 |       0 |                   
   config.ts        |      75 |       40 |   71.42 |      75 | 33-34,45,50       
-  edge.ts          |       0 |        0 |       0 |       0 |                   
-  index.ts         |       0 |        0 |       0 |       0 | 15-46             
+  index.ts         |       0 |      100 |     100 |       0 | 3                 
   schema.ts        |     100 |      100 |     100 |     100 |                   
- src/middlewares   |    91.2 |    78.18 |   93.75 |   91.01 |                   
+ src/middlewares   |   91.01 |    79.24 |   93.75 |    90.8 |                   
   error-handler.ts |      80 |     62.5 |   83.33 |   78.94 | 65-77             
   logger.ts        |     100 |      100 |     100 |     100 |                   
-  security.ts      |     100 |    66.66 |     100 |     100 | 9-17,24           
+  security.ts      |     100 |       70 |     100 |     100 | 9-17              
   trust-proxy.ts   |   87.87 |    84.84 |     100 |    87.5 | 20-23             
- src/routers       |    99.1 |       92 |     100 |   99.05 |                   
+ src/routers       |     100 |    91.48 |     100 |     100 |                   
   docs.ts          |     100 |      100 |     100 |     100 |                   
-  utils.ts         |   99.03 |    91.66 |     100 |      99 | 247               
+  utils.ts         |     100 |    91.11 |     100 |     100 | 74,154-165,234    
  src/routers/http  |     100 |      100 |     100 |     100 |                   
   default.ts       |     100 |      100 |     100 |     100 |                   
   index.ts         |     100 |      100 |     100 |     100 |                   
@@ -214,6 +247,9 @@ All files          |      87 |    81.16 |   86.84 |   86.91 |
   default.ts       |     100 |      100 |     100 |     100 |                   
   index.ts         |   78.37 |     86.2 |     100 |   78.37 | 34,80-86,103      
   test.ts          |     100 |      100 |     100 |     100 |                   
+ src/runtimes      |       0 |        0 |       0 |       0 |                   
+  edge.ts          |       0 |        0 |       0 |       0 |                   
+  node.ts          |       0 |        0 |       0 |       0 | 16-61             
  src/services      |     100 |      100 |     100 |     100 |                   
   default.ts       |     100 |      100 |     100 |     100 |                   
   test.ts          |     100 |      100 |     100 |     100 |                   
@@ -225,25 +261,28 @@ All files          |      87 |    81.16 |   86.84 |   86.91 |
       Coverage enabled with v8
 
  ✓ tests/index.test.ts (1 test) 2ms
+ ✓ tests/app.test.tsx (4 tests) 335ms
+ ✓ tests/telemetry.test.ts (1 test) 1553ms
+     ✓ pushes a log and a trace span to Faro, and a metric to the OTEL collector  1551ms
 
- Test Files  1 passed (1)
-      Tests  1 passed (1)
-   Start at  03:44:51
-   Duration  335ms (transform 66ms, setup 0ms, import 211ms, tests 2ms, environment 0ms)
+ Test Files  3 passed (3)
+      Tests  6 passed (6)
+   Start at  14:37:03
+   Duration  3.36s (transform 245ms, setup 0ms, import 899ms, tests 1.89s, environment 1.53s)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |    6.15 |        0 |       0 |    6.15 |                   
- src               |    6.25 |        0 |       0 |    6.25 |                   
-  app.tsx          |       0 |        0 |       0 |       0 | 16-89             
+All files          |   63.07 |    18.75 |   66.66 |   63.07 |                   
+ src               |   64.06 |    18.75 |   66.66 |   64.06 |                   
+  app.tsx          |   82.35 |     37.5 |   83.33 |   82.35 | 41-44,65-68       
   config.ts        |       0 |        0 |       0 |       0 | 4-18              
-  counter.ts       |      20 |      100 |       0 |      20 | 10-39             
+  counter.ts       |      65 |      100 |      75 |      65 | 17-29             
   main.tsx         |       0 |        0 |     100 |       0 | 12-19             
  src/providers     |       0 |      100 |     100 |       0 |                   
   ...-provider.tsx |       0 |      100 |     100 |       0 | 5                 
 -------------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 8.36s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 19.22s saved. (Run `vp run --last-details` for full details)

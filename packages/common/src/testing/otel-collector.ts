@@ -1,10 +1,8 @@
-import { Buffer } from 'node:buffer';
-import { createServer } from 'node:http';
-import { gunzipSync } from 'node:zlib';
+import { type ServerType, serve } from '@hono/node-server';
 
 interface RecordedRequest {
   body: unknown;
-  headers: Record<string, string | string[] | undefined>;
+  headers: Record<string, string>;
   path: string;
 }
 
@@ -22,34 +20,44 @@ interface FakeOtelCollector {
 const pollIntervalMs = 25;
 const defaultTimeoutMs = 20_000;
 
-const parseBody = (decoded: Buffer): unknown => {
+const decodeBody = async (request: Request): Promise<unknown> => {
+  if (!request.body) {
+    return '';
+  }
+
+  const decoded =
+    request.headers.get('content-encoding') === 'gzip'
+      ? request.body.pipeThrough(new globalThis.DecompressionStream('gzip'))
+      : request.body;
+
+  const text = await new globalThis.Response(decoded).text();
+
   try {
-    return JSON.parse(decoded.toString('utf8')) as unknown;
+    return JSON.parse(text) as unknown;
   } catch {
-    return decoded.toString('utf8');
+    return text;
   }
 };
 
 const startFakeOtelCollector = async (): Promise<FakeOtelCollector> => {
   const requests: RecordedRequest[] = [];
 
-  const server = createServer((req, res) => {
-    const chunks: Buffer[] = [];
-    req.on('data', (chunk: Buffer) => {
-      chunks.push(chunk);
-    });
-    req.on('end', () => {
-      const raw = Buffer.concat(chunks);
-      const decoded = req.headers['content-encoding'] === 'gzip' ? gunzipSync(raw) : raw;
+  const handleRequest = async (request: Request): Promise<Response> => {
+    const requestUrl = new globalThis.URL(request.url);
 
-      requests.push({ body: parseBody(decoded), headers: req.headers, path: req.url ?? '' });
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end('{}');
+    requests.push({
+      body: await decodeBody(request),
+      headers: Object.fromEntries(request.headers),
+      path: `${requestUrl.pathname}${requestUrl.search}`,
     });
-  });
 
-  await new Promise<void>((resolve) => {
-    server.listen(0, '127.0.0.1', resolve);
+    return new globalThis.Response('{}', { headers: { 'Content-Type': 'application/json' } });
+  };
+
+  const server = await new Promise<ServerType>((resolve) => {
+    const instance = serve({ fetch: handleRequest, hostname: '127.0.0.1', port: 0 }, () => {
+      resolve(instance);
+    });
   });
 
   const address = server.address();
@@ -95,5 +103,5 @@ const startFakeOtelCollector = async (): Promise<FakeOtelCollector> => {
   return { close, requestsFor, url, waitForRequest };
 };
 
-export { startFakeOtelCollector };
+export { decodeBody, startFakeOtelCollector };
 export type { FakeOtelCollector, RecordedRequest };

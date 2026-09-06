@@ -18,7 +18,7 @@ We adhere to **The Vite+ Way**, which emphasizes:
 ### Applications (`apps/`)
 
 - **`frontend`**: Vite-powered Single Page Application (SPA).
-- **`backend`**: Node.js Express API.
+- **`backend`**: [Hono](https://hono.dev/) API — a Fetch-API/WinterCG-compatible framework, deployable to Node.js (`@hono/node-server`) or the edge (Cloudflare Workers via `wrangler`).
 
 ### Shared Libraries (`packages/`)
 
@@ -113,7 +113,7 @@ We use `mise` as the primary task runner for high-level repository automation. T
 | :-------------------------------------------- | :--------- | :------------------------------- |
 | **Frontend** (`/apps/frontend`)               | `vp dev`   | Start Vite development server.   |
 |                                               | `vp build` | Build production bundle.         |
-| **Backend** (`/apps/backend`)                 | `vp dev`   | Start Express API.               |
+| **Backend** (`/apps/backend`)                 | `vp dev`   | Start Hono API.                  |
 |                                               | `vp pack`  | Build optimized CJS/ESM library. |
 | **Common** (`/packages/common`)               | `vp pack`  | Build shared library modules.    |
 | **Design System** (`/packages/design-system`) | `vp pack`  | Build UI library components.     |

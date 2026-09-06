@@ -10,7 +10,7 @@ const setupCounter = (element: HTMLButtonElement): (() => void) => {
   let counter = INITIAL_COUNT;
   const setCounter = (count: number): void => {
     counter = count;
-    element.innerHTML = `Count is ${counter}`;
+    element.textContent = `Count is ${counter}`;
   };
 
   const onHandleClick = (): void => {
