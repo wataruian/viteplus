@@ -163,7 +163,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/base.d.cts               0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                   0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] 127 files, total: 258.49 kB
-✔ [@lightproject/design-system] Build complete in 54ms
+✔ [@lightproject/design-system] Build complete in 50ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs               14.46 kB │ gzip: 3.89 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs             9.32 kB │ gzip: 2.64 kB
 ℹ [@lightproject/design-system] [ESM] dist/tokens/colors.mjs                     6.79 kB │ gzip: 0.92 kB
@@ -332,7 +332,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                 0.28 kB │ gzip: 0.18 kB
 ℹ [@lightproject/design-system] [ESM] dist/configs/index.d.mts                   0.19 kB │ gzip: 0.12 kB
 ℹ [@lightproject/design-system] [ESM] 167 files, total: 322.61 kB
-✔ [@lightproject/design-system] Build complete in 707ms
+✔ [@lightproject/design-system] Build complete in 673ms
 
 ~/packages/design-system$ vp build ◉ cache hit, replaying
 transforming...
@@ -343,7 +343,7 @@ out/index.html                   0.47 kB │ gzip:   0.30 kB
 out/assets/style-DekB2JRS.css   72.97 kB │ gzip:   9.51 kB
 out/assets/index-BtNFJpfJ.js   620.81 kB │ gzip: 121.84 kB │ map: 1,174.21 kB
 
-✓ built in 606ms
+✓ built in 603ms
 
 ~/packages/design-system$ storybook build ◉ cache hit, replaying
 @storybook/core v8.6.14
@@ -351,10 +351,10 @@ out/assets/index-BtNFJpfJ.js   620.81 kB │ gzip: 121.84 kB │ map: 1,174.21 k
 info => Cleaning outputDir: storybook-static
 info => Loading presets
 info => Building manager..
-info => Manager built (86 ms)
+info => Manager built (77 ms)
 info => Building preview..
 info Using tsconfig paths for react-docgen
-(node:68630) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:91990) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 transforming...
 ✓ 269 modules transformed.
@@ -412,25 +412,25 @@ storybook-static/assets/entry-preview-docs-DywCBx6-.js      254.47 kB │ gzip: 
 storybook-static/assets/dist-DL6828uk.js                    647.56 kB │ gzip: 149.57 kB
 storybook-static/assets/dist-BminftMy.js                    882.35 kB │ gzip: 271.71 kB
 
-✓ built in 1.45s
-info => Preview built (2.38 s)
+✓ built in 1.42s
+info => Preview built (2.28 s)
 info => Output directory: /Users/wataru/lightproject/viteplus/packages/design-system/storybook-static
 
 ~/packages/common$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/environment/validator.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/node/directory.ts, src/node/index.ts, src/samples/hello.ts, src/samples/index.ts, src/server/index.ts, src/server/telemetry.ts, src/testing/index.ts, src/testing/otel-collector.ts, src/typecast/index.ts, src/typecast/tc.ts, src/validators/index.ts, src/validators/validate.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/index.ts, src/utils/rum.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts
+ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/environment/validator.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/server/index.ts, src/server/telemetry.ts, src/testing/index.ts, src/testing/otel-collector.ts, src/typecast/index.ts, src/typecast/tc.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/index.ts, src/utils/rum.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/node/directory.ts, src/node/index.ts, src/samples/hello.ts, src/samples/index.ts, src/validators/index.ts, src/validators/validate.ts
 ℹ [@lightproject/common] tsconfig: tsconfig.json
 ℹ Build start
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/common] [CJS] dist/node/directory.cjs               7.87 kB │ gzip: 1.99 kB
 ℹ [@lightproject/common] [CJS] dist/server/telemetry.cjs             6.45 kB │ gzip: 1.78 kB
-ℹ [@lightproject/common] [CJS] dist/utils/index.cjs                  6.14 kB │ gzip: 1.30 kB
+ℹ [@lightproject/common] [CJS] dist/utils/index.cjs                  6.29 kB │ gzip: 1.32 kB
 ℹ [@lightproject/common] [CJS] dist/logger/log.cjs                   4.14 kB │ gzip: 1.38 kB
 ℹ [@lightproject/common] [CJS] dist/environment/index.cjs            3.55 kB │ gzip: 0.76 kB
+ℹ [@lightproject/common] [CJS] dist/utils/rum.cjs                    3.41 kB │ gzip: 1.15 kB
 ℹ [@lightproject/common] [CJS] dist/utils/color.cjs                  3.35 kB │ gzip: 1.10 kB
 ℹ [@lightproject/common] [CJS] dist/environment/env.cjs              3.34 kB │ gzip: 1.03 kB
 ℹ [@lightproject/common] [CJS] dist/configs/index.cjs                3.13 kB │ gzip: 0.67 kB
-ℹ [@lightproject/common] [CJS] dist/utils/rum.cjs                    2.99 kB │ gzip: 1.00 kB
 ℹ [@lightproject/common] [CJS] dist/logger/index.cjs                 2.83 kB │ gzip: 0.72 kB
 ℹ [@lightproject/common] [CJS] dist/configs/endpoints.cjs            2.51 kB │ gzip: 0.71 kB
 ℹ [@lightproject/common] [CJS] dist/testing/otel-collector.cjs       2.38 kB │ gzip: 1.04 kB
@@ -460,8 +460,8 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [CJS] dist/environment/env.cjs.map          5.16 kB │ gzip: 1.65 kB
 ℹ [@lightproject/common] [CJS] dist/utils/color.cjs.map              4.86 kB │ gzip: 1.69 kB
 ℹ [@lightproject/common] [CJS] dist/testing/otel-collector.cjs.map   4.68 kB │ gzip: 1.82 kB
+ℹ [@lightproject/common] [CJS] dist/utils/rum.cjs.map                4.51 kB │ gzip: 1.64 kB
 ℹ [@lightproject/common] [CJS] dist/utils/text.cjs.map               4.09 kB │ gzip: 1.55 kB
-ℹ [@lightproject/common] [CJS] dist/utils/rum.cjs.map                3.86 kB │ gzip: 1.41 kB
 ℹ [@lightproject/common] [CJS] dist/validators/validate.cjs.map      3.47 kB │ gzip: 1.23 kB
 ℹ [@lightproject/common] [CJS] dist/utils/serialize.cjs.map          3.36 kB │ gzip: 1.34 kB
 ℹ [@lightproject/common] [CJS] dist/utils/date.cjs.map               3.10 kB │ gzip: 1.01 kB
@@ -515,16 +515,16 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [CJS] dist/logger/log.d.cts                 0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip: 0.05 kB
-ℹ [@lightproject/common] [CJS] 93 files, total: 157.03 kB
-✔ [@lightproject/common] Build complete in 112ms
+ℹ [@lightproject/common] [CJS] 93 files, total: 158.26 kB
+✔ [@lightproject/common] Build complete in 110ms
 ℹ [@lightproject/common] [ESM] dist/node/directory.mjs                 6.82 kB │ gzip: 1.81 kB
 ℹ [@lightproject/common] [ESM] dist/server/telemetry.mjs               5.17 kB │ gzip: 1.61 kB
 ℹ [@lightproject/common] [ESM] dist/logger/log.mjs                     3.40 kB │ gzip: 1.25 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                    3.21 kB │ gzip: 0.97 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.mjs                    3.32 kB │ gzip: 0.99 kB
 ℹ [@lightproject/common] [ESM] dist/environment/env.mjs                2.77 kB │ gzip: 0.92 kB
 ℹ [@lightproject/common] [ESM] dist/utils/color.mjs                    2.66 kB │ gzip: 0.96 kB
+ℹ [@lightproject/common] [ESM] dist/utils/rum.mjs                      2.59 kB │ gzip: 1.00 kB
 ℹ [@lightproject/common] [ESM] dist/testing/otel-collector.mjs         2.23 kB │ gzip: 0.96 kB
-ℹ [@lightproject/common] [ESM] dist/utils/rum.mjs                      2.22 kB │ gzip: 0.86 kB
 ℹ [@lightproject/common] [ESM] dist/utils/text.mjs                     2.09 kB │ gzip: 0.91 kB
 ℹ [@lightproject/common] [ESM] dist/environment/index.mjs              1.79 kB │ gzip: 0.56 kB
 ℹ [@lightproject/common] [ESM] dist/configs/endpoints.mjs              1.78 kB │ gzip: 0.60 kB
@@ -555,8 +555,8 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/environment/env.mjs.map            5.16 kB │ gzip: 1.65 kB
 ℹ [@lightproject/common] [ESM] dist/utils/color.mjs.map                4.84 kB │ gzip: 1.68 kB
 ℹ [@lightproject/common] [ESM] dist/testing/otel-collector.mjs.map     4.67 kB │ gzip: 1.82 kB
+ℹ [@lightproject/common] [ESM] dist/utils/rum.mjs.map                  4.25 kB │ gzip: 1.57 kB
 ℹ [@lightproject/common] [ESM] dist/utils/text.mjs.map                 4.09 kB │ gzip: 1.55 kB
-ℹ [@lightproject/common] [ESM] dist/utils/rum.mjs.map                  3.61 kB │ gzip: 1.34 kB
 ℹ [@lightproject/common] [ESM] dist/validators/validate.mjs.map        3.47 kB │ gzip: 1.23 kB
 ℹ [@lightproject/common] [ESM] dist/utils/serialize.mjs.map            3.35 kB │ gzip: 1.33 kB
 ℹ [@lightproject/common] [ESM] dist/utils/date.mjs.map                 3.10 kB │ gzip: 1.01 kB
@@ -591,7 +591,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts.map          0.18 kB │ gzip: 0.16 kB
 ℹ [@lightproject/common] [ESM] dist/environment/index.mjs.map          0.18 kB │ gzip: 0.15 kB
 ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts.map               0.17 kB │ gzip: 0.15 kB
-ℹ [@lightproject/common] [ESM] dist/utils/rum.d.mts.map                0.16 kB │ gzip: 0.14 kB
+ℹ [@lightproject/common] [ESM] dist/utils/rum.d.mts.map                0.16 kB │ gzip: 0.15 kB
 ℹ [@lightproject/common] [ESM] dist/validators/index.mjs.map           0.15 kB │ gzip: 0.14 kB
 ℹ [@lightproject/common] [ESM] dist/configs/index.mjs.map              0.15 kB │ gzip: 0.14 kB
 ℹ [@lightproject/common] [ESM] dist/samples/index.mjs.map              0.15 kB │ gzip: 0.14 kB
@@ -606,8 +606,8 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts.map            0.10 kB │ gzip: 0.10 kB
 ℹ [@lightproject/common] [ESM] dist/logger/index.d.mts.map             0.10 kB │ gzip: 0.10 kB
 ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts.map              0.10 kB │ gzip: 0.10 kB
+ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts                  2.49 kB │ gzip: 0.67 kB
 ℹ [@lightproject/common] [ESM] dist/node/directory.d.mts               2.42 kB │ gzip: 0.53 kB
-ℹ [@lightproject/common] [ESM] dist/utils/index.d.mts                  2.42 kB │ gzip: 0.66 kB
 ℹ [@lightproject/common] [ESM] dist/environment/env.d.mts              1.57 kB │ gzip: 0.45 kB
 ℹ [@lightproject/common] [ESM] dist/configs/endpoints.d.mts            1.46 kB │ gzip: 0.45 kB
 ℹ [@lightproject/common] [ESM] dist/utils/color.d.mts                  1.33 kB │ gzip: 0.45 kB
@@ -625,10 +625,10 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/testing/otel-collector.d.mts       0.69 kB │ gzip: 0.34 kB
 ℹ [@lightproject/common] [ESM] dist/utils/serialize.d.mts              0.66 kB │ gzip: 0.34 kB
 ℹ [@lightproject/common] [ESM] dist/node/index.d.mts                   0.60 kB │ gzip: 0.19 kB
+ℹ [@lightproject/common] [ESM] dist/utils/rum.d.mts                    0.54 kB │ gzip: 0.30 kB
 ℹ [@lightproject/common] [ESM] dist/validators/index.d.mts             0.54 kB │ gzip: 0.21 kB
 ℹ [@lightproject/common] [ESM] dist/logger/redactor.d.mts              0.51 kB │ gzip: 0.26 kB
 ℹ [@lightproject/common] [ESM] dist/typecast/tc.d.mts                  0.47 kB │ gzip: 0.26 kB
-ℹ [@lightproject/common] [ESM] dist/utils/rum.d.mts                    0.47 kB │ gzip: 0.28 kB
 ℹ [@lightproject/common] [ESM] dist/utils/time.d.mts                   0.44 kB │ gzip: 0.24 kB
 ℹ [@lightproject/common] [ESM] dist/utils/base.d.mts                   0.37 kB │ gzip: 0.23 kB
 ℹ [@lightproject/common] [ESM] dist/server/index.d.mts                 0.36 kB │ gzip: 0.16 kB
@@ -638,11 +638,11 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/testing/index.d.mts                0.20 kB │ gzip: 0.13 kB
 ℹ [@lightproject/common] [ESM] dist/samples/index.d.mts                0.18 kB │ gzip: 0.14 kB
 ℹ [@lightproject/common] [ESM] dist/samples/hello.d.mts                0.14 kB │ gzip: 0.13 kB
-ℹ [@lightproject/common] [ESM] 121 files, total: 166.04 kB
-✔ [@lightproject/common] Build complete in 1118ms
+ℹ [@lightproject/common] [ESM] 121 files, total: 167.31 kB
+✔ [@lightproject/common] Build complete in 1051ms
 
 ~/apps/backend$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/backend] entry: src/app.ts, src/client.ts, src/config.ts, src/index.ts, src/schema.ts, src/middlewares/error-handler.ts, src/middlewares/logger.ts, src/middlewares/security.ts, src/middlewares/trust-proxy.ts, src/routers/docs.ts, src/routers/utils.ts, src/runtimes/edge.ts, src/runtimes/node.ts, src/services/default.ts, src/services/test.ts, src/routers/http/default.ts, src/routers/http/index.ts, src/routers/http/test.ts, src/routers/trpc/default.ts, src/routers/trpc/index.ts, src/routers/trpc/test.ts
+ℹ [@lightproject/backend] entry: src/app.ts, src/client.ts, src/config.ts, src/index.ts, src/schema.ts, src/runtimes/edge.ts, src/runtimes/node.ts, src/services/default.ts, src/services/test.ts, src/routers/docs.ts, src/routers/utils.ts, src/middlewares/error-handler.ts, src/middlewares/logger.ts, src/middlewares/security.ts, src/middlewares/trust-proxy.ts, src/routers/http/default.ts, src/routers/http/index.ts, src/routers/http/test.ts, src/routers/trpc/default.ts, src/routers/trpc/index.ts, src/routers/trpc/test.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
@@ -711,7 +711,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [CJS] dist/routers/docs.d.cts                  0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/app.d.cts                           0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 63 files, total: 89.35 kB
-✔ [@lightproject/backend] Build complete in 284ms
+✔ [@lightproject/backend] Build complete in 182ms
 ℹ [@lightproject/backend] [ESM] dist/routers/utils.mjs                     6.92 kB │ gzip: 2.26 kB
 ℹ [@lightproject/backend] [ESM] dist/routers/trpc/index.mjs                3.06 kB │ gzip: 1.20 kB
 ℹ [@lightproject/backend] [ESM] dist/app.mjs                               2.46 kB │ gzip: 0.92 kB
@@ -794,7 +794,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [ESM] dist/runtimes/edge.d.mts                   0.15 kB │ gzip: 0.12 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                           0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 81 files, total: 110.49 kB
-✔ [@lightproject/backend] Build complete in 797ms
+✔ [@lightproject/backend] Build complete in 682ms
 
 ~/apps/frontend$ vp build ◉ cache hit, replaying
 transforming...
@@ -805,9 +805,9 @@ dist/index.html                     1.33 kB │ gzip:   0.51 kB
 dist/assets/vite-BF8QNONU.svg       8.70 kB │ gzip:   1.60 kB
 dist/assets/hero-CLDdwZDr.png      13.05 kB
 dist/assets/style-CJhanwuF.css     76.82 kB │ gzip:  10.79 kB
-dist/assets/index-BVlLBEAM.js   1,783.94 kB │ gzip: 361.61 kB │ map: 3,358.14 kB
+dist/assets/index-BavoIhDJ.js   1,784.35 kB │ gzip: 361.76 kB │ map: 3,358.83 kB
 
-✓ built in 772ms
+✓ built in 800ms
 
 ---
-vp run: 7/7 cache hit (100%), 16.84s saved. (Run `vp run --last-details` for full details)
+vp run: 7/7 cache hit (100%), 16.17s saved. (Run `vp run --last-details` for full details)

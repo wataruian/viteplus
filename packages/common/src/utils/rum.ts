@@ -6,7 +6,7 @@ import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
-import { getEnv } from '../environment';
+import { getEnv, isBrowser } from '../environment';
 
 interface RumOptions {
   serviceName?: string;
@@ -18,6 +18,25 @@ interface RumOptions {
 
 let isInitialized = false;
 let meterProviderInstance: MeterProvider | undefined = undefined;
+
+const flushRum = async () => {
+  await meterProviderInstance?.forceFlush();
+};
+
+const registerLifecycleFlush = () => {
+  if (!isBrowser()) {
+    return;
+  }
+
+  const flushOnHide = () => {
+    if (globalThis.document.visibilityState === 'hidden') {
+      flushRum().catch(() => {});
+    }
+  };
+
+  globalThis.document.addEventListener('visibilitychange', flushOnHide);
+  globalThis.addEventListener('pagehide', flushOnHide);
+};
 
 const initializeRum = (options: RumOptions = {}) => {
   if (isInitialized) {
@@ -68,6 +87,8 @@ const initializeRum = (options: RumOptions = {}) => {
 
   metrics.setGlobalMeterProvider(meterProviderInstance);
 
+  registerLifecycleFlush();
+
   return initializeFaro({
     app: {
       environment,
@@ -84,10 +105,6 @@ const initializeRum = (options: RumOptions = {}) => {
   });
 };
 
-const flushRum = async () => {
-  await meterProviderInstance?.forceFlush();
-};
-
 export { faro } from '@grafana/faro-web-sdk';
-export { flushRum, initializeRum };
+export { flushRum, initializeRum, registerLifecycleFlush };
 export type { RumOptions };
