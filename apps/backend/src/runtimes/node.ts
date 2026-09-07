@@ -62,4 +62,4 @@ const bootstrap = () => {
   });
 };
 
-export { bootstrap, init };
+export { bootstrap, init, registerShutdownSignals };

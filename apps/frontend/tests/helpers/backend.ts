@@ -46,5 +46,5 @@ const backendRuntimes = [
   { name: 'wrangler', start: startWranglerBackend },
 ] as const;
 
-export { backendRuntimes };
+export { backendRuntimes, startNodeBackend, startWranglerBackend };
 export type { BackendFetch, RunningBackend };

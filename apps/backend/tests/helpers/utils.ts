@@ -6,6 +6,14 @@ import { type Unstable_DevWorker, unstable_dev } from 'wrangler';
 
 import { createWrappedResponseSchema } from '../../src/routers/utils';
 
+type ParsedErrorEnvelope = z.infer<typeof errorEnvelope>;
+
+interface FetchResponseLike {
+  headers: { get: (name: string) => string | null };
+  json: () => Promise<unknown>;
+  status: number;
+}
+
 const errorEnvelope = z.object({
   code: z.number(),
   error: z.object({
@@ -19,8 +27,6 @@ const errorEnvelope = z.object({
   success: z.literal(false),
 });
 
-type ParsedErrorEnvelope = z.infer<typeof errorEnvelope>;
-
 const httpEnvelope = createWrappedResponseSchema;
 
 const trpcEnvelope = <T extends z.ZodType>(dataSchema: T) =>
@@ -31,12 +37,6 @@ const stripVolatile = (parsed: ParsedErrorEnvelope) => ({
   error: { ...parsed.error, stack: undefined },
   sessionId: 'x',
 });
-
-interface FetchResponseLike {
-  headers: { get: (name: string) => string | null };
-  json: () => Promise<unknown>;
-  status: number;
-}
 
 const parseErrorEnvelope = async (res: FetchResponseLike) => errorEnvelope.parse(await res.json());
 
