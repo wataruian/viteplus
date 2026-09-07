@@ -5,7 +5,7 @@ import { useTheme } from '../context/theme-context';
 import { baseStyles } from '../tokens/base';
 import { themes } from '../utils/theme-generator';
 import type { BaseComponentProps } from './base';
-import { Button, type ButtonProps } from './button';
+import { Button } from './button';
 
 const themeSwitcherStyles = {
   base: `flex flex-wrap gap-1 ${baseStyles.colors.bg.adaptiveSurface} p-1 rounded-xl border ${baseStyles.colors.border.inverseSurface}/10 shadow-sm w-fit`,
@@ -64,11 +64,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
         {themeList.map((t) => (
           <Button
             key={t}
-            intent={
-              (theme === t
-                ? lookStyles.activeIntent
-                : lookStyles.inactiveIntent) as ButtonProps['intent']
-            }
+            intent={theme === t ? lookStyles.activeIntent : lookStyles.inactiveIntent}
             size={size}
             props={{
               onClick: () => {

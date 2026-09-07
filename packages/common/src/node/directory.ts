@@ -216,6 +216,32 @@ const deletePath = ({
   }
 };
 
+const resolveTransferGuard = ({
+  destinationPath,
+  replace,
+  sourcePath,
+  throwError,
+}: {
+  destinationPath: string;
+  replace: boolean;
+  sourcePath: string;
+  throwError: boolean;
+}): boolean => {
+  const sourceExists = pathExists(sourcePath);
+
+  if (!sourceExists && throwError) {
+    throw new Error(`Source path does not exist: ${sourcePath}`);
+  }
+
+  const destinationExists = pathExists(destinationPath);
+
+  if (destinationExists && throwError) {
+    throw new Error(`Destination path already exists: ${destinationPath}`);
+  }
+
+  return (sourceExists && !destinationExists) || (sourceExists && destinationExists && replace);
+};
+
 const copyPath = ({
   destinationPath,
   force = true,
@@ -231,17 +257,9 @@ const copyPath = ({
   sourcePath: string;
   throwError?: boolean;
 }): void => {
-  const sourceExists = pathExists(sourcePath);
-  if (!sourceExists && throwError) {
-    throw new Error(`Source path does not exist: ${sourcePath}`);
-  }
+  const shouldTransfer = resolveTransferGuard({ destinationPath, replace, sourcePath, throwError });
 
-  const destinationExists = pathExists(destinationPath);
-  if (destinationExists && throwError) {
-    throw new Error(`Destination path already exists: ${destinationPath}`);
-  }
-
-  if ((sourceExists && !destinationExists) || (sourceExists && destinationExists && replace)) {
+  if (shouldTransfer) {
     if (replace) {
       deletePath({ force, path: destinationPath, recursive });
     }
@@ -270,17 +288,9 @@ const movePath = ({
   sourcePath: string;
   throwError?: boolean;
 }): void => {
-  const sourceExists = pathExists(sourcePath);
-  if (!sourceExists && throwError) {
-    throw new Error(`Source path does not exist: ${sourcePath}`);
-  }
+  const shouldTransfer = resolveTransferGuard({ destinationPath, replace, sourcePath, throwError });
 
-  const destinationExists = pathExists(destinationPath);
-  if (destinationExists && throwError) {
-    throw new Error(`Destination path already exists: ${destinationPath}`);
-  }
-
-  if ((sourceExists && !destinationExists) || (sourceExists && destinationExists && replace)) {
+  if (shouldTransfer) {
     if (replace) {
       deletePath({ force, path: destinationPath, recursive });
     }
@@ -350,4 +360,5 @@ export {
   movePath,
   pathExists,
   readFile,
+  resolveTransferGuard,
 };

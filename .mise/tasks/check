@@ -64,41 +64,8 @@ function executeCommand() {
   local exitStatus=""
   
   if [[ "${debug}" == "true" ]]; then
-    node -e '
-      const { spawn } = require("child_process");
-      const fs = require("fs");
-      const [outputFile, cmd, ...args] = process.argv.slice(1);
-      const outFd = fs.openSync(outputFile, "w");
-      const child = spawn(cmd, args, {
-        env: { ...process.env, FORCE_COLOR: "1", CLICOLOR_FORCE: "1" },
-        stdio: ["inherit", outFd, outFd]
-      });
-      let readOffset = 0;
-      const readFd = fs.openSync(outputFile, "r");
-      const buffer = Buffer.alloc(65536);
-      function streamOutput() {
-        try {
-          const bytesRead = fs.readSync(readFd, buffer, 0, buffer.length, readOffset);
-          if (bytesRead > 0) {
-            process.stdout.write(buffer.subarray(0, bytesRead));
-            readOffset += bytesRead;
-            return true;
-          }
-        } catch (e) {}
-        return false;
-      }
-      const interval = setInterval(() => {
-        while (streamOutput()) {}
-      }, 50);
-      child.on("close", (code) => {
-        clearInterval(interval);
-        while (streamOutput()) {}
-        fs.closeSync(outFd);
-        fs.closeSync(readFd);
-        process.exitCode = code === null ? 1 : code;
-      });
-    ' "${commandOutputPath}" "${arguments[@]}"
-    exitStatus="${?}"
+    FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" 2>&1 | tee "${commandOutputPath}"
+    exitStatus="${PIPESTATUS[0]}"
   else
     FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" > "${commandOutputPath}" 2>&1
     exitStatus="${?}"

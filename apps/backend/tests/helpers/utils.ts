@@ -122,6 +122,7 @@ const importFreshWranglerApp = async (
     ip: '127.0.0.1',
     local: true,
     logLevel: 'none',
+    persist: false,
     vars: env,
   });
   wranglerWorkers.set(key, workerPromise);

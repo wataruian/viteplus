@@ -101,6 +101,9 @@ const App = () => {
           </p>
         </div>
         <button ref={counterRef} id='counter' type='button' className='counter'></button>
+        <a href='/preview' className='preview-link'>
+          Preview Design System
+        </a>
       </section>
 
       <div className='ticks'></div>

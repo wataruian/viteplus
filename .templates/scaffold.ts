@@ -37,19 +37,33 @@ const scaffold = (type: string) => {
 
   process.stdout.write(`Scaffolding ${type} template in ${targetDir}...\n`);
 
+  const excludedNames = new Set([
+    'node_modules',
+    'dist',
+    'out',
+    'storybook-static',
+    '.wrangler',
+    'coverage',
+    'tmp',
+    'tsconfig.tsbuildinfo',
+    '.env',
+    '.git',
+  ]);
+
   fs.cpSync(templateDir, targetDir, {
+    dereference: false,
     filter: (src: string) => {
       const base = path.basename(src);
-      return (
-        base !== 'node_modules' &&
-        base !== 'dist' &&
-        base !== 'out' &&
-        base !== 'storybook-static' &&
-        base !== '.wrangler' &&
-        base !== 'coverage' &&
-        base !== 'tmp' &&
-        base !== 'tsconfig.tsbuildinfo'
-      );
+
+      if (excludedNames.has(base)) {
+        return false;
+      }
+
+      if (fs.lstatSync(src).isSymbolicLink()) {
+        return false;
+      }
+
+      return true;
     },
     recursive: true,
   });

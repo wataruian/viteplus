@@ -1,6 +1,7 @@
 import { logger, requestContextStorage } from '@lightproject/common/logger';
 import type { Context, ErrorHandler, NotFoundHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import type { StatusCode } from 'hono/utils/http-status';
 
 import { config } from '../config';
 
@@ -9,7 +10,7 @@ type AppContext = Context<{ Variables: { sessionId: string } }>;
 const getSessionIdFromCtx = (c: AppContext): string => c.get('sessionId');
 
 const buildErrorBody = (
-  statusCode: number,
+  statusCode: StatusCode,
   errorCode: string,
   message: string,
   sessionId: string,
@@ -40,32 +41,17 @@ const notFoundHandler: NotFoundHandler = (c) => {
   return c.json(buildErrorBody(status, 'NOT_FOUND', 'Not Found', sessionId), status);
 };
 
-const globalErrorHandler: ErrorHandler = (err, c) => {
-  const sessionId = getSessionIdFromCtx(c as AppContext);
-
-  if (err instanceof HTTPException) {
-    const { status } = err;
-
-    requestContextStorage.run({ sessionId }, () => {
-      logger.error(`HTTP Exception: ${err.message} [${c.req.method}] ${c.req.url}`, {
-        err,
-        method: c.req.method,
-        path: c.req.path,
-        status,
-        url: c.req.url,
-      });
-    });
-
-    return c.json(
-      buildErrorBody(status, 'HTTP_EXCEPTION', err.message, sessionId, err.stack),
-      status,
-    );
-  }
-
-  const status = 500;
-
+const respondWithError = (
+  c: AppContext,
+  err: Error,
+  sessionId: string,
+  status: StatusCode,
+  errorCode: string,
+  logLabel: string,
+  message: string,
+) => {
   requestContextStorage.run({ sessionId }, () => {
-    logger.error(`Internal Server Error: ${err.message} [${c.req.method}] ${c.req.url}`, {
+    logger.error(`${logLabel}: ${err.message} [${c.req.method}] ${c.req.url}`, {
       err,
       method: c.req.method,
       path: c.req.path,
@@ -74,17 +60,40 @@ const globalErrorHandler: ErrorHandler = (err, c) => {
     });
   });
 
-  return c.json(
-    buildErrorBody(
-      status,
-      'INTERNAL_SERVER_ERROR',
-      err.message || 'Internal Server Error',
+  return c.json(buildErrorBody(status, errorCode, message, sessionId, err.stack), status);
+};
+
+const globalErrorHandler: ErrorHandler = (err, c) => {
+  const sessionId = getSessionIdFromCtx(c as AppContext);
+
+  if (err instanceof HTTPException) {
+    return respondWithError(
+      c as AppContext,
+      err,
       sessionId,
-      err.stack,
-    ),
-    status,
+      err.status,
+      'HTTP_EXCEPTION',
+      'HTTP Exception',
+      err.message,
+    );
+  }
+
+  return respondWithError(
+    c as AppContext,
+    err,
+    sessionId,
+    500,
+    'INTERNAL_SERVER_ERROR',
+    'Internal Server Error',
+    err.message || 'Internal Server Error',
   );
 };
 
-export { buildErrorBody, getSessionIdFromCtx, globalErrorHandler, notFoundHandler };
+export {
+  buildErrorBody,
+  getSessionIdFromCtx,
+  globalErrorHandler,
+  notFoundHandler,
+  respondWithError,
+};
 export type { AppContext };

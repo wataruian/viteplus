@@ -66,13 +66,20 @@ const defineTrpcRoute = <S extends z.ZodRawShape, O extends Record<string, unkno
   definition: RouteDefinition<S, O>,
 ) => definition;
 
+const parseAndInvoke = <S extends z.ZodRawShape, O extends Record<string, unknown>>(
+  handlerFn: ServiceFn<S, O>,
+  requestSchema: z.ZodObject<S>,
+  rawInput: unknown,
+): O | Promise<O> => handlerFn(requestSchema.parse(rawInput));
+
 const defineHttpRoute = <S extends z.ZodRawShape, O extends Record<string, unknown>>(
   definition: RouteDefinition<S, O>,
 ): HttpRoute => {
   const { handlerFn, method, path, schema: schemaOverride } = definition;
   const schema = schemaOverride ?? handlerFn.schema;
   const requestSchema = schema.request ?? handlerFn.schema.request;
-  const handle = (input: unknown): O | Promise<O> => handlerFn(requestSchema.parse(input));
+  const handle = (input: unknown): O | Promise<O> =>
+    parseAndInvoke(handlerFn, requestSchema, input);
 
   return {
     handle,
@@ -149,8 +156,7 @@ const createQuery = <S extends z.ZodRawShape, O extends Record<string, unknown>>
 ) => {
   const { handlerFn } = definition;
   return createProcedure(definition).query(async ({ input, ctx }) => {
-    const parsed = handlerFn.schema.request.parse(input ?? {});
-    const result = await handlerFn(parsed);
+    const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input ?? {});
     return successEnvelope(result, ctx.sessionId ?? getSessionId());
   });
 };
@@ -160,8 +166,7 @@ const createMutation = <S extends z.ZodRawShape, O extends Record<string, unknow
 ) => {
   const { handlerFn } = definition;
   return createProcedure(definition).mutation(async ({ input, ctx }) => {
-    const parsed = handlerFn.schema.request.parse(input);
-    const result = await handlerFn(parsed);
+    const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input);
     return successEnvelope(result, ctx.sessionId ?? getSessionId());
   });
 };
@@ -246,11 +251,29 @@ const createHttpRouter = (routesList: HttpRoute[]) => {
   return router;
 };
 
+const normalizeTrpcGetQuery = (request: Request, query: Record<string, string>): Request => {
+  if ('input' in query || Object.keys(query).length === 0) {
+    return request;
+  }
+
+  const newUrl = new globalThis.URL(request.url);
+
+  for (const key of Object.keys(query)) {
+    newUrl.searchParams.delete(key);
+  }
+
+  newUrl.searchParams.set('input', JSON.stringify(query));
+
+  return new globalThis.Request(newUrl.toString(), request);
+};
+
 const mergeHttpRouters = (routers: Record<string, OpenAPIHono<HttpEnv>>) => {
   const app = new OpenAPIHono<HttpEnv>();
+
   for (const router of Object.values(routers)) {
     app.route('/', router);
   }
+
   return app;
 };
 
@@ -288,6 +311,8 @@ export {
   getRouteBase,
   isTrpcRouteMeta,
   mergeHttpRouters,
+  normalizeTrpcGetQuery,
+  parseAndInvoke,
   successEnvelope,
   t,
   trpcRouteMethods,

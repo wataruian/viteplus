@@ -14,7 +14,9 @@ const meta = {
   title: 'Design System/Header',
 } satisfies Meta<typeof Header>;
 
-const Default: StoryObj<typeof meta> = {
+const Default: StoryObj<typeof meta> = {};
+
+const WithCustomChildren: StoryObj<typeof meta> = {
   args: {
     children: <span className='font-semibold text-lg'>Custom Header Text</span>,
     showLogo: false,
@@ -23,5 +25,5 @@ const Default: StoryObj<typeof meta> = {
   },
 };
 
-export { Default };
+export { Default, WithCustomChildren };
 export default meta;

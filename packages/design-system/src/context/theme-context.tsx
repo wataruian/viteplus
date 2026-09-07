@@ -1,19 +1,13 @@
-import { createContext, useContext } from 'react';
+import { createRequiredContext } from '../utils/create-required-context';
 
 interface ThemeContextValue {
   setTheme: (theme: string) => void;
   theme: string;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
-const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+const [ThemeContext, useTheme] = createRequiredContext<ThemeContextValue>(
+  'useTheme must be used within a ThemeProvider',
+);
 
 export { ThemeContext, useTheme };
 export type { ThemeContextValue };

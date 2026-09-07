@@ -10,6 +10,7 @@ services:
       - -config.file=/etc/loki.yaml
     volumes:
       - ./configs/loki.yaml:/etc/loki.yaml
+      - loki-storage:/tmp/loki
 
   grafana:
     image: grafana/grafana:12.1.1
@@ -36,6 +37,7 @@ services:
       - -config.file=/etc/tempo.yaml
     volumes:
       - ./configs/tempo.yaml:/etc/tempo.yaml
+      - tempo-storage:/tmp/tempo
 
   mimir:
     image: grafana/mimir:2.17.0
@@ -68,4 +70,6 @@ services:
 
 volumes:
   grafana-storage:
+  loki-storage:
   mimir-storage:
+  tempo-storage:

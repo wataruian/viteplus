@@ -1,19 +1,13 @@
-import { createContext, useContext } from 'react';
+import { createRequiredContext } from '../utils/create-required-context';
 
 interface SessionContextType {
   resetSessionId: () => string;
   sessionId: string;
 }
 
-const SessionContext = createContext<SessionContextType | null>(null);
-
-const useSession = () => {
-  const context = useContext(SessionContext);
-  if (!context) {
-    throw new Error('useSession must be used within SessionProvider');
-  }
-  return context;
-};
+const [SessionContext, useSession] = createRequiredContext<SessionContextType>(
+  'useSession must be used within SessionProvider',
+);
 
 export { SessionContext, useSession };
 export type { SessionContextType };

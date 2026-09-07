@@ -1,10 +1,17 @@
 import { z } from '@hono/zod-openapi';
-import { openApiVersion } from '@lightproject/common/configs';
+import { openApiVersion, trpcUrl } from '@lightproject/common/configs';
 import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { appRouter } from '../../src/routers/trpc';
-import { collectTrpcOpenApiRoutes, createQuery, defineTrpcRoute, t } from '../../src/routers/utils';
+import {
+  collectTrpcOpenApiRoutes,
+  createQuery,
+  defineTrpcRoute,
+  normalizeTrpcGetQuery,
+  t,
+} from '../../src/routers/utils';
 import { DefaultService } from '../../src/services/default';
+import { TestService } from '../../src/services/test';
 import { runtimes, trpcEnvelope } from '../helpers/utils';
 
 const openApiDocShape = z.object({
@@ -27,6 +34,48 @@ const trpcSampleInputs: Record<string, unknown> = {
 };
 
 const successCode = 200;
+
+describe('normalizeTrpcGetQuery', () => {
+  test('rewrites plain query params into a JSON input param', () => {
+    const request = new globalThis.Request(`${trpcUrl}/test.hello?name=Foo`);
+
+    const result = normalizeTrpcGetQuery(request, { name: 'Foo' });
+
+    const resultUrl = new globalThis.URL(result.url);
+
+    expect(resultUrl.searchParams.get('input')).toBe(JSON.stringify({ name: 'Foo' }));
+    expect(resultUrl.searchParams.has('name')).toBe(false);
+  });
+
+  test('leaves the request untouched when an input= param is already present', () => {
+    const request = new globalThis.Request(
+      `${trpcUrl}/test.hello?input=${encodeURIComponent(JSON.stringify({ name: 'Foo' }))}`,
+    );
+
+    const result = normalizeTrpcGetQuery(request, { input: JSON.stringify({ name: 'Foo' }) });
+
+    expect(result).toBe(request);
+  });
+
+  test('leaves the request untouched when there are no query params at all', () => {
+    const request = new globalThis.Request(`${trpcUrl}/default.root`);
+    const result = normalizeTrpcGetQuery(request, {});
+
+    expect(result).toBe(request);
+  });
+
+  test('rewrites multiple query params into a single JSON input object', () => {
+    const request = new globalThis.Request(`${trpcUrl}/test.profile?age=42&name=Foo`);
+    const result = normalizeTrpcGetQuery(request, { age: '42', name: 'Foo' });
+
+    const resultUrl = new globalThis.URL(result.url);
+
+    expect(JSON.parse(resultUrl.searchParams.get('input') ?? '')).toStrictEqual({
+      age: '42',
+      name: 'Foo',
+    });
+  });
+});
 
 test('every registered tRPC procedure is discoverable for OpenAPI generation', () => {
   const openApiRoutes = collectTrpcOpenApiRoutes(appRouter);
@@ -85,6 +134,29 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
 
     expect(res.status).toBe(successCode);
     expect(res.headers.get('content-type')).toMatch(/text\/html/u);
+  });
+
+  test('a plain query-string GET request (no explicit input= param) is rewritten into a tRPC input and produces the same result', async () => {
+    const app = await importApp();
+
+    const plainRes = await app.request('/trpc/test.hello?name=Plain');
+
+    const explicitRes = await app.request(
+      `/trpc/test.hello?input=${encodeURIComponent(JSON.stringify({ name: 'Plain' }))}`,
+    );
+
+    expect(plainRes.status).toBe(successCode);
+    expect(explicitRes.status).toBe(successCode);
+
+    const parsedPlain = trpcEnvelope(TestService.hello.schema.response).parse(
+      await plainRes.json(),
+    );
+
+    const parsedExplicit = trpcEnvelope(TestService.hello.schema.response).parse(
+      await explicitRes.json(),
+    );
+
+    expect(parsedPlain.result.data.data).toStrictEqual(parsedExplicit.result.data.data);
   });
 
   test('every registered tRPC procedure has a working sample request that matches its documented response schema', async () => {

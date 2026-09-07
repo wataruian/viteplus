@@ -1,5 +1,7 @@
+import { Hono } from 'hono';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
+import { getRequestIp, isNodeEnv } from '../src/middlewares/trust-proxy';
 import { errorEnvelope, runtimes } from './helpers/utils';
 
 const unknownIp = '9.9.9.9';
@@ -8,6 +10,51 @@ const failureCode = 403;
 
 afterEach(() => {
   vi.unstubAllEnvs();
+});
+
+const requestWithEnv = async (env: Record<string, unknown>) => {
+  const app = new Hono();
+  let captured = '';
+
+  app.get('/', (c) => {
+    captured = getRequestIp(c);
+    return c.text('ok');
+  });
+
+  await app.request('/', {}, env);
+
+  return captured;
+};
+
+describe('isNodeEnv', () => {
+  test('accepts any non-null object', () => {
+    expect(isNodeEnv({})).toBe(true);
+    expect(isNodeEnv({ incoming: { socket: {} } })).toBe(true);
+  });
+
+  test('rejects primitives, null, and undefined', () => {
+    expect(isNodeEnv(null)).toBe(false);
+    expect(isNodeEnv(undefined)).toBe(false);
+    expect(isNodeEnv('string')).toBe(false);
+    expect(isNodeEnv(42)).toBe(false);
+  });
+});
+
+describe('getRequestIp', () => {
+  test('falls back to env.incoming.socket.remoteAddress when no proxy headers are present', async () => {
+    const ip = await requestWithEnv({ incoming: { socket: { remoteAddress: '203.0.113.5' } } });
+    expect(ip).toBe('203.0.113.5');
+  });
+
+  test('returns an empty string when neither proxy headers nor a Node env are present', async () => {
+    const ip = await requestWithEnv({});
+    expect(ip).toBe('');
+  });
+
+  test('ignores a non-string remoteAddress', async () => {
+    const ip = await requestWithEnv({ incoming: { socket: { remoteAddress: 12_345 } } });
+    expect(ip).toBe('');
+  });
 });
 
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {

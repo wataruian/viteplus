@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# Replace <production-domain> with the deployed origin, then uncomment, before relying on this.
 # Sitemap: https://<production-domain>/sitemap.xml

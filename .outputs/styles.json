@@ -714,85 +714,8 @@
           "kind": "object",
           "value": {
             "intent": {
-              "kind": "object",
-              "value": {
-                "accent": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "accent"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                },
-                "danger": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "danger"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                },
-                "ghost": {
-                  "kind": "template",
-                  "raw": "${baseStyles.colors.bg.transparent} ${baseStyles.colors.text.inverseSurface} hover:${baseStyles.colors.bg.adaptiveSurface} hover:${baseStyles.colors.text.inverseSurface}"
-                },
-                "info": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "info"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                },
-                "inverse": {
-                  "kind": "template",
-                  "raw": "${baseStyles.colors.bg.inversePrimary} ${baseStyles.colors.text.adaptivePrimary} hover:opacity-90"
-                },
-                "premium": {
-                  "kind": "template",
-                  "raw": "bg-gradient-to-br from-primary via-accent to-primary bg-[length:200%_200%] animate-gradient text-white shadow-xl ${baseStyles.colors.shadow.primary}/20 hover:scale-[1.02]"
-                },
-                "primary": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "primary"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                },
-                "secondary": {
-                  "kind": "template",
-                  "raw": "${baseStyles.colors.bg.adaptiveSurface} ${baseStyles.colors.text.inverseSurface} shadow-lg ${baseStyles.colors.shadow.adaptiveSurface} hover:${baseStyles.colors.bg.inverseSurface} hover:${baseStyles.colors.text.adaptiveSurface}"
-                },
-                "success": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "success"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                },
-                "warning": {
-                  "args": [
-                    {
-                      "kind": "string",
-                      "value": "warning"
-                    }
-                  ],
-                  "kind": "call",
-                  "name": "intentSolid"
-                }
-              }
+              "kind": "ref",
+              "name": "buttonStyles.variants.intent"
             },
             "look": {
               "kind": "object",
@@ -813,25 +736,8 @@
               }
             },
             "size": {
-              "kind": "object",
-              "value": {
-                "lg": {
-                  "kind": "string",
-                  "value": "h-14 px-8 text-lg rounded-xl"
-                },
-                "md": {
-                  "kind": "string",
-                  "value": "h-11 px-6 text-base rounded-lg"
-                },
-                "sm": {
-                  "kind": "string",
-                  "value": "h-9 px-4 text-sm rounded-md"
-                },
-                "xl": {
-                  "kind": "string",
-                  "value": "h-16 px-10 text-xl rounded-2xl"
-                }
-              }
+              "kind": "ref",
+              "name": "buttonStyles.variants.size"
             }
           }
         }

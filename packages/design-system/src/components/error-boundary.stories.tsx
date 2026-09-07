@@ -23,6 +23,7 @@ const Default: StoryObj<typeof meta> = {
 const Danger: StoryObj<typeof meta> = {
   args: {
     ...Default.args,
+    forceError: true,
     intent: 'danger',
   },
 };
@@ -30,6 +31,7 @@ const Danger: StoryObj<typeof meta> = {
 const Warning: StoryObj<typeof meta> = {
   args: {
     ...Default.args,
+    forceError: true,
     intent: 'warning',
   },
 };

@@ -6,7 +6,7 @@ type JsonValue = Primitive | { [key: string]: JsonValue } | JsonValue[];
 
 const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
 
-const isT = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
+const assumeShape = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
 
 const safeSerialize = <T>(
   value: T,
@@ -37,10 +37,10 @@ const safeSerialize = <T>(
   );
 
   type R = T extends object ? JsonValue & object : JsonValue;
-  if (isT<R>(result)) {
+  if (assumeShape<R>(result)) {
     return result;
   }
-  throw new Error('Unreachable');
+  throw new Error('unreachable: assumeShape always narrows successfully');
 };
 
 const safeClone = <T extends JsonValue>(source: T): T => {
@@ -48,14 +48,14 @@ const safeClone = <T extends JsonValue>(source: T): T => {
     return source;
   }
 
-  if (Array.isArray(source) && isT<JsonValue[]>(source)) {
+  if (Array.isArray(source) && assumeShape<JsonValue[]>(source)) {
     const result = source.map((item: JsonValue) => safeClone(item));
-    if (isT<T>(result)) {
+    if (assumeShape<T>(result)) {
       return result;
     }
   }
 
-  if (!isRecord(source) || !isT<Record<string, JsonValue>>(source)) {
+  if (!isRecord(source) || !assumeShape<Record<string, JsonValue>>(source)) {
     return source;
   }
 
@@ -72,11 +72,11 @@ const safeClone = <T extends JsonValue>(source: T): T => {
     }
   }
 
-  if (isT<T>(result)) {
+  if (assumeShape<T>(result)) {
     return result;
   }
-  throw new Error('Unreachable');
+  throw new Error('unreachable: assumeShape always narrows successfully');
 };
 
-export { defaultIgnoredKeys, isT, safeClone, safeSerialize };
+export { assumeShape, defaultIgnoredKeys, safeClone, safeSerialize };
 export type { JsonValue, Primitive };

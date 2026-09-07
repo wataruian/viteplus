@@ -21,8 +21,13 @@ class TestService {
       preferences: { notifications: boolean; theme: 'dark' | 'light' };
       tags: string[];
     }) => {
+      const slug = input.name
+        .toLowerCase()
+        .replaceAll(/[^a-z0-9]+/gu, '-')
+        .replaceAll(/^-+|-+$/gu, '');
+
       const profile = {
-        id: `profile_${input.name.toLowerCase().replaceAll(/\s+/gu, '-')}`,
+        id: `profile_${slug}`,
         metadata: {
           createdAt: new Date().toISOString(),
           version: 1,

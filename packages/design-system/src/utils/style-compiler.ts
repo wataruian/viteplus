@@ -246,6 +246,87 @@ const extractStylesFromFile = (file: string): Record<string, ASTNode> => {
   return result;
 };
 
+const getRootName = (name: string): string => name.split('.')[0] ?? name;
+
+const collectRefNames = (node: ASTNode, acc: Set<string>): void => {
+  switch (node.kind) {
+    case 'array': {
+      for (const v of node.value) {
+        collectRefNames(v, acc);
+      }
+      break;
+    }
+    case 'object': {
+      for (const key of Object.keys(node.value)) {
+        collectRefNames(node.value[key], acc);
+      }
+      break;
+    }
+    case 'call': {
+      acc.add(getRootName(node.name));
+      for (const arg of node.args) {
+        collectRefNames(arg, acc);
+      }
+      break;
+    }
+    case 'ref': {
+      acc.add(getRootName(node.name));
+      break;
+    }
+    case 'template': {
+      for (const match of node.raw.matchAll(/\$\{(?<expr>[^}]+)\}/gu)) {
+        const expr = match.groups?.['expr']?.trim();
+        if (expr !== undefined && expr !== '') {
+          acc.add(getRootName(expr));
+        }
+      }
+      break;
+    }
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'unknown': {
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+};
+
+const sortRegistryKeys = (registry: Record<string, ASTNode>): string[] => {
+  const order: string[] = [];
+  const visited = new Set<string>();
+  const visiting = new Set<string>();
+
+  const visit = (key: string): void => {
+    if (visited.has(key) || visiting.has(key)) {
+      return;
+    }
+    visiting.add(key);
+
+    const node = registry[key];
+    const deps = new Set<string>();
+    collectRefNames(node, deps);
+
+    for (const dep of deps) {
+      if (dep !== key && dep in registry) {
+        visit(dep);
+      }
+    }
+
+    visiting.delete(key);
+    visited.add(key);
+    order.push(key);
+  };
+
+  for (const key of Object.keys(registry)) {
+    visit(key);
+  }
+
+  return order;
+};
+
 const compileStylesRegistry = (registry: Record<string, ASTNode>) => {
   const ctx: Ctx = {
     baseStyles,
@@ -254,16 +335,27 @@ const compileStylesRegistry = (registry: Record<string, ASTNode>) => {
     intentSolid,
   };
 
-  return Object.fromEntries(Object.entries(registry).map(([k, v]) => [k, resolveValue(v, ctx)]));
+  const resolved: Record<string, unknown> = {};
+
+  for (const key of sortRegistryKeys(registry)) {
+    const value = resolveValue(registry[key], ctx);
+    resolved[key] = value;
+    ctx[key] = value;
+  }
+
+  return resolved;
 };
 
 export {
+  collectRefNames,
   compileStylesRegistry,
   extractStylesFromFile,
   getKey,
+  getRootName,
   parseValue,
   resolvePath,
   resolveValue,
+  sortRegistryKeys,
   stripTemplate,
   unwrap,
 };

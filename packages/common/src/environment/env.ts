@@ -61,12 +61,7 @@ const isNode = () =>
   (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
     undefined;
 
-const isFalse = (value = '') => {
-  if (!value || (value && (value.toLowerCase() === 'false' || value === '0'))) {
-    return true;
-  }
-  return false;
-};
+const isFalse = (value = '') => !value || value.toLowerCase() === 'false' || value === '0';
 
 const getEnvName = () =>
   getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'local';

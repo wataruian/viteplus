@@ -74,7 +74,8 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
 
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
 
-  const { SessionProvider } = await import('@lightproject/design-system/context');
+  const { ModeProvider, SessionProvider, ThemeProvider } =
+    await import('@lightproject/design-system/context');
   const { default: App } = await import('../src/app');
 
   const container = globalThis.document.createElement('div');
@@ -84,7 +85,11 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
   await act(async () => {
     root.render(
       <SessionProvider>
-        <App />
+        <ThemeProvider>
+          <ModeProvider>
+            <App />
+          </ModeProvider>
+        </ThemeProvider>
       </SessionProvider>,
     );
     await Promise.resolve();

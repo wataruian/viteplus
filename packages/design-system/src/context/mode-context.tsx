@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createRequiredContext } from '../utils/create-required-context';
 
 type Mode = 'light' | 'dark';
 
@@ -8,15 +8,9 @@ interface ModeContextValue {
   toggleMode: () => void;
 }
 
-const ModeContext = createContext<ModeContextValue | undefined>(undefined);
-
-const useMode = () => {
-  const context = useContext(ModeContext);
-  if (context === undefined) {
-    throw new Error('useMode must be used within a ModeProvider');
-  }
-  return context;
-};
+const [ModeContext, useMode] = createRequiredContext<ModeContextValue>(
+  'useMode must be used within a ModeProvider',
+);
 
 export { ModeContext, useMode };
 export type { Mode, ModeContextValue };

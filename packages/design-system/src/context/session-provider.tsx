@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { SessionContext } from './session-context';
 
-const SessionProvider = ({ children }: { children: React.ReactNode }) => {
+const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [sessionId, setSessionId] = useState(() => globalThis.crypto.randomUUID());
 
   const resetSessionId = () => {

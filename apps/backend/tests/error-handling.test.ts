@@ -1,9 +1,36 @@
+import { Hono } from 'hono';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
+import { globalErrorHandler } from '../src/middlewares/error-handler';
 import { expectErrorEnvelope, parseErrorEnvelope, runtimes, stripVolatile } from './helpers/utils';
 
 afterEach(() => {
   vi.unstubAllEnvs();
+});
+
+test('a plain (non-HTTPException) error thrown by a handler produces a generic 500 envelope', async () => {
+  const app = new Hono<{ Variables: { sessionId: string } }>();
+
+  app.use('*', async (c, next) => {
+    c.set('sessionId', 'unit-test-session');
+    await next();
+  });
+
+  app.onError(globalErrorHandler);
+
+  app.get('/boom', () => {
+    throw new Error('boom');
+  });
+
+  const res = await app.request('/boom');
+  expect(res.status).toBe(500);
+
+  const parsed = await parseErrorEnvelope(res);
+  expectErrorEnvelope(parsed, {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'boom',
+    statusCode: 500,
+  });
 });
 
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {

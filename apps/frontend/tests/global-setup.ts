@@ -12,6 +12,7 @@ export default async function setup(): Promise<() => Promise<void>> {
     ip: '127.0.0.1',
     local: true,
     logLevel: 'none',
+    persist: false,
   });
 
   globalThis.process.env['WRANGLER_TEST_BASE_URL'] = `http://${worker.address}:${worker.port}`;

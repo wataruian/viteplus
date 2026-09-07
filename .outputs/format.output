@@ -1,17 +1,17 @@
 ~/packages/library$ vp format --write ◉ cache hit, replaying
-Finished in 112ms on 7 files using 8 threads.
+Finished in 330ms on 7 files using 8 threads.
 
 ~/packages/design-system$ vp format --write ◉ cache hit, replaying
-Finished in 204ms on 67 files using 8 threads.
+Finished in 475ms on 82 files using 8 threads.
 
 ~/packages/common$ vp format --write ◉ cache hit, replaying
-Finished in 136ms on 39 files using 8 threads.
+Finished in 448ms on 47 files using 8 threads.
 
 ~/apps/backend$ vp format --write ◉ cache hit, replaying
-Finished in 97ms on 35 files using 8 threads.
+Finished in 174ms on 37 files using 8 threads.
 
 ~/apps/frontend$ vp format --write ◉ cache hit, replaying
-Finished in 178ms on 16 files using 8 threads.
+Finished in 352ms on 17 files using 8 threads.
 
 ---
-vp run: 5/5 cache hit (100%), 1.29s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 2.56s saved. (Run `vp run --last-details` for full details)

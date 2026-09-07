@@ -10,11 +10,18 @@ import {
   isDebug,
   isDevelop,
   isDevelopOrStagingOrProduction,
+  isEdge,
+  isFalse,
   isLocal,
   isLocalOrTest,
+  isNode,
+  isNodeEnvTest,
+  isNonProduction,
+  isOtherEnvironment,
   isProduction,
   isStaging,
   isTest,
+  isVitest,
 } from '../src/environment/env';
 
 describe('Environment Helpers', () => {
@@ -104,6 +111,110 @@ describe('Environment Helpers', () => {
       vi.stubGlobal('document', undefined);
       expect(isBrowser()).toBe(false);
       vi.unstubAllGlobals();
+    });
+  });
+
+  describe('isEdge', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    test('is false in a normal Node test environment', () => {
+      expect(isEdge()).toBe(false);
+    });
+
+    test('is true when EdgeRuntime is present', () => {
+      vi.stubGlobal('EdgeRuntime', 'edge-light');
+      expect(isEdge()).toBe(true);
+    });
+
+    test('is true when Deno is present', () => {
+      vi.stubGlobal('Deno', {});
+      expect(isEdge()).toBe(true);
+    });
+
+    test('is true when navigator.userAgent is Cloudflare-Workers', () => {
+      vi.stubGlobal('navigator', { userAgent: 'Cloudflare-Workers' });
+      expect(isEdge()).toBe(true);
+    });
+  });
+
+  describe('isNode', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    test('is true in a normal Node test environment', () => {
+      expect(isNode()).toBe(true);
+    });
+
+    test('is false when isEdge() is true', () => {
+      vi.stubGlobal('Deno', {});
+      expect(isNode()).toBe(false);
+    });
+  });
+
+  describe('isFalse', () => {
+    test('treats an empty value as false-ish', () => {
+      expect(isFalse('')).toBe(true);
+    });
+
+    test('treats "false" (any case) and "0" as false-ish', () => {
+      expect(isFalse('false')).toBe(true);
+      expect(isFalse('FALSE')).toBe(true);
+      expect(isFalse('0')).toBe(true);
+    });
+
+    test('treats any other value as not false-ish', () => {
+      expect(isFalse('true')).toBe(false);
+      expect(isFalse('1')).toBe(false);
+    });
+  });
+
+  describe('isNodeEnvTest', () => {
+    test('reflects NODE_ENV', () => {
+      vi.stubEnv('NODE_ENV', 'test');
+      expect(isNodeEnvTest()).toBe(true);
+      vi.stubEnv('NODE_ENV', 'production');
+      expect(isNodeEnvTest()).toBe(false);
+    });
+  });
+
+  describe('isVitest', () => {
+    test('reflects the VITEST env var', () => {
+      vi.stubEnv('VITEST', 'true');
+      expect(isVitest()).toBe(true);
+      vi.stubEnv('VITEST', 'false');
+      expect(isVitest()).toBe(false);
+    });
+  });
+
+  describe('isNonProduction', () => {
+    test('is true for test/local/develop/staging and false for production', () => {
+      for (const env of ['test', 'local', 'develop', 'staging']) {
+        vi.stubEnv('ENV', env);
+        expect(isNonProduction()).toBe(true);
+      }
+      vi.stubEnv('ENV', 'production');
+      expect(isNonProduction()).toBe(false);
+    });
+  });
+
+  describe('isOtherEnvironment', () => {
+    test('is true for an unrecognized ENV value', () => {
+      vi.stubEnv('ENV', 'qa-custom');
+      expect(isOtherEnvironment()).toBe(true);
+    });
+
+    test('is false for a recognized ENV value', () => {
+      vi.stubEnv('ENV', 'production');
+      expect(isOtherEnvironment()).toBe(false);
+    });
+
+    test('matches against a specific expected environment name when provided', () => {
+      vi.stubEnv('ENV', 'qa-custom');
+      expect(isOtherEnvironment('qa-custom')).toBe(true);
+      expect(isOtherEnvironment('qa-different')).toBe(false);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { type ComponentType, type HTMLAttributes, type ReactNode, forwardRef } from 'react';
 
 import { ModeProvider } from '../context/mode-provider';
 import { ThemeProvider } from '../context/theme-provider';
@@ -157,7 +157,7 @@ const getExtraProps = (componentName: string, variant?: string, group?: string) 
   }
 };
 
-const renderChildren = (componentName: string, variant: string): React.ReactNode => {
+const renderChildren = (componentName: string, variant: string): ReactNode => {
   if (componentName === 'Typography') {
     return `${variant} Typography`;
   }
@@ -186,7 +186,7 @@ const isBlockComponent = (componentName: string) =>
 const isRecord = (val: unknown): val is Record<string, unknown> =>
   typeof val === 'object' && val !== null;
 
-const isForwardRefComponent = (val: unknown): val is React.ComponentType<Record<string, unknown>> =>
+const isForwardRefComponent = (val: unknown): val is ComponentType<Record<string, unknown>> =>
   typeof val === 'object' &&
   val !== null &&
   '$$typeof' in val &&
@@ -200,7 +200,7 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
       Object.entries(registry).filter(([key]) => key.endsWith('Styles')),
     );
 
-    const ui: Record<string, React.ComponentType<Record<string, unknown>>> = {};
+    const ui: Record<string, ComponentType<Record<string, unknown>>> = {};
 
     for (const [key, value] of Object.entries(registry)) {
       if (!key.endsWith('Styles') && isForwardRefComponent(value)) {

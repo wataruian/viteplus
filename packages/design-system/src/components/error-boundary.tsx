@@ -62,6 +62,7 @@ interface ErrorBoundaryProps extends BaseComponentProps, ErrorBoundaryVariants {
 
 interface ErrorBoundaryState {
   error?: Error | undefined;
+  errorInfo?: ErrorInfo | undefined;
   hasError: boolean;
 }
 
@@ -70,6 +71,7 @@ class ErrorBoundaryBase extends Component<ErrorBoundaryProps, ErrorBoundaryState
     super(props);
     this.state = {
       error: undefined,
+      errorInfo: undefined,
       hasError: false,
     };
   }
@@ -78,7 +80,8 @@ class ErrorBoundaryBase extends Component<ErrorBoundaryProps, ErrorBoundaryState
     return { error, hasError: true };
   }
 
-  public static componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    this.setState({ errorInfo });
     globalThis.console.error('An error occurred in the component', error, errorInfo);
   }
 
