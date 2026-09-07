@@ -1,6 +1,13 @@
 version: '3.9'
 
 services:
+  loki-storage-init:
+    image: busybox:1.38.0
+    container_name: loki-storage-init
+    command: chown -R 10001:10001 /tmp/loki
+    volumes:
+      - loki-storage:/tmp/loki
+
   loki:
     image: grafana/loki:3.5.3
     container_name: loki
@@ -11,6 +18,9 @@ services:
     volumes:
       - ./configs/loki.yaml:/etc/loki.yaml
       - loki-storage:/tmp/loki
+    depends_on:
+      loki-storage-init:
+        condition: service_completed_successfully
 
   grafana:
     image: grafana/grafana:12.1.1
@@ -28,6 +38,13 @@ services:
       - tempo
       - mimir
 
+  tempo-storage-init:
+    image: busybox:1.38.0
+    container_name: tempo-storage-init
+    command: chown -R 10001:10001 /tmp/tempo
+    volumes:
+      - tempo-storage:/tmp/tempo
+
   tempo:
     image: grafana/tempo:2.8.1
     container_name: tempo
@@ -38,6 +55,9 @@ services:
     volumes:
       - ./configs/tempo.yaml:/etc/tempo.yaml
       - tempo-storage:/tmp/tempo
+    depends_on:
+      tempo-storage-init:
+        condition: service_completed_successfully
 
   mimir:
     image: grafana/mimir:2.17.0
