@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-vi.mock('../src/environment/meta-env', () => ({
+vi.mock('../src/utils/helpers', () => ({
   getMetaEnv: () => ({ ONLY_IN_META: 'from-import-meta-env' }),
 }));
 

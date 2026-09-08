@@ -1,10 +1,5 @@
 import { isRecord } from '../validators/validate';
-
-type Primitive = string | number | boolean | bigint | symbol | null | undefined;
-
-type JsonValue = Primitive | { [key: string]: JsonValue } | JsonValue[];
-
-const assumeShape = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
+import { type JsonValue, assumeShape } from './helpers';
 
 const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
 
@@ -78,5 +73,4 @@ const safeClone = <T extends JsonValue>(source: T): T => {
   throw new Error('unreachable: assumeShape always narrows successfully');
 };
 
-export { assumeShape, defaultIgnoredKeys, safeClone, safeSerialize };
-export type { JsonValue, Primitive };
+export { defaultIgnoredKeys, safeClone, safeSerialize };

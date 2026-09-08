@@ -4,7 +4,7 @@ const { assumeShapeMock } = vi.hoisted(() => ({
   assumeShapeMock: vi.fn<(val: unknown, dummy?: unknown) => boolean>(),
 }));
 
-vi.mock('../src/utils/assume-shape', () => ({
+vi.mock('../src/utils/helpers', () => ({
   assumeShape: assumeShapeMock,
 }));
 

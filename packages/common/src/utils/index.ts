@@ -1,6 +1,7 @@
 export * from './base';
 export * from './color';
 export * from './date';
+export * from './helpers';
 export * from './rum';
 export * from './serialize';
 export * from './telemetry';

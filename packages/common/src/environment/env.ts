@@ -1,7 +1,4 @@
-const getMetaEnv = (): Record<string, string | undefined> | undefined => {
-  const meta: ImportMeta & { env?: Record<string, string | undefined> } = import.meta;
-  return meta.env;
-};
+import { getMetaEnv } from '../utils/helpers';
 
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
@@ -101,7 +98,6 @@ export {
   getEnvName,
   getLogFormat,
   getLogLevel,
-  getMetaEnv,
   getNodeEnv,
   hasEnvProperty,
   isBrowser,
