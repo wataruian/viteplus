@@ -25,6 +25,13 @@ const logLevelPriority: Record<LogLevel, number> = {
   warn: 2,
 };
 
+const faroLogLevel: Record<LogLevel, faroSdk.LogLevel> = {
+  debug: faroSdk.LogLevel.DEBUG,
+  error: faroSdk.LogLevel.ERROR,
+  info: faroSdk.LogLevel.INFO,
+  warn: faroSdk.LogLevel.WARN,
+};
+
 const otelSeverity: Record<LogLevel, SeverityNumber> = {
   debug: SeverityNumber.DEBUG,
   error: SeverityNumber.ERROR,
@@ -133,11 +140,7 @@ class Logger {
       return;
     }
 
-    const options: faroSdk.PushLogOptions = {};
-
-    if (isFaroLogLevel(entry.level)) {
-      options.level = entry.level;
-    }
+    const options: faroSdk.PushLogOptions = { level: faroLogLevel[entry.level] };
 
     faroSdk.faro.api.pushLog([JSON.stringify(entry)], options);
   }
@@ -165,5 +168,5 @@ class Logger {
 
 const logger = new Logger();
 
-export { Logger, isFaroLogLevel, logLevelPriority, logger, otelSeverity };
+export { Logger, faroLogLevel, isFaroLogLevel, logLevelPriority, logger, otelSeverity };
 export type { LoggerOptions };

@@ -1,22 +1,22 @@
-~/packages/library$ vp check --fix ◉ cache hit, replaying
-pass: Formatting completed for checked files (2.9s)
-pass: Found no warnings, lint errors, or type errors in 5 files (1.2s, 8 threads)
+~/packages/library$ vp check --fix
+~/packages/design-system$ vp check --fix
+~/packages/common$ vp check --fix
+pass: Formatting completed for checked files (2.3s)
+pass: Found no warnings, lint errors, or type errors in 5 files (888ms, 8 threads)
 
-~/packages/design-system$ vp check --fix ◉ cache hit, replaying
-pass: Formatting completed for checked files (3.8s)
-pass: Found no warnings, lint errors, or type errors in 79 files (2.1s, 8 threads)
-
-~/packages/common$ vp check --fix ◉ cache hit, replaying
 pass: Formatting completed for checked files (3.0s)
-pass: Found no warnings, lint errors, or type errors in 45 files (1.5s, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 52 files (1.5s, 8 threads)
 
-~/apps/backend$ vp check --fix ◉ cache hit, replaying
+~/apps/backend$ vp check --fix
+pass: Formatting completed for checked files (3.8s)
+pass: Found no warnings, lint errors, or type errors in 85 files (2.2s, 8 threads)
+
 pass: Formatting completed for checked files (2.4s)
-pass: Found no warnings, lint errors, or type errors in 34 files (1.5s, 8 threads)
+pass: Found no warnings, lint errors, or type errors in 35 files (1.5s, 8 threads)
 
-~/apps/frontend$ vp check --fix ◉ cache hit, replaying
-pass: Formatting completed for checked files (2.5s)
-pass: Found no warnings, lint errors, or type errors in 12 files (1.3s, 8 threads)
+~/apps/frontend$ vp check --fix
+pass: Formatting completed for checked files (2.6s)
+pass: Found no warnings, lint errors, or type errors in 15 files (1.4s, 8 threads)
 
 ---
-vp run: 5/5 cache hit (100%), 17.35s saved. (Run `vp run --last-details` for full details)
+vp run: 0/5 cache hit (0%). (Run `vp run --last-details` for full details)

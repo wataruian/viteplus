@@ -71,4 +71,14 @@ describe('ErrorBoundary', () => {
     expect(container.querySelector('.i-ph-warning-duotone')).not.toBeNull();
     unmount();
   });
+
+  test('renders no inner content (just the bare Card) when useDefault is false', () => {
+    const { container, unmount } = render(
+      <ErrorBoundary className='bare' forceError useDefault={false} />,
+    );
+    const card = container.firstElementChild;
+    expect(card?.className).toContain('bare');
+    expect(card?.textContent).toBe('');
+    unmount();
+  });
 });

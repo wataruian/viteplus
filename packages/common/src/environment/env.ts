@@ -1,3 +1,8 @@
+const getMetaEnv = (): Record<string, string | undefined> | undefined => {
+  const meta: ImportMeta & { env?: Record<string, string | undefined> } = import.meta;
+  return meta.env;
+};
+
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
 
@@ -12,7 +17,7 @@ const getEnv = (key: string, defaultValue?: string): string | undefined => {
   }
 
   try {
-    const metaEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+    const metaEnv = getMetaEnv();
     if (metaEnv?.[key] !== undefined) {
       return metaEnv[key];
     }
@@ -35,10 +40,6 @@ const isTrue = (value = '') => {
 };
 
 const isEdge = () => {
-  if (typeof globalThis === 'undefined') {
-    return false;
-  }
-
   if ('EdgeRuntime' in globalThis) {
     return true;
   }
@@ -100,6 +101,7 @@ export {
   getEnvName,
   getLogFormat,
   getLogLevel,
+  getMetaEnv,
   getNodeEnv,
   hasEnvProperty,
   isBrowser,

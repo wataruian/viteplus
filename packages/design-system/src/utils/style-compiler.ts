@@ -246,7 +246,7 @@ const extractStylesFromFile = (file: string): Record<string, ASTNode> => {
   return result;
 };
 
-const getRootName = (name: string): string => name.split('.')[0] ?? name;
+const getRootName = (name: string): string => name.split('.')[0];
 
 const collectRefNames = (node: ASTNode, acc: Set<string>): void => {
   switch (node.kind) {

@@ -1,5 +1,6 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion, trpcUrl } from '@lightproject/common/configs';
+import { getSessionId } from '@lightproject/common/logger';
 import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { appRouter } from '../../src/routers/trpc';
@@ -98,6 +99,22 @@ test('a procedure built without route metadata throws instead of silently vanish
   });
 
   expect(() => collectTrpcOpenApiRoutes(mixedRouter)).toThrow(/broken/u);
+});
+
+test('a query/mutation caller without a sessionId in context falls back to getSessionId()', async () => {
+  const createCaller = t.createCallerFactory(appRouter);
+  const caller = createCaller({});
+
+  const queryResult = await caller.default.root();
+  expect(queryResult.sessionId).toBe(getSessionId());
+
+  const mutationResult = await caller.test.profile({
+    age: 42,
+    name: 'Sample User',
+    preferences: { notifications: false, theme: 'light' },
+    tags: ['sample'],
+  });
+  expect(mutationResult.sessionId).toBe(getSessionId());
 });
 
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {

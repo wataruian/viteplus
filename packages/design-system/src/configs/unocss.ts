@@ -20,6 +20,15 @@ import { getStyles } from '../utils/helpers';
 import { shortcuts } from '../utils/shortcuts';
 import { getCSS, getThemes } from '../utils/theme-generator';
 
+const isVitest =
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.[
+    'VITEST'
+  ] === 'true';
+
+const resolvedWebFontsOptions = isVitest
+  ? { ...webFontsOptions, provider: 'none' as const }
+  : webFontsOptions;
+
 const themes = getThemes();
 
 const semanticColors: ColorKeyMap[] = ['primary', 'accent', 'success', 'warning', 'danger', 'info'];
@@ -65,7 +74,7 @@ const unoCssBaseConfig: UserConfig = {
     presetAttributify(),
     presetIcons(iconsOptions),
     presetTypography(),
-    presetWebFonts(webFontsOptions),
+    presetWebFonts(resolvedWebFontsOptions),
   ],
   safelist,
   shortcuts,
@@ -80,4 +89,4 @@ const unoCssBaseConfig: UserConfig = {
 
 const unoCssConfig = defineConfig(unoCssBaseConfig);
 
-export { unoCssBaseConfig, unoCssConfig };
+export { resolvedWebFontsOptions, unoCssBaseConfig, unoCssConfig };

@@ -42,8 +42,17 @@ describe('base URLs', () => {
   });
 
   test('fall back to VITE_-prefixed env vars', async () => {
-    const { apiBaseUrl } = await importFresh({ VITE_API_URL: 'https://vite-api.example.com' });
+    const { adminUrl, apiBaseUrl, siteUrl } = await importFresh({
+      ADMIN_URL: undefined,
+      API_URL: undefined,
+      SITE_URL: undefined,
+      VITE_ADMIN_URL: 'https://vite-admin.example.com',
+      VITE_API_URL: 'https://vite-api.example.com',
+      VITE_SITE_URL: 'https://vite-site.example.com',
+    });
     expect(apiBaseUrl).toBe('https://vite-api.example.com');
+    expect(adminUrl).toBe('https://vite-admin.example.com');
+    expect(siteUrl).toBe('https://vite-site.example.com');
   });
 });
 
@@ -78,5 +87,17 @@ describe('getRequestType', () => {
     const { getRequestType, requestTypes } = await importFresh();
     expect(getRequestType('/trpc/test.hello')).toBe(requestTypes.trpc);
     expect(getRequestType('/api/test/hello')).toBe(requestTypes.http);
+  });
+});
+
+describe('isTrpcRequest', () => {
+  test('returns true for the tRPC request type', async () => {
+    const { isTrpcRequest, requestTypes } = await importFresh();
+    expect(isTrpcRequest(requestTypes.trpc)).toBe(true);
+  });
+
+  test('returns false for the HTTP request type', async () => {
+    const { isTrpcRequest, requestTypes } = await importFresh();
+    expect(isTrpcRequest(requestTypes.http)).toBe(false);
   });
 });

@@ -54,6 +54,19 @@ describe('safeToString', () => {
   test('falls back to Object.prototype.toString for functions', () => {
     expect(safeToString(() => {})).toBe('[object Function]');
   });
+
+  test('throws when Object.prototype.toString itself fails for an exotic function', () => {
+    const evilFn = new Proxy(() => {}, {
+      get(target, prop, receiver): unknown {
+        if (prop === Symbol.toStringTag) {
+          throw new Error('boom');
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
+
+    expect(() => safeToString(evilFn)).toThrow(/Failed to convert function value to string/u);
+  });
 });
 
 describe('generateUuid', () => {

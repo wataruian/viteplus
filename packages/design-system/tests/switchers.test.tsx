@@ -23,6 +23,21 @@ describe('ModeSwitcher', () => {
 
     unmount();
   });
+
+  test('passes className, intent, and size through untouched when useDefault is false', () => {
+    const { container, unmount } = render(
+      <ModeProvider initialMode='light'>
+        <ModeSwitcher className='bare' intent='accent' size='lg' useDefault={false} />
+      </ModeProvider>,
+    );
+
+    const button = requireElement(container, 'button');
+    expect(button.className).toContain('bare');
+    expect(button.className).toContain('bg-accent');
+    expect(button.className).toContain('h-14');
+
+    unmount();
+  });
 });
 
 describe('ThemeSwitcher', () => {
@@ -49,6 +64,18 @@ describe('ThemeSwitcher', () => {
     expect(globalThis.document.documentElement.classList.contains(lastTheme ?? '')).toBe(
       lastTheme !== 'default',
     );
+
+    unmount();
+  });
+
+  test('uses className directly when useDefault is false', () => {
+    const { container, unmount } = render(
+      <ThemeProvider>
+        <ThemeSwitcher className='bare' useDefault={false} />
+      </ThemeProvider>,
+    );
+
+    expect(container.querySelector('div')?.className).toBe('bare');
 
     unmount();
   });

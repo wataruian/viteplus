@@ -5,6 +5,7 @@ import {
   getEnvName,
   getLogFormat,
   getLogLevel,
+  hasEnvProperty,
   isBrowser,
   isCi,
   isDebug,
@@ -43,11 +44,32 @@ describe('Environment Helpers', () => {
 
     test('getEnvName should default to local', () => {
       vi.stubEnv('ENV', undefined);
+      vi.stubEnv('VITE_ENV', undefined);
       expect(getEnvName()).toBe('local');
+    });
+
+    test('getEnvName should fall back to VITE_ENV when ENV is unset', () => {
+      vi.stubEnv('ENV', undefined);
+      vi.stubEnv('VITE_ENV', 'STAGING');
+      expect(getEnvName()).toBe('staging');
     });
 
     test('getEnv should return undefined for non-existent variable', () => {
       expect(getEnv('NON_EXISTENT_ET92')).toBeUndefined();
+    });
+
+    test('getEnv should return the provided default value when unset', () => {
+      expect(getEnv('NON_EXISTENT_ET93', 'fallback-value')).toBe('fallback-value');
+    });
+  });
+
+  describe('hasEnvProperty', () => {
+    test('returns true when the object has an env property', () => {
+      expect(hasEnvProperty({ env: { FOO: 'bar' } })).toBe(true);
+    });
+
+    test('returns false when the object has no env property', () => {
+      expect(hasEnvProperty({})).toBe(false);
     });
   });
 

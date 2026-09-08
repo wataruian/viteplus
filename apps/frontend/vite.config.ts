@@ -71,6 +71,10 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     test: {
       ...baseConfig.test,
+      coverage: {
+        ...baseConfig.test?.coverage,
+        exclude: ['**/index.ts', '**/main.tsx'],
+      },
       environment: 'jsdom',
       globalSetup: ['tests/global-setup.ts'],
     },

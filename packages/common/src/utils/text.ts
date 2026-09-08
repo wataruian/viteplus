@@ -56,8 +56,8 @@ const padEmoji = (
     return padChar.repeat(targetWidth);
   }
 
-  const codePoint = emoji.codePointAt(0) ?? 0;
-  const isLikelyEmoji = codePoint > 8000 || emoji.includes('️') || emoji.includes('‍');
+  const isLikelyEmoji =
+    /^[\u{1F41}-\u{10FFFF}]/u.test(emoji) || emoji.includes('️') || emoji.includes('‍');
 
   const contentWidth = isLikelyEmoji ? 2 : [...new Intl.Segmenter().segment(emoji)].length;
 

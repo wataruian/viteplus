@@ -217,3 +217,227 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
     }
   });
 });
+
+const successfulTrpcResult = {
+  code: 200,
+  data: { reply: 'Hello Test!' },
+  message: 'Success',
+  sessionId: 'test-session',
+  success: true,
+};
+
+const renderAppWithMocks = async (options: {
+  configModule: { config: { viteApiUrl: string | undefined } };
+  trpcQuery: () => unknown;
+}) => {
+  vi.resetModules();
+  vi.unstubAllEnvs();
+  vi.stubEnv('LOG_FORMAT', 'json');
+  vi.stubEnv('LOG_LEVEL', 'info');
+
+  vi.doMock('@lightproject/common/configs', () => ({
+    apiBaseUrl: defaultApiUrl,
+  }));
+
+  vi.doMock('../src/config', () => options.configModule);
+
+  vi.doMock('../src/providers/trpc-provider', () => ({
+    trpcClient: {
+      test: {
+        hello: {
+          query: options.trpcQuery,
+        },
+      },
+    },
+  }));
+
+  const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+
+  const { ModeProvider, SessionProvider, ThemeProvider } =
+    await import('@lightproject/design-system/context');
+  const { default: App } = await import('../src/app');
+
+  const container = globalThis.document.createElement('div');
+  globalThis.document.body.append(container);
+  const root: Root = createRoot(container);
+
+  await act(async () => {
+    root.render(
+      <SessionProvider>
+        <ThemeProvider>
+          <ModeProvider>
+            <App />
+          </ModeProvider>
+        </ThemeProvider>
+      </SessionProvider>,
+    );
+    await Promise.resolve();
+  });
+
+  return {
+    cleanup: () => {
+      act(() => {
+        root.unmount();
+      });
+      container.remove();
+      logSpy.mockRestore();
+      vi.doUnmock('../src/providers/trpc-provider');
+      vi.doUnmock('../src/config');
+      vi.doUnmock('@lightproject/common/configs');
+    },
+    logSpy,
+  };
+};
+
+describe('App error handling', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  test.each<[string, unknown]>([
+    ['an Error instance', new Error('tRPC boom')],
+    ['a non-Error value', 'tRPC boom'],
+  ])(
+    'records a span exception and logs an error when the tRPC call rejects with %s, without blocking initialization',
+    async (_label, rejection) => {
+      const { cleanup, logSpy } = await renderAppWithMocks({
+        configModule: { config: { viteApiUrl: undefined } },
+        trpcQuery: () => {
+          throw rejection;
+        },
+      });
+
+      try {
+        await vi.waitFor(() => {
+          expect(
+            parseLogEntries(logSpy.mock.calls).some((entry) =>
+              entry.message.includes('Failed to call tRPC server'),
+            ),
+          ).toBe(true);
+        });
+
+        const entries = parseLogEntries(logSpy.mock.calls);
+        expect(findEntry(entries, 'Failed to call tRPC server').level).toBe('error');
+
+        findEntry(entries, 'Frontend Start');
+        findEntry(entries, 'VITE_API_URL is not set');
+      } finally {
+        cleanup();
+      }
+    },
+  );
+
+  test.each<[string, () => unknown]>([
+    ['an Error instance', () => new Error('config boom')],
+    ['a non-Error value', () => 'config boom'],
+  ])(
+    'records a span exception and logs an error when initialization fails outside the tRPC call with %s',
+    async (_label, makeRejection) => {
+      const { cleanup, logSpy } = await renderAppWithMocks({
+        configModule: {
+          config: {
+            get viteApiUrl(): string | undefined {
+              throw makeRejection();
+            },
+          },
+        },
+        trpcQuery: () => successfulTrpcResult,
+      });
+
+      try {
+        await vi.waitFor(() => {
+          expect(
+            parseLogEntries(logSpy.mock.calls).some((entry) =>
+              entry.message.includes('Failed to initialize frontend'),
+            ),
+          ).toBe(true);
+        });
+
+        const entries = parseLogEntries(logSpy.mock.calls);
+        expect(findEntry(entries, 'Failed to initialize frontend').level).toBe('error');
+      } finally {
+        cleanup();
+      }
+    },
+  );
+
+  test('swallows a rejection from the initialize effect when starting the span itself throws', async () => {
+    vi.resetModules();
+    vi.unstubAllEnvs();
+    vi.stubEnv('LOG_FORMAT', 'json');
+    vi.stubEnv('LOG_LEVEL', 'info');
+
+    vi.doMock('@lightproject/common/configs', () => ({
+      apiBaseUrl: defaultApiUrl,
+    }));
+
+    vi.doMock('@lightproject/common/utils', () => ({
+      tracer: {
+        startSpan: () => {
+          throw new Error('failed to start span');
+        },
+      },
+    }));
+
+    vi.doMock('../src/config', () => ({
+      config: { viteApiUrl: undefined },
+    }));
+
+    vi.doMock('../src/providers/trpc-provider', () => ({
+      trpcClient: {
+        test: {
+          hello: {
+            query: () => successfulTrpcResult,
+          },
+        },
+      },
+    }));
+
+    const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    const unhandledRejectionSpy = vi.fn();
+    const handleUnhandledRejection = (reason: unknown): void => {
+      unhandledRejectionSpy(reason);
+    };
+    globalThis.process.on('unhandledRejection', handleUnhandledRejection);
+
+    const { ModeProvider, SessionProvider, ThemeProvider } =
+      await import('@lightproject/design-system/context');
+    const { default: App } = await import('../src/app');
+
+    const container = globalThis.document.createElement('div');
+    globalThis.document.body.append(container);
+    const root: Root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <SessionProvider>
+          <ThemeProvider>
+            <ModeProvider>
+              <App />
+            </ModeProvider>
+          </ThemeProvider>
+        </SessionProvider>,
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(unhandledRejectionSpy).not.toHaveBeenCalled();
+    expect(
+      parseLogEntries(logSpy.mock.calls).some((entry) => entry.message.includes('Frontend Start')),
+    ).toBe(false);
+
+    globalThis.process.off('unhandledRejection', handleUnhandledRejection);
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+    logSpy.mockRestore();
+    vi.doUnmock('../src/providers/trpc-provider');
+    vi.doUnmock('../src/config');
+    vi.doUnmock('@lightproject/common/utils');
+    vi.doUnmock('@lightproject/common/configs');
+  });
+});

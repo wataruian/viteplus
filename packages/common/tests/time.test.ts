@@ -1,6 +1,17 @@
 import { describe, expect, test, vi } from 'vite-plus/test';
 
-import { eternalSleep, sleep, withRetry } from '../src/utils/time';
+import { eternalSleep, reduceWaitingTimeByTwoBlocks, sleep, withRetry } from '../src/utils/time';
+
+describe('reduceWaitingTimeByTwoBlocks', () => {
+  test('subtracts 6000ms from the waiting time', () => {
+    expect(reduceWaitingTimeByTwoBlocks(70_000)).toBe(64_000);
+  });
+
+  test('never returns less than the 60000ms floor', () => {
+    expect(reduceWaitingTimeByTwoBlocks(1000)).toBe(60_000);
+    expect(reduceWaitingTimeByTwoBlocks(0)).toBe(60_000);
+  });
+});
 
 describe('sleep', () => {
   test('resolves after the given number of milliseconds', async () => {

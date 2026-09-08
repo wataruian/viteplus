@@ -18,5 +18,12 @@ export default defineConfig(({ mode }): UserConfig => {
       },
       shims: false,
     },
+    test: {
+      ...baseConfig.test,
+      coverage: {
+        ...baseConfig.test?.coverage,
+        exclude: ['**/index.ts'],
+      },
+    },
   };
 });

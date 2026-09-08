@@ -1,9 +1,12 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion } from '@lightproject/common/configs';
+import { Hono } from 'hono';
 import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { apiRouter } from '../../src/routers/http';
 import {
+  type HttpEnv,
+  type HttpRoute,
   assertHttpRoutesDocumented,
   createHttpRouter,
   defineHttpRoute,
@@ -41,6 +44,52 @@ test('a route registered without going through defineHttpRoute throws instead of
   expect(() => {
     assertHttpRoutesDocumented(router);
   }).toThrow(/\/broken/u);
+});
+
+test('defineHttpRoute falls back to the handler request schema for parsing when a schema override omits one', async () => {
+  const overrideResponseSchema = z.object({ id: z.string() });
+
+  const route = defineHttpRoute({
+    handlerFn: TestService.profile,
+    method: 'post',
+    path: '/profile-override',
+    schema: { response: overrideResponseSchema },
+  });
+
+  expect(route.schema.request).toBeUndefined();
+
+  const result = await route.handle({
+    age: 42,
+    name: 'Sample User',
+    preferences: { notifications: false, theme: 'light' },
+    tags: ['sample'],
+  });
+
+  expect(result).toMatchObject({ id: 'profile_sample-user' });
+});
+
+test('createHttpRouter builds a requestless route when a route has no request schema at all', async () => {
+  const responseSchema = z.object({ ping: z.string() });
+  const route: HttpRoute = {
+    handle: () => ({ ping: 'pong' }),
+    method: 'get',
+    path: '/ping',
+    schema: { response: responseSchema },
+  };
+
+  const router = createHttpRouter([route]);
+  const app = new Hono<HttpEnv>();
+  app.use('*', async (c, next) => {
+    c.set('sessionId', 'unit-test-session');
+    await next();
+  });
+  app.route('/', router);
+
+  const res = await app.request('/ping');
+
+  expect(res.status).toBe(successCode);
+  const body: unknown = await res.json();
+  expect(httpEnvelope(responseSchema).parse(body).data).toStrictEqual({ ping: 'pong' });
 });
 
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {

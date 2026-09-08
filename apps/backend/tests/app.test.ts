@@ -1,9 +1,15 @@
 import { apiBaseUrl } from '@lightproject/common/configs';
 import { resetTelemetryForTests } from '@lightproject/common/server';
+import type * as ServerModule from '@lightproject/common/server';
 import type { ExecutionContext } from 'hono';
 import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { runtimes } from './helpers/utils';
+
+afterEach(() => {
+  vi.doUnmock('@lightproject/common/server');
+  vi.resetModules();
+});
 
 beforeEach(() => {
   resetTelemetryForTests();
@@ -58,4 +64,27 @@ test('flushes telemetry via executionCtx.waitUntil when the runtime provides one
 
   expect(res.status).toBe(200);
   expect(waitUntilCalls.length).toBeGreaterThan(0);
+});
+
+test('a rejected flushTelemetry without executionCtx.waitUntil is swallowed instead of throwing', async () => {
+  vi.doMock('@lightproject/common/server', async (importOriginal) => {
+    const actual = await importOriginal<typeof ServerModule>();
+    return {
+      ...actual,
+      flushTelemetry: async () => {
+        await Promise.reject(new Error('flush failed'));
+      },
+    };
+  });
+  vi.resetModules();
+
+  const { getApp } = await import('../src/app');
+  const app = await getApp();
+
+  const res = await app.request(`${apiBaseUrl}/`);
+  expect(res.status).toBe(200);
+
+  await new Promise((resolve) => {
+    globalThis.setTimeout(resolve, 0);
+  });
 });

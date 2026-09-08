@@ -4,9 +4,9 @@ type Primitive = string | number | boolean | bigint | symbol | null | undefined;
 
 type JsonValue = Primitive | { [key: string]: JsonValue } | JsonValue[];
 
-const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
-
 const assumeShape = <T extends JsonValue>(_val: JsonValue, _dummy?: T): _val is T => true;
+
+const defaultIgnoredKeys = new Set(['_readableState', '_writableState', 'parser', 'socket']);
 
 const safeSerialize = <T>(
   value: T,

@@ -48,11 +48,9 @@ const getRandomColor = (id = '') => {
     return defaultColor;
   }
 
-  if (sessionColors.has(colorId)) {
-    const cachedColor = sessionColors.get(colorId);
-    if (cachedColor) {
-      return cachedColor;
-    }
+  const cachedColor = sessionColors.get(colorId);
+  if (cachedColor !== undefined) {
+    return cachedColor;
   }
 
   const color = colors[globalColorIndex];
@@ -61,10 +59,8 @@ const getRandomColor = (id = '') => {
   sessionColors.set(colorId, color);
 
   if (sessionColors.size > 1000) {
-    const firstKey = sessionColors.keys().next().value;
-    if (firstKey !== undefined) {
-      sessionColors.delete(firstKey);
-    }
+    const [firstKey] = sessionColors.keys();
+    sessionColors.delete(firstKey);
   }
 
   return color;

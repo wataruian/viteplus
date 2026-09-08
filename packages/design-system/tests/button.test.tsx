@@ -55,4 +55,34 @@ describe('Button', () => {
     expect(ref.current).toBeInstanceOf(globalThis.HTMLButtonElement);
     unmount();
   });
+
+  test('forwards an object ref to the anchor element when href is set', () => {
+    const ref = createRef<HTMLButtonElement | HTMLAnchorElement>();
+    const { unmount } = render(
+      <Button href='/docs' ref={ref}>
+        Ref link
+      </Button>,
+    );
+    expect(ref.current).toBeInstanceOf(globalThis.HTMLAnchorElement);
+    unmount();
+  });
+
+  test('forwards a callback ref to both the anchor and button variants', () => {
+    const seen: (HTMLAnchorElement | HTMLButtonElement | null)[] = [];
+    const refCallback = (node: HTMLAnchorElement | HTMLButtonElement | null) => {
+      seen.push(node);
+    };
+
+    const { unmount: unmountLink } = render(
+      <Button href='/docs' ref={refCallback}>
+        Link
+      </Button>,
+    );
+    expect(seen.at(-1)).toBeInstanceOf(globalThis.HTMLAnchorElement);
+    unmountLink();
+
+    const { unmount: unmountButton } = render(<Button ref={refCallback}>Btn</Button>);
+    expect(seen.at(-1)).toBeInstanceOf(globalThis.HTMLButtonElement);
+    unmountButton();
+  });
 });

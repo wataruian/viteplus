@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-import { getRequestIp, isNodeEnv } from '../src/middlewares/trust-proxy';
+import { getAllowedIps, getRequestIp, isNodeEnv } from '../src/middlewares/trust-proxy';
 import { errorEnvelope, runtimes } from './helpers/utils';
 
 const unknownIp = '9.9.9.9';
@@ -37,6 +37,17 @@ describe('isNodeEnv', () => {
     expect(isNodeEnv(undefined)).toBe(false);
     expect(isNodeEnv('string')).toBe(false);
     expect(isNodeEnv(42)).toBe(false);
+  });
+});
+
+describe('getAllowedIps', () => {
+  test('skips whitespace-only entries produced by stray commas', () => {
+    const allowed = getAllowedIps('5.5.5.5, ,,6.6.6.6');
+
+    expect(allowed.has('5.5.5.5')).toBe(true);
+    expect(allowed.has('6.6.6.6')).toBe(true);
+    expect(allowed.has('')).toBe(false);
+    expect(allowed.size).toBe(4);
   });
 });
 

@@ -10,4 +10,15 @@ describe('Marquee', () => {
     expect(track?.textContent).toBe('ItemItem');
     unmount();
   });
+
+  test('uses className directly and skips the track look class when useDefault is false', () => {
+    const { container, unmount } = render(
+      <Marquee className='bare' useDefault={false}>
+        Item
+      </Marquee>,
+    );
+    expect(container.querySelector('div')?.className).toBe('bare');
+    expect(container.querySelector('.track')?.className).toBe('track');
+    unmount();
+  });
 });

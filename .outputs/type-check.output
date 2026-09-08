@@ -1,12 +1,12 @@
-~/packages/library$ tsc ◉ cache hit, replaying
+~/packages/library$ tsc
+~/packages/design-system$ tsc
+~/packages/common$ tsc
 
-~/packages/design-system$ tsc ◉ cache hit, replaying
 
-~/packages/common$ tsc ◉ cache hit, replaying
+~/apps/backend$ tsc
 
-~/apps/backend$ tsc ◉ cache hit, replaying
 
-~/apps/frontend$ tsc ◉ cache hit, replaying
+~/apps/frontend$ tsc
 
 ---
-vp run: 5/5 cache hit (100%), 20.06s saved. (Run `vp run --last-details` for full details)
+vp run: 0/5 cache hit (0%). (Run `vp run --last-details` for full details)

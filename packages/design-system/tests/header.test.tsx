@@ -35,6 +35,24 @@ describe('Header', () => {
     unmount();
   });
 
+  test('uses className directly when useDefault is false', () => {
+    const { container, unmount } = render(
+      withProviders(
+        <Header
+          className='bare'
+          showLogo={false}
+          showModeSwitcher={false}
+          showThemeSwitcher={false}
+          useDefault={false}
+        />,
+      ),
+    );
+
+    expect(container.querySelector('header')?.className).toBe('bare');
+
+    unmount();
+  });
+
   test('renders children inside the header', () => {
     const { container, unmount } = render(
       withProviders(

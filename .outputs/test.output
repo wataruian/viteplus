@@ -1,318 +1,168 @@
-~/packages/library$ vp test ◉ cache hit, replaying
-
- RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/library
-      Coverage enabled with v8
-
- ✓ tests/index.test.ts (1 test) 5ms
-
- Test Files  1 passed (1)
-      Tests  1 passed (1)
-   Start at  22:45:01
-   Duration  529ms (transform 132ms, setup 0ms, import 180ms, tests 5ms, environment 0ms)
-
- % Coverage report from v8
--------------|---------|----------|---------|---------|-------------------
-File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------|---------|----------|---------|---------|-------------------
-All files    |     100 |      100 |     100 |     100 |                   
- src         |       0 |        0 |       0 |       0 |                   
-  index.ts   |       0 |        0 |       0 |       0 |                   
- src/samples |     100 |      100 |     100 |     100 |                   
-  hello.ts   |     100 |      100 |     100 |     100 |                   
-  index.ts   |       0 |        0 |       0 |       0 |                   
--------------|---------|----------|---------|---------|-------------------
-
-~/packages/design-system$ vp test ◉ cache hit, replaying
-
- RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/design-system
-      Coverage enabled with v8
-
- ✓ tests/theme-generator.test.ts (12 tests) 66ms
- ✓ tests/input.test.tsx (3 tests) 211ms
- ✓ tests/helpers.test.ts (9 tests) 9ms
- ✓ tests/typography.test.tsx (3 tests) 8ms
- ✓ tests/button.test.tsx (5 tests) 289ms
- ✓ tests/logo.test.tsx (3 tests) 4ms
- ✓ tests/card.test.tsx (2 tests) 6ms
- ✓ tests/layout.test.tsx (2 tests) 5ms
- ✓ tests/error-boundary.test.tsx (6 tests) 402ms
- ✓ tests/badge.test.tsx (3 tests) 209ms
- ✓ tests/icon.test.tsx (2 tests) 2ms
- ✓ tests/marquee.test.tsx (1 test) 18ms
- ✓ tests/header.test.tsx (3 tests) 174ms
- ✓ tests/switchers.test.tsx (2 tests) 242ms
- ✓ tests/providers.test.tsx (10 tests) 290ms
-
- Test Files  15 passed (15)
-      Tests  66 passed (66)
-   Start at  22:45:04
-   Duration  6.55s (transform 2.50s, setup 0ms, import 6.27s, tests 1.93s, environment 40.80s)
-
- % Coverage report from v8
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |   36.23 |    37.52 |   50.42 |   35.96 |                   
- src               |       0 |        0 |       0 |       0 |                   
-  app.tsx          |       0 |      100 |       0 |       0 | 3-4               
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  main.tsx         |       0 |        0 |     100 |       0 | 8-10              
-  start.ts         |       0 |        0 |       0 |       0 | 1-38              
- src/components    |   42.46 |    61.13 |   51.06 |   42.46 |                   
-  ...e.stories.tsx |       0 |      100 |     100 |       0 | 5-98              
-  badge.tsx        |     100 |      100 |     100 |     100 |                   
-  base.ts          |       0 |        0 |       0 |       0 |                   
-  ...n.stories.tsx |       0 |      100 |     100 |       0 | 5-129             
-  button.tsx       |   81.25 |    81.25 |     100 |   81.25 | 59,61,77          
-  card.stories.tsx |       0 |      100 |     100 |       0 | 5-45              
-  card.tsx         |     100 |      100 |     100 |     100 |                   
-  ...y.stories.tsx |       0 |      100 |     100 |       0 | 5-31              
-  ...-boundary.tsx |     100 |     93.1 |     100 |     100 | 100-104           
-  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-19              
-  header.tsx       |     100 |     92.3 |     100 |     100 | 50                
-  icon.stories.tsx |       0 |      100 |     100 |       0 | 5-45              
-  icon.tsx         |     100 |       75 |     100 |     100 | 34                
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  ...t.stories.tsx |       0 |      100 |     100 |       0 | 5-33              
-  input.tsx        |     100 |      100 |     100 |     100 |                   
-  ...t.stories.tsx |       0 |      100 |       0 |       0 | 5-21              
-  layout.tsx       |     100 |       75 |     100 |     100 | 36,63             
-  logo.stories.tsx |       0 |      100 |     100 |       0 | 5-17              
-  logo.tsx         |     100 |      100 |     100 |     100 |                   
-  ...e.stories.tsx |       0 |      100 |     100 |       0 | 5-70              
-  marquee.tsx      |     100 |       80 |     100 |     100 | 63,76             
-  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-127             
-  ...-switcher.tsx |     100 |       85 |     100 |     100 | 44-46             
-  preview.tsx      |       0 |        0 |       0 |       0 | 16-428            
-  registry.ts      |       0 |        0 |       0 |       0 |                   
-  ...r.stories.tsx |       0 |      100 |     100 |       0 | 5-34              
-  ...-switcher.tsx |     100 |     87.5 |     100 |     100 | 51                
-  ...y.stories.tsx |       0 |      100 |     100 |       0 | 5-56              
-  typography.tsx   |     100 |      100 |     100 |     100 |                   
- src/configs       |       0 |      100 |     100 |       0 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  unocss.ts        |       0 |      100 |     100 |       0 | 23-81             
- src/context       |     100 |      100 |     100 |     100 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  mode-context.tsx |     100 |      100 |     100 |     100 |                   
-  ...-provider.tsx |     100 |      100 |     100 |     100 |                   
-  ...n-context.tsx |     100 |      100 |     100 |     100 |                   
-  ...-provider.tsx |     100 |      100 |     100 |     100 |                   
-  ...e-context.tsx |     100 |      100 |     100 |     100 |                   
-  ...-provider.tsx |     100 |      100 |     100 |     100 |                   
- src/tokens        |   33.33 |      100 |      80 |   33.33 |                   
-  animation.ts     |       0 |      100 |     100 |       0 | 1                 
-  base.ts          |     100 |      100 |     100 |     100 |                   
-  breakpoints.ts   |       0 |      100 |     100 |       0 | 1                 
-  effects.ts       |       0 |      100 |     100 |       0 | 1-58              
-  icons.ts         |       0 |      100 |       0 |       0 | 4-8               
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  spacing.ts       |       0 |      100 |     100 |       0 | 1-13              
-  typography.ts    |       0 |      100 |     100 |       0 | 3-59              
- src/utils         |   29.19 |    16.43 |   39.62 |   29.02 |                   
-  compile.ts       |       0 |        0 |     100 |       0 | 1-49              
-  ...ed-context.ts |     100 |      100 |     100 |     100 |                   
-  helpers.ts       |     100 |      100 |     100 |     100 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  shortcuts.ts     |       0 |      100 |     100 |       0 | 3                 
-  ...e-compiler.ts |       0 |        0 |       0 |       0 | 18-346            
-  ...-generator.ts |   97.64 |    65.71 |     100 |   97.56 | 195,203           
-  ...te-stories.ts |       0 |        0 |       0 |       0 | 1-177             
--------------------|---------|----------|---------|---------|-------------------
-
-~/packages/common$ vp test ◉ cache hit, replaying
+~/packages/library$ vp test
+~/packages/design-system$ vp test
+~/packages/common$ vp test
 
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/env.test.ts (32 tests) 13ms
- ✓ tests/directory.test.ts (36 tests) 64ms
- ✓ tests/text.test.ts (20 tests) 51ms
- ✓ tests/time.test.ts (5 tests) 16ms
- ✓ tests/serialize.test.ts (8 tests) 3ms
- ✓ tests/date.test.ts (6 tests) 2ms
- ✓ tests/validator.test.ts (7 tests) 6ms
- ✓ tests/endpoints.test.ts (7 tests) 275ms
- ✓ tests/logger.test.ts (20 tests) 14ms
- ✓ tests/base.test.ts (6 tests) 35ms
- ✓ tests/telemetry.test.ts (1 test) 25ms
- ✓ tests/rum.test.ts (2 tests) 2ms
 
- Test Files  12 passed (12)
-      Tests  150 passed (150)
-   Start at  22:45:01
-   Duration  1.87s (transform 2.48s, setup 0ms, import 4.45s, tests 505ms, environment 2ms)
-
- % Coverage report from v8
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |   73.47 |     69.5 |   66.43 |   73.24 |                   
- src               |       0 |        0 |       0 |       0 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
- src/configs       |   89.28 |    66.66 |   66.66 |   89.28 |                   
-  endpoints.ts     |   89.28 |    66.66 |   66.66 |   89.28 | 46-49             
-  index.ts         |       0 |        0 |       0 |       0 |                   
- src/environment   |    97.7 |    97.18 |   96.15 |   97.22 |                   
-  env.ts           |   97.01 |    96.49 |   95.83 |   96.15 | 2,39              
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  validator.ts     |     100 |      100 |     100 |     100 |                   
- src/logger        |   80.58 |    70.87 |   80.95 |      82 |                   
-  context.ts       |   88.88 |     90.9 |   83.33 |   94.11 | 35                
-  formatters.ts    |     100 |    76.19 |     100 |     100 | 23-29,43-45       
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  log.ts           |   79.06 |    75.47 |   72.72 |   80.95 | ...89,114,136-142 
-  redactor.ts      |    62.5 |    38.88 |     100 |    62.5 | 34-41,50,56,66,71 
- src/node          |   92.59 |    84.28 |     100 |   92.06 |                   
-  directory.ts     |   92.59 |    84.28 |     100 |   92.06 | ...,69,81,113,295 
-  index.ts         |       0 |        0 |       0 |       0 |                   
- src/samples       |       0 |      100 |       0 |       0 |                   
-  hello.ts         |       0 |      100 |       0 |       0 | 1                 
-  index.ts         |       0 |        0 |       0 |       0 |                   
- src/server        |   54.09 |    33.33 |   11.11 |   54.09 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  telemetry.ts     |   54.09 |    33.33 |   11.11 |   54.09 | ...85-191,198-201 
- src/testing       |       0 |        0 |       0 |       0 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  ...-collector.ts |       0 |        0 |       0 |       0 | 20-103            
- src/typecast      |       0 |        0 |       0 |       0 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  tc.ts            |       0 |        0 |       0 |       0 | 3-47              
- src/utils         |   80.83 |    68.94 |   81.08 |   80.68 |                   
-  base.ts          |     100 |      100 |     100 |     100 |                   
-  color.ts         |   63.33 |    45.16 |   33.33 |   63.33 | ...6,74-89,93-105 
-  date.ts          |     100 |      100 |     100 |     100 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  rum.ts           |      32 |      3.7 |      40 |      32 | 31-38,42-92       
-  serialize.ts     |    92.3 |    87.87 |     100 |   91.89 | 43,59,78          
-  telemetry.ts     |   66.66 |       50 |       0 |     100 | 6                 
-  text.ts          |   97.61 |    97.14 |     100 |   97.36 | 33                
-  time.ts          |   88.88 |      100 |   85.71 |   88.88 | 2-3               
- src/validators    |   28.12 |    14.28 |   18.18 |      30 |                   
-  index.ts         |       0 |        0 |       0 |       0 |                   
-  validate.ts      |   28.12 |    14.28 |   18.18 |      30 | 4,10,16,19,25-57  
--------------------|---------|----------|---------|---------|-------------------
-
-~/apps/backend$ vp test ◉ cache hit, replaying
-
- RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/library
       Coverage enabled with v8
 
- ✓ tests/routers/http-openapi.test.ts (8 tests) 6026ms
-     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  749ms
-     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  4791ms
- ✓ tests/telemetry.test.ts (2 tests) 5402ms
-     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  636ms
-     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  4699ms
- ✓ tests/routers/trpc-openapi.test.ts (14 tests) 6111ms
-     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  954ms
-     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  4441ms
- ✓ tests/services.test.ts (24 tests) 8199ms
-       ✓ GET /api/ returns the standard envelope  584ms
-       ✓ GET /api/ returns the standard envelope  5019ms
- ✓ tests/config.test.ts (7 tests) 2ms
- ✓ tests/security-cors.test.ts (8 tests) 9324ms
-     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  616ms
-     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  4499ms
-     ✓ ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded  3917ms
- ✓ tests/app.test.ts (4 tests) 3270ms
-     ✓ /metrics exposes Prometheus-formatted metrics once telemetry is initialized  3135ms
- ✓ tests/error-handling.test.ts (9 tests) 9693ms
-     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  429ms
-     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  4637ms
-     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  3928ms
- ✓ tests/security-csp.test.ts (6 tests) 4964ms
-     ✓ the CSP header is present on both HTTP and tRPC responses and includes the default origins  2914ms
-     ✓ ADDITIONAL_CORS_ORIGINS extends script-src/worker-src but not style-src  1761ms
- ✓ tests/openapi-docs-availability.test.ts (6 tests) 5232ms
-     ✓ regular routes keep working regardless of doc-route availability  320ms
-     ✓ isLocal() ENV registers every doc/OpenAPI route  3031ms
-     ✓ a non-local ENV never registers the doc/OpenAPI routes  1662ms
- ✓ tests/trust-proxy.test.ts (29 tests) 17997ms
-       ✓ ENV=local is safe  703ms
-       ✓ ENV=local is safe  4639ms
-       ✓ ENV=test is safe  3571ms
-       ✓ ENV=qa-random-unrecognized is safe  1997ms
-       ✓ CI=true is safe regardless of ENV  1070ms
-       ✓ ENV=develop blocks an unallowlisted IP  822ms
-       ✓ ENV=staging blocks an unallowlisted IP  776ms
-       ✓ ENV=production blocks an unallowlisted IP  797ms
-       ✓ a matching IP is allowed in an unsafe env  666ms
-     ✓ ALLOW_ALL_IPS=true allows any IP regardless of env  780ms
-     ✓ BLOCK_ALL_IPS=true blocks every request even in an otherwise-safe env  780ms
-     ✓ BLOCK_ALL_IPS=true wins over ALLOW_ALL_IPS=true  696ms
+ ✓ tests/index.test.ts (1 test) 14ms
 
- Test Files  11 passed (11)
-      Tests  117 passed (117)
-   Start at  22:45:05
-   Duration  25.86s (transform 5.71s, setup 0ms, import 48.70s, tests 76.22s, environment 1ms)
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  21:39:15
+   Duration  557ms (transform 56ms, setup 0ms, import 132ms, tests 14ms, environment 51ms)
 
  % Coverage report from v8
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |   92.26 |    88.74 |   89.87 |   92.01 |                   
- src               |   98.24 |    91.66 |   93.75 |   98.21 |                   
-  app.ts           |     100 |      100 |    87.5 |     100 |                   
-  client.ts        |       0 |        0 |       0 |       0 |                   
-  config.ts        |     100 |       90 |     100 |     100 | 34                
-  index.ts         |       0 |      100 |     100 |       0 | 3                 
-  schema.ts        |     100 |      100 |     100 |     100 |                   
- src/middlewares   |     100 |    90.56 |     100 |     100 |                   
-  error-handler.ts |     100 |     87.5 |     100 |     100 | 88                
-  logger.ts        |     100 |      100 |     100 |     100 |                   
-  security.ts      |     100 |       70 |     100 |     100 | 9-17              
-  trust-proxy.ts   |     100 |    96.96 |     100 |     100 | 40                
- src/routers       |     100 |    92.15 |     100 |     100 |                   
-  docs.ts          |     100 |      100 |     100 |     100 |                   
-  utils.ts         |     100 |    91.83 |     100 |     100 | 80,160-170,239    
- src/routers/http  |     100 |      100 |     100 |     100 |                   
-  default.ts       |     100 |      100 |     100 |     100 |                   
-  index.ts         |     100 |      100 |     100 |     100 |                   
-  test.ts          |     100 |      100 |     100 |     100 |                   
- src/routers/trpc  |   93.33 |       88 |     100 |   93.33 |                   
-  default.ts       |     100 |      100 |     100 |     100 |                   
-  index.ts         |   92.85 |       88 |     100 |   92.85 | 34,92             
-  test.ts          |     100 |      100 |     100 |     100 |                   
- src/runtimes      |       0 |        0 |       0 |       0 |                   
-  edge.ts          |       0 |        0 |       0 |       0 |                   
-  node.ts          |       0 |        0 |       0 |       0 | 16-61             
- src/services      |     100 |      100 |     100 |     100 |                   
-  default.ts       |     100 |      100 |     100 |     100 |                   
-  test.ts          |     100 |      100 |     100 |     100 |                   
--------------------|---------|----------|---------|---------|-------------------
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |      100 |     100 |     100 |                   
+ hello.ts |     100 |      100 |     100 |     100 |                   
+----------|---------|----------|---------|---------|-------------------
 
-~/apps/frontend$ vp test ◉ cache hit, replaying
+ ✓ tests/directory.test.ts (54 tests) 75ms
+ ✓ tests/env.test.ts (36 tests) 10ms
+ ✓ tests/color.test.ts (21 tests) 172ms
+ ✓ tests/text.test.ts (21 tests) 18ms
+ ✓ tests/validate.test.ts (21 tests) 6ms
+ ✓ tests/time.test.ts (7 tests) 25ms
+ ✓ tests/tc.test.ts (13 tests) 6ms
+ ✓ tests/serialize.test.ts (8 tests) 4ms
+ ✓ tests/rum.test.ts (8 tests) 126ms
+ ✓ tests/endpoints.test.ts (9 tests) 117ms
+ ✓ tests/logger.test.ts (58 tests) 72ms
+ ✓ tests/date.test.ts (6 tests) 6ms
+ ✓ tests/validator.test.ts (7 tests) 4ms
+ ❯ tests/serialize-assume-shape.test.ts (4 tests | 4 failed) 10ms
+     × throws 7ms
+     × falls through to returning the original array unchanged 1ms
+     × returns the source unchanged 1ms
+     × throws 1ms
+ ✓ tests/otel-collector.test.ts (13 tests) 527ms
+ ✓ tests/base.test.ts (6 tests) 2ms
+ ✓ tests/telemetry.test.ts (17 tests) 49ms
+ ✓ tests/directory-fs-error.test.ts (1 test) 4ms
+ ❯ tests/env-meta-fallback.test.ts (1 test | 1 failed) 17ms
+     × falls back to import.meta.env when the key is absent from process.env 17ms
+ ✓ tests/otel-collector-address.test.ts (1 test) 23ms
+ ✓ tests/telemetry-utils.test.ts (4 tests) 82ms
 
- RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/frontend
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/env-meta-fallback.test.ts > getEnv reading from import.meta.env > falls back to import.meta.env when the key is absent from process.env
+AssertionError: expected undefined to be 'from-import-meta-env' // Object.is equality
+
+- Expected:
+"from-import-meta-env"
+
++ Received:
+undefined
+
+ ❯ tests/env-meta-fallback.test.ts:16:36
+     14|     vi.resetModules();
+     15|     const { getEnv } = await import('../src/environment/env');
+     16|     expect(getEnv('ONLY_IN_META')).toBe('from-import-meta-env');
+       |                                    ^
+     17|   });
+     18| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/serialize-assume-shape.test.ts > safeSerialize when assumeShape cannot narrow the parsed result > throws
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/serialize-assume-shape.test.ts:21:43
+     19|     const { safeSerialize } = await import('../src/utils/serialize');
+     20|
+     21|     expect(() => safeSerialize({ a: 1 })).toThrow(
+       |                                           ^
+     22|       'unreachable: assumeShape always narrows successfully',
+     23|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/serialize-assume-shape.test.ts > safeClone when assumeShape cannot narrow an array-clone result > falls through to returning the original array unchanged
+AssertionError: expected [ 1, 2, 3 ] to be [ 1, 2, 3 ] // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: [ 1, 2, 3 ]
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ ❯ tests/serialize-assume-shape.test.ts:34:33
+     32|
+     33|     const original = [1, 2, 3];
+     34|     expect(safeClone(original)).toBe(original);
+       |                                 ^
+     35|   });
+     36| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/serialize-assume-shape.test.ts > safeClone when assumeShape rejects a non-array, non-record value > returns the source unchanged
+AssertionError: expected { a: 1 } to be { a: 1 } // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: { a: 1 }
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ ❯ tests/serialize-assume-shape.test.ts:45:33
+     43|
+     44|     const original = { a: 1 };
+     45|     expect(safeClone(original)).toBe(original);
+       |                                 ^
+     46|   });
+     47| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/serialize-assume-shape.test.ts > safeClone when assumeShape cannot narrow the cloned record result > throws
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ tests/serialize-assume-shape.test.ts:55:39
+     53|     const { safeClone } = await import('../src/utils/serialize');
+     54|
+     55|     expect(() => safeClone({ a: 1 })).toThrow(
+       |                                       ^
+     56|       'unreachable: assumeShape always narrows successfully',
+     57|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  2 failed | 19 passed (21)
+      Tests  5 failed | 311 passed (316)
+   Start at  21:39:15
+   Duration  1.77s (transform 2.84s, setup 0ms, import 4.62s, tests 1.35s, environment 2ms)
+
+
+ RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
-[unocss] Fetching web fonts: https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Fira+Code&family=Inter:wght@300;400;500;600;700&display=swap
-[unocss] Web fonts fetched.
- ✓ tests/counter.test.ts (4 tests) 7ms
- ✓ tests/app.test.tsx (4 tests) 572ms
- ✓ tests/telemetry.test.ts (1 test) 1528ms
-     ✓ pushes a log and a trace span to Faro, and a metric to the OTEL collector  1527ms
 
- Test Files  3 passed (3)
-      Tests  9 passed (9)
-   Start at  22:45:32
-   Duration  5.17s (transform 1.09s, setup 0ms, import 2.37s, tests 2.11s, environment 3.19s)
-
- % Coverage report from v8
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |   65.75 |    16.66 |      60 |   65.75 |                   
- src               |   66.66 |    16.66 |      60 |   66.66 |                   
-  app.tsx          |   82.35 |     37.5 |   83.33 |   82.35 | 41-44,65-68       
-  config.ts        |       0 |        0 |       0 |       0 | 4-18              
-  counter.ts       |     100 |      100 |     100 |     100 |                   
-  main.tsx         |       0 |        0 |       0 |       0 | 10-29             
-  preview-page.tsx |       0 |      100 |       0 |       0 | 3-4               
- src/providers     |       0 |      100 |     100 |       0 |                   
-  ...-provider.tsx |       0 |      100 |     100 |       0 | 5                 
--------------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 47.47s saved. (Run `vp run --last-details` for full details)
+vp run: 0/3 cache hit (0%), 2 failed. (Run `vp run --last-details` for full details)

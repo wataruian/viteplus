@@ -18,4 +18,12 @@ describe('Icon', () => {
     );
     unmount();
   });
+
+  test('uses className directly (plus the icon name) when useDefault is false', () => {
+    const { container, unmount } = render(
+      <Icon className='bare' name='i-ph-star-fill' useDefault={false} />,
+    );
+    expect(container.querySelector('span')?.className).toBe('bare i-ph-star-fill');
+    unmount();
+  });
 });

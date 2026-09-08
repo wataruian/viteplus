@@ -27,7 +27,7 @@ const getImporterDir = (): string => {
   const stackFrames = error.stack?.split('\n') ?? [];
 
   for (let i = 2; i < stackFrames.length; i += 1) {
-    const frame = stackFrames[i]?.trim() ?? '';
+    const frame = stackFrames[i].trim();
 
     const match =
       /at\s+(?:[^(]+\s+)?\(?(?<file1>[^)]+?):\d+:\d+\)?$/u.exec(frame) ??
@@ -62,7 +62,7 @@ const getImporterFilePath = (): string => {
   const stackFrames = error.stack?.split('\n') ?? [];
 
   for (let i = 2; i < stackFrames.length; i += 1) {
-    const frame = stackFrames[i]?.trim() ?? '';
+    const frame = stackFrames[i].trim();
     const match = /(?:at\s+(?:.+?\s+\()?)(?<file>(?:file:\/\/)?[^():]+):\d+:\d+\)?$/u.exec(frame);
     const filePath0 = match?.[1];
     if (filePath0 === undefined || filePath0 === '') {
@@ -108,11 +108,7 @@ const getProjectRoot = (startDir: string = getScriptDir(), marker = '.git'): str
       return currentDir;
     }
 
-    const parentDir = np.dirname(currentDir);
-    if (parentDir === currentDir) {
-      break;
-    }
-    currentDir = parentDir;
+    currentDir = np.dirname(currentDir);
   }
 
   throw new Error(`Could not find project root directory (looking for ${marker})`);

@@ -1,0 +1,3 @@
+#:tombi schema.strict = false
+
+override_tool_versions_filenames = ["none"]

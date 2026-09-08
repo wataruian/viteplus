@@ -237,6 +237,12 @@ const getCommonViteConfig = ({
         provider: 'v8',
         reporter: ['text', 'json', 'html'],
         reportsDirectory: 'coverage',
+        thresholds: {
+          branches: 100,
+          functions: 100,
+          lines: 100,
+          statements: 100,
+        },
       },
       env: {
         LOG_LEVEL: 'silent',

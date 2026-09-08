@@ -1,5 +1,3 @@
-~/packages/design-system$ tsx --conditions=typescript ./src/utils/update-stories.ts ◉ cache hit, replaying
+~/packages/design-system$ tsx --conditions=typescript ./src/utils/update-stories.ts
 All story files are up to date.
 
----
-vp run: cache hit, 407ms saved.

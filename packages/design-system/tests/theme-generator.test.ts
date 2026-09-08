@@ -106,4 +106,35 @@ describe('getThemes / generateThemeCss / getCSS', () => {
     expect(typeof css).toBe('string');
     expect(css.length).toBeGreaterThan(0);
   });
+
+  test('generateThemeCss throws when the primary color is missing', () => {
+    expect(() => generateThemeCss('.broken', { accent: '#3b82f6', primary: '' })).toThrow(
+      'Primary color is required',
+    );
+  });
+
+  test('generateThemeCss throws when the accent color is missing', () => {
+    expect(() => generateThemeCss('.broken', { accent: '', primary: '#8b5cf6' })).toThrow(
+      'Accent color is required',
+    );
+  });
+
+  test('generateThemeCss uses the provided danger/success/warning/info/surface colors instead of the defaults', () => {
+    const withDefaults = generateThemeCss('.custom', {
+      accent: '#3b82f6',
+      primary: '#8b5cf6',
+    });
+
+    const withOverrides = generateThemeCss('.custom', {
+      accent: '#3b82f6',
+      danger: '#111111',
+      info: '#222222',
+      primary: '#8b5cf6',
+      success: '#333333',
+      surface: '#444444',
+      warning: '#555555',
+    });
+
+    expect(withOverrides).not.toBe(withDefaults);
+  });
 });

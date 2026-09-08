@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { afterEach, beforeEach, describe, expect, test } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
   backupPath,
@@ -25,6 +25,23 @@ import {
   pathExists,
   readFile,
 } from '../src/node/directory';
+
+const getPrepareStackTraceDescriptor = (): PropertyDescriptor =>
+  Object.getOwnPropertyDescriptor(Error, 'prepareStackTrace') ?? {
+    configurable: true,
+    value: undefined,
+    writable: true,
+  };
+
+const withStack = <T>(stackText: string, fn: () => T): T => {
+  const original = getPrepareStackTraceDescriptor();
+  Error.prepareStackTrace = () => stackText;
+  try {
+    return fn();
+  } finally {
+    Object.defineProperty(Error, 'prepareStackTrace', original);
+  }
+};
 
 let tempDir = '';
 
@@ -327,5 +344,244 @@ describe('backupPath', () => {
     expect(() => {
       backupPath({ destinationPath: destination, sourcePath: source });
     }).toThrow(/Backup file already exists/u);
+  });
+});
+
+describe('module load guard', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  test('throws a TypeError at import time when process.versions.node is not a string', async () => {
+    vi.stubGlobal('process', {
+      ...globalThis.process,
+      versions: { ...globalThis.process.versions, node: undefined },
+    });
+    vi.resetModules();
+
+    await expect(import('../src/node/directory')).rejects.toThrow(TypeError);
+  });
+});
+
+describe('getImporterDir - stack parsing branches', () => {
+  test('skips frames with no location info and frames pointing at non-existent files', () => {
+    const existingFile = path.join(tempDir, 'caller.js');
+    fs.writeFileSync(existingFile, '// caller');
+
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      '    totally unparseable frame',
+      '    at /this/path/does/not/exist.js:5:5',
+      `    at Object.<anonymous> (${existingFile}:12:34)`,
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(path.dirname(existingFile));
+    });
+  });
+
+  test('skips a frame pointing back at directory.ts itself before finding the real caller', () => {
+    const existingFile = path.join(tempDir, 'caller2.js');
+    fs.writeFileSync(existingFile, '// caller');
+
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      `    at someInternalWrapper (${getScriptFilePath()}:200:1)`,
+      `    at Object.<anonymous> (${existingFile}:12:34)`,
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(path.dirname(existingFile));
+    });
+  });
+
+  test('converts a file:// URL frame to a filesystem path', () => {
+    const existingFile = path.join(tempDir, 'caller3.js');
+    fs.writeFileSync(existingFile, '// caller');
+    const fileUrl = `file://${existingFile}`;
+
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      `    at Object.<anonymous> (${fileUrl}:12:34)`,
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(path.dirname(existingFile));
+    });
+  });
+
+  test('falls back to the current working directory when no frame resolves', () => {
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      '    junk frame one',
+      '    junk frame two',
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(globalThis.process.cwd());
+    });
+  });
+});
+
+describe('getImporterFilePath - stack parsing branches', () => {
+  test('returns the first non-self file path found in the stack', () => {
+    const stack = [
+      'Error: Getting importer file',
+      `    at getImporterFilePath (${getScriptFilePath()}:60:19)`,
+      '    at Object.<anonymous> (/some/other/file.js:99:1)',
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterFilePath()).toBe('/some/other/file.js');
+    });
+  });
+
+  test('converts a file:// URL frame to a filesystem path', () => {
+    const stack = [
+      'Error: Getting importer file',
+      `    at getImporterFilePath (${getScriptFilePath()}:60:19)`,
+      '    at Object.<anonymous> (file:///some/other/file.js:99:1)',
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterFilePath()).toBe('/some/other/file.js');
+    });
+  });
+
+  test('skips a frame pointing back at directory.ts itself before finding the real caller', () => {
+    const stack = [
+      'Error: Getting importer file',
+      `    at getImporterFilePath (${getScriptFilePath()}:60:19)`,
+      `    at wrapper (${getScriptFilePath()}:300:1)`,
+      '    at Object.<anonymous> (/some/other/file.js:99:1)',
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterFilePath()).toBe('/some/other/file.js');
+    });
+  });
+
+  test('falls back to process.argv[1] when no frame matches', () => {
+    const stack = [
+      'Error: Getting importer file',
+      `    at getImporterFilePath (${getScriptFilePath()}:60:19)`,
+      '    junk frame with no location',
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterFilePath()).toBe(globalThis.process.argv[1] ?? '');
+    });
+  });
+
+  test('falls back to an empty string when neither a frame nor process.argv[1] is available', () => {
+    const stack = [
+      'Error: Getting importer file',
+      `    at getImporterFilePath (${getScriptFilePath()}:60:19)`,
+      '    junk frame with no location',
+    ].join('\n');
+
+    vi.stubGlobal('process', { ...globalThis.process, argv: [globalThis.process.argv[0] ?? ''] });
+    try {
+      withStack(stack, () => {
+        expect(getImporterFilePath()).toBe('');
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});
+
+describe('getCallerFilePath fallback', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test('falls back to an empty string when process.argv[1] is unset', () => {
+    vi.stubGlobal('process', { ...globalThis.process, argv: [globalThis.process.argv[0] ?? ''] });
+    expect(getCallerFilePath()).toBe('');
+  });
+});
+
+describe('stack unavailable (Error.stack is undefined)', () => {
+  test('getImporterDir falls back to the current working directory', () => {
+    const original = getPrepareStackTraceDescriptor();
+    Error.prepareStackTrace = () => undefined;
+    try {
+      expect(getImporterDir()).toBe(globalThis.process.cwd());
+    } finally {
+      Object.defineProperty(Error, 'prepareStackTrace', original);
+    }
+  });
+
+  test('getImporterFilePath falls back to process.argv[1]', () => {
+    const original = getPrepareStackTraceDescriptor();
+    Error.prepareStackTrace = () => undefined;
+    try {
+      expect(getImporterFilePath()).toBe(globalThis.process.argv[1] ?? '');
+    } finally {
+      Object.defineProperty(Error, 'prepareStackTrace', original);
+    }
+  });
+});
+
+describe('readFile - encoding branch', () => {
+  test('passes undefined encoding through to fs.readFileSync when encoding is explicitly null', () => {
+    const filePath = path.join(tempDir, 'binary.txt');
+    fs.writeFileSync(filePath, 'raw bytes');
+
+    const result = readFile({ encoding: null, path: filePath });
+
+    expect(globalThis.Buffer.isBuffer(result)).toBe(true);
+    if (globalThis.Buffer.isBuffer(result)) {
+      expect(result.toString('utf8')).toBe('raw bytes');
+    }
+  });
+});
+
+describe('createFile - additional branches', () => {
+  test('silently does nothing when the file exists, replace is false, and throwError is false', () => {
+    const filePath = path.join(tempDir, 'existing-no-throw.txt');
+    fs.writeFileSync(filePath, 'original');
+
+    expect(() => {
+      createFile({ content: 'ignored', path: filePath, replace: false, throwError: false });
+    }).not.toThrow();
+    expect(fs.readFileSync(filePath, 'utf8')).toBe('original');
+  });
+
+  test('passes undefined encoding through to fs.writeFileSync when encoding is explicitly null', () => {
+    const filePath = path.join(tempDir, 'null-encoding.txt');
+    createFile({ content: 'hello', encoding: null, path: filePath });
+    expect(fs.readFileSync(filePath, 'utf8')).toBe('hello');
+  });
+
+  test('defaults content to an empty string when not provided', () => {
+    const filePath = path.join(tempDir, 'no-content.txt');
+    createFile({ path: filePath });
+    expect(fs.readFileSync(filePath, 'utf8')).toBe('');
+  });
+});
+
+describe('movePath - replace branch', () => {
+  test('deletes the existing destination first when replace is true', () => {
+    const source = path.join(tempDir, 'move-source.txt');
+    const destination = path.join(tempDir, 'move-destination.txt');
+    fs.writeFileSync(source, 'new content');
+    fs.writeFileSync(destination, 'old content');
+
+    movePath({
+      destinationPath: destination,
+      replace: true,
+      sourcePath: source,
+      throwError: false,
+    });
+
+    expect(pathExists(source)).toBe(false);
+    expect(fs.readFileSync(destination, 'utf8')).toBe('new content');
   });
 });

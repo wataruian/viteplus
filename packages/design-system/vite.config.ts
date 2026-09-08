@@ -108,6 +108,20 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     test: {
       ...baseConfig.test,
+      coverage: {
+        ...baseConfig.test?.coverage,
+        exclude: [
+          '**/index.ts',
+          'src/components/registry.ts',
+          'src/components/base.ts',
+          'src/app.tsx',
+          'src/main.tsx',
+          'src/start.ts',
+          '**/*.stories.tsx',
+          'src/utils/compile.ts',
+          'src/utils/update-stories.ts',
+        ],
+      },
       environment: 'jsdom',
     },
   });

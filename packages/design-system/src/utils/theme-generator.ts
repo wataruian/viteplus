@@ -75,10 +75,6 @@ const lightnessStops: Record<ColorScale, number> = {
 const toOklch = converter('oklch');
 const toRgb = converter('rgb');
 
-/**
- * Parse any CSS color string and return it as an Oklch object.
- * Throws if the color string is unrecognisable.
- */
 const parseToOklch = (color: string): Oklch => {
   const parsed = parse(color);
   if (parsed === undefined) {
@@ -87,10 +83,6 @@ const parseToOklch = (color: string): Oklch => {
   return toOklch(parsed);
 };
 
-/**
- * Convert an Oklch color to a clamped "r, g, b" CSS variable tuple string.
- * Clamps chroma to ensure the color is in the sRGB gamut.
- */
 const oklchToRgbTuple = (oklchColor: Oklch): string => {
   const clamped = clampChroma(oklchColor, 'oklch');
   const rgb = toRgb(clamped);
@@ -100,9 +92,6 @@ const oklchToRgbTuple = (oklchColor: Oklch): string => {
   return `${red} ${green} ${blue}`;
 };
 
-/**
- * Build an Oklch color object with explicit fields.
- */
 const makeOklch = (l: number, c: number, h: number): Oklch => ({
   c,
   h,
@@ -112,19 +101,9 @@ const makeOklch = (l: number, c: number, h: number): Oklch => ({
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
-/** Returns the lightness stops record. The `isSurface` param is kept for back-compat. */
-
 const getLightnessStops = () =>
   Object.keys(lightnessStops).toSorted((a, b) => Math.trunc(Number(a)) - Math.trunc(Number(b)));
 
-/**
- * Generate a perceptually uniform OKLCH color scale for a given CSS color.
- *
- * Only Lightness is interpolated across the scale; Chroma and Hue are constant,
- * so the hue identity of the base color is preserved at every stop.
- *
- * For surface colors, chroma is reduced to ~15% to produce a subtle neutral tint.
- */
 const generateColorScale = (hex: string, prefix: string, isSurface = false): string => {
   const base = parseToOklch(hex);
   const baseL = base.l;
@@ -141,9 +120,6 @@ const generateColorScale = (hex: string, prefix: string, isSurface = false): str
     .join('\n');
 };
 
-/**
- * Build a UnoCSS-compatible theme colors object that references CSS variables.
- */
 const getThemeColors = (prefix: string): Record<string, string> => {
   const colors = Object.keys(lightnessStops)
     .toSorted((stopA, stopB) => Math.trunc(Number(stopA)) - Math.trunc(Number(stopB)))

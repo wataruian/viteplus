@@ -33,6 +33,33 @@ test('a plain (non-HTTPException) error thrown by a handler produces a generic 5
   });
 });
 
+test('a plain error with an empty message falls back to a generic message', async () => {
+  const app = new Hono<{ Variables: { sessionId: string } }>();
+
+  app.use('*', async (c, next) => {
+    c.set('sessionId', 'unit-test-session');
+    await next();
+  });
+
+  app.onError(globalErrorHandler);
+
+  app.get('/blank', () => {
+    const err = new Error('placeholder');
+    err.message = '';
+    throw err;
+  });
+
+  const res = await app.request('/blank');
+  expect(res.status).toBe(500);
+
+  const parsed = await parseErrorEnvelope(res);
+  expectErrorEnvelope(parsed, {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Internal Server Error',
+    statusCode: 500,
+  });
+});
+
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
   afterAll(cleanup);
 

@@ -2,7 +2,7 @@ import { apiBaseUrl } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
 import { tracer } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
-import { useEffect, useRef } from 'react';
+import { type RefCallback, useEffect, useRef } from 'react';
 
 import heroImg from './assets/hero.png';
 import typescriptLogo from './assets/typescript.svg';
@@ -15,7 +15,16 @@ import './style.css';
 
 const App = () => {
   const { sessionId } = useSession();
-  const counterRef = useRef<HTMLButtonElement>(null);
+  const counterCleanupRef = useRef<(() => void) | undefined>(undefined);
+
+  const counterRef: RefCallback<HTMLButtonElement> = (element) => {
+    if (element) {
+      counterCleanupRef.current = setupCounter(element);
+    } else {
+      counterCleanupRef.current?.();
+      counterCleanupRef.current = undefined;
+    }
+  };
 
   useEffect(() => {
     const run = async () => {
@@ -75,16 +84,6 @@ const App = () => {
       // Errors already logged and recorded in span
     });
   }, [sessionId]);
-
-  useEffect(() => {
-    let cleanup: (() => void) | undefined = undefined;
-    if (counterRef.current) {
-      cleanup = setupCounter(counterRef.current);
-    }
-    return () => {
-      cleanup?.();
-    };
-  }, []);
 
   return (
     <>
