@@ -3,12 +3,12 @@
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/library
       Coverage enabled with v8
 
- ✓ tests/index.test.ts (1 test) 5ms
+ ✓ tests/index.test.ts (1 test) 2ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  22:04:59
-   Duration  402ms (transform 135ms, setup 0ms, import 180ms, tests 5ms, environment 0ms)
+   Start at  01:02:47
+   Duration  831ms (transform 55ms, setup 0ms, import 112ms, tests 2ms, environment 0ms)
 
  % Coverage report from v8
 ----------|---------|----------|---------|---------|-------------------
@@ -23,41 +23,41 @@ All files |     100 |      100 |     100 |     100 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/design-system
       Coverage enabled with v8
 
- ✓ tests/theme-generator.test.ts (15 tests) 114ms
- ✓ tests/button.test.tsx (7 tests) 140ms
- ✓ tests/style-compiler.test.ts (50 tests) 31ms
- ✓ tests/error-boundary.test.tsx (7 tests) 129ms
+ ✓ tests/style-compiler.test.ts (50 tests) 317ms
+ ✓ tests/theme-generator.test.ts (15 tests) 152ms
+ ✓ tests/providers.test.tsx (10 tests) 433ms
+ ✓ tests/button.test.tsx (7 tests) 57ms
  ✓ tests/helpers.test.ts (9 tests) 2ms
- ✓ tests/providers.test.tsx (10 tests) 393ms
- ✓ tests/switchers.test.tsx (4 tests) 157ms
- ✓ tests/layout.test.tsx (4 tests) 9ms
- ✓ tests/input.test.tsx (3 tests) 9ms
- ✓ tests/typography.test.tsx (3 tests) 5ms
- ✓ tests/header.test.tsx (4 tests) 245ms
- ✓ tests/icon.test.tsx (3 tests) 13ms
- ✓ tests/badge.test.tsx (3 tests) 3ms
- ✓ tests/logo.test.tsx (3 tests) 23ms
- ✓ tests/card.test.tsx (2 tests) 2ms
- ✓ tests/marquee.test.tsx (2 tests) 16ms
+ ✓ tests/header.test.tsx (4 tests) 44ms
+ ✓ tests/layout.test.tsx (4 tests) 7ms
+ ✓ tests/error-boundary.test.tsx (7 tests) 224ms
+ ✓ tests/switchers.test.tsx (4 tests) 352ms
+     ✓ toggles mode when clicked and updates its aria-label  321ms
+ ✓ tests/input.test.tsx (3 tests) 27ms
+ ✓ tests/icon.test.tsx (3 tests) 7ms
+ ✓ tests/typography.test.tsx (3 tests) 4ms
+ ✓ tests/badge.test.tsx (3 tests) 5ms
+ ✓ tests/marquee.test.tsx (2 tests) 21ms
+ ✓ tests/card.test.tsx (2 tests) 3ms
+ ✓ tests/logo.test.tsx (3 tests) 3ms
  ✓ tests/shortcuts.test.ts (1 test) 0ms
- ✓ tests/tokens.test.ts (17 tests) 4647ms
-     ✓ the ph collection loader resolves an iconify JSON payload  4641ms
- ✓ tests/preview.test.tsx (3 tests) 1593ms
-     ✓ renders the design system preview page with theme scales and component gallery  630ms
-     ✓ renders an extra "Default" group per component when showDefault is set  446ms
-     ✓ passes className through directly when useDefault is false  516ms
- ✓ tests/preview-registry-drift.test.tsx (3 tests) 5115ms
-     ✓ skips a *Styles entry that has no matching component  3776ms
-     ✓ renders a component whose *Styles value is not a record with no variant groups or default detail  683ms
-     ✓ renders a plain "Default" label when a *Styles value has no default entry  654ms
- ✓ tests/unocss-config.test.ts (8 tests) 1480ms
-     ✓ disables the web fonts provider under Vitest, to avoid a real network fetch  662ms
-     ✓ leaves the real provider untouched outside Vitest  687ms
+ ✓ tests/tokens.test.ts (17 tests) 4854ms
+     ✓ the ph collection loader resolves an iconify JSON payload  4828ms
+ ✓ tests/preview.test.tsx (3 tests) 2034ms
+     ✓ renders the design system preview page with theme scales and component gallery  946ms
+     ✓ renders an extra "Default" group per component when showDefault is set  505ms
+     ✓ passes className through directly when useDefault is false  582ms
+ ✓ tests/preview-registry-drift.test.tsx (3 tests) 5346ms
+     ✓ skips a *Styles entry that has no matching component  3900ms
+     ✓ renders a component whose *Styles value is not a record with no variant groups or default detail  824ms
+     ✓ renders a plain "Default" label when a *Styles value has no default entry  619ms
+ ✓ tests/unocss-config.test.ts (8 tests) 715ms
+     ✓ disables the web fonts provider under Vitest, to avoid a real network fetch  380ms
 
  Test Files  21 passed (21)
       Tests  161 passed (161)
-   Start at  22:05:01
-   Duration  13.12s (transform 16.80s, setup 0ms, import 24.61s, tests 14.13s, environment 64.62s)
+   Start at  01:02:50
+   Duration  11.35s (transform 12.07s, setup 0ms, import 20.81s, tests 14.61s, environment 57.92s)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -109,32 +109,33 @@ All files          |     100 |      100 |     100 |     100 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/packages/common
       Coverage enabled with v8
 
- ✓ tests/env.test.ts (36 tests) 34ms
- ✓ tests/text.test.ts (21 tests) 32ms
- ✓ tests/color.test.ts (21 tests) 216ms
- ✓ tests/directory.test.ts (54 tests) 61ms
- ✓ tests/tc.test.ts (13 tests) 4ms
- ✓ tests/validate.test.ts (21 tests) 11ms
- ✓ tests/rum.test.ts (8 tests) 47ms
- ✓ tests/endpoints.test.ts (9 tests) 103ms
- ✓ tests/time.test.ts (7 tests) 17ms
- ✓ tests/logger.test.ts (58 tests) 59ms
- ✓ tests/serialize-assume-shape.test.ts (4 tests) 7ms
+ ✓ tests/directory.test.ts (54 tests) 56ms
+ ✓ tests/env.test.ts (36 tests) 7ms
+ ✓ tests/color.test.ts (21 tests) 179ms
+ ✓ tests/validate.test.ts (21 tests) 3ms
+ ✓ tests/rum.test.ts (8 tests) 93ms
+ ✓ tests/telemetry.test.ts (17 tests) 224ms
+ ✓ tests/text.test.ts (21 tests) 62ms
+ ✓ tests/tc.test.ts (13 tests) 2ms
+ ✓ tests/time.test.ts (7 tests) 89ms
+ ✓ tests/otel-collector.test.ts (13 tests) 588ms
+ ✓ tests/endpoints.test.ts (9 tests) 485ms
+     ✓ default to localhost when no env vars are set  421ms
  ✓ tests/serialize.test.ts (8 tests) 2ms
- ✓ tests/validator.test.ts (7 tests) 12ms
- ✓ tests/otel-collector-address.test.ts (1 test) 11ms
- ✓ tests/env-meta-fallback.test.ts (1 test) 1ms
- ✓ tests/date.test.ts (6 tests) 10ms
- ✓ tests/directory-fs-error.test.ts (1 test) 5ms
- ✓ tests/telemetry-utils.test.ts (4 tests) 93ms
- ✓ tests/otel-collector.test.ts (13 tests) 514ms
- ✓ tests/telemetry.test.ts (17 tests) 136ms
- ✓ tests/base.test.ts (6 tests) 5ms
+ ✓ tests/validator.test.ts (7 tests) 18ms
+ ✓ tests/logger.test.ts (58 tests) 121ms
+ ✓ tests/serialize-assume-shape.test.ts (4 tests) 52ms
+ ✓ tests/date.test.ts (6 tests) 3ms
+ ✓ tests/otel-collector-address.test.ts (1 test) 15ms
+ ✓ tests/env-meta-fallback.test.ts (1 test) 5ms
+ ✓ tests/telemetry-utils.test.ts (4 tests) 42ms
+ ✓ tests/directory-fs-error.test.ts (1 test) 6ms
+ ✓ tests/base.test.ts (6 tests) 2ms
 
  Test Files  21 passed (21)
       Tests  316 passed (316)
-   Start at  22:04:59
-   Duration  1.86s (transform 3.08s, setup 0ms, import 4.76s, tests 1.38s, environment 4ms)
+   Start at  01:02:47
+   Duration  2.27s (transform 4.37s, setup 0ms, import 6.23s, tests 2.06s, environment 3ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -178,58 +179,60 @@ All files          |     100 |      100 |     100 |     100 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/backend
       Coverage enabled with v8
 
- ✓ tests/routers/http-openapi.test.ts (10 tests) 6920ms
-     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  1479ms
-     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  4933ms
- ✓ tests/telemetry.test.ts (2 tests) 5896ms
-     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  957ms
-     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  4859ms
- ✓ tests/security-cors.test.ts (8 tests) 8727ms
-     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  1264ms
-     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  4082ms
-     ✓ ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded  2418ms
- ✓ tests/services.test.ts (24 tests) 8398ms
-       ✓ GET /api/ returns the standard envelope  1284ms
-       ✓ GET /api/ returns the standard envelope  3752ms
-       ✓ invalid input (negative age) is rejected identically on HTTP and tRPC  330ms
- ✓ tests/config.test.ts (7 tests) 33ms
- ✓ tests/routers/trpc-openapi.test.ts (15 tests) 7720ms
-     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  2188ms
-     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  4206ms
-     ✓ a plain query-string GET request (no explicit input= param) is rewritten into a tRPC input and produces the same result  338ms
- ✓ tests/security-origins.test.ts (1 test) 15ms
- ✓ tests/app.test.ts (5 tests) 3391ms
-     ✓ /metrics exposes Prometheus-formatted metrics once telemetry is initialized  2896ms
- ✓ tests/error-handling.test.ts (10 tests) 9734ms
-     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  1376ms
-     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  300ms
-     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  4292ms
-     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  2832ms
- ✓ tests/security-csp.test.ts (6 tests) 5233ms
-     ✓ an untrusted origin never appears in the CSP header ("failure" case)  304ms
-     ✓ the CSP header is present on both HTTP and tRPC responses and includes the default origins  2978ms
-     ✓ ADDITIONAL_CORS_ORIGINS extends script-src/worker-src but not style-src  1728ms
- ✓ tests/openapi-docs-availability.test.ts (6 tests) 3637ms
-     ✓ isLocal() ENV registers every doc/OpenAPI route  1527ms
-     ✓ a non-local ENV never registers the doc/OpenAPI routes  1834ms
- ✓ tests/trust-proxy.test.ts (30 tests) 18185ms
-       ✓ ENV=local is safe  1243ms
-       ✓ ENV=local is safe  4164ms
-       ✓ ENV=test is safe  2753ms
-       ✓ ENV=qa-random-unrecognized is safe  1613ms
-       ✓ CI=true is safe regardless of ENV  1504ms
-       ✓ ENV=develop blocks an unallowlisted IP  866ms
-       ✓ ENV=staging blocks an unallowlisted IP  808ms
-       ✓ ENV=production blocks an unallowlisted IP  731ms
-       ✓ a matching IP is allowed in an unsafe env  675ms
-     ✓ ALLOW_ALL_IPS=true allows any IP regardless of env  760ms
-     ✓ BLOCK_ALL_IPS=true blocks every request even in an otherwise-safe env  749ms
-     ✓ BLOCK_ALL_IPS=true wins over ALLOW_ALL_IPS=true  699ms
+ ✓ tests/telemetry.test.ts (2 tests) 5346ms
+     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  741ms
+     ✓ a request pushes a log, a trace span, and a metric to the OTEL collector  4500ms
+ ✓ tests/routers/trpc-openapi.test.ts (15 tests) 6569ms
+     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  1160ms
+     ✓ the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure  4770ms
+ ✓ tests/routers/http-openapi.test.ts (10 tests) 6267ms
+     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  1156ms
+     ✓ the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route  4725ms
+ ✓ tests/config.test.ts (7 tests) 104ms
+ ✓ tests/services.test.ts (24 tests) 9158ms
+       ✓ GET /api/ returns the standard envelope  1256ms
+       ✓ invalid input (missing fields) is rejected identically on HTTP and tRPC  452ms
+       ✓ invalid input (wrong tags type) is rejected identically on HTTP and tRPC  315ms
+       ✓ GET /api/ returns the standard envelope  4098ms
+       ✓ tRPC query without a name defaults to "World"  422ms
+       ✓ invalid input (negative age) is rejected identically on HTTP and tRPC  341ms
+ ✓ tests/security-origins.test.ts (1 test) 11ms
+ ✓ tests/app.test.ts (5 tests) 4417ms
+     ✓ /metrics exposes Prometheus-formatted metrics once telemetry is initialized  3932ms
+ ✓ tests/error-handling.test.ts (10 tests) 9874ms
+     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  1833ms
+     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  418ms
+     ✓ an HTTPException thrown by shared middleware (trust-proxy) produces an identical error envelope on the HTTP and tRPC routers  3354ms
+     ✓ a malformed JSON body throws an HTTPException that flows through the global error handler on both the HTTP and tRPC routers  3618ms
+ ✓ tests/security-cors.test.ts (8 tests) 10621ms
+     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  982ms
+     ✓ an allowed origin is echoed back on both the HTTP and tRPC routers  5191ms
+     ✓ ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded  4016ms
+ ✓ tests/security-csp.test.ts (6 tests) 5962ms
+     ✓ the CSP header is present on both HTTP and tRPC responses and includes the default origins  3079ms
+     ✓ ADDITIONAL_CORS_ORIGINS extends script-src/worker-src but not style-src  2325ms
+ ✓ tests/openapi-docs-availability.test.ts (6 tests) 5362ms
+     ✓ regular routes keep working regardless of doc-route availability  412ms
+     ✓ isLocal() ENV registers every doc/OpenAPI route  2899ms
+     ✓ a non-local ENV never registers the doc/OpenAPI routes  1523ms
+ ✓ tests/trust-proxy.test.ts (30 tests) 19448ms
+       ✓ ENV=local is safe  966ms
+       ✓ ENV=local is safe  4710ms
+       ✓ ENV=test is safe  4047ms
+       ✓ ENV=qa-random-unrecognized is safe  2301ms
+       ✓ CI=true is safe regardless of ENV  1020ms
+       ✓ ENV=develop blocks an unallowlisted IP  915ms
+       ✓ ENV=staging blocks an unallowlisted IP  728ms
+       ✓ ENV=production blocks an unallowlisted IP  832ms
+       ✓ a matching IP is allowed in an unsafe env  770ms
+     ✓ ALLOW_ALL_IPS=true allows any IP regardless of env  784ms
+     ✓ BLOCK_ALL_IPS=true blocks every request even in an otherwise-safe env  815ms
+     ✓ BLOCK_ALL_IPS=true wins over ALLOW_ALL_IPS=true  783ms
 
  Test Files  12 passed (12)
       Tests  124 passed (124)
-   Start at  22:05:02
-   Duration  26.37s (transform 8.16s, setup 0ms, import 50.32s, tests 77.89s, environment 1ms)
+   Start at  01:02:52
+   Duration  28.14s (transform 4.48s, setup 0ms, import 53.19s, tests 83.14s, environment 1ms)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -264,18 +267,19 @@ All files          |     100 |      100 |     100 |     100 |
  RUN  v4.1.11 /Users/wataru/lightproject/viteplus/apps/frontend
       Coverage enabled with v8
 
- ✓ tests/config.test.ts (6 tests) 154ms
- ✓ tests/trpc-provider.test.tsx (1 test) 3ms
+ ✓ tests/config.test.ts (6 tests) 341ms
+     ✓ uses ADMIN_PORT when set  335ms
+ ✓ tests/trpc-provider.test.tsx (1 test) 5ms
  ✓ tests/counter.test.ts (4 tests) 12ms
- ✓ tests/preview-page.test.tsx (1 test) 158ms
- ✓ tests/app.test.tsx (9 tests) 761ms
- ✓ tests/telemetry.test.ts (1 test) 1537ms
-     ✓ pushes a log and a trace span to Faro, and a metric to the OTEL collector  1535ms
+ ✓ tests/preview-page.test.tsx (1 test) 192ms
+ ✓ tests/app.test.tsx (9 tests) 756ms
+ ✓ tests/telemetry.test.ts (1 test) 1544ms
+     ✓ pushes a log and a trace span to Faro, and a metric to the OTEL collector  1541ms
 
  Test Files  6 passed (6)
       Tests  22 passed (22)
-   Start at  22:05:29
-   Duration  5.91s (transform 2.49s, setup 0ms, import 4.58s, tests 2.63s, environment 9.88s)
+   Start at  01:03:21
+   Duration  6.22s (transform 2.61s, setup 0ms, import 4.91s, tests 2.85s, environment 10.25s)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
@@ -292,4 +296,4 @@ All files          |     100 |      100 |     100 |     100 |
 -------------------|---------|----------|---------|---------|-------------------
 
 ---
-vp run: 5/5 cache hit (100%), 55.39s saved. (Run `vp run --last-details` for full details)
+vp run: 5/5 cache hit (100%), 57.48s saved. (Run `vp run --last-details` for full details)

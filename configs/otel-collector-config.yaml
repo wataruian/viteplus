@@ -1,3 +1,8 @@
+extensions:
+  file_storage:
+    directory: /var/lib/otelcol/file_storage
+    create_directory: true
+
 receivers:
   otlp:
     protocols:
@@ -44,16 +49,23 @@ exporters:
 
   otlphttp/loki:
     endpoint: http://loki:3100/otlp
+    sending_queue:
+      storage: file_storage
 
   otlp/tempo:
     endpoint: http://tempo:4317
     tls:
       insecure: true
+    sending_queue:
+      storage: file_storage
 
   debug:
     verbosity: detailed
 
 service:
+  extensions:
+    - file_storage
+
   telemetry:
     logs:
       level: info

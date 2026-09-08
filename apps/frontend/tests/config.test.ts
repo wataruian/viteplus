@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
+vi.mock('@lightproject/common/utils/helpers', () => ({
+  getMetaEnv: () => ({}),
+}));
+
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.resetModules();

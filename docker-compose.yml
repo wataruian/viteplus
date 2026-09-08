@@ -22,6 +22,13 @@ services:
       loki-storage-init:
         condition: service_completed_successfully
 
+  grafana-storage-init:
+    image: busybox:1.38.0
+    container_name: grafana-storage-init
+    command: chown -R 472:472 /var/lib/grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
   grafana:
     image: grafana/grafana:12.1.1
     container_name: grafana
@@ -34,9 +41,14 @@ services:
       - ./configs/grafana/provisioning:/etc/grafana/provisioning
       - grafana-storage:/var/lib/grafana
     depends_on:
-      - loki
-      - tempo
-      - mimir
+      grafana-storage-init:
+        condition: service_completed_successfully
+      loki:
+        condition: service_started
+      tempo:
+        condition: service_started
+      mimir:
+        condition: service_started
 
   tempo-storage-init:
     image: busybox:1.38.0
@@ -71,6 +83,13 @@ services:
       - ./configs/mimir.yaml:/etc/mimir.yaml
       - mimir-storage:/data/mimir
 
+  otel-storage-init:
+    image: busybox:1.38.0
+    container_name: otel-storage-init
+    command: chown -R 10001:10001 /var/lib/otelcol
+    volumes:
+      - otel-storage:/var/lib/otelcol
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.131.0
     container_name: otel-collector
@@ -82,14 +101,22 @@ services:
       - --config=/etc/otelcol/config.yaml
     volumes:
       - ./configs/otel-collector-config.yaml:/etc/otelcol/config.yaml
+      - otel-storage:/var/lib/otelcol
     depends_on:
-      - loki
-      - grafana
-      - tempo
-      - mimir
+      otel-storage-init:
+        condition: service_completed_successfully
+      grafana:
+        condition: service_started
+      loki:
+        condition: service_started
+      tempo:
+        condition: service_started
+      mimir:
+        condition: service_started
 
 volumes:
   grafana-storage:
   loki-storage:
   mimir-storage:
+  otel-storage:
   tempo-storage:
