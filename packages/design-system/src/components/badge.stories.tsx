@@ -102,5 +102,5 @@ const Sm: StoryObj<typeof meta> = {
   },
 };
 
-export { Default, Accent, Danger, Glass, Info, Outline, Primary, Success, Warning, Lg, Md, Sm };
+export { Accent, Danger, Default, Glass, Info, Lg, Md, Outline, Primary, Sm, Success, Warning };
 export default meta;

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Typography } from '../src/components/typography';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Typography', () => {
   test('renders a <p> by default', () => {

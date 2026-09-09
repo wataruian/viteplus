@@ -5,7 +5,7 @@ import { ThemeSwitcher } from '../src/components/theme-switcher';
 import { ModeProvider } from '../src/context/mode-provider';
 import { ThemeProvider } from '../src/context/theme-provider';
 import { themes } from '../src/utils/theme-generator';
-import { click, render, requireElement } from './render';
+import { click, render, requireElement } from './helpers/render';
 
 describe('ModeSwitcher', () => {
   test('toggles mode when clicked and updates its aria-label', () => {

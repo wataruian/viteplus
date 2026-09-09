@@ -1,17 +1,17 @@
 {
-  "name": "Frontend",
-  "short_name": "Frontend",
-  "description": "Vite+ Monorepo Starter frontend — a React SPA built with Vite.",
-  "start_url": "/",
-  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "description": "Vite+ Monorepo Starter frontend — a React SPA built with Vite.",
+  "display": "standalone",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "purpose": "any",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "/favicon.svg",
+      "type": "image/svg+xml"
     }
-  ]
+  ],
+  "name": "Frontend",
+  "short_name": "Frontend",
+  "start_url": "/",
+  "theme_color": "#ffffff"
 }

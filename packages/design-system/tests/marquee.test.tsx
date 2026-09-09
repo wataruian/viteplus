@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Marquee } from '../src/components/marquee';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Marquee', () => {
   test('renders the children content twice for a seamless loop', () => {

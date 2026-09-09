@@ -5,7 +5,7 @@ import { Header } from '../src/components/header';
 import { ModeProvider } from '../src/context/mode-provider';
 import { ThemeProvider } from '../src/context/theme-provider';
 import { themes } from '../src/utils/theme-generator';
-import { render } from './render';
+import { render } from './helpers/render';
 
 const withProviders = (children: ReactNode) => (
   <ThemeProvider>

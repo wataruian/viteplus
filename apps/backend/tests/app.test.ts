@@ -1,6 +1,6 @@
 import { apiBaseUrl } from '@lightproject/common/configs';
-import { resetTelemetryForTests } from '@lightproject/common/server';
 import type * as ServerModule from '@lightproject/common/server';
+import { resetTelemetryForTests } from '@lightproject/common/server';
 import type { ExecutionContext } from 'hono';
 import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 

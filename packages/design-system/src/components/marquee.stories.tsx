@@ -74,5 +74,5 @@ const Slow: StoryObj<typeof meta> = {
   },
 };
 
-export { Default, Left, Right, False, True, Fast, Slow };
+export { Default, False, Fast, Left, Right, Slow, True };
 export default meta;

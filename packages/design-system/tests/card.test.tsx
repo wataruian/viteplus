@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Card } from '../src/components/card';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Card', () => {
   test('renders children inside a div with variant classes by default', () => {

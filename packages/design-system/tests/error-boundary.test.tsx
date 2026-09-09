@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vite-plus/test';
 
 import { ErrorBoundary } from '../src/components/error-boundary';
-import { render } from './render';
+import { render } from './helpers/render';
 
 const Bomb = (): never => {
   throw new Error('boom');

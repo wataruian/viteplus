@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Container, Section } from '../src/components/layout';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Container', () => {
   test('renders children inside a div with container classes', () => {

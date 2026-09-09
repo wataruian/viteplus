@@ -2,7 +2,7 @@ import { createRef } from 'react';
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Button } from '../src/components/button';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Button', () => {
   test('renders a <button type="button"> by default', () => {

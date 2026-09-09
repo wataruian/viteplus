@@ -76,7 +76,7 @@ export default defineConfig(({ mode }): UserConfig => {
         exclude: ['**/index.ts', '**/main.tsx'],
       },
       environment: 'jsdom',
-      globalSetup: ['tests/global-setup.ts'],
+      globalSetup: ['tests/helpers/global-setup.ts'],
     },
   };
 });

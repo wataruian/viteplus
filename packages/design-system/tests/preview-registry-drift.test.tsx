@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import type * as RegistryModule from '../src/components/registry';
-import { render } from './render';
+import { render } from './helpers/render';
 
 beforeEach(() => {
   vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});

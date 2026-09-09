@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Icon } from '../src/components/icon';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Icon', () => {
   test('renders a span with the icon name class appended', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vite-plus/test';
 
 import { Preview } from '../src/components/preview';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Preview', () => {
   test('renders the design system preview page with theme scales and component gallery', () => {

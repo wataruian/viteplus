@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Input } from '../src/components/input';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Input', () => {
   test('renders an <input> with variant classes by default', () => {

@@ -53,7 +53,7 @@ This file acts as a chronological ledger for major architectural shifts, context
   (`devCommand`/`startCommand` overrides — the monorepo-wide default in the root
   `vite.config.ts` still assumes `src/index.ts` for other apps), `tsconfig.madge.json`, and the
   two integration test helpers that point `wrangler unstable_dev` directly at the edge entry
-  (`apps/backend/tests/helpers/utils.ts`, `apps/frontend/tests/global-setup.ts`).
+  (`apps/backend/tests/helpers/utils.ts`, `apps/frontend/tests/helpers/global-setup.ts`).
 
 ## 2026-08-31: `packages/common/src/utils/directory.ts` Moved to `src/node/`
 

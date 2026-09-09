@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Badge } from '../src/components/badge';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Badge', () => {
   test('renders children inside a span with variant classes by default', () => {

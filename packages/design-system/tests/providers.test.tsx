@@ -7,7 +7,7 @@ import { SessionProvider } from '../src/context/session-provider';
 import { useTheme } from '../src/context/theme-context';
 import { ThemeProvider } from '../src/context/theme-provider';
 import { themes } from '../src/utils/theme-generator';
-import { click, render, requireElement } from './render';
+import { click, render, requireElement } from './helpers/render';
 
 const ModeConsumer = () => {
   const { mode, toggleMode } = useMode();

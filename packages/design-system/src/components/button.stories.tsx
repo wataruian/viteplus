@@ -134,20 +134,20 @@ const Xl: StoryObj<typeof meta> = {
 };
 
 export {
-  Default,
   Accent,
   Danger,
+  Default,
   Ghost,
   Info,
   Inverse,
+  Lg,
+  Md,
   Premium,
   Primary,
   Secondary,
+  Sm,
   Success,
   Warning,
-  Lg,
-  Md,
-  Sm,
   Xl,
 };
 export default meta;

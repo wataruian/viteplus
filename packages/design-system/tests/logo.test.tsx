@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Logo } from '../src/components/logo';
-import { render } from './render';
+import { render } from './helpers/render';
 
 describe('Logo', () => {
   test('renders the top and bottom text when useDefault is true', () => {
