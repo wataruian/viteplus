@@ -46,15 +46,24 @@ describe('config.adminPort', () => {
 });
 
 describe('config.viteApiUrl', () => {
-  test('returns the value when VITE_API_URL is set', async () => {
+  test('uses API_URL when set', async () => {
+    vi.stubEnv('API_URL', 'http://from-api-url.test');
+    vi.stubEnv('VITE_API_URL', undefined);
+    const config = await importConfig();
+    expect(config.viteApiUrl).toBe('http://from-api-url.test');
+  });
+
+  test('falls back to VITE_API_URL when API_URL is unset', async () => {
+    vi.stubEnv('API_URL', undefined);
     vi.stubEnv('VITE_API_URL', 'http://example.test');
     const config = await importConfig();
     expect(config.viteApiUrl).toBe('http://example.test');
   });
 
-  test('returns undefined when VITE_API_URL is unset', async () => {
+  test('falls back to the shared apiBaseUrl when neither API_URL nor VITE_API_URL is set', async () => {
+    vi.stubEnv('API_URL', undefined);
     vi.stubEnv('VITE_API_URL', undefined);
     const config = await importConfig();
-    expect(config.viteApiUrl).toBeUndefined();
+    expect(config.viteApiUrl).toBe('http://localhost:3000');
   });
 });

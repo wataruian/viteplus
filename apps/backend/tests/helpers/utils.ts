@@ -68,7 +68,7 @@ const expectErrorEnvelope = (
   }
 };
 
-const importFreshApp = async (env: Record<string, string> = {}) => {
+const importFreshApp = async (env: Record<string, string | undefined> = {}) => {
   vi.resetModules();
   vi.unstubAllEnvs();
   for (const [key, value] of Object.entries(env)) {
@@ -88,15 +88,21 @@ const wranglerWorkers = new Map<string, Promise<Unstable_DevWorker>>();
 const wranglerEnvKey = (env: Record<string, string>) =>
   JSON.stringify(Object.entries(env).toSorted(([a], [b]) => a.localeCompare(b)));
 
+const definedEntries = (env: Record<string, string | undefined>): Record<string, string> =>
+  Object.fromEntries(
+    Object.entries(env).filter((entry): entry is [string, string] => entry[1] !== undefined),
+  );
+
 const stopWranglerWorker = async (workerPromise: Promise<Unstable_DevWorker>) => {
   const worker = await workerPromise;
   await worker.stop();
 };
 
 const importFreshWranglerApp = async (
-  env: Record<string, string> = {},
+  env: Record<string, string | undefined> = {},
 ): Promise<{ request: Unstable_DevWorker['fetch'] }> => {
-  const key = wranglerEnvKey(env);
+  const definedEnv = definedEntries(env);
+  const key = wranglerEnvKey(definedEnv);
   const cached = wranglerWorkers.get(key);
   if (cached) {
     wranglerWorkers.delete(key);
@@ -123,7 +129,7 @@ const importFreshWranglerApp = async (
     local: true,
     logLevel: 'none',
     persist: false,
-    vars: env,
+    vars: definedEnv,
   });
   wranglerWorkers.set(key, workerPromise);
   const worker = await workerPromise;
@@ -148,6 +154,7 @@ const runtimes = [
 ] as const;
 
 export {
+  definedEntries,
   errorEnvelope,
   expectErrorEnvelope,
   httpEnvelope,

@@ -35,6 +35,20 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     const body = await res.text();
     expect(body).toContain('request_hits');
   });
+
+  test('starts up when API_PORT is set', async () => {
+    const app = await importApp({ API_PORT: '4321' });
+
+    const res = await app.request('/');
+    expect(res.status).toBe(200);
+  });
+
+  test('starts up when API_PORT is not set', async () => {
+    const app = await importApp({ API_PORT: undefined });
+
+    const res = await app.request('/');
+    expect(res.status).toBe(200);
+  });
 });
 
 test('server.fetch memoizes app creation and still serves requests correctly across calls', async () => {

@@ -1,4 +1,3 @@
-import { apiBaseUrl } from '@lightproject/common/configs';
 import { logger } from '@lightproject/common/logger';
 import { tracer } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
@@ -7,7 +6,7 @@ import { type RefCallback, useEffect, useRef } from 'react';
 import heroImg from './assets/hero.png';
 import typescriptLogo from './assets/typescript.svg';
 import viteLogo from './assets/vite.svg';
-import { config } from './config';
+import { config, get } from './config';
 import { setupCounter } from './counter';
 import { trpcClient } from './providers/trpc-provider';
 
@@ -55,12 +54,11 @@ const App = () => {
           });
         }
 
-        let viteApiUrl = apiBaseUrl;
-        if (config.viteApiUrl === undefined) {
-          logger.info(`VITE_API_URL is not set, using default URL: ${viteApiUrl}`);
+        const url = get('API_URL') ?? get('VITE_API_URL');
+        if (url !== undefined && url !== '') {
+          logger.info(`VITE_API_URL is set: ${url}`);
         } else {
-          ({ viteApiUrl } = config);
-          logger.info(`VITE_API_URL is set: ${viteApiUrl}`);
+          logger.info(`VITE_API_URL is not set, using default URL: ${config.viteApiUrl}`);
         }
 
         logger.info('Frontend Start', {

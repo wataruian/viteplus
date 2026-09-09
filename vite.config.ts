@@ -212,8 +212,8 @@ const getCommonViteConfig = ({
       clean: true,
       dts: {
         cjsReexport: true,
+        generator: 'tsgo',
         sourcemap: isLocal,
-        tsgo: true,
       },
       entry: ['src/**/*.ts', 'src/**/*.tsx', '!src/**/*.stories.ts', '!src/**/*.stories.tsx'],
       exports: false,

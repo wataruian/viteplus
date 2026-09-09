@@ -53,7 +53,8 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
   }));
 
   vi.doMock('../src/config', () => ({
-    config: { viteApiUrl: apiUrl },
+    config: { viteApiUrl: apiUrl ?? defaultApiUrl },
+    get: (key: string) => (key === 'VITE_API_URL' ? apiUrl : undefined),
   }));
 
   vi.doMock('../src/providers/trpc-provider', () => ({
@@ -227,7 +228,10 @@ const successfulTrpcResult = {
 };
 
 const renderAppWithMocks = async (options: {
-  configModule: { config: { viteApiUrl: string | undefined } };
+  configModule: {
+    config: { viteApiUrl: string | undefined };
+    get?: (key: string) => string | undefined;
+  };
   trpcQuery: () => unknown;
 }) => {
   vi.resetModules();
@@ -239,7 +243,10 @@ const renderAppWithMocks = async (options: {
     apiBaseUrl: defaultApiUrl,
   }));
 
-  vi.doMock('../src/config', () => options.configModule);
+  vi.doMock('../src/config', () => ({
+    config: options.configModule.config,
+    get: options.configModule.get ?? (() => undefined),
+  }));
 
   vi.doMock('../src/providers/trpc-provider', () => ({
     trpcClient: {

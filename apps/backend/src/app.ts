@@ -1,4 +1,4 @@
-import { requestContextStorage } from '@lightproject/common/logger';
+import { logger, requestContextStorage } from '@lightproject/common/logger';
 import {
   flushTelemetry,
   initializeTelemetry,
@@ -9,6 +9,7 @@ import { Hono } from 'hono';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 
 import packageJson from '../package.json' with { type: 'json' };
+import { config, get } from './config';
 import { globalErrorHandler, notFoundHandler } from './middlewares/error-handler';
 import { requestLogger } from './middlewares/logger';
 import { corsMiddleware, cspMiddleware } from './middlewares/security';
@@ -18,6 +19,13 @@ import { httpRouter } from './routers/http';
 import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
 
 const getApp = async () => {
+  const port = get('API_PORT');
+  if (port !== undefined && port !== '') {
+    logger.info(`API_PORT is set: ${port}`);
+  } else {
+    logger.info(`API_PORT is not set, using default port: ${config.apiPort}`);
+  }
+
   await initializeTelemetry({
     serviceName: packageJson.name,
     serviceVersion: packageJson.version,
