@@ -24,6 +24,7 @@
   // "npm.scriptRunner": "vp",
   "oxc.fmt.configPath": "./vite.config.ts",
   "search.exclude": {
+    "**/.pruned": true,
     "**/.wrangler": true,
     "**/bak": true,
     "**/coverage": true,
@@ -43,7 +44,8 @@
     "**/dist/**",
     "**/out/**",
     "**/storybook-static/**",
-    "**/.wrangler/**"
+    "**/.wrangler/**",
+    "**/.pruned/**"
   ],
   "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
   "unocss.remToPxPreview": true,

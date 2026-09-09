@@ -43,6 +43,7 @@ const scaffold = (type: string) => {
     'out',
     'storybook-static',
     '.wrangler',
+    '.pruned',
     'coverage',
     'tmp',
     'tsconfig.tsbuildinfo',

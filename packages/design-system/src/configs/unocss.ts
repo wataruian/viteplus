@@ -60,6 +60,7 @@ const unoCssBaseConfig: UserConfig = {
         /[\\/]out[\\/]/u,
         /[\\/]storybook-static[\\/]/u,
         /[\\/]\.wrangler[\\/]/u,
+        /[\\/]\.pruned[\\/]/u,
       ],
       include: [/\.(?:vue|svelte|[jt]sx|mdx?|html)(?:$|\?)/u, '**/*.{js,ts,jsx,tsx}'],
     },

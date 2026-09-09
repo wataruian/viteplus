@@ -15,12 +15,13 @@
   "type": "module",
   "scripts": {
     "clean:ai": "rimraf -g \".ai-data/artifacts/**/*\" \".ai-data/artifacts/!(*.gitkeep)\"",
-    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/dist/** **/out/** **/storybook-static/** **/coverage/** **/.wrangler/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
+    "clean:build": "vp cache clean && rimraf -g .vite-hooks/_ **/__unconfig_vite.config.ts packages/**/tmp/** apps/**/tmp/** **/dist/** **/out/** **/storybook-static/** **/coverage/** **/.wrangler/** **/.pruned/** **/tsconfig.tsbuildinfo vite.config.d.ts vite.config.d.ts.map",
     "clean:modules": "rimraf -g --max-retries=10 --retry-delay=100 **/node_modules/**",
     "clean:tools": "rimraf -g **/tmp/**",
     "debug": "vp cache clean && vp run ready",
     "init": "vp install && vp run ready",
     "prepare": "vp config",
+    "prune": "vp exec turbo prune --out-dir ./.pruned",
     "ready": "vp run -r madge && vp run -r root && vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
     "serve:dev": "vp run -r --parallel dev",
     "serve:prod": "vp run -r --parallel start",
@@ -40,6 +41,7 @@
     "plop": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
+    "turbo": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"

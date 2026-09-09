@@ -16,6 +16,7 @@ const ignorePatterns = [
   'tsconfig.tsbuildinfo',
   'storybook-static',
   '.wrangler',
+  '.pruned',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -416,7 +417,7 @@ const getRootViteConfig = (): UserConfig => {
         },
         madge: {
           command:
-            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
           ...commonRunProps,
         },
         plop: {
