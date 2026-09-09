@@ -294,6 +294,24 @@ const collectRefNames = (node: ASTNode, acc: Set<string>): void => {
   }
 };
 
+const sortKeysDeep = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map((item) => sortKeysDeep(item));
+  }
+
+  if (isObject(value)) {
+    const sorted: Record<string, unknown> = {};
+
+    for (const key of Object.keys(value).toSorted((a, b) => a.localeCompare(b))) {
+      sorted[key] = sortKeysDeep(value[key]);
+    }
+
+    return sorted;
+  }
+
+  return value;
+};
+
 const sortRegistryKeys = (registry: Record<string, ASTNode>): string[] => {
   const order: string[] = [];
   const visited = new Set<string>();
@@ -355,6 +373,7 @@ export {
   parseValue,
   resolvePath,
   resolveValue,
+  sortKeysDeep,
   sortRegistryKeys,
   stripTemplate,
   unwrap,

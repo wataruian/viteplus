@@ -15,6 +15,7 @@ import {
   parseValue,
   resolvePath,
   resolveValue,
+  sortKeysDeep,
   sortRegistryKeys,
   stripTemplate,
   unwrap,
@@ -459,6 +460,33 @@ describe('compileStylesRegistry', () => {
     };
     const resolved = compileStylesRegistry(registry);
     expect(resolved['callStyles']).toBe(intentSolid('primary'));
+  });
+});
+
+describe('sortKeysDeep', () => {
+  test('sorts object keys recursively via localeCompare', () => {
+    const input: unknown = JSON.parse('{"swatchItem":1,"swatchesContainer":2,"a":{"z":1,"m":2}}');
+    const result = sortKeysDeep(input);
+
+    expect(result).toStrictEqual({ a: { m: 2, z: 1 }, swatchItem: 1, swatchesContainer: 2 });
+
+    if (result !== null && typeof result === 'object' && !Array.isArray(result)) {
+      expect(Object.keys(result)).toStrictEqual(['a', 'swatchesContainer', 'swatchItem']);
+    } else {
+      throw new Error('expected sortKeysDeep to return an object');
+    }
+  });
+
+  test('sorts objects nested inside arrays while preserving array order', () => {
+    const input: unknown = JSON.parse('[{"b":1,"a":2},"x",3]');
+    expect(sortKeysDeep(input)).toStrictEqual([{ a: 2, b: 1 }, 'x', 3]);
+  });
+
+  test('leaves primitives untouched', () => {
+    expect(sortKeysDeep('x')).toBe('x');
+    expect(sortKeysDeep(1)).toBe(1);
+    expect(sortKeysDeep(true)).toBe(true);
+    expect(sortKeysDeep(null)).toBeNull();
   });
 });
 

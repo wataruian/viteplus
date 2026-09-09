@@ -4,7 +4,12 @@ import { inspect } from 'node:util';
 
 import fg from 'fast-glob';
 
-import { type ASTNode, compileStylesRegistry, extractStylesFromFile } from './style-compiler';
+import {
+  type ASTNode,
+  compileStylesRegistry,
+  extractStylesFromFile,
+  sortKeysDeep,
+} from './style-compiler';
 
 const envPath = path.resolve(import.meta.dirname, '../../../../.env');
 
@@ -19,10 +24,12 @@ for (const file of files) {
 
 const stylesRegistry = compileStylesRegistry(raw);
 
-const styles = {
+const unsortedStyles = {
   raw,
   stylesRegistry,
 };
+
+const styles = sortKeysDeep(unsortedStyles);
 
 if (typeof globalThis.process.loadEnvFile === 'function' && fs.existsSync(envPath)) {
   try {

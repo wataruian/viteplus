@@ -613,14 +613,14 @@ styles {
               kind: 'template',
               raw: 'w-[1px] h-12 md:h-16 ${baseStyles.colors.bg.inversePrimary} mx-1 self-start'
             },
+            swatchesContainer: {
+              kind: 'string',
+              value: 'flex flex-wrap gap-3 items-start'
+            },
             swatchItem: { kind: 'string', value: 'flex flex-col gap-2' },
             swatchLabel: {
               kind: 'template',
               raw: 'text-[10px] md:text-xs font-mono ${baseStyles.colors.text.inverseSurface}/60 text-center'
-            },
-            swatchesContainer: {
-              kind: 'string',
-              value: 'flex flex-wrap gap-3 items-start'
             },
             themesContainer: { kind: 'string', value: 'space-y-8 md:space-y-12' },
             themesGrid: { kind: 'string', value: 'grid gap-12' },
@@ -986,9 +986,9 @@ styles {
         showcaseIcon: 'i-ph-star-fill',
         swatchColor: 'w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-sm ring-2 ring-inverse-surface hover:scale-110 hover:shadow-lg transition-transform duration-300 cursor-pointer',
         swatchDivider: 'w-[1px] h-12 md:h-16 bg-inverse-primary mx-1 self-start',
+        swatchesContainer: 'flex flex-wrap gap-3 items-start',
         swatchItem: 'flex flex-col gap-2',
         swatchLabel: 'text-[10px] md:text-xs font-mono text-inverse-surface/60 text-center',
-        swatchesContainer: 'flex flex-wrap gap-3 items-start',
         themesContainer: 'space-y-8 md:space-y-12',
         themesGrid: 'grid gap-12',
         themesSection: 'space-y-8',
@@ -1042,4 +1042,4 @@ styles {
 }
 
 ---
-vp run: cache hit, 1.24s saved.
+vp run: cache hit, 1.48s saved.
