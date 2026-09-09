@@ -12,10 +12,7 @@ const startNodeBackend = async (): Promise<RunningBackend> => {
   const app = await getApp();
 
   return {
-    fetch: async (input, init) => {
-      const response = await app.request(input, init);
-      return response;
-    },
+    fetch: async (input, init) => await app.request(input, init),
     stop: async () => {
       await Promise.resolve();
     },
@@ -30,10 +27,7 @@ const startWranglerBackend = async (): Promise<RunningBackend> => {
   }
 
   return {
-    fetch: async (input, init) => {
-      const response = await globalThis.fetch(input, init);
-      return response;
-    },
+    fetch: async (input, init) => await globalThis.fetch(input, init),
     stop: async () => {
       await Promise.resolve();
     },

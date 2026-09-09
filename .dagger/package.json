@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "typescript": "6.0.2"
+  },
+  "packageManager": "pnpm@11.10.0"
+}

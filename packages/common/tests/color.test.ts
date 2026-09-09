@@ -5,8 +5,7 @@ import type * as ColorModule from '../src/utils/color';
 const importFreshColorModule = async (chalkLevel?: string): Promise<typeof ColorModule> => {
   vi.resetModules();
   vi.stubEnv('CHALK_LEVEL', chalkLevel);
-  const colorModule = await import('../src/utils/color');
-  return colorModule;
+  return await import('../src/utils/color');
 };
 
 afterEach(() => {

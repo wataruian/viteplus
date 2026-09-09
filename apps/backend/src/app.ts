@@ -68,10 +68,7 @@ const getApp = async () => {
 
   app.get('/', (c) => c.json({ status: 'OK' }));
 
-  app.get('/metrics', async () => {
-    const response = await prometheusExporter.getMetricsResponse();
-    return response;
-  });
+  app.get('/metrics', async () => await prometheusExporter.getMetricsResponse());
 
   app.route('/', docsRouter);
   app.route('/', httpRouter);

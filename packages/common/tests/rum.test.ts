@@ -53,8 +53,7 @@ vi.mock('@opentelemetry/sdk-metrics', () => {
 
 const importFreshRumModule = async (): Promise<typeof RumModule> => {
   vi.resetModules();
-  const rumModule = await import('../src/utils/rum');
-  return rumModule;
+  return await import('../src/utils/rum');
 };
 
 afterEach(() => {

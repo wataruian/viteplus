@@ -15,10 +15,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1
+      # - name: Set up Vite+
+      #   uses: voidzero-dev/setup-vp@v1
+      #   with:
+      #     cache: true
+      #     run-install: true
+      # - name: Run checks, build, and tests
+      #   run: vp run ready
+      - name: Run Dagger pipeline
+        uses: dagger/dagger-for-github@v8
         with:
-          cache: true
-          run-install: true
-      - name: Run checks, build, and tests
-        run: vp run ready
+          version: '0.21.9'
+          call: ready
+          cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}

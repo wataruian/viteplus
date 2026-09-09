@@ -187,3 +187,70 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   `...props` onto the root element, so consumers can already add `aria-hidden`/`role`
   contextually; this is an extensible API choice, not a spec violation, unlike the two fixes
   above.
+
+## 2026-09-09: Dagger Pipeline for Local + CI Parity
+
+- **Decision**: Added a TypeScript Dagger module at `.dagger/` (`dagger init --sdk=typescript`)
+  that wraps `pnpm install` + the `vp` task runner in a hermetic container. GitHub Actions
+  (`.github/workflows/ci.yml`) now runs `dagger/dagger-for-github@v8` calling `dagger call ready`
+  instead of `voidzero-dev/setup-vp@v1` + `vp run ready` directly on the runner — the exact same
+  containerized pipeline now runs on a laptop (`dagger -m .dagger call ready`, or `mise run ci`)
+  and in CI, closing the "works on my machine" gap.
+- **Why a container at all**: `dagger` was already added to `mise.toml`'s `[tools]` (see
+  `mise.lock`/`mise.toml` diff from an earlier session) before this module existed — this entry
+  fills in the module itself.
+- **Caching design** (`.dagger/src/index.ts`): dependency install is cached on manifests alone
+  (`package.json` + `pnpm-lock.yaml` + `pnpm-workspace.yaml`, via `Directory.filter`) so Dagger's
+  own content-addressed cache skips `pnpm install` entirely when only source files change — the
+  common case. The pnpm store and vp's own task cache (`.vite-hooks/`, see `clean:build` script)
+  are mounted as `LOCKED` `CacheVolume`s so warm caches survive across separate `dagger call`
+  invocations on the same engine (i.e. iterative local dev). In CI, cross-run persistence of
+  those cache volumes requires a `DAGGER_CLOUD_TOKEN` repo secret (optional, wired into
+  `ci.yml`'s `cloud-token` input) — without it every CI run is a cold cache, no worse than the
+  previous setup.
+- **Container needs `git`**: `node:24.14.1-slim` has no `git`; `pnpm install`'s `prepare` script
+  runs `vp config`, which shells out to git and needs it present (it degrades gracefully to
+  "`.git` can't be found" without a real repo, which is expected — `.git` itself is excluded from
+  the container's mounted source).
+- **Gotcha found while validating**: a standalone `test()` call failed with
+  `Cannot find package '@lightproject/common/configs'` — workspace packages' `exports` map
+  resolves subpath imports to `dist/*` at runtime (see `packages/common/package.json`), so tests
+  can't import them until the package is built. `vp run ready`'s script order already builds
+  before testing; the Dagger module's `test()` function now does the same (`build` then `test`)
+  so it's safe to call standalone, matching what `ready()` does implicitly. `check()` (format/
+  lint/type-check) doesn't have this issue — it's static analysis, not runtime imports.
+- **Not committed**: `.dagger/sdk/` (Dagger's vendored TS SDK client) is gitignored by Dagger's
+  own default `.dagger/.gitignore` — verified it regenerates automatically on `dagger call` even
+  when absent, so this isn't something to "fix."
+
+### 2026-09-09 follow-up: module discovery, and two hard walls in Dagger's isolation
+
+- **`dagger.json` moved to repo root**: originally `dagger.json` lived inside `.dagger/` (module
+  root = `.dagger/`), which meant every invocation needed `dagger -m .dagger call ...`. Re-ran
+  `dagger init --sdk=typescript --name=viteplus --source=.dagger .` from the repo root instead —
+  this puts `dagger.json` at the repo root with `"source": ".dagger"` pointing at the actual
+  module code, and `dagger call`/`dagger functions`/`mise run ci` now all work with **no `-m`
+  flag** from anywhere in the repo (Dagger's own module auto-discovery finds root `dagger.json`).
+  `.github/workflows/ci.yml`'s `dagger/dagger-for-github` step no longer needs a `module:` input
+  either, for the same reason.
+- **Wall #1 — can't `extends` a tsconfig outside `.dagger/`**: tried making `.dagger/tsconfig.json`
+  extend the root `tsconfig.base.json` (to stop duplicating `strict`/`target`/etc.) via
+  `"extends": "../tsconfig.base.json"` plus `dagger.json`'s `"include": ["tsconfig.base.json"]`.
+  This reproducibly fails with `Error: File '../tsconfig.base.json' not found` from inside the
+  module's own bootstrap. Root cause: the Dagger TS module's entrypoint is loaded by `tsx`,
+  which resolves `tsconfig.json#extends` against the container's disk **before** any Dagger API
+  call runs — and `include` only makes extra repo files fetchable _through_ the Dagger API
+  (`dag.currentModule().source()`) at runtime, not present on disk at that early boot point. So
+  `.dagger/tsconfig.json` **must stay self-contained** (reverted to the plain `dagger init`
+  version: `target`/`moduleResolution`/`experimentalDecorators`/`strict`/`skipLibCheck` +
+  the `paths` mapping to `./sdk`). This is a hard constraint of how the TS SDK boots, not a
+  config mistake — don't retry this without a different mechanism.
+- **Wall #2 — `.dagger/package.json`'s `typescript` dependency + `yarn.lock` keep coming back**:
+  removed both (module doesn't need a local `typescript` install to execute — `tsx` handles
+  transpilation itself, and `dagger call` runs fine without them, confirmed). But `dagger develop`
+  (needed whenever the module's exported functions change, or the pinned `engineVersion` bumps)
+  regenerates both unconditionally — same root cause as wall #1: the module's build container
+  can't see the monorepo's hoisted root `node_modules/typescript`, so Dagger's own TS SDK codegen
+  provisions an isolated one via `yarn`. Currently removed per an explicit ask, but expect them
+  to reappear after the next `dagger develop` — that's Dagger managing its own module tooling,
+  not a bug, and not worth fighting (don't add a script to re-delete them after every `develop`).

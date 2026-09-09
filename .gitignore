@@ -24,6 +24,7 @@ coverage
 
 # Build
 node_modules
+.pnpm-store
 dist
 dist-ssr
 out
@@ -36,6 +37,7 @@ vite.config.d.ts.map
 __unconfig_vite.config.ts
 tmp
 .wrangler
+.dagger/sdk
 .pruned
 
 # AI

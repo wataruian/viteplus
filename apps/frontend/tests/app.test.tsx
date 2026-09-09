@@ -64,8 +64,7 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
           fetch: async (input, init) => {
             const requestInit: RequestInit | undefined =
               init === undefined ? undefined : { ...init, signal: init.signal ?? null };
-            const response = await backend.fetch(input, requestInit);
-            return response;
+            return await backend.fetch(input, requestInit);
           },
           url: `${backend.url}/trpc`,
         }),

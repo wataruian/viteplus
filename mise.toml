@@ -17,6 +17,7 @@ bashrc = { enabled = true, mode = "activate" }
 [tools]
 node = "24.14.1"
 pnpm = "11.10.0"
+dagger = "0.21.9"
 # viteplus = "0.2.7"
 
 [env]

@@ -5,8 +5,7 @@ import type * as TelemetryUtilsModule from '../src/utils/telemetry';
 const importFresh = async (serviceName?: string): Promise<typeof TelemetryUtilsModule> => {
   vi.resetModules();
   vi.stubEnv('OTEL_SERVICE_NAME', serviceName);
-  const telemetryModule = await import('../src/utils/telemetry');
-  return telemetryModule;
+  return await import('../src/utils/telemetry');
 };
 
 afterEach(() => {

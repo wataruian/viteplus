@@ -30,8 +30,7 @@ const withRetry = async <T>(operation: () => Promise<T>, retries = 3, delay = 10
     }
   };
 
-  const result = await execute(0);
-  return result;
+  return await execute(0);
 };
 
 export { eternalSleep, reduceWaitingTimeByTwoBlocks, sleep, withRetry };

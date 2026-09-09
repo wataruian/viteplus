@@ -18,8 +18,7 @@ const importFresh = async (env: Record<string, string | undefined> = {}) => {
   for (const key of endpointsEnvKeys) {
     vi.stubEnv(key, env[key]);
   }
-  const endpoints = await import('../src/configs/endpoints');
-  return endpoints;
+  return await import('../src/configs/endpoints');
 };
 
 afterEach(() => {

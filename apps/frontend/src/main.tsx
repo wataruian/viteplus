@@ -10,14 +10,8 @@ import 'virtual:uno.css';
 const isPreviewRoute = globalThis.location.pathname === '/preview';
 
 const Page = isPreviewRoute
-  ? lazy(async () => {
-      const mod = await import('./preview-page');
-      return mod;
-    })
-  : lazy(async () => {
-      const mod = await import('./app');
-      return mod;
-    });
+  ? lazy(async () => await import('./preview-page'))
+  : lazy(async () => await import('./app'));
 
 initializeRum({
   serviceName: packageJson.name,

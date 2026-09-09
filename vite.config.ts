@@ -16,6 +16,7 @@ const ignorePatterns = [
   'tsconfig.tsbuildinfo',
   'storybook-static',
   '.wrangler',
+  '.dagger/sdk',
   '.pruned',
 ];
 
@@ -201,6 +202,7 @@ const getCommonViteConfig = ({
         'typescript/explicit-module-boundary-types': 'off',
         'typescript/no-extraneous-class': 'off',
         'typescript/prefer-readonly-parameter-types': 'off',
+        'typescript/return-await': 'off',
         'unicorn/max-nested-calls': 'off',
         'unicorn/no-array-reduce': 'off',
         'unicorn/no-null': 'off',
@@ -417,7 +419,7 @@ const getRootViteConfig = (): UserConfig => {
         },
         madge: {
           command:
-            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.dagger|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
           ...commonRunProps,
         },
         plop: {
