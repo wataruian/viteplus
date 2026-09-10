@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#MISE description="Run all the services with docker"
+
+set -o errexit # Bail out on any error
+
+projects=(
+  "@lightproject/design-system"
+  "@lightproject/backend"
+  "@lightproject/frontend"
+)
+
+for project in "${projects[@]}"; do
+  name="${project##*/}"
+
+  storybookPort=""
+  containerPort="80"
+  storybookContainerPort="81"
+  case "${name}" in
+    "backend")
+      port="${API_PORT:-"3000"}"
+      containerPort="3000"
+      ;;
+    "frontend")
+      port="${ADMIN_PORT:-"3001"}"
+      ;;
+    "design-system")
+      port="${DESIGN_SYSTEM_PORT:-"6007"}"
+      storybookPort="${STORYBOOK_PORT:-"6006"}"
+      ;;
+    *)
+      echo "Invalid project: ${project}"
+      exit 1
+      ;;
+  esac
+
+  echo "Building: ${project}"
+
+  dagger call load \
+    --workspace="${project}" \
+    --docker-socket="/var/run/docker.sock"
+
+  docker rm -f "${name}" || true
+
+  if [[ -n "${storybookPort}" ]]; then
+    docker run --rm -d \
+      -p "${port}:${containerPort}" \
+      -p "${storybookPort}:${storybookContainerPort}" \
+      --name "${name}" "${name}"
+  else
+    docker run --rm -d \
+      -p "${port}:${containerPort}" \
+      --name "${name}" "${name}"
+  fi
+
+  echo "✅ ${name} is running on http://localhost:${port}"
+  if [[ -n "${storybookPort}" ]]; then
+    echo "✅ storybook is running on http://localhost:${storybookPort}"
+  fi
+done
+
+echo "✅ All good!"

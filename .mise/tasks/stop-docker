@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#MISE description="Stop all the services"
+
+set -o errexit # Bail out on any error
+
+projects=(
+  "@lightproject/design-system"
+  "@lightproject/backend"
+  "@lightproject/frontend"
+)
+
+for project in "${projects[@]}"; do
+  name="${project##*/}"
+
+  echo "Stopping: ${project}"
+
+  docker rm -f "${name}" || true
+
+  echo "✅ ${name} is stopped"
+done
+
+echo "✅ All good!"

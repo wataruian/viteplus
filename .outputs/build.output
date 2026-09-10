@@ -2,6 +2,7 @@
 ℹ [@lightproject/library] entry: src/index.ts, src/samples/hello.ts, src/samples/index.ts
 ℹ [@lightproject/library] tsconfig: tsconfig.json
 ℹ Build start
+ℹ Cleaning 23 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/library] [CJS] dist/samples/index.cjs               0.56 kB │ gzip: 0.32 kB
@@ -14,7 +15,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/library] [CJS] dist/samples/hello.d.cts             0.04 kB │ gzip: 0.06 kB
 ℹ [@lightproject/library] [CJS] dist/samples/index.d.cts             0.04 kB │ gzip: 0.06 kB
 ℹ [@lightproject/library] [CJS] 9 files, total: 1.89 kB
-✔ [@lightproject/library] Build complete in 165ms
+✔ [@lightproject/library] Build complete in 568ms
 ℹ [@lightproject/library] [ESM] dist/samples/index.mjs               0.58 kB │ gzip: 0.31 kB
 ℹ [@lightproject/library] [ESM] dist/samples/hello.mjs               0.42 kB │ gzip: 0.26 kB
 ℹ [@lightproject/library] [ESM] dist/index.mjs                       0.38 kB │ gzip: 0.21 kB
@@ -27,12 +28,13 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/library] [ESM] dist/samples/hello.d.mts             0.22 kB │ gzip: 0.17 kB
 ℹ [@lightproject/library] [ESM] dist/index.d.mts                     0.18 kB │ gzip: 0.12 kB
 ℹ [@lightproject/library] [ESM] 11 files, total: 3.28 kB
-✔ [@lightproject/library] Build complete in 1125ms
+✔ [@lightproject/library] Build complete in 2173ms
 
 ~/packages/design-system$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/base.ts, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/registry.ts, src/components/theme-switcher.tsx, src/components/typography.tsx, src/configs/index.ts, src/configs/unocss.ts, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/session-context.tsx, src/context/session-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts, src/utils/compile.ts, src/utils/create-required-context.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts, src/utils/update-stories.ts
+ℹ [@lightproject/design-system] entry: src/index.ts, src/components/badge.tsx, src/components/base.ts, src/components/button.tsx, src/components/card.tsx, src/components/error-boundary.tsx, src/components/header.tsx, src/components/icon.tsx, src/components/index.ts, src/components/input.tsx, src/components/layout.tsx, src/components/logo.tsx, src/components/marquee.tsx, src/components/mode-switcher.tsx, src/components/preview.tsx, src/components/registry.ts, src/components/theme-switcher.tsx, src/components/typography.tsx, src/context/index.ts, src/context/mode-context.tsx, src/context/mode-provider.tsx, src/context/session-context.tsx, src/context/session-provider.tsx, src/context/theme-context.tsx, src/context/theme-provider.tsx, src/configs/index.ts, src/configs/unocss.ts, src/utils/compile.ts, src/utils/create-required-context.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/shortcuts.ts, src/utils/style-compiler.ts, src/utils/theme-generator.ts, src/utils/update-stories.ts, src/tokens/animation.ts, src/tokens/base.ts, src/tokens/breakpoints.ts, src/tokens/effects.ts, src/tokens/icons.ts, src/tokens/index.ts, src/tokens/spacing.ts, src/tokens/typography.ts
 ℹ [@lightproject/design-system] tsconfig: tsconfig.json
 ℹ Build start
+ℹ Cleaning 301 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/design-system] [CJS] dist/components/preview.cjs                 16.63 kB │ gzip: 3.94 kB
@@ -163,7 +165,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [CJS] dist/components/base.d.cts                   0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] dist/tokens/base.d.cts                       0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/design-system] [CJS] 127 files, total: 243.64 kB
-✔ [@lightproject/design-system] Build complete in 702ms
+✔ [@lightproject/design-system] Build complete in 339ms
 ℹ [@lightproject/design-system] [ESM] dist/components/preview.mjs                   14.46 kB │ gzip: 3.89 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/theme-generator.mjs                 8.51 kB │ gzip: 2.23 kB
 ℹ [@lightproject/design-system] [ESM] dist/utils/style-compiler.mjs                  6.84 kB │ gzip: 2.26 kB
@@ -332,7 +334,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/design-system] [ESM] dist/utils/shortcuts.d.mts                     0.28 kB │ gzip: 0.18 kB
 ℹ [@lightproject/design-system] [ESM] dist/configs/index.d.mts                       0.24 kB │ gzip: 0.14 kB
 ℹ [@lightproject/design-system] [ESM] 167 files, total: 300.90 kB
-✔ [@lightproject/design-system] Build complete in 2207ms
+✔ [@lightproject/design-system] Build complete in 1930ms
 
 ~/packages/design-system$ vp build ◉ cache hit, replaying
 transforming...
@@ -343,7 +345,7 @@ out/index.html                   0.47 kB │ gzip:   0.30 kB
 out/assets/index-lOheUxGJ.css   72.95 kB │ gzip:   9.49 kB
 out/assets/index-fb5NxqT3.js   619.91 kB │ gzip: 121.89 kB │ map: 1,172.04 kB
 
-✓ built in 1.22s
+✓ built in 831ms
 
 ~/packages/design-system$ storybook build ◉ cache hit, replaying
 @storybook/core v8.6.14
@@ -351,11 +353,9 @@ out/assets/index-fb5NxqT3.js   619.91 kB │ gzip: 121.89 kB │ map: 1,172.04 k
 info => Cleaning outputDir: storybook-static
 info => Loading presets
 info => Building manager..
-info => Manager built (180 ms)
+info => Manager built (231 ms)
 info => Building preview..
 info Using tsconfig paths for react-docgen
-(node:57512) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 transforming...
 ✓ 270 modules transformed.
 rendering chunks...
@@ -413,14 +413,15 @@ storybook-static/assets/entry-preview-docs-BH0v5xqJ.js       254.47 kB │ gzip:
 storybook-static/assets/dist-Itz9iqm6.js                     647.56 kB │ gzip: 149.57 kB
 storybook-static/assets/dist-7wqNFzoP.js                     882.35 kB │ gzip: 271.71 kB
 
-✓ built in 2.78s
-info => Preview built (4.24 s)
+✓ built in 2.69s
+info => Preview built (4.15 s)
 info => Output directory: /Users/wataru/lightproject/viteplus/packages/design-system/storybook-static
 
 ~/packages/common$ vp pack ◉ cache hit, replaying
 ℹ [@lightproject/common] entry: src/index.ts, src/configs/endpoints.ts, src/configs/index.ts, src/environment/env.ts, src/environment/index.ts, src/environment/validator.ts, src/logger/context.ts, src/logger/formatters.ts, src/logger/index.ts, src/logger/log.ts, src/logger/redactor.ts, src/node/directory.ts, src/node/index.ts, src/server/index.ts, src/server/telemetry.ts, src/testing/index.ts, src/testing/otel-collector.ts, src/typecast/index.ts, src/typecast/tc.ts, src/utils/base.ts, src/utils/color.ts, src/utils/date.ts, src/utils/helpers.ts, src/utils/index.ts, src/utils/rum.ts, src/utils/serialize.ts, src/utils/telemetry.ts, src/utils/text.ts, src/utils/time.ts, src/validators/index.ts, src/validators/validate.ts
 ℹ [@lightproject/common] tsconfig: tsconfig.json
 ℹ Build start
+ℹ Cleaning 218 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/common] [CJS] dist/node/directory.cjs               7.71 kB │ gzip: 2.02 kB
@@ -514,7 +515,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [CJS] dist/environment/env.d.cts            0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/common] [CJS] dist/typecast/tc.d.cts                0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/common] [CJS] 90 files, total: 158.06 kB
-✔ [@lightproject/common] Build complete in 179ms
+✔ [@lightproject/common] Build complete in 522ms
 ℹ [@lightproject/common] [ESM] dist/node/directory.mjs                 6.64 kB │ gzip: 1.83 kB
 ℹ [@lightproject/common] [ESM] dist/server/telemetry.mjs               5.17 kB │ gzip: 1.61 kB
 ℹ [@lightproject/common] [ESM] dist/logger/log.mjs                     3.53 kB │ gzip: 1.27 kB
@@ -633,12 +634,13 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/common] [ESM] dist/typecast/index.d.mts               0.28 kB │ gzip: 0.16 kB
 ℹ [@lightproject/common] [ESM] dist/testing/index.d.mts                0.20 kB │ gzip: 0.13 kB
 ℹ [@lightproject/common] [ESM] 117 files, total: 167.31 kB
-✔ [@lightproject/common] Build complete in 2627ms
+✔ [@lightproject/common] Build complete in 2521ms
 
 ~/apps/backend$ vp pack ◉ cache hit, replaying
-ℹ [@lightproject/backend] entry: src/app.ts, src/client.ts, src/config.ts, src/index.ts, src/schema.ts, src/middlewares/error-handler.ts, src/middlewares/logger.ts, src/middlewares/security.ts, src/middlewares/trust-proxy.ts, src/routers/docs.ts, src/routers/utils.ts, src/runtimes/edge.ts, src/runtimes/node.ts, src/services/default.ts, src/services/test.ts, src/routers/http/default.ts, src/routers/http/index.ts, src/routers/http/test.ts, src/routers/trpc/default.ts, src/routers/trpc/index.ts, src/routers/trpc/test.ts
+ℹ [@lightproject/backend] entry: src/app.ts, src/client.ts, src/config.ts, src/index.ts, src/schema.ts, src/middlewares/error-handler.ts, src/middlewares/logger.ts, src/middlewares/security.ts, src/middlewares/trust-proxy.ts, src/routers/docs.ts, src/routers/utils.ts, src/runtimes/edge.ts, src/runtimes/node.ts, src/routers/http/default.ts, src/routers/http/index.ts, src/routers/http/test.ts, src/routers/trpc/default.ts, src/routers/trpc/index.ts, src/routers/trpc/test.ts, src/services/default.ts, src/services/test.ts
 ℹ [@lightproject/backend] tsconfig: tsconfig.json
 ℹ Build start
+ℹ Cleaning 150 files
 warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some options will be unavailable.
 ℹ Emit types with @typescript/native-preview@7.0.0-dev.20260405.1
 ℹ [@lightproject/backend] [CJS] dist/routers/utils.cjs                   8.24 kB │ gzip: 2.49 kB
@@ -705,7 +707,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [CJS] dist/routers/docs.d.cts                  0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] dist/app.d.cts                           0.03 kB │ gzip: 0.05 kB
 ℹ [@lightproject/backend] [CJS] 63 files, total: 90.74 kB
-✔ [@lightproject/backend] Build complete in 528ms
+✔ [@lightproject/backend] Build complete in 517ms
 ℹ [@lightproject/backend] [ESM] dist/routers/utils.mjs                     7.42 kB │ gzip: 2.42 kB
 ℹ [@lightproject/backend] [ESM] dist/routers/trpc/index.mjs                2.76 kB │ gzip: 1.07 kB
 ℹ [@lightproject/backend] [ESM] dist/app.mjs                               2.69 kB │ gzip: 1.02 kB
@@ -788,7 +790,7 @@ warn: TypeScript 7.0 does not yet have a stable API and is experimental. Some op
 ℹ [@lightproject/backend] [ESM] dist/runtimes/edge.d.mts                   0.15 kB │ gzip: 0.12 kB
 ℹ [@lightproject/backend] [ESM] dist/index.d.mts                           0.09 kB │ gzip: 0.08 kB
 ℹ [@lightproject/backend] [ESM] 81 files, total: 113.42 kB
-✔ [@lightproject/backend] Build complete in 3137ms
+✔ [@lightproject/backend] Build complete in 1836ms
 
 ~/apps/frontend$ vp build ◉ cache hit, replaying
 transforming...
@@ -802,11 +804,11 @@ dist/assets/app-BwjBLpVl.css                  5.47 kB │ gzip:   1.65 kB
 dist/assets/index-DYnD-6EN.css               73.72 kB │ gzip:   9.65 kB
 dist/assets/rolldown-runtime-7_rZTKki.js      1.79 kB │ gzip:   0.80 kB
 dist/assets/preview-page-B8DIB_lr.js         42.33 kB │ gzip:   9.52 kB │ map:    81.24 kB
-dist/assets/app-Goj087A9.js                  61.83 kB │ gzip:  15.46 kB │ map:   185.85 kB
+dist/assets/app-gNmz99TY.js                  61.83 kB │ gzip:  15.46 kB │ map:   185.85 kB
 dist/assets/theme-provider-tJsNMTKk.js      107.22 kB │ gzip:  24.22 kB │ map:   270.34 kB
-dist/assets/index-D-SMRtzp.js             1,620.06 kB │ gzip: 324.22 kB │ map: 2,892.37 kB
+dist/assets/index-BSj6fNBD.js             1,620.02 kB │ gzip: 324.19 kB │ map: 2,892.37 kB
 
-✓ built in 1.77s
+✓ built in 1.60s
 
 ---
-vp run: 7/7 cache hit (100%), 30.17s saved. (Run `vp run --last-details` for full details)
+vp run: 7/7 cache hit (100%), 27.42s saved. (Run `vp run --last-details` for full details)
