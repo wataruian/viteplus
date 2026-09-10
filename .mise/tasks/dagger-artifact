@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#MISE description="Run a Dagger workspace function and export its result, defaulting to ./tmp/artifacts/<name>"
+
+set -o errexit # Bail out on any error
+
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
+func="${1:?"Usage: mise run dagger-artifact <function> [workspace] [path]"}"
+
+case "${func}" in
+  root|madge)
+    path="${2:-"./tmp/artifacts"}"
+    dagger call "${func}" export --path="${path}" && cat "${path}/${func}.output"
+    ;;
+  build)
+    workspace="${2:?"Usage: mise run dagger-artifact build <workspace> [path]"}"
+    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+    dagger call build-artifact --workspace="${workspace}" export --path="${path}/build"
+    ;;
+  *)
+    workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"
+    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+    dagger call "${func}" --workspace="${workspace}" export --path="${path}" && cat "${path}/${func}.output"
+    ;;
+esac

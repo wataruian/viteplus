@@ -24,6 +24,7 @@ fi
 
 if [[ "${install}" == "true" ]]; then
   vp install
+  dagger develop
 fi
 
 echo ""
