@@ -310,6 +310,10 @@ const getPackageViteConfig = ({
           output: [
             {
               base: 'package',
+              pattern: 'tmp/compile/**/*',
+            },
+            {
+              base: 'package',
               pattern: 'dist/**/*',
             },
             {

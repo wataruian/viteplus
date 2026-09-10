@@ -174,7 +174,9 @@ const updateStories = () => {
 };
 
 if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
+  globalThis.console.log('🚀 Updating stories...');
   updateStories();
+  globalThis.console.log('✅ Done updating stories');
 }
 
 export { getVariants, updateStories, updateStoryFile };

@@ -8,8 +8,7 @@ currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
 scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 
 cache="${1:-"true"}"
-debug="${2:-"true"}"
-install="${3:-"false"}"
+install="${2:-"false"}"
 
 rootDir="${scriptDir}/../.."
 cd "${rootDir}"
@@ -21,66 +20,25 @@ function executeCommand() {
   local outputsDir="${rootDir}/.outputs"
   mkdir -p "${outputsDir}"
 
-  local isCompileCommand="false"
-  local commandOutputFile=""
   local commandName="${arguments[*]}"
 
+  local isBuildCommand="false"
   case "${commandName}" in
-    "vp run -r update-stories"*)
-      commandOutputFile="update-stories.output"
-      ;;
-    "vp run -r madge"*)
-      commandOutputFile="madge.output"
-      ;;
-    "vp run -r root"*)
-      commandOutputFile="root.output"
-      ;;
-    "vp run -r check"*)
-      commandOutputFile="check.output"
-      ;;
-    "vp run -r format"*)
-      commandOutputFile="format.output"
-      ;;
-    "vp run -r lint"*)
-      commandOutputFile="lint.output"
-      ;;
-    "vp run -r type-check"*)
-      commandOutputFile="type-check.output"
-      ;;
     "vp run -r build"*)
-      commandOutputFile="build.output"
-      ;;
-    "vp run -r test"*)
-      commandOutputFile="test.output"
-      ;;
-    "vp run -r compile"*)
-      isCompileCommand="true"
-      commandOutputFile="compile.output"
+      isBuildCommand="true"
       ;;
   esac
 
-  local commandOutputPath="${outputsDir}/${commandOutputFile}"
   local commandSuccess="false"
-  local exitStatus=""
-  
-  if [[ "${debug}" == "true" ]]; then
-    FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" 2>&1 | tee "${commandOutputPath}"
-    exitStatus="${PIPESTATUS[0]}"
-  else
-    FORCE_COLOR=1 CLICOLOR_FORCE=1 "${arguments[@]}" > "${commandOutputPath}" 2>&1
-    exitStatus="${?}"
-  fi
-  
-  if [[ -f "${commandOutputPath}" ]]; then
-    node -e 'const fs = require("fs"); const f = process.argv[1]; fs.writeFileSync(f, fs.readFileSync(f, "utf8").replace(/\x1b\[[0-9;]*[a-zA-Z]/g, ""));' "${commandOutputPath}"
-  fi
 
-  if [[ "${exitStatus}" -eq 0 ]]; then
-    commandSuccess="true"
-  fi
+  echo "✨ Executing executed command: \`${commandName}\`"
+
+  "${arguments[@]}" && commandSuccess="true" || commandSuccess="false"
 
   if [[ "${commandSuccess}" == "true" ]]; then
-    if [[ "${isCompileCommand}" == "true" ]]; then
+    echo "✅ Successfully executed command: \`${commandName}\`"
+    
+    if [[ "${isBuildCommand}" == "true" ]]; then
       local stylesGeneratedJsonFile="${rootDir}/packages/design-system/tmp/compile/styles.json"
       local stylesMasterJsonFile="${outputsDir}/styles.json"
       
@@ -90,10 +48,8 @@ function executeCommand() {
         echo "✅ Saved styles to ${stylesMasterJsonFile}"
       fi
     fi
-
-    echo "✅ Successfully executed command: \`${commandName}\`. Saved output: ${commandOutputPath}"
   else
-    echo "❌ Failed to execute command: \`${commandName}\`. Saved output: ${commandOutputPath}"
+    echo "❌ Failed to execute command: \`${commandName}\`"
     exit 1
   fi
 }
@@ -106,7 +62,6 @@ if [[ "${install}" == "true" ]]; then
   vp install
 fi
 
-executeCommand vp run -r update-stories
 executeCommand vp run -r madge
 executeCommand vp run -r root --fix
 executeCommand vp run -r check --fix
@@ -115,7 +70,6 @@ executeCommand vp run -r lint --fix
 executeCommand vp run -r type-check
 executeCommand vp run -r build
 executeCommand vp run -r test
-executeCommand vp run -r compile "${debug}"
 
 echo ""
 echo "✅ Commands executed successfully"

@@ -44,7 +44,7 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
     globalThis.process.env['STYLE_COMPILE_DEBUG'] = 'true';
   }
 
-  globalThis.console.log('🚀 Starting style compile process...');
+  globalThis.console.log('🚀 Compiling styles...');
 
   const outputDir = path.resolve(import.meta.dirname, '../../tmp/compile');
   const outputFile = path.resolve(outputDir, 'styles.json');
@@ -61,6 +61,8 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
       }),
     );
   }
+
+  globalThis.console.log('✅ Done compiling styles');
 }
 
 export { componentsGlob, files, raw, styles, stylesRegistry };

@@ -5,19 +5,16 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getPackageViteConfig } from '../../vite.config.ts';
 
 const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
 
-  const rootDir = path.resolve(dir, '../..');
-
-  const commonRunProps = getCommonRunProps(rootDir, mode);
-
   const baseConfig = getPackageViteConfig({
-    buildCommand: 'vp pack && vp build && storybook build',
+    buildCommand:
+      'tsx --conditions=typescript ./src/utils/update-stories.ts && tsx --conditions=typescript ./src/utils/compile.ts && vp pack && vp build && storybook build',
     buildType: 'custom',
     devCommand: 'tsx watch --conditions=typescript ./src/start.ts false',
     dir,
@@ -82,26 +79,6 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     resolve: {
       ...baseConfig.resolve,
-    },
-    run: {
-      ...baseConfig.run,
-      tasks: {
-        ...baseConfig.run?.tasks,
-        compile: {
-          command: 'tsx --conditions=typescript ./src/utils/compile.ts',
-          ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'tmp/compile/**/*',
-            },
-          ],
-        },
-        'update-stories': {
-          command: 'tsx --conditions=typescript ./src/utils/update-stories.ts',
-          ...commonRunProps,
-        },
-      },
     },
     server: {
       port: designSystemPort,
