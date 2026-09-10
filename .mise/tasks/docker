@@ -53,6 +53,7 @@ for project in "${projects[@]}"; do
   fi
 
   echo "✅ ${name} is running on http://localhost:${port}"
+
   if [[ -n "${storybookPort}" ]]; then
     echo "✅ storybook is running on http://localhost:${storybookPort}"
   fi
