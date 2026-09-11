@@ -541,6 +541,12 @@ export class Monorepo {
       .withDefaultArgs(['node', 'dist/index.mjs']);
   }
 
+  private async deploymentContainer(workspace: string, buildEnv?: string[]): Promise<Container> {
+    return Monorepo.isFrontend(workspace)
+      ? await this.nginx(workspace, buildEnv)
+      : await this.vp(workspace, buildEnv);
+  }
+
   @func()
   public async load(
     workspace: string,
@@ -548,10 +554,7 @@ export class Monorepo {
     tag?: string,
     buildEnv?: string[],
   ): Promise<string> {
-    const isFrontend = Monorepo.isFrontend(workspace);
-    const container = isFrontend
-      ? await this.nginx(workspace, buildEnv)
-      : await this.vp(workspace, buildEnv);
+    const container = await this.deploymentContainer(workspace, buildEnv);
 
     const workspacePath = Monorepo.workspacePath(workspace);
     const imageName = workspacePath.split('/').pop();
@@ -586,10 +589,7 @@ export class Monorepo {
     tag?: string,
     buildEnv?: string[],
   ): Promise<string> {
-    const isFrontend = Monorepo.isFrontend(workspace);
-    const container = isFrontend
-      ? await this.nginx(workspace, buildEnv)
-      : await this.vp(workspace, buildEnv);
+    const container = await this.deploymentContainer(workspace, buildEnv);
 
     const refs = [`${address}:latest`];
     if (tag !== undefined && tag !== '') {
