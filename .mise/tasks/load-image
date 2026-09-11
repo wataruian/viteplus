@@ -11,7 +11,7 @@ rootDir="${scriptDir}/../.."
 cd "${rootDir}"
 
 workspace="${1:?"Usage: mise run load-image <workspace> [tag]"}"
-tag="${2:-}"
+tag="${2:-""}"
 
 dockerSocket="${DOCKER_SOCKET:-"/var/run/docker.sock"}"
 

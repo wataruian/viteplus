@@ -16,6 +16,8 @@ if [[ "${ai}" == "true" ]]; then
   vp run --no-cache clean:ai
 fi
 
+dagger core engine local-cache prune || true
+
 vp run --no-cache clean:build
 
 if [[ "${modules}" == "true" ]]; then

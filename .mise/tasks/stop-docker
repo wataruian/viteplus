@@ -3,11 +3,17 @@
 
 set -o errexit # Bail out on any error
 
+app="${1:-""}"
+
 projects=(
   "@lightproject/design-system"
   "@lightproject/backend"
   "@lightproject/frontend"
 )
+
+if [[ -n "${app}" ]]; then
+  projects=("@lightproject/${app}")
+fi
 
 for project in "${projects[@]}"; do
   name="${project##*/}"

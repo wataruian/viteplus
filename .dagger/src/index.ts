@@ -1,4 +1,5 @@
 import {
+  CacheSharingMode,
   type Container,
   type Directory,
   type File,
@@ -12,6 +13,9 @@ import {
 
 const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:0.3.0';
 const VITE_PLUS_USER = 'vp';
+const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
+const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
+const PNPM_STORE_PATH = '/home/vp/.local/share/pnpm/store';
 
 const NGINX_IMAGE = 'nginx:1.27.0-alpine';
 const DOCKER_CLI_VERSION = 'docker:27-cli';
@@ -179,6 +183,22 @@ export class Monorepo {
     return dag.directory().withNewFile(`${taskName}.output`, content);
   }
 
+  private static withInstallCaches(container: Container): Container {
+    return container
+      .withMountedCache(
+        VITE_PLUS_PACKAGE_MANAGER_PATH,
+        dag.cacheVolume('vite-plus-package-manager'),
+        { owner: VITE_PLUS_USER },
+      )
+      .withMountedCache(VITE_PLUS_JS_RUNTIME_PATH, dag.cacheVolume('vite-plus-js-runtime'), {
+        owner: VITE_PLUS_USER,
+      })
+      .withMountedCache(PNPM_STORE_PATH, dag.cacheVolume('vite-plus-pnpm-store'), {
+        owner: VITE_PLUS_USER,
+        sharing: CacheSharingMode.Locked,
+      });
+  }
+
   private static withBuildEnv(
     container: Container,
     workspace: string,
@@ -205,11 +225,13 @@ export class Monorepo {
   }
 
   private withRootSource(): Container {
-    return dag
-      .container()
-      .from(VITE_PLUS_IMAGE)
-      .withWorkdir('/app')
-      .withMountedDirectory('/app', this.rootSource, { owner: VITE_PLUS_USER });
+    return Monorepo.withInstallCaches(
+      dag
+        .container()
+        .from(VITE_PLUS_IMAGE)
+        .withWorkdir('/app')
+        .withMountedDirectory('/app', this.rootSource, { owner: VITE_PLUS_USER }),
+    );
   }
 
   private withInstalledRootSource(): Container {
@@ -260,13 +282,15 @@ export class Monorepo {
     const workspacePath = Monorepo.workspacePath(workspace);
     const dependencyPaths = await this.internalDependencyPaths(workspace);
 
-    let container = dag
-      .container()
-      .from(VITE_PLUS_IMAGE)
-      .withWorkdir('/app')
-      .withDirectory('/app', this.source.filter({ include: MANIFEST_FILES }), {
-        owner: VITE_PLUS_USER,
-      });
+    let container = Monorepo.withInstallCaches(
+      dag
+        .container()
+        .from(VITE_PLUS_IMAGE)
+        .withWorkdir('/app')
+        .withDirectory('/app', this.source.filter({ include: MANIFEST_FILES }), {
+          owner: VITE_PLUS_USER,
+        }),
+    );
 
     for (const path of [workspacePath, ...dependencyPaths]) {
       container = container.withDirectory(`/app/${path}`, this.source.directory(path), {
@@ -296,12 +320,13 @@ export class Monorepo {
     const combined = rootFiles.withDirectory('/', prunedJson);
     const installArgs = mode === 'prod' ? ['vp', 'install', '--prod'] : ['vp', 'install'];
 
-    return dag
-      .container()
-      .from(VITE_PLUS_IMAGE)
-      .withWorkdir('/app')
-      .withDirectory('/app', combined, { owner: VITE_PLUS_USER })
-      .withExec(installArgs);
+    return Monorepo.withInstallCaches(
+      dag
+        .container()
+        .from(VITE_PLUS_IMAGE)
+        .withWorkdir('/app')
+        .withDirectory('/app', combined, { owner: VITE_PLUS_USER }),
+    ).withExec(installArgs);
   }
 
   private async mountFiles(workspace: string, mode = 'dev'): Promise<Container> {
