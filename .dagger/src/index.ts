@@ -184,6 +184,21 @@ export class Monorepo {
     return dag.directory().withNewFile(`${taskName}.output`, content);
   }
 
+  private static installArgs(mode: 'dev' | 'prod' = 'dev'): string[] {
+    switch (mode) {
+      case 'dev': {
+        return ['vp', 'install', '--frozen-lockfile'];
+      }
+      case 'prod': {
+        return ['vp', 'install', '--prod', '--frozen-lockfile'];
+      }
+      default: {
+        const exhaustive: never = mode;
+        throw new Error(`mode must be 'dev' or 'prod', got '${exhaustive as string}'`);
+      }
+    }
+  }
+
   private static withInstallCaches(container: Container): Container {
     return container
       .withMountedCache(
@@ -245,7 +260,7 @@ export class Monorepo {
   }
 
   private withInstalledRootSource(): Container {
-    return Monorepo.withTaskCache(this.withRootSource().withExec(['vp', 'install']), 'root');
+    return Monorepo.withTaskCache(this.withRootSource().withExec(Monorepo.installArgs()), 'root');
   }
 
   private async internalDependencyPaths(workspace: string): Promise<string[]> {
@@ -319,16 +334,10 @@ export class Monorepo {
     ]);
   }
 
-  private async install(workspace: string, mode = 'dev'): Promise<Container> {
-    if (mode !== 'dev' && mode !== 'prod') {
-      throw new Error(`mode must be 'dev' or 'prod', got '${mode}'`);
-    }
-
+  private install(pruned: Container, mode: 'dev' | 'prod' = 'dev'): Container {
     const rootFiles = this.source.filter({ include: ROOT_FILES });
-    const pruned = await this.prune(workspace);
     const prunedJson = pruned.directory('.pruned/json');
     const combined = rootFiles.withDirectory('/', prunedJson);
-    const installArgs = mode === 'prod' ? ['vp', 'install', '--prod'] : ['vp', 'install'];
 
     return Monorepo.withInstallCaches(
       dag
@@ -336,13 +345,13 @@ export class Monorepo {
         .from(VITE_PLUS_IMAGE)
         .withWorkdir('/app')
         .withDirectory('/app', combined, { owner: VITE_PLUS_USER }),
-    ).withExec(installArgs);
+    ).withExec(Monorepo.installArgs(mode));
   }
 
-  private async mountFiles(workspace: string, mode = 'dev'): Promise<Container> {
-    const installContainer = await this.install(workspace, mode);
-
+  private async mountFiles(workspace: string, mode: 'dev' | 'prod' = 'dev'): Promise<Container> {
     const pruned = await this.prune(workspace);
+    const installContainer = this.install(pruned, mode);
+
     const prunedFull = pruned.directory('.pruned/full').filter({ exclude: ['**/node_modules'] });
     const fullEntries = await prunedFull.entries();
 
@@ -390,7 +399,7 @@ export class Monorepo {
 
   @func()
   public async check(workspace: string): Promise<Directory> {
-    const container = await this.mountFiles(workspace, 'dev');
+    const container = await this.mountFiles(workspace);
 
     const stdout = await container.withExec(['vp', 'run', '-r', 'check']).stdout();
 
@@ -399,7 +408,7 @@ export class Monorepo {
 
   @func()
   public async format(workspace: string): Promise<Directory> {
-    const container = await this.mountFiles(workspace, 'dev');
+    const container = await this.mountFiles(workspace);
 
     const stdout = await container.withExec(['vp', 'run', '-r', 'format']).stdout();
 
@@ -408,7 +417,7 @@ export class Monorepo {
 
   @func()
   public async lint(workspace: string): Promise<Directory> {
-    const container = await this.mountFiles(workspace, 'dev');
+    const container = await this.mountFiles(workspace);
 
     const stdout = await container.withExec(['vp', 'run', '-r', 'lint']).stdout();
 
@@ -417,7 +426,7 @@ export class Monorepo {
 
   @func()
   public async typeCheck(workspace: string): Promise<Directory> {
-    const container = await this.mountFiles(workspace, 'dev');
+    const container = await this.mountFiles(workspace);
 
     const stdout = await container.withExec(['vp', 'run', '-r', 'type-check']).stdout();
 
@@ -426,7 +435,7 @@ export class Monorepo {
 
   @func()
   public async build(workspace: string, buildEnv?: string[]): Promise<Container> {
-    const container = await this.mountFiles(workspace, 'dev');
+    const container = await this.mountFiles(workspace);
 
     return Monorepo.withBuildEnv(container, workspace, buildEnv).withExec([
       'vp',
@@ -515,7 +524,8 @@ export class Monorepo {
   public async vp(workspace: string, buildEnv?: string[]): Promise<Container> {
     const buildContainer = await this.build(workspace, buildEnv);
 
-    let container = await this.install(workspace, 'prod');
+    const pruned = await this.prune(workspace);
+    let container = this.install(pruned, 'prod');
 
     const rootEntries = await buildContainer.directory('/app').entries();
     const groups = ['apps', 'packages'].filter((group) => rootEntries.includes(`${group}/`));

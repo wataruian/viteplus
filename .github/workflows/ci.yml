@@ -17,6 +17,9 @@ jobs:
           persist-credentials: false
       - name: Set up mise
         uses: jdx/mise-action@v4
+      - name: Resolve dagger version from mise
+        id: dagger-version
+        run: echo "version=$(dagger version | awk '{print $2}' | sed 's/^v//')" >> "$GITHUB_OUTPUT"
       # - name: Set up Vite+
       #   uses: voidzero-dev/setup-vp@v1
       #   with:
@@ -40,11 +43,14 @@ jobs:
           URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
           echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
           echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
+      # dagger-for-github skips its own download when a dagger matching `version` is
+      # already on PATH, so this reuses the mise-provisioned binary above instead of
+      # fetching a second copy.
       - name: Run Dagger pipeline
         uses: dagger/dagger-for-github@v8
         env:
           _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
         with:
-          version: '0.21.9'
+          version: ${{ steps.dagger-version.outputs.version }}
           call: ready
           # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}

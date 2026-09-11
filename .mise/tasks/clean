@@ -25,7 +25,7 @@ if [[ "${modules}" == "true" ]]; then
 fi
 
 if [[ "${install}" == "true" ]]; then
-  vp install
+  vp install --frozen-lockfile
   dagger develop
 fi
 

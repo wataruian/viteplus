@@ -19,7 +19,7 @@
     "clean:modules": "rimraf -g --max-retries=10 --retry-delay=100 **/node_modules/**",
     "clean:tools": "rimraf -g **/tmp/**",
     "debug": "vp cache clean && vp run ready",
-    "init": "vp install && vp run ready",
+    "init": "vp install --frozen-lockfile && vp run ready",
     "prepare": "vp config",
     "prune": "vp exec turbo prune --out-dir ./.pruned --docker",
     "ready": "vp run -r madge && vp run -r root && vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",

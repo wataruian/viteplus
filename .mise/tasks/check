@@ -59,7 +59,7 @@ if [[ "${cache}" == "false" ]]; then
 fi
 
 if [[ "${install}" == "true" ]]; then
-  vp install
+  vp install --frozen-lockfile
 fi
 
 executeCommand vp run -r madge
