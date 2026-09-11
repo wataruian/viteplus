@@ -38,7 +38,6 @@ const SOURCE_IGNORE = [
   '**/.env',
   '.env.example',
   '.gitattributes',
-  '.gitignore',
   '.miserc.toml',
   'AGENTS.md',
   'CLAUDE.md',
@@ -73,6 +72,38 @@ const ROOT_FILES = [
   'tsconfig.madge.json',
   'vite.config.ts',
 ];
+
+const MANIFEST_FILES = [
+  'package.json',
+  '**/package.json',
+  'pnpm-workspace.yaml',
+  'pnpm-lock.yaml',
+  '.gitignore',
+  ...ROOT_FILES,
+];
+
+const WORKSPACE_NAMES = [
+  '@lightproject/library',
+  '@lightproject/common',
+  '@lightproject/design-system',
+  '@lightproject/backend',
+  '@lightproject/frontend',
+];
+
+const readStringRecord = (value: unknown): Record<string, string> => {
+  if (typeof value !== 'object' || value === null) {
+    return {};
+  }
+
+  const result: Record<string, string> = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (typeof entry === 'string') {
+      result[key] = entry;
+    }
+  }
+
+  return result;
+};
 
 const BUILD_ARTIFACT_KEEP = [
   'dist',
@@ -173,14 +204,6 @@ export class Monorepo {
     return result;
   }
 
-  private withSource(): Container {
-    return dag
-      .container()
-      .from(VITE_PLUS_IMAGE)
-      .withWorkdir('/app')
-      .withMountedDirectory('/app', this.source, { owner: VITE_PLUS_USER });
-  }
-
   private withRootSource(): Container {
     return dag
       .container()
@@ -193,19 +216,76 @@ export class Monorepo {
     return this.withRootSource().withExec(['vp', 'install']);
   }
 
-  private prune(workspace: string): Container {
-    return this.withSource()
+  private async internalDependencyPaths(workspace: string): Promise<string[]> {
+    const manifestEntries = await Promise.all(
+      WORKSPACE_NAMES.map(async (name): Promise<[string, Record<string, string>]> => {
+        const raw = await this.source
+          .file(`${Monorepo.workspacePath(name)}/package.json`)
+          .contents();
+        const parsed: unknown = JSON.parse(raw);
+        const fields = typeof parsed === 'object' && parsed !== null ? parsed : {};
+        const { dependencies, devDependencies } = fields as {
+          dependencies?: unknown;
+          devDependencies?: unknown;
+        };
+
+        return [name, { ...readStringRecord(dependencies), ...readStringRecord(devDependencies) }];
+      }),
+    );
+    const dependenciesByName = new Map(manifestEntries);
+
+    const visited = new Set<string>();
+    const queue = [workspace];
+
+    let current = queue.shift();
+    while (current !== undefined) {
+      if (!visited.has(current)) {
+        visited.add(current);
+
+        for (const [name, version] of Object.entries(dependenciesByName.get(current) ?? {})) {
+          if (version === 'workspace:*' && !visited.has(name)) {
+            queue.push(name);
+          }
+        }
+      }
+
+      current = queue.shift();
+    }
+
+    visited.delete(workspace);
+    return [...visited].map((name) => Monorepo.workspacePath(name));
+  }
+
+  private async prune(workspace: string): Promise<Container> {
+    const workspacePath = Monorepo.workspacePath(workspace);
+    const dependencyPaths = await this.internalDependencyPaths(workspace);
+
+    let container = dag
+      .container()
+      .from(VITE_PLUS_IMAGE)
+      .withWorkdir('/app')
+      .withDirectory('/app', this.source.filter({ include: MANIFEST_FILES }), {
+        owner: VITE_PLUS_USER,
+      });
+
+    for (const path of [workspacePath, ...dependencyPaths]) {
+      container = container.withDirectory(`/app/${path}`, this.source.directory(path), {
+        owner: VITE_PLUS_USER,
+      });
+    }
+
+    return container
       .withExec(['vp', 'install'])
       .withExec(['vp', 'run', 'prune', workspace, '--docker']);
   }
 
-  private install(workspace: string, mode = 'dev'): Container {
+  private async install(workspace: string, mode = 'dev'): Promise<Container> {
     if (mode !== 'dev' && mode !== 'prod') {
       throw new Error(`mode must be 'dev' or 'prod', got '${mode}'`);
     }
 
     const rootFiles = this.source.filter({ include: ROOT_FILES });
-    const pruned = this.prune(workspace);
+    const pruned = await this.prune(workspace);
     const prunedJson = pruned.directory('.pruned/json');
     const combined = rootFiles.withDirectory('/', prunedJson);
     const installArgs = mode === 'prod' ? ['vp', 'install', '--prod'] : ['vp', 'install'];
@@ -219,10 +299,10 @@ export class Monorepo {
   }
 
   private async mountFiles(workspace: string, mode = 'dev'): Promise<Container> {
-    const installContainer = this.install(workspace, mode);
+    const installContainer = await this.install(workspace, mode);
 
-    const pruned = this.prune(workspace);
-    const prunedFull = pruned.directory('.pruned/full');
+    const pruned = await this.prune(workspace);
+    const prunedFull = pruned.directory('.pruned/full').filter({ exclude: ['**/node_modules'] });
     const fullEntries = await prunedFull.entries();
 
     let container = installContainer;
@@ -382,7 +462,7 @@ export class Monorepo {
   public async vp(workspace: string, buildEnv?: string[]): Promise<Container> {
     const buildContainer = await this.build(workspace, buildEnv);
 
-    let container = this.install(workspace, 'prod');
+    let container = await this.install(workspace, 'prod');
 
     const rootEntries = await buildContainer.directory('/app').entries();
     const groups = ['apps', 'packages'].filter((group) => rootEntries.includes(`${group}/`));
