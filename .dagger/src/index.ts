@@ -274,9 +274,15 @@ export class Monorepo {
       });
     }
 
-    return container
-      .withExec(['vp', 'install'])
-      .withExec(['vp', 'run', 'prune', workspace, '--docker']);
+    return container.withExec([
+      'vpx',
+      'npm:turbo@2.10.12',
+      'prune',
+      '--out-dir',
+      './.pruned',
+      '--docker',
+      workspace,
+    ]);
   }
 
   private async install(workspace: string, mode = 'dev'): Promise<Container> {

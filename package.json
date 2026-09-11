@@ -21,7 +21,7 @@
     "debug": "vp cache clean && vp run ready",
     "init": "vp install && vp run ready",
     "prepare": "vp config",
-    "prune": "vp exec turbo prune --out-dir ./.pruned",
+    "prune": "vp exec turbo prune --out-dir ./.pruned --docker",
     "ready": "vp run -r madge && vp run -r root && vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
     "serve:dev": "vp run -r --parallel dev",
     "serve:prod": "vp run -r --parallel start",
