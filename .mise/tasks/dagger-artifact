@@ -13,7 +13,7 @@ cd "${rootDir}"
 func="${1:?"Usage: mise run dagger-artifact <function> [workspace] [path]"}"
 
 case "${func}" in
-  root|madge)
+  root|madge|ready)
     path="${2:-"./tmp/artifacts"}"
     dagger call "${func}" export --path="${path}" && cat "${path}/${func}.output"
     ;;

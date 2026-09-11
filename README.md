@@ -128,6 +128,29 @@ We use `vp staged` as a pre-commit hook. It automatically runs:
 
 Only code that passes these checks can be committed.
 
+## 🐳 CI Pipeline (Dagger)
+
+CI runs entirely through a [Dagger](https://dagger.io/) module in `.dagger/src/index.ts` (the `Monorepo` object), inside the official `ghcr.io/voidzero-dev/vite-plus` image — so CI runs the exact same containerized environment you can reproduce locally with the `dagger` CLI.
+
+| Function                              | Description                                                                                                                    |
+| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- |
+| `dagger call ready`                   | Full suite (madge, root, check, format, lint, type-check, build, test) against the whole repo — what CI runs on every push/PR. |
+| `dagger call check --workspace=<pkg>` | Format, lint, and type checks for one workspace (e.g. `@lightproject/backend`).                                                |
+| `dagger call build --workspace=<pkg>` | Build one workspace and its internal dependencies.                                                                             |
+| `dagger call test --workspace=<pkg>`  | Run tests (with coverage) for one workspace.                                                                                   |
+| `dagger call vp --workspace=<pkg>`    | Production-only container running the built Node.js app.                                                                       |
+| `dagger call nginx --workspace=<pkg>` | Static/nginx container for frontend-type workspaces.                                                                           |
+| `dagger call publish` / `load`        | Push or locally load a built container image.                                                                                  |
+
+Run `dagger functions` to list everything available.
+
+**Caching**: the module mounts persistent [cache volumes](https://docs.dagger.io/api/cache-volumes/) so repeated runs skip redundant work:
+
+- Node.js runtime, the pnpm binary, and the pnpm package store are shared globally across every workspace and the root install.
+- Vite Task's own task cache (`node_modules/.vite/task-cache`) is scoped **per target workspace**, since `turbo prune` rewrites `pnpm-lock.yaml` differently depending on which workspace is the build target — a shared cache volume would otherwise cause unrelated cache misses whenever a different workspace triggered the build.
+
+These caches persist across `dagger call` invocations on the same machine (backed by the local Dagger engine), but **not** across separate GitHub Actions runs by default — GitHub-hosted runners are ephemeral, so each CI run starts with an empty cache unless a persistent or remote Dagger engine (Dagger Cloud, or a self-hosted engine via `_EXPERIMENTAL_DAGGER_RUNNER_HOST`) is configured.
+
 ## 🏗 Monorepo Conventions
 
 ### Dependency Management

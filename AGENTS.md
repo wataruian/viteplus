@@ -72,6 +72,7 @@ This document outlines the goals, guidelines, and best practices for AI agents w
   - Use `mise run <task>` for high-level automation (defined in `.mise/tasks/`).
   - Use `vp run <script>` for custom scripts defined in `package.json`.
   - Use `vp <command>` (e.g., `vp dev`, `vp test`) for built-in Vite+ functionality.
+  - Use `dagger call <function> [--workspace=<pkg>]` to reproduce CI locally in the same containerized environment (see CI Pipeline below).
 - **Configuration Hub**: Treat `vite.config.ts` as the source of truth for formatting, linting, and building.
 
 ## Exploration Strategy
@@ -94,6 +95,15 @@ When first entering the repository or a new package:
 - **Catalogs**: Use `catalog:` in `package.json` for shared external dependencies defined in `pnpm-workspace.yaml`.
 - **Internal**: Use `workspace:*` for all internal package/app references.
 - **Strictness**: Do not add dependencies directly with `pnpm` or `npm`. Use `vp add`.
+
+## CI Pipeline (Dagger)
+
+- **Source of truth**: `.dagger/src/index.ts` defines the `Monorepo` Dagger object. It is a standalone project (its own `package.json`/`tsconfig.json`, not a pnpm workspace member) — it is covered by the root `vp check` task, not the per-workspace `-r check`.
+- **Local parity**: `dagger call <function> [--workspace=<pkg>]` runs the same containerized pipeline CI does. Run `dagger functions` to list them (`ready`, `check`, `build`, `test`, `vp`, `nginx`, `publish`, `load`, `wrangler`, etc.).
+- **GitHub Actions**: `.github/workflows/ci.yml` runs `dagger call ready` on every push/PR via `dagger/dagger-for-github`.
+- **Caching**: install-level caches (Node.js runtime, pnpm binary, pnpm store) are shared globally across every workspace via `withInstallCaches`. Vite Task's own task cache is scoped **per target workspace** via `withTaskCache(container, key)` — `turbo prune` rewrites `pnpm-lock.yaml` differently per build target, so a single shared task-cache volume would otherwise bust itself whenever a different workspace triggered the build.
+- **Ephemeral CI caveat**: these caches persist across `dagger call` invocations on one machine (the local Dagger engine keeps running between calls), but GitHub-hosted runners are ephemeral — each CI run starts cold unless a persistent/remote engine is wired in (Dagger Cloud, or `_EXPERIMENTAL_DAGGER_RUNNER_HOST` pointing at a self-hosted engine).
+- **When editing `.dagger/src/index.ts`**: verify with `vpx tsc --noEmit -p .dagger/tsconfig.json` and `vp check .dagger/src/index.ts`, then confirm with a real `dagger call` — Dagger's own op-cache and cache-volume behavior can hide correctness issues that a type-check alone won't catch (e.g. a `withMountedCache` mount silently shadowing existing container content).
 
 ## Best Practices
 

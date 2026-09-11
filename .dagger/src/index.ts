@@ -362,15 +362,6 @@ export class Monorepo {
   }
 
   @func()
-  public async ready(): Promise<Directory> {
-    const container = this.withInstalledRootSource();
-
-    const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
-
-    return Monorepo.outputDirectory('ready', stdout);
-  }
-
-  @func()
   public async madge(): Promise<Directory> {
     const container = this.withInstalledRootSource();
 
@@ -386,6 +377,15 @@ export class Monorepo {
     const stdout = await container.withExec(['vp', 'run', '-r', 'root']).stdout();
 
     return Monorepo.outputDirectory('root', stdout);
+  }
+
+  @func()
+  public async ready(): Promise<Directory> {
+    const container = this.withInstalledRootSource();
+
+    const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
+
+    return Monorepo.outputDirectory('ready', stdout);
   }
 
   @func()
