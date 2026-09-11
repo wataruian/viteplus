@@ -148,6 +148,31 @@ export class Monorepo {
     return dag.directory().withNewFile(`${taskName}.output`, content);
   }
 
+  private static withBuildEnv(
+    container: Container,
+    workspace: string,
+    buildEnv?: string[],
+  ): Container {
+    if (buildEnv && buildEnv.length > 0 && !Monorepo.isFrontend(workspace)) {
+      throw new Error(`buildEnv is only supported for frontend workspaces, got '${workspace}'`);
+    }
+
+    let result = container;
+
+    for (const entry of buildEnv ?? []) {
+      const separatorIndex = entry.indexOf('=');
+      if (separatorIndex === -1) {
+        throw new Error(`Invalid build env entry (expected KEY=VALUE): ${entry}`);
+      }
+
+      const key = entry.slice(0, separatorIndex);
+      const value = entry.slice(separatorIndex + 1);
+      result = result.withEnvVariable(key, value);
+    }
+
+    return result;
+  }
+
   private withSource(): Container {
     return dag
       .container()
@@ -267,15 +292,20 @@ export class Monorepo {
   }
 
   @func()
-  public async build(workspace: string): Promise<Container> {
+  public async build(workspace: string, buildEnv?: string[]): Promise<Container> {
     const container = await this.mountFiles(workspace, 'dev');
 
-    return container.withExec(['vp', 'run', '-r', 'build']);
+    return Monorepo.withBuildEnv(container, workspace, buildEnv).withExec([
+      'vp',
+      'run',
+      '-r',
+      'build',
+    ]);
   }
 
   @func()
-  public async buildArtifact(workspace: string): Promise<Directory> {
-    const buildContainer = await this.build(workspace);
+  public async buildArtifact(workspace: string, buildEnv?: string[]): Promise<Directory> {
+    const buildContainer = await this.build(workspace, buildEnv);
 
     const pruneArgs = BUILD_ARTIFACT_KEEP.map((name) => `! -name '${name}'`).join(' ');
     const script = [
@@ -294,8 +324,8 @@ export class Monorepo {
   }
 
   @func()
-  public async test(workspace: string): Promise<Directory> {
-    const container = await this.build(workspace);
+  public async test(workspace: string, buildEnv?: string[]): Promise<Directory> {
+    const container = await this.build(workspace, buildEnv);
 
     const testContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test']);
 
@@ -308,8 +338,8 @@ export class Monorepo {
   }
 
   @func()
-  public async nginx(workspace: string): Promise<Container> {
-    const buildContainer = await this.build(workspace);
+  public async nginx(workspace: string, buildEnv?: string[]): Promise<Container> {
+    const buildContainer = await this.build(workspace, buildEnv);
 
     const workspacePath = Monorepo.workspacePath(workspace);
     const workspaceDir = buildContainer.directory(`/app/${workspacePath}`);
@@ -341,12 +371,16 @@ export class Monorepo {
         .withExposedPort(81);
     }
 
-    return container.withDefaultArgs(['nginx', '-g', 'daemon off;']);
+    return Monorepo.withBuildEnv(container, workspace, buildEnv).withDefaultArgs([
+      'nginx',
+      '-g',
+      'daemon off;',
+    ]);
   }
 
   @func()
-  public async vp(workspace: string): Promise<Container> {
-    const buildContainer = await this.build(workspace);
+  public async vp(workspace: string, buildEnv?: string[]): Promise<Container> {
+    const buildContainer = await this.build(workspace, buildEnv);
 
     let container = this.install(workspace, 'prod');
 
@@ -381,15 +415,22 @@ export class Monorepo {
 
     const workspacePath = Monorepo.workspacePath(workspace);
 
-    return container
+    return Monorepo.withBuildEnv(container, workspace, buildEnv)
       .withWorkdir(`/app/${workspacePath}`)
       .withDefaultArgs(['node', 'dist/index.mjs']);
   }
 
   @func()
-  public async load(workspace: string, dockerSocket: Socket, tag?: string): Promise<string> {
+  public async load(
+    workspace: string,
+    dockerSocket: Socket,
+    tag?: string,
+    buildEnv?: string[],
+  ): Promise<string> {
     const isFrontend = Monorepo.isFrontend(workspace);
-    const container = isFrontend ? await this.nginx(workspace) : await this.vp(workspace);
+    const container = isFrontend
+      ? await this.nginx(workspace, buildEnv)
+      : await this.vp(workspace, buildEnv);
 
     const workspacePath = Monorepo.workspacePath(workspace);
     const imageName = workspacePath.split('/').pop();
@@ -418,9 +459,16 @@ export class Monorepo {
   }
 
   @func()
-  public async publish(workspace: string, address: string, tag?: string): Promise<string> {
+  public async publish(
+    workspace: string,
+    address: string,
+    tag?: string,
+    buildEnv?: string[],
+  ): Promise<string> {
     const isFrontend = Monorepo.isFrontend(workspace);
-    const container = isFrontend ? await this.nginx(workspace) : await this.vp(workspace);
+    const container = isFrontend
+      ? await this.nginx(workspace, buildEnv)
+      : await this.vp(workspace, buildEnv);
 
     const refs = [`${address}:latest`];
     if (tag !== undefined && tag !== '') {
@@ -437,8 +485,9 @@ export class Monorepo {
     workspace: string,
     cloudflareApiToken: Secret,
     cloudflareAccountId?: string,
+    buildEnv?: string[],
   ): Promise<string> {
-    const container = await this.build(workspace);
+    const container = await this.build(workspace, buildEnv);
 
     const workspacePath = Monorepo.workspacePath(workspace);
 
@@ -453,6 +502,8 @@ export class Monorepo {
       );
     }
 
-    return deployContainer.withExec(['vp', 'exec', 'wrangler', 'deploy']).stdout();
+    return Monorepo.withBuildEnv(deployContainer, workspace, buildEnv)
+      .withExec(['vp', 'exec', 'wrangler', 'deploy'])
+      .stdout();
   }
 }

@@ -9,7 +9,15 @@ const schema = commonEnvSchema.extend({
   VITE_API_URL: z.string().optional(),
 });
 
-const { get } = validateEnv(schema);
+const { get: baseGet } = validateEnv(schema);
+
+const getViteEnv = (key: string): string | undefined => {
+  const value: unknown = import.meta.env[key];
+  return typeof value === 'string' ? value : undefined;
+};
+
+const get = (key: Parameters<typeof baseGet>[0]): string | undefined =>
+  baseGet(key) ?? getViteEnv(key);
 
 const config = {
   get adminPort() {
@@ -22,4 +30,4 @@ const config = {
   },
 };
 
-export { config, get };
+export { config, get, getViteEnv };

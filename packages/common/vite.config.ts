@@ -7,17 +7,8 @@ export default defineConfig(({ mode }): UserConfig => {
 
   const baseConfig = getPackageViteConfig({ dir, mode });
 
-  const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
-
   return {
     ...baseConfig,
-    pack: {
-      ...basePack,
-      define: {
-        'import.meta': '{}',
-      },
-      shims: false,
-    },
     test: {
       ...baseConfig.test,
       coverage: {

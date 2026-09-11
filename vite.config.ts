@@ -120,7 +120,6 @@ const getCommonViteConfig = ({
   const dotenvKeys = getDotenvKeys(rootDir);
   const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
   const isLocal = env['ENV'] === 'local';
-  const isDevMode = mode !== 'production';
 
   const pkgPath = path.resolve(dir, 'package.json');
   let pkgName: string | undefined = undefined;
@@ -139,7 +138,7 @@ const getCommonViteConfig = ({
   return {
     build: {
       chunkSizeWarningLimit: 2500,
-      cssCodeSplit: !isDevMode,
+      cssCodeSplit: true,
       cssMinify: !isLocal,
       emptyOutDir: true,
       minify: !isLocal,
@@ -224,7 +223,7 @@ const getCommonViteConfig = ({
       minify: !isLocal,
       name: pkgName ?? '',
       outDir: 'dist',
-      shims: true,
+      shims: false,
       sourcemap: isLocal,
       treeshake: true,
       unbundle: isLocal,

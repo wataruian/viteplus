@@ -1,9 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-vi.mock('../src/utils/helpers', () => ({
-  getMetaEnv: () => ({}),
-}));
-
 const endpointsEnvKeys = [
   'API_URL',
   'ADMIN_URL',

@@ -1,5 +1,3 @@
-import { getMetaEnv } from '../utils/helpers';
-
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
 
@@ -8,15 +6,6 @@ const getEnv = (key: string, defaultValue?: string): string | undefined => {
     const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
     if (envGlobal.process?.env !== undefined && envGlobal.process.env[key] !== undefined) {
       return envGlobal.process.env[key];
-    }
-  } catch {
-    // Ignore error
-  }
-
-  try {
-    const metaEnv = getMetaEnv();
-    if (metaEnv?.[key] !== undefined) {
-      return metaEnv[key];
     }
   } catch {
     // Ignore error

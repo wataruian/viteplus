@@ -25,10 +25,6 @@ import {
   isVitest,
 } from '../src/environment/env';
 
-vi.mock('../src/utils/helpers', () => ({
-  getMetaEnv: () => ({}),
-}));
-
 describe('Environment Helpers', () => {
   afterEach(() => {
     vi.unstubAllEnvs();

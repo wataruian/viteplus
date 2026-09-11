@@ -15,6 +15,7 @@ for project in "${projects[@]}"; do
   storybookPort=""
   containerPort="80"
   storybookContainerPort="81"
+  buildArgs=()
   case "${name}" in
     "backend")
       port="${API_PORT:-"3000"}"
@@ -22,6 +23,9 @@ for project in "${projects[@]}"; do
       ;;
     "frontend")
       port="${ADMIN_PORT:-"3001"}"
+      buildArgs+=(
+        --build-env="VITE_API_URL=${VITE_API_URL}"
+      )
       ;;
     "design-system")
       port="${DESIGN_SYSTEM_PORT:-"6007"}"
@@ -33,11 +37,14 @@ for project in "${projects[@]}"; do
       ;;
   esac
 
+  buildArgs+=(
+    --workspace="${project}"
+    --docker-socket="/var/run/docker.sock"
+  )
+
   echo "Building: ${project}"
 
-  dagger call load \
-    --workspace="${project}" \
-    --docker-socket="/var/run/docker.sock"
+  dagger call load "${buildArgs[@]}"
 
   docker rm -f "${name}" || true
 

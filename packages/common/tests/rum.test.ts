@@ -15,10 +15,6 @@ const {
   setGlobalMeterProviderMock: vi.fn(),
 }));
 
-vi.mock('../src/utils/helpers', () => ({
-  getMetaEnv: () => ({}),
-}));
-
 vi.mock('@grafana/faro-web-sdk', () => ({
   faro: { staticFaroExport: true },
   getWebInstrumentations: vi.fn(() => ['web-instrumentation']),

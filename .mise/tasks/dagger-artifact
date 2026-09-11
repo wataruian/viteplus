@@ -20,7 +20,20 @@ case "${func}" in
   build)
     workspace="${2:?"Usage: mise run dagger-artifact build <workspace> [path]"}"
     path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    dagger call build-artifact --workspace="${workspace}" export --path="${path}/build"
+    buildArgs=()
+    case "${workspace}" in
+      "@lightproject/frontend")
+        buildArgs+=(
+          --build-env="VITE_API_URL=${VITE_API_URL}"
+        )
+        ;;
+      *)
+        ;;
+    esac
+    buildArgs+=(
+      --workspace="${workspace}"
+    )
+    dagger call build-artifact "${buildArgs[@]}" export --path="${path}/build"
     ;;
   *)
     workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"

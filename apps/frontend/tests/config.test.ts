@@ -1,9 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-vi.mock('@lightproject/common/utils/helpers', () => ({
-  getMetaEnv: () => ({}),
-}));
-
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.resetModules();
@@ -14,6 +10,23 @@ const importConfig = async () => {
   const { config } = await import('../src/config');
   return config;
 };
+
+describe('getViteEnv', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(import.meta.env, 'SOME_VITE_ONLY_KEY');
+  });
+
+  test('returns the value when import.meta.env has it', async () => {
+    const { getViteEnv } = await import('../src/config');
+    Object.assign(import.meta.env, { SOME_VITE_ONLY_KEY: 'from-vite' });
+    expect(getViteEnv('SOME_VITE_ONLY_KEY')).toBe('from-vite');
+  });
+
+  test('returns undefined when the key is absent from import.meta.env', async () => {
+    const { getViteEnv } = await import('../src/config');
+    expect(getViteEnv('SOME_VITE_ONLY_KEY')).toBeUndefined();
+  });
+});
 
 describe('config.adminPort', () => {
   test('uses ADMIN_PORT when set', async () => {
