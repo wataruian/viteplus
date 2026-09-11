@@ -87,13 +87,15 @@ const MANIFEST_FILES = [
   ...ROOT_FILES,
 ];
 
-const WORKSPACE_NAMES = [
-  '@lightproject/library',
-  '@lightproject/common',
-  '@lightproject/design-system',
-  '@lightproject/backend',
-  '@lightproject/frontend',
-];
+const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
+  '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
+  '@lightproject/common': { isFrontend: false, path: 'packages/common' },
+  '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
+  '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
+  '@lightproject/library': { isFrontend: false, path: 'packages/library' },
+};
+
+const WORKSPACE_NAMES = Object.keys(WORKSPACES);
 
 const readStringRecord = (value: unknown): Record<string, string> => {
   if (typeof value !== 'object' || value === null) {
@@ -139,45 +141,21 @@ export class Monorepo {
       .withFile('plopfile.ts', plopfile);
   }
 
-  private static workspacePath(workspace: string): string {
-    switch (workspace) {
-      case '@lightproject/library': {
-        return 'packages/library';
-      }
-      case '@lightproject/common': {
-        return 'packages/common';
-      }
-      case '@lightproject/design-system': {
-        return 'packages/design-system';
-      }
-      case '@lightproject/backend': {
-        return 'apps/backend';
-      }
-      case '@lightproject/frontend': {
-        return 'apps/frontend';
-      }
-      default: {
-        throw new Error(`Workspace ${workspace} is not supported`);
-      }
-    }
-  }
-
-  private static isFrontend(workspace: string): boolean {
-    const workspacePath = Monorepo.workspacePath(workspace);
-
-    if (!workspacePath) {
+  private static workspace(workspace: string): { isFrontend: boolean; path: string } {
+    const entry = WORKSPACES[workspace];
+    if (!entry) {
       throw new Error(`Workspace ${workspace} is not supported`);
     }
 
-    switch (workspace) {
-      case '@lightproject/design-system':
-      case '@lightproject/frontend': {
-        return true;
-      }
-      default: {
-        return false;
-      }
-    }
+    return entry;
+  }
+
+  private static workspacePath(workspace: string): string {
+    return Monorepo.workspace(workspace).path;
+  }
+
+  private static isFrontend(workspace: string): boolean {
+    return Monorepo.workspace(workspace).isFrontend;
   }
 
   private static outputDirectory(taskName: string, content: string): Directory {
