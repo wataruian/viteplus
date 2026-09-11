@@ -16,6 +16,7 @@ const VITE_PLUS_USER = 'vp';
 const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
 const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
 const PNPM_STORE_PATH = '/home/vp/.local/share/pnpm/store';
+const TASK_CACHE_PATH = '/app/node_modules/.vite/task-cache';
 
 const NGINX_IMAGE = 'nginx:1.27.0-alpine';
 const DOCKER_CLI_VERSION = 'docker:27-cli';
@@ -188,15 +189,24 @@ export class Monorepo {
       .withMountedCache(
         VITE_PLUS_PACKAGE_MANAGER_PATH,
         dag.cacheVolume('vite-plus-package-manager'),
-        { owner: VITE_PLUS_USER },
+        { owner: VITE_PLUS_USER, sharing: CacheSharingMode.Locked },
       )
       .withMountedCache(VITE_PLUS_JS_RUNTIME_PATH, dag.cacheVolume('vite-plus-js-runtime'), {
         owner: VITE_PLUS_USER,
+        sharing: CacheSharingMode.Locked,
       })
       .withMountedCache(PNPM_STORE_PATH, dag.cacheVolume('vite-plus-pnpm-store'), {
         owner: VITE_PLUS_USER,
         sharing: CacheSharingMode.Locked,
       });
+  }
+
+  private static withTaskCache(container: Container, key: string): Container {
+    return container.withMountedCache(
+      TASK_CACHE_PATH,
+      dag.cacheVolume(`vite-plus-task-cache-${key}`),
+      { owner: VITE_PLUS_USER, sharing: CacheSharingMode.Locked },
+    );
   }
 
   private static withBuildEnv(
@@ -230,12 +240,12 @@ export class Monorepo {
         .container()
         .from(VITE_PLUS_IMAGE)
         .withWorkdir('/app')
-        .withMountedDirectory('/app', this.rootSource, { owner: VITE_PLUS_USER }),
+        .withDirectory('/app', this.rootSource, { owner: VITE_PLUS_USER }),
     );
   }
 
   private withInstalledRootSource(): Container {
-    return this.withRootSource().withExec(['vp', 'install']);
+    return Monorepo.withTaskCache(this.withRootSource().withExec(['vp', 'install']), 'root');
   }
 
   private async internalDependencyPaths(workspace: string): Promise<string[]> {
@@ -345,7 +355,19 @@ export class Monorepo {
       }
     }
 
-    return container;
+    return Monorepo.withTaskCache(
+      container,
+      Monorepo.workspacePath(workspace).replaceAll('/', '-'),
+    );
+  }
+
+  @func()
+  public async ready(): Promise<Directory> {
+    const container = this.withInstalledRootSource();
+
+    const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
+
+    return Monorepo.outputDirectory('ready', stdout);
   }
 
   @func()
