@@ -5,6 +5,9 @@ inputs:
   args:
     description: 'Arguments passed to `vp run`'
     default: '-r root'
+  workspace:
+    description: 'Workspace to run `vp run` in'
+    default: 'root'
 
 runs:
   using: 'composite'
@@ -16,9 +19,24 @@ runs:
         path: node_modules/.vite/task-cache
         prefix: vite-task-${{ runner.os }}-${{ runner.arch }}-
 
-    - name: Run vp run ${{ inputs.args }}
+    - name: Run vp run ${{ inputs.args }} (${{ inputs.workspace }})
       shell: bash
-      run: vp run ${{ inputs.args }}
+      run: |
+        case "${{ inputs.workspace }}" in
+          library|common|design-system)
+            dir="packages/${{ inputs.workspace }}"
+            ;;
+          backend|frontend)
+            dir="apps/${{ inputs.workspace }}"
+            ;;
+          root)
+            dir="."
+            ;;
+          *)
+            dir="${{ inputs.workspace }}"
+            ;;
+        esac
+        cd "${dir}" && vp run "${{ inputs.args }}"
 
     - name: Prune previous Vite Task cache
       if: success()
