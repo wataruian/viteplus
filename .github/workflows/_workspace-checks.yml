@@ -20,9 +20,6 @@ jobs:
           - '@lightproject/backend'
           - '@lightproject/frontend'
           - '@lightproject/design-system'
-    permissions:
-      contents: read
-      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
