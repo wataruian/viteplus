@@ -6,9 +6,6 @@ on:
 jobs:
   develop:
     if: github.ref == 'refs/heads/develop'
-    permissions:
-      contents: read
-      actions: write
     uses: ./.github/actions/main
     with:
       environment: develop
@@ -16,9 +13,6 @@ jobs:
 
   staging:
     if: github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-      actions: write
     uses: ./.github/actions/main
     with:
       environment: staging
@@ -27,9 +21,6 @@ jobs:
   production:
     needs: staging
     if: github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-      actions: write
     uses: ./.github/actions/main
     with:
       environment: production
