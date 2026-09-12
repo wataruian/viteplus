@@ -24,6 +24,9 @@ jobs:
       contents: read
       actions: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
       - name: Run dagger pipeline
         uses: ./.github/actions/main
         with:
