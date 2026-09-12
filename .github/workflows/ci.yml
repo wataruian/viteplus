@@ -52,27 +52,38 @@ jobs:
           echo "dagger version:"
           echo "${dagger_version}"
 
+      - name: Cache Dagger SDK
+        id: cache-dagger-sdk
+        uses: actions/cache@v6.1.0
+        with:
+          path: .dagger/sdk
+          key: dagger-sdk-${{ runner.os }}-${{ steps.resolve-toolchain-versions.outputs.dagger_version }}-${{ hashFiles('.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
+
       - name: Setup Dagger
+        if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
         run: dagger develop
+
+      - name: Hello World
+        run: echo "Hello World!"
 
       # - name: Run Vite+ pipeline
       #   run: vp run ready
 
-      - uses: crazy-max/ghaction-github-runtime@v4.0.0
+      # - uses: crazy-max/ghaction-github-runtime@v4.0.0
 
-      - name: Build Dagger cache config
-        id: dagger-cache-config
-        run: |
-          URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
-          echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
-          echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
+      # - name: Build Dagger cache config
+      #   id: dagger-cache-config
+      #   run: |
+      #     URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
+      #     echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
+      #     echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
 
-      - name: Run Dagger pipeline
-        uses: dagger/dagger-for-github@v8.4.1
-        env:
-          DAGGER_NO_NAG: 1
-          _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
-        with:
-          version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
-          call: ready
-          # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+      # - name: Run Dagger pipeline
+      #   uses: dagger/dagger-for-github@v8.4.1
+      #   env:
+      #     DAGGER_NO_NAG: 1
+      #     _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
+      #   with:
+      #     version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
+      #     call: ready
+      #     # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
