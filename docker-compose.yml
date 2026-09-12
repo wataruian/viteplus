@@ -131,7 +131,7 @@ services:
       - ./configs/dagger-engine.json:/etc/dagger/engine.json
 
   github-runner:
-    image: myoung34/github-runner:2.337.0
+    image: myoung34/github-runner:2.337.0-ubuntu-noble
     container_name: github-runner
     restart: unless-stopped
     environment:
@@ -139,7 +139,7 @@ services:
       ACCESS_TOKEN: ${GH_RUNNER_TOKEN}
       RUNNER_NAME: ${GH_RUNNER_NAME:-gh-runner-1}
       RUNNER_SCOPE: repo
-      LABELS: self-hosted,linux,x64,dagger
+      LABELS: self-hosted,linux,arm64,dagger
       EPHEMERAL: '1'
       DISABLE_AUTO_UPDATE: 'true'
       RUNNER_WORKDIR: /tmp/runner/work
