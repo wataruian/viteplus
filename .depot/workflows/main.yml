@@ -7,7 +7,7 @@
 name: 'Main Pipeline'
 on:
   push:
-    branches: [main, ci]
+    branches: [main]
 concurrency:
   group: ci
   cancel-in-progress: false
@@ -19,7 +19,6 @@ jobs:
     uses: ./.depot/workflows/check.yml
     with:
       environment: develop
-      cacheScope: develop
     secrets: inherit
 
 # staging:
@@ -30,7 +29,6 @@ jobs:
 #   uses: ./.github/workflows/check.yml
 #   with:
 #     environment: staging
-#     cacheScope: staging
 #   secrets: inherit
 
 # production:
@@ -41,5 +39,4 @@ jobs:
 #   uses: ./.github/workflows/check.yml
 #   with:
 #     environment: production
-#     cacheScope: production
 #   secrets: inherit

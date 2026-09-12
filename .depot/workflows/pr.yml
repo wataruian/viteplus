@@ -7,7 +7,7 @@
 name: 'PR Pipeline'
 on:
   pull_request:
-    branches: [main, ci]
+    branches: [main]
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -17,6 +17,4 @@ jobs:
       contents: read
       actions: write
     uses: ./.depot/workflows/check.yml
-    with:
-      cacheScope: ${{ github.head_ref }}
     secrets: inherit
