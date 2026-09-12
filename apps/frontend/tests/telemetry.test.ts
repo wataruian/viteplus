@@ -33,8 +33,16 @@ afterEach(() => {
 
 describe('RUM telemetry', () => {
   test('pushes a log and a trace span to Faro, and a metric to the OTEL collector', async () => {
+    const startedAt = Date.now();
+    const mark = (label: string) => {
+      globalThis.console.error(`[telemetry-diag] ${label} at +${Date.now() - startedAt}ms`);
+    };
+    mark('test start');
+
     const collector = await startFakeOtelCollector();
+    mark('collector started');
     const fetchTarget = await startFakeOtelCollector();
+    mark('fetchTarget started');
 
     try {
       initializeRum({
@@ -43,25 +51,44 @@ describe('RUM telemetry', () => {
         serviceName: '@lightproject/frontend-test',
         serviceVersion: '1.2.3',
       });
+      mark('initializeRum done');
 
       faro.api.pushLog([testLogMessage]);
+      mark('pushLog done');
 
       getMeter().createCounter('button_clicks', { description: 'button_clicks' }).add(1);
+      mark('counter.add done');
       await flushRum();
+      mark('flushRum done');
 
       await globalThis.fetch(`${fetchTarget.url}/probe`).catch(() => {});
+      mark('probe fetch done');
 
       const [logRequest, metricRequest, traceRequest] = await Promise.all([
-        collector.waitForRequest(
-          '/collect',
-          (request) => collectLogBodySchema.safeParse(request.body).success,
-        ),
-        collector.waitForRequest('/v1/metrics'),
-        collector.waitForRequest(
-          '/collect',
-          (request) => collectTraceBodySchema.safeParse(request.body).success,
-        ),
+        collector
+          .waitForRequest(
+            '/collect',
+            (request) => collectLogBodySchema.safeParse(request.body).success,
+          )
+          .then((result) => {
+            mark('log request received');
+            return result;
+          }),
+        collector.waitForRequest('/v1/metrics').then((result) => {
+          mark('metric request received');
+          return result;
+        }),
+        collector
+          .waitForRequest(
+            '/collect',
+            (request) => collectTraceBodySchema.safeParse(request.body).success,
+          )
+          .then((result) => {
+            mark('trace request received');
+            return result;
+          }),
       ]);
+      mark('Promise.all done');
 
       const log = collectLogBodySchema.parse(logRequest.body);
       expect(log.logs.some((entry) => entry.message.includes(testLogMessage))).toBe(true);
