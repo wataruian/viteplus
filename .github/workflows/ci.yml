@@ -63,7 +63,7 @@ jobs:
         id: restore-dagger-engine-cache
         uses: actions/cache/restore@v6.1.0
         with:
-          path: dagger-engine-cache.tar.gz
+          path: dagger-engine-cache.tar
           key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-
@@ -71,9 +71,9 @@ jobs:
       - name: Start Dagger engine
         run: |
           docker volume create dagger-engine-cache
-          if [[ -f dagger-engine-cache.tar.gz ]]; then
+          if [[ -f dagger-engine-cache.tar ]]; then
             docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
-              sh -c "tar xzf /backup/dagger-engine-cache.tar.gz -C /data"
+              sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
           fi
 
           echo '{"gc": {"enabled": false}}' > dagger-engine.json
@@ -85,16 +85,6 @@ jobs:
             "registry.dagger.io/engine:${{ steps.setup-configs.outputs.dagger_version }}"
 
           echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
-
-      - name: Diagnose Dagger engine startup
-        run: |
-          sleep 3
-          echo "--- docker ps -a ---"
-          docker ps -a
-          echo "--- docker logs dagger-engine-custom ---"
-          docker logs dagger-engine-custom || true
-          echo "--- docker inspect mounts ---"
-          docker inspect dagger-engine-custom --format '{{json .Mounts}}' || true
 
       - name: Setup Dagger
         if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
@@ -116,33 +106,19 @@ jobs:
           # call: ready
           call: check --workspace=@lightproject/library
 
-      - name: Diagnose Dagger engine after run
-        if: always()
-        run: |
-          echo "--- docker ps -a (checking for a second, dagger-auto-provisioned container) ---"
-          docker ps -a
-          echo "--- docker logs dagger-engine-custom (tail) ---"
-          docker logs --tail 200 dagger-engine-custom || true
-          echo "--- actual volume content size (independent of the tar step) ---"
-          docker run --rm -v dagger-engine-cache:/data alpine du -sh /data || true
-
       - name: Stop Dagger engine
         if: always()
         run: docker stop dagger-engine-custom 2>/dev/null || true
-
-      - name: Diagnose volume size after stop
-        if: always()
-        run: docker run --rm -v dagger-engine-cache:/data alpine du -sh /data || true
 
       - name: Save Dagger engine volume
         if: always()
         run: |
           docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
-            sh -c "tar czf /backup/dagger-engine-cache.tar.gz -C /data ."
+            sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
 
       - name: Save Dagger engine volume cache
         if: always()
         uses: actions/cache/save@v6.1.0
         with:
-          path: dagger-engine-cache.tar.gz
+          path: dagger-engine-cache.tar
           key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
