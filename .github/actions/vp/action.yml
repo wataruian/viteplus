@@ -36,7 +36,7 @@ runs:
             dir="${{ inputs.workspace }}"
             ;;
         esac
-        cd "${dir}" && vp run "${{ inputs.args }}"
+        cd "${dir}" && vp run ${{ inputs.args }}
 
     - name: Prune previous Vite Task cache
       if: success()
