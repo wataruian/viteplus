@@ -125,7 +125,7 @@ jobs:
 
       - name: Stop Dagger engine
         if: always()
-        run: docker stop dagger-engine-custom 2>/dev/null || true
+        run: docker kill dagger-engine-custom 2>/dev/null || true
 
       - name: Diagnose volume size after stop
         if: always()
