@@ -76,7 +76,7 @@ jobs:
               sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
           fi
 
-          echo '{"gc": {"enabled": false}}' > dagger-engine.json
+          echo '{"gc": {"maxUsedSpace": "5GB", "reservedSpace": "1GB"}}' > dagger-engine.json
 
           docker run -d --privileged \
             --name dagger-engine-custom \
