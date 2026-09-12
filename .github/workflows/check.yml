@@ -11,6 +11,10 @@ on:
         description: 'Key used to scope the rolling Dagger engine cache (e.g. an environment name or a PR branch name)'
         required: true
         type: string
+      registryAddress:
+        required: false
+        default: 'ttl.sh'
+        type: string
 
 jobs:
   checks:
@@ -108,7 +112,12 @@ jobs:
 
       - name: Build
         shell: bash
-        run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+        run: |
+          if [[ -n "${{ inputs.environment }}" ]]; then
+            mise run publish "@lightproject/${{ matrix.workspace }}" "${{ inputs.registryAddress }}" "${GITHUB_SHA::7}"
+          else
+            mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}" 
+          fi
 
       - name: Test
         shell: bash

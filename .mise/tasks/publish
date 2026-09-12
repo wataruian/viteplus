@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#MISE description="Publish image for a workspace into a registry"
+
+set -o errexit # Bail out on any error
+
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
+workspace="${1:?"Usage: mise run publish <workspace> [address] [tag]"}"
+address="${2:-""}"
+tag="${3:-""}"
+
+if [[ -z "${address}" ]]; then
+ echo "address is required"
+ exit 1
+fi
+
+args=(dagger call publish --workspace="${workspace}")
+
+args+=(--address="${address}")
+
+if [[ -n "${tag}" ]]; then
+  args+=(--tag="${tag}")
+fi
+
+"${args[@]}"
