@@ -430,7 +430,6 @@ export class Monorepo {
     const pruneArgs = BUILD_ARTIFACT_KEEP.map((name) => `! -name '${name}'`).join(' ');
     const script = [
       'set -eu',
-      'rm -rf /app/node_modules',
       'for group in apps packages; do',
       '  [ -d "/app/$group" ] || continue',
       '  for pkg in "/app/$group"/*/; do',
@@ -440,7 +439,10 @@ export class Monorepo {
       'done',
     ].join('\n');
 
-    return buildContainer.withExec(['sh', '-c', script]).directory('/app');
+    return buildContainer
+      .withExec(['sh', '-c', script])
+      .directory('/app')
+      .filter({ exclude: ['node_modules'] });
   }
 
   @func()

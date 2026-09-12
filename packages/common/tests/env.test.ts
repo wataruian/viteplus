@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
   getEnv,
@@ -26,6 +26,10 @@ import {
 } from '../src/environment/env';
 
 describe('Environment Helpers', () => {
+  beforeEach(() => {
+    vi.stubEnv('CI', undefined);
+  });
+
   afterEach(() => {
     vi.unstubAllEnvs();
   });

@@ -47,6 +47,7 @@ describe('validateEnv().get', () => {
   });
 
   test('returns undefined when neither the live value nor the snapshot has a string', () => {
+    vi.stubEnv('CI', undefined);
     const { get } = validateEnv(commonEnvSchema);
     expect(get('CI')).toBeUndefined();
   });

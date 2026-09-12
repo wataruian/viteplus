@@ -1,0 +1,19 @@
+name: 'PR'
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pull-request:
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/_main.yml
+    with:
+      cacheScope: ${{ github.head_ref }}
+    secrets: inherit

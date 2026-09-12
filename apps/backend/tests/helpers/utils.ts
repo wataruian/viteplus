@@ -71,6 +71,7 @@ const expectErrorEnvelope = (
 const importFreshApp = async (env: Record<string, string | undefined> = {}) => {
   vi.resetModules();
   vi.unstubAllEnvs();
+  vi.stubEnv('CI', undefined);
   for (const [key, value] of Object.entries(env)) {
     vi.stubEnv(key, value);
   }
