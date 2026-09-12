@@ -78,9 +78,6 @@ jobs:
           echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
           echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
 
-      # - name: Dagger check
-      #   uses: dagger/checks@v1.0.0
-
       - name: Run Dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         env:
@@ -89,5 +86,6 @@ jobs:
         with:
           check: '**'
           version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
+          # call: ready
           call: check --workspace=@lightproject/library
           # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
