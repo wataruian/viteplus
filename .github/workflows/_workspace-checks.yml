@@ -1,0 +1,65 @@
+name: 'Workspace Checks'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'GitHub environment to run against (dev, staging, production)'
+        required: true
+        type: string
+
+jobs:
+  checks:
+    name: ${{ inputs.environment }} / ${{ matrix.workspace }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace:
+          - 'backend'
+          - 'frontend'
+          - 'design-system'
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1.19.0
+        with:
+          version: 0.3.0
+          cache: true
+          run-install: true
+
+      - name: check
+        uses: ./.github/actions/vp
+        with:
+          args: '-r check'
+          workspace: ${{ matrix.workspace }}
+
+      - name: format
+        uses: ./.github/actions/vp
+        with:
+          args: '-r format'
+          workspace: ${{ matrix.workspace }}
+
+      - name: lint
+        uses: ./.github/actions/vp
+        with:
+          args: '-r lint'
+          workspace: ${{ matrix.workspace }}
+
+      - name: build
+        uses: ./.github/actions/vp
+        with:
+          args: '-r build'
+          workspace: ${{ matrix.workspace }}
+
+      - name: test
+        uses: ./.github/actions/vp
+        with:
+          args: '--filter @lightproject/${{ matrix.workspace }} test'
+          workspace: root

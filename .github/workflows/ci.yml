@@ -2,8 +2,7 @@ name: 'CI'
 
 on:
   push:
-    # branches: [main]
-    branches: [develop]
+    branches: [develop, main]
 jobs:
   # ready:
   #   runs-on: ubuntu-latest
@@ -18,116 +17,23 @@ jobs:
   #       uses: ./.github/actions/base
 
   dev:
-    name: Dev / ${{ matrix.workspace }}
-    runs-on: ubuntu-latest
-    environment: dev
-    strategy:
-      fail-fast: false
-      matrix:
-        workspace:
-          - 'backend'
-          - 'frontend'
-          - 'design-system'
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
+    if: github.ref == 'refs/heads/develop'
+    uses: ./.github/workflows/_workspace-checks.yml
+    with:
+      environment: dev
+    secrets: inherit
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.19.0
-        with:
-          version: 0.3.0
-          cache: true
-          run-install: true
+  staging:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/_workspace-checks.yml
+    with:
+      environment: staging
+    secrets: inherit
 
-      - name: check
-        uses: ./.github/actions/vp
-        with:
-          args: '-r check'
-          workspace: ${{ matrix.workspace }}
-
-      - name: format
-        uses: ./.github/actions/vp
-        with:
-          args: '-r format'
-          workspace: ${{ matrix.workspace }}
-
-      - name: lint
-        uses: ./.github/actions/vp
-        with:
-          args: '-r lint'
-          workspace: ${{ matrix.workspace }}
-
-      - name: build
-        uses: ./.github/actions/vp
-        with:
-          args: '-r build'
-          workspace: ${{ matrix.workspace }}
-
-      - name: test
-        uses: ./.github/actions/vp
-        with:
-          args: '--filter @lightproject/${{ matrix.workspace }} test'
-          workspace: root
-
-  # deploy-staging:
-  #   name: Deploy (staging) / ${{ matrix.workspace }}
-  #   needs: deploy-dev
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   environment: staging
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       workspace:
-  #         - '@lightproject/backend'
-  #         - '@lightproject/frontend'
-  #         - '@lightproject/design-system'
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v7.0.1
-
-  #     - name: Base setup
-  #       uses: ./.github/actions/base
-  #       with:
-  #         run-vp: 'false'
-  #         run-dagger: 'true'
-  #         dagger-calls: |
-  #           build --workspace=${{ matrix.workspace }}
-  #           test --workspace=${{ matrix.workspace }}
-  #           # publish --workspace=${{ matrix.workspace }} --address=...
-
-  # deploy-production:
-  #   name: Deploy (production) / ${{ matrix.workspace }}
-  #   needs: deploy-staging
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       workspace:
-  #         - '@lightproject/backend'
-  #         - '@lightproject/frontend'
-  #         - '@lightproject/design-system'
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v7.0.1
-
-  #     - name: Base setup
-  #       uses: ./.github/actions/base
-  #       with:
-  #         run-vp: 'false'
-  #         run-dagger: 'true'
-  #         dagger-calls: |
-  #           build --workspace=${{ matrix.workspace }}
-  #           test --workspace=${{ matrix.workspace }}
-  #           # publish --workspace=${{ matrix.workspace }} --address=...
+  production:
+    needs: staging
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/_workspace-checks.yml
+    with:
+      environment: production
+    secrets: inherit
