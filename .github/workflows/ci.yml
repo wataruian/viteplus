@@ -20,12 +20,12 @@ jobs:
         with:
           version: 2026.7.3
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.19.0
-        with:
-          version: 0.3.0
-          cache: true
-          run-install: true
+      # - name: Set up Vite+
+      #   uses: voidzero-dev/setup-vp@v1.19.0
+      #   with:
+      #     version: 0.3.0
+      #     cache: true
+      #     run-install: true
 
       - name: Setup configs
         id: setup-configs
@@ -43,9 +43,9 @@ jobs:
           pnpm --version
           echo " "
 
-          echo "vp version:"
-          vp --version
-          echo " "
+          # echo "vp version:"
+          # vp --version
+          # echo " "
 
           dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
           echo "dagger_version=${dagger_version}" >> "${GITHUB_OUTPUT}"
@@ -83,12 +83,22 @@ jobs:
 
           echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
 
+      - name: Diagnose Dagger engine startup
+        run: |
+          sleep 3
+          echo "--- docker ps -a ---"
+          docker ps -a
+          echo "--- docker logs dagger-engine-custom ---"
+          docker logs dagger-engine-custom || true
+          echo "--- docker inspect mounts ---"
+          docker inspect dagger-engine-custom --format '{{json .Mounts}}' || true
+
       - name: Setup Dagger
         if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
         run: dagger develop
 
-      - name: Run Vite+ pipeline
-        run: vp run -r root
+      # - name: Run Vite+ pipeline
+      #   run: vp run -r root
 
       # - name: Run Vite+ pipeline
       #   run: vp run ready
@@ -102,6 +112,16 @@ jobs:
           version: ${{ steps.setup-configs.outputs.dagger_version }}
           # call: ready
           call: check --workspace=@lightproject/library
+
+      - name: Diagnose Dagger engine after run
+        if: always()
+        run: |
+          echo "--- docker ps -a (checking for a second, dagger-auto-provisioned container) ---"
+          docker ps -a
+          echo "--- docker logs dagger-engine-custom (tail) ---"
+          docker logs --tail 200 dagger-engine-custom || true
+          echo "--- actual volume content size (independent of the tar step) ---"
+          docker run --rm -v dagger-engine-cache:/data alpine du -sh /data || true
 
       - name: Stop Dagger engine
         if: always()
