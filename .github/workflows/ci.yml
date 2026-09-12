@@ -66,6 +66,9 @@ jobs:
       - name: Hello World
         run: echo "Hello World!"
 
+      - name: Check Dagger SDK
+        run: ls -la .dagger/sdk
+
       # - name: Run Vite+ pipeline
       #   run: vp run ready
 
