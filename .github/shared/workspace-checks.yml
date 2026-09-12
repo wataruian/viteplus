@@ -4,13 +4,13 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'GitHub environment to run against (dev, staging, production)'
+        description: 'GitHub environment to run against (develop, staging, production)'
         required: true
         type: string
 
 jobs:
   checks:
-    name: ${{ inputs.environment }} / ${{ matrix.workspace }}
+    name: ${{ matrix.workspace }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     strategy:

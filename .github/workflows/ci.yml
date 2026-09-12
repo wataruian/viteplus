@@ -16,14 +16,14 @@ jobs:
   #     - name: Base setup
   #       uses: ./.github/actions/base
 
-  dev:
+  develop:
     if: github.ref == 'refs/heads/develop'
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/shared/workspace-checks.yml
     with:
-      environment: dev
+      environment: develop
     secrets: inherit
 
   staging:
@@ -31,7 +31,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/shared/workspace-checks.yml
     with:
       environment: staging
     secrets: inherit
@@ -42,7 +42,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/shared/workspace-checks.yml
     with:
       environment: production
     secrets: inherit
