@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  pull-request:
     permissions:
       contents: read
       actions: write
