@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/workflows/_main.yml
     with:
       environment: develop
     secrets: inherit
@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/workflows/_main.yml
     with:
       environment: staging
     secrets: inherit
@@ -31,7 +31,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_workspace-checks.yml
+    uses: ./.github/workflows/_main.yml
     with:
       environment: production
     secrets: inherit
