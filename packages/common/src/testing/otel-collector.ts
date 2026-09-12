@@ -18,7 +18,7 @@ interface FakeOtelCollector {
 }
 
 const pollIntervalMs = 25;
-const defaultTimeoutMs = 60_000;
+const defaultTimeoutMs = 20_000;
 
 const decodeBody = async (request: Request): Promise<unknown> => {
   if (!request.body) {

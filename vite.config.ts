@@ -255,7 +255,7 @@ const getCommonViteConfig = ({
       include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
       isolate: false,
       pool: 'forks',
-      testTimeout: 60_000,
+      testTimeout: 30_000,
       // testTimeout: 60 * 60 * 1000, // 1 hour
     },
   };
