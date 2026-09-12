@@ -19,13 +19,12 @@ jobs:
         with:
           version: 2026.7.3
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.19.0
-        with:
-          version: 0.3.0
-          cache: true
-          # run-install: true
-          run-install: false
+      # - name: Set up Vite+
+      #   uses: voidzero-dev/setup-vp@v1.19.0
+      #   with:
+      #     version: 0.3.0
+      #     cache: true
+      #     run-install: true
 
       - name: Resolve toolchain versions
         id: resolve-toolchain-versions
@@ -43,8 +42,8 @@ jobs:
           echo "dagger version:"
           echo "${dagger_version}"
 
-          echo "vp version:"
-          vp --version
+          # echo "vp version:"
+          # vp --version
 
       - name: Setup Dagger
         run: dagger develop
@@ -52,39 +51,21 @@ jobs:
       # - name: Run Vite+ pipeline
       #   run: vp run ready
 
+      - uses: crazy-max/ghaction-github-runtime@v4.0.0
+
+      - name: Build Dagger cache config
+        id: dagger-cache-config
+        run: |
+          URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
+          echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
+          echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
+
       - name: Run Dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         env:
           DAGGER_NO_NAG: 1
+          _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
         with:
           version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
           call: ready
-
-      # Exposes the GitHub Actions cache endpoint/token as env vars for the step below.
-      # GitHub stopped auto-exposing these; this action re-derives them.
-      # - uses: crazy-max/ghaction-github-runtime@v4.0.0
-      # NOTE: this is Dagger's *exec/layer* cache only - it never persists the contents
-      # of our withMountedCache volumes (pnpm-store, task-cache, etc), since that's a
-      # separate BuildKit mechanism that export/import cache backends don't cover. It
-      # only helps when a run is byte-identical to a prior one (e.g. a rerun); it does
-      # NOT speed up installs when source actually changes, which is the common case.
-      # Real cross-run reuse of those cache volumes needs a persistent engine instead
-      # (self-hosted, or Dagger Cloud).
-      # - name: Build Dagger cache config
-      #   id: dagger-cache-config
-      #   run: |
-      #     URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
-      #     echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
-      #     echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
-
-      # dagger-for-github skips its own download when a dagger matching `version` is
-      # already on PATH, so this reuses the mise-provisioned binary above instead of
-      # fetching a second copy.
-      # - name: Run Dagger pipeline
-      #   uses: dagger/dagger-for-github@v8.4.1
-      #   env:
-      #     _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
-      #   with:
-      #     version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
-      #     call: ready
-      #     cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+          # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
