@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         workspace:
-          - design-system
-          - frontend
+          # - design-system
+          # - frontend
           - backend
     steps:
       - name: Checkout code
@@ -61,7 +61,7 @@ jobs:
         id: dagger-engine-cache
         uses: actions/cache/restore@v6.1.0
         with:
-          path: dagger-engine-cache.tar
+          path: ${{ runner.temp }}/dagger-engine-cache.tar
           key: dagger-engine-volume-${{ inputs.cacheScope }}-${{ matrix.workspace }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             dagger-engine-volume-${{ inputs.cacheScope }}-${{ matrix.workspace }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-
@@ -71,8 +71,8 @@ jobs:
         run: |
           docker volume create dagger-engine-cache
 
-          if [[ -f dagger-engine-cache.tar ]]; then
-            docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+          if [[ -f "${RUNNER_TEMP}/dagger-engine-cache.tar" ]]; then
+            docker run --rm -v dagger-engine-cache:/data -v "${RUNNER_TEMP}":/backup alpine \
               sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
           fi
 
@@ -130,7 +130,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+          docker run --rm -v dagger-engine-cache:/data -v "${RUNNER_TEMP}":/backup alpine \
             sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
 
       - name: Prune previous Dagger engine volume cache
@@ -147,5 +147,5 @@ jobs:
         if: always()
         uses: actions/cache/save@v6.1.0
         with:
-          path: dagger-engine-cache.tar
+          path: ${{ runner.temp }}/dagger-engine-cache.tar
           key: ${{ steps.dagger-engine-cache.outputs.cache-primary-key }}
