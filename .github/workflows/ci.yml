@@ -127,6 +127,10 @@ jobs:
         if: always()
         run: docker stop dagger-engine-custom 2>/dev/null || true
 
+      - name: Diagnose volume size after stop
+        if: always()
+        run: docker run --rm -v dagger-engine-cache:/data alpine du -sh /data || true
+
       - name: Save Dagger engine volume
         if: always()
         run: |
