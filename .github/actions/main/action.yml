@@ -41,6 +41,8 @@ runs:
         echo "dagger version:"
         echo "${dagger_version}"
 
+        echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
+
     - name: Setup Dagger
       if: steps.dagger-sdk-cache.outputs.cache-hit != 'true'
       shell: bash
