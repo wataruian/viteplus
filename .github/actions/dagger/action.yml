@@ -2,8 +2,8 @@ name: 'Run dagger pipeline'
 description: 'Run `dagger call` with an engine volume cache across GitHub Actions runs'
 
 inputs:
-  call:
-    description: 'Target passed to `dagger call`'
+  calls:
+    description: 'Newline-separated `dagger call` targets to run against one engine session. Lines that are blank or start with `#` are skipped.'
     required: true
   dagger-version:
     description: 'Dagger CLI/engine version (from `dagger version`)'
@@ -39,14 +39,21 @@ runs:
 
         echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
 
-    - name: Run dagger call ${{ inputs.call }}
-      uses: dagger/dagger-for-github@v8.4.1
+    - name: Run dagger calls
+      shell: bash
       env:
         DAGGER_NO_NAG: 1
-      with:
-        check: '**'
-        version: ${{ inputs.dagger-version }}
-        call: ${{ inputs.call }}
+        DAGGER_CALLS: ${{ inputs.calls }}
+      run: |
+        while IFS= read -r call; do
+          call="$(echo "${call}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          [ -z "${call}" ] && continue
+          case "${call}" in \#*) continue ;; esac
+
+          echo "::group::dagger call ${call}"
+          dagger call ${call}
+          echo "::endgroup::"
+        done <<< "${DAGGER_CALLS}"
 
     - name: Stop Dagger engine
       if: always()

@@ -11,8 +11,8 @@ inputs:
   run-dagger:
     description: 'Whether to run the dagger pipeline'
     default: 'false'
-  dagger-call:
-    description: 'Target passed to `dagger call`'
+  dagger-calls:
+    description: 'Newline-separated `dagger call` targets to run against one engine session'
     default: ''
 
 runs:
@@ -85,5 +85,5 @@ runs:
       if: inputs.run-dagger == 'true'
       uses: ./.github/actions/dagger
       with:
-        call: ${{ inputs.dagger-call }}
+        calls: ${{ inputs.dagger-calls }}
         dagger-version: ${{ steps.setup-configs.outputs.dagger_version }}

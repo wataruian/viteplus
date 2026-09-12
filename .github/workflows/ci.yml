@@ -2,12 +2,11 @@ name: 'CI'
 
 on:
   push:
-    branches: [main, staging, develop]
+    branches: [main]
   pull_request:
 
 jobs:
-  pull-requests:
-    if: github.event_name == 'pull_request'
+  ready:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,35 +18,19 @@ jobs:
       - name: Base setup
         uses: ./.github/actions/base
 
-  dev:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
-
-      - name: Base setup
-        uses: ./.github/actions/base
-
-  stage:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
-
-      - name: Base setup
-        uses: ./.github/actions/base
-
-  production:
+  deploy-dev:
+    name: Deploy (dev) / ${{ matrix.workspace }}
+    needs: ready
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: dev
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace:
+          - '@lightproject/backend'
+          - '@lightproject/frontend'
+          - '@lightproject/design-system'
     permissions:
       contents: read
       actions: write
@@ -57,3 +40,70 @@ jobs:
 
       - name: Base setup
         uses: ./.github/actions/base
+        with:
+          run-vp: 'false'
+          run-dagger: 'true'
+          dagger-calls: |
+            build --workspace=${{ matrix.workspace }}
+            test --workspace=${{ matrix.workspace }}
+            # publish --workspace=${{ matrix.workspace }} --address=...
+
+  deploy-staging:
+    name: Deploy (staging) / ${{ matrix.workspace }}
+    needs: deploy-dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace:
+          - '@lightproject/backend'
+          - '@lightproject/frontend'
+          - '@lightproject/design-system'
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Base setup
+        uses: ./.github/actions/base
+        with:
+          run-vp: 'false'
+          run-dagger: 'true'
+          dagger-calls: |
+            build --workspace=${{ matrix.workspace }}
+            test --workspace=${{ matrix.workspace }}
+            # publish --workspace=${{ matrix.workspace }} --address=...
+
+  deploy-production:
+    name: Deploy (production) / ${{ matrix.workspace }}
+    needs: deploy-staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace:
+          - '@lightproject/backend'
+          - '@lightproject/frontend'
+          - '@lightproject/design-system'
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Base setup
+        uses: ./.github/actions/base
+        with:
+          run-vp: 'false'
+          run-dagger: 'true'
+          dagger-calls: |
+            build --workspace=${{ matrix.workspace }}
+            test --workspace=${{ matrix.workspace }}
+            # publish --workspace=${{ matrix.workspace }} --address=...
