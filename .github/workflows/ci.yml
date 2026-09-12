@@ -27,8 +27,8 @@ jobs:
           cache: true
           run-install: true
 
-      - name: Resolve toolchain versions
-        id: resolve-toolchain-versions
+      - name: Setup configs
+        id: setup-configs
         run: |
           echo "mise version:"
           mise_version="$(mise --version 2>/dev/null | head -n1 | awk '{print $1}')"
@@ -48,16 +48,35 @@ jobs:
           echo " "
 
           dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
-          echo "dagger_version=${dagger_version}" >> "$GITHUB_OUTPUT"
+          echo "dagger_version=${dagger_version}" >> "${GITHUB_OUTPUT}"
           echo "dagger version:"
           echo "${dagger_version}"
+
+          echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=docker-image://registry.dagger.io/engine:${dagger_version}?volume=dagger-engine-cache" >> "${GITHUB_ENV}"
 
       - name: Cache Dagger SDK
         id: cache-dagger-sdk
         uses: actions/cache@v6.1.0
         with:
           path: .dagger/sdk
-          key: dagger-sdk-${{ runner.os }}-${{ steps.resolve-toolchain-versions.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
+          key: dagger-sdk-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
+
+      - name: Restore Dagger engine volume cache
+        id: restore-dagger-engine-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: dagger-engine-cache.tar.gz
+          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}
+          restore-keys: |
+            dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-
+
+      - name: Load Dagger engine volume from cache
+        run: |
+          if [[ -f dagger-engine-cache.tar.gz ]]; then
+            docker volume create dagger-engine-cache
+            docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+              sh -c "tar xzf /backup/dagger-engine-cache.tar.gz -C /data"
+          fi
 
       - name: Setup Dagger
         if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
@@ -69,23 +88,29 @@ jobs:
       # - name: Run Vite+ pipeline
       #   run: vp run ready
 
-      - uses: crazy-max/ghaction-github-runtime@v4.0.0
-
-      - name: Build Dagger cache config
-        id: dagger-cache-config
-        run: |
-          URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
-          echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
-          echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
-
       - name: Run Dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         env:
           DAGGER_NO_NAG: 1
-          _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
         with:
           check: '**'
-          version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
+          version: ${{ steps.setup-configs.outputs.dagger_version }}
           # call: ready
           call: check --workspace=@lightproject/library
-          # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+
+      - name: Stop Dagger engine
+        if: always()
+        run: docker stop "$(docker ps -q --filter 'name=dagger-engine')" 2>/dev/null || true
+
+      - name: Save Dagger engine volume
+        if: always()
+        run: |
+          docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+            sh -c "tar czf /backup/dagger-engine-cache.tar.gz -C /data ."
+
+      - name: Save Dagger engine volume cache
+        if: always()
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: dagger-engine-cache.tar.gz
+          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}
