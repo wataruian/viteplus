@@ -2,7 +2,7 @@ name: 'Main Pipeline'
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci]
 
 concurrency:
   group: ci
@@ -16,27 +16,24 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       environment: develop
-      cacheScope: develop
     secrets: inherit
 
-  # staging:
-  #   needs: develop
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   uses: ./.github/workflows/check.yml
-  #   with:
-  #     environment: staging
-  #     cacheScope: staging
-  #   secrets: inherit
+  staging:
+    needs: develop
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/check.yml
+    with:
+      environment: staging
+    secrets: inherit
 
-  # production:
-  #   needs: staging
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   uses: ./.github/workflows/check.yml
-  #   with:
-  #     environment: production
-  #     cacheScope: production
-  #   secrets: inherit
+  production:
+    needs: staging
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/check.yml
+    with:
+      environment: production
+    secrets: inherit

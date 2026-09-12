@@ -1,0 +1,38 @@
+name: 'Manual Pipeline'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - develop
+          - staging
+          - production
+      workspace:
+        description: 'Workspace to deploy'
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - design-system
+          - frontend
+          - backend
+
+concurrency:
+  group: manual-deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/check.yml
+    with:
+      environment: ${{ inputs.environment }}
+      workspace: ${{ inputs.workspace != 'all' && inputs.workspace || '' }}
+    secrets: inherit
