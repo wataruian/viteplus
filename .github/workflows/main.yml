@@ -16,7 +16,6 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       environment: develop
-      cacheScope: develop
     secrets: inherit
 
   # staging:
@@ -27,7 +26,6 @@ jobs:
   #   uses: ./.github/workflows/check.yml
   #   with:
   #     environment: staging
-  #     cacheScope: staging
   #   secrets: inherit
 
   # production:
@@ -38,5 +36,4 @@ jobs:
   #   uses: ./.github/workflows/check.yml
   #   with:
   #     environment: production
-  #     cacheScope: production
   #   secrets: inherit

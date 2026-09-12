@@ -7,7 +7,7 @@
 name: 'Main Pipeline'
 on:
   push:
-    branches: [main]
+    branches: [main, ci]
 concurrency:
   group: ci
   cancel-in-progress: false

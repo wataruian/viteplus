@@ -7,7 +7,7 @@
 name: 'PR Pipeline'
 on:
   pull_request:
-    branches: [main]
+    branches: [main, ci]
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
