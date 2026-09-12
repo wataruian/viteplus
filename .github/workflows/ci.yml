@@ -52,8 +52,6 @@ jobs:
           echo "dagger version:"
           echo "${dagger_version}"
 
-          echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=docker-image://registry.dagger.io/engine:${dagger_version}?volume=dagger-engine-cache" >> "${GITHUB_ENV}"
-
       - name: Cache Dagger SDK
         id: cache-dagger-sdk
         uses: actions/cache@v6.1.0
@@ -66,17 +64,24 @@ jobs:
         uses: actions/cache/restore@v6.1.0
         with:
           path: dagger-engine-cache.tar.gz
-          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}
+          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-
 
-      - name: Load Dagger engine volume from cache
+      - name: Start Dagger engine
         run: |
+          docker volume create dagger-engine-cache
           if [[ -f dagger-engine-cache.tar.gz ]]; then
-            docker volume create dagger-engine-cache
             docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
               sh -c "tar xzf /backup/dagger-engine-cache.tar.gz -C /data"
           fi
+
+          docker run -d --privileged \
+            --name dagger-engine-custom \
+            -v dagger-engine-cache:/var/lib/dagger \
+            "registry.dagger.io/engine:${{ steps.setup-configs.outputs.dagger_version }}"
+
+          echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
 
       - name: Setup Dagger
         if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
@@ -100,7 +105,7 @@ jobs:
 
       - name: Stop Dagger engine
         if: always()
-        run: docker stop "$(docker ps -q --filter 'name=dagger-engine')" 2>/dev/null || true
+        run: docker stop dagger-engine-custom 2>/dev/null || true
 
       - name: Save Dagger engine volume
         if: always()
@@ -113,4 +118,4 @@ jobs:
         uses: actions/cache/save@v6.1.0
         with:
           path: dagger-engine-cache.tar.gz
-          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}
+          key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
