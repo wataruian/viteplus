@@ -18,6 +18,7 @@ bashrc = { enabled = true, mode = "activate" }
 node = "24.14.1"
 pnpm = "11.10.0"
 dagger = "0.21.9"
+depot = "2.102.7"
 # viteplus = "0.2.7"
 
 [env]

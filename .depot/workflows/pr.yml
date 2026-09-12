@@ -1,0 +1,22 @@
+# Depot CI Migration
+# Source: .github/workflows/pr.yml
+#
+# Changes made:
+# - Rewrote .github/ path references to .depot/
+
+name: 'PR Pipeline'
+on:
+  pull_request:
+    branches: [main]
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  pull-request:
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.depot/workflows/check.yml
+    with:
+      cacheScope: ${{ github.head_ref }}
+    secrets: inherit

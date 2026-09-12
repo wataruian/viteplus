@@ -39,6 +39,45 @@ checksum = "sha256:4ade22eac31f1d6ea364e1e594e1b67c01a62640249b716ccc172407eecc5
 url = "https://github.com/dagger/dagger/releases/download/v0.21.9/dagger_v0.21.9_windows_amd64.zip"
 url_api = "https://api.github.com/repos/dagger/dagger/releases/assets/530870102"
 
+[[tools.depot]]
+version = "2.102.7"
+backend = "github:depot/cli"
+
+[tools.depot."platforms.linux-arm64"]
+checksum = "sha256:ab455358d3c180a3c600c996de503727e9670a344b4a7fd0beb550f349cbbe3c"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378341"
+
+[tools.depot."platforms.linux-arm64-musl"]
+checksum = "sha256:ab455358d3c180a3c600c996de503727e9670a344b4a7fd0beb550f349cbbe3c"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378341"
+
+[tools.depot."platforms.linux-x64"]
+checksum = "sha256:576ff8d378c8a74620b61d813513e5286f2059cde4596e3a31eccc2005a74669"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378330"
+
+[tools.depot."platforms.linux-x64-musl"]
+checksum = "sha256:576ff8d378c8a74620b61d813513e5286f2059cde4596e3a31eccc2005a74669"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378330"
+
+[tools.depot."platforms.macos-arm64"]
+checksum = "sha256:ac136ac322b60a1f7c2220ee1a3bd69c3e8a9650b675ab2b2ebbdbf87ecb7eb7"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378333"
+
+[tools.depot."platforms.macos-x64"]
+checksum = "sha256:10887b646244158ea24aa12d153720990612ed9f8799ff47cdff1f374fd58ac8"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378339"
+
+[tools.depot."platforms.windows-x64"]
+checksum = "sha256:bab6910b8fe62884f7a65adcbf11e3c4f5f7fb98886c00bc442d42b8b3c011e1"
+url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_windows_amd64.zip"
+url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378335"
+
 [[tools.node]]
 version = "24.14.1"
 backend = "core:node"
