@@ -24,15 +24,7 @@ jobs:
       contents: read
       actions: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
-
       - name: Run dagger pipeline
-        uses: ./.github/actions/base
+        uses: ./.github/actions/main
         with:
-          dagger-calls: |
-            check --workspace=${{ matrix.workspace }}
-            format --workspace=${{ matrix.workspace }}
-            lint --workspace=${{ matrix.workspace }}
-            build --workspace=${{ matrix.workspace }}
-            test --workspace=${{ matrix.workspace }}
+          environment: ${{ inputs.environment }}

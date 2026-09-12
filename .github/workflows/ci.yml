@@ -4,18 +4,6 @@ on:
   push:
     branches: [develop, main]
 jobs:
-  # ready:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v7.0.1
-
-  #     - name: Base setup
-  #       uses: ./.github/actions/base
-
   develop:
     if: github.ref == 'refs/heads/develop'
     permissions:
