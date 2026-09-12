@@ -17,7 +17,8 @@ jobs:
           persist-credentials: false
       - name: Set up mise
         uses: jdx/mise-action@v4
-        version: 2026.7.3
+        with:
+          version: 2026.7.3
       # - name: Resolve dagger version from mise
       #   id: dagger-version
       #   run: echo "version=$(dagger version | awk '{print $2}' | sed 's/^v//')" >> "$GITHUB_OUTPUT"
