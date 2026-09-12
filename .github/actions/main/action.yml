@@ -47,16 +47,21 @@ runs:
       run: dagger develop
 
     - name: Check
+      shell: bash
       run: mise run dagger-artifact check "${{ inputs.workspace }}"
 
     - name: Format
+      shell: bash
       run: mise run dagger-artifact format "${{ inputs.workspace }}"
 
     - name: Lint
+      shell: bash
       run: mise run dagger-artifact lint "${{ inputs.workspace }}"
 
     - name: Type Check
+      shell: bash
       run: mise run dagger-artifact type-check "${{ inputs.workspace }}"
 
     - name: Build
+      shell: bash
       run: mise run dagger-artifact build "${{ inputs.workspace }}"
