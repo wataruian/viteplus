@@ -76,9 +76,12 @@ jobs:
               sh -c "tar xzf /backup/dagger-engine-cache.tar.gz -C /data"
           fi
 
+          echo '{"gc": {"enabled": false}}' > dagger-engine.json
+
           docker run -d --privileged \
             --name dagger-engine-custom \
             -v dagger-engine-cache:/var/lib/dagger \
+            -v "${PWD}/dagger-engine.json":/etc/dagger/engine.json \
             "registry.dagger.io/engine:${{ steps.setup-configs.outputs.dagger_version }}"
 
           echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
@@ -125,7 +128,7 @@ jobs:
 
       - name: Stop Dagger engine
         if: always()
-        run: docker kill dagger-engine-custom 2>/dev/null || true
+        run: docker stop dagger-engine-custom 2>/dev/null || true
 
       - name: Diagnose volume size after stop
         if: always()
