@@ -1,0 +1,78 @@
+name: 'Main pipeline'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to run (develop, staging, production)'
+        required: true
+        type: string
+
+jobs:
+  checks:
+    name: ${{ matrix.workspace }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace:
+          - design-system
+          - frontend
+          - backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Mise
+        uses: jdx/mise-action@v4.3.0
+        with:
+          version: 2026.7.3
+
+      - name: Setup configs
+        id: setup-configs
+        shell: bash
+        run: |
+          echo "mise version:"
+          mise_version="$(mise --version 2>/dev/null | head -n1 | awk '{print $1}')"
+          echo "${mise_version}"
+          echo " "
+
+          echo "node version:"
+          node --version
+          echo " "
+
+          echo "pnpm version:"
+          pnpm --version
+          echo " "
+
+          dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
+          echo "dagger_version=${dagger_version}" >> "${GITHUB_OUTPUT}"
+          echo "dagger version:"
+          echo "${dagger_version}"
+
+          echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
+
+      - name: Setup Dagger
+        shell: bash
+        run: dagger develop
+
+      - name: Check
+        shell: bash
+        run: mise run dagger-artifact check "${{ matrix.workspace }}"
+
+      - name: Format
+        shell: bash
+        run: mise run dagger-artifact format "${{ matrix.workspace }}"
+
+      - name: Lint
+        shell: bash
+        run: mise run dagger-artifact lint "${{ matrix.workspace }}"
+
+      - name: Type Check
+        shell: bash
+        run: mise run dagger-artifact type-check "${{ matrix.workspace }}"
+
+      - name: Build
+        shell: bash
+        run: mise run dagger-artifact build "${{ matrix.workspace }}"
