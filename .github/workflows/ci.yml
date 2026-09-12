@@ -13,32 +13,45 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up mise
+
+      - name: Set up Mise
         uses: jdx/mise-action@v4.3.0
         with:
           version: 2026.7.3
+
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1.19.0
+        with:
+          cache: true
+          run-install: true
+
+      - name: Resolve toolchain versions
+        run: |
+          echo "node:"
+          node --version
+
+          echo "pnpm:"
+          pnpm --version
+
+          echo "dagger:"
+          dagger version
+
+          echo "vp:"
+          vp --version
+
+      - name: Run dagger pipeline
+        uses: dagger/dagger-for-github@v8.4.1
+        with:
+          # version: v0.21.9
+          call: ready
+
       # - name: Resolve dagger version from mise
       #   id: dagger-version
       #   run: echo "version=$(dagger version | awk '{print $2}' | sed 's/^v//')" >> "$GITHUB_OUTPUT"
-      - name: Resolve toolchain versions
-        run: |
-          mise --version
-          node --version
-          pnpm --version
-          dagger --version
-      # - name: Set up Vite+
-      #   uses: voidzero-dev/setup-vp@v1
-      #   with:
-      #     cache: true
-      #     run-install: true
-      # - name: Run checks, build, and tests
-      #   run: vp run ready
+
       # Exposes the GitHub Actions cache endpoint/token as env vars for the step below.
       # GitHub stopped auto-exposing these; this action re-derives them.
-
-      # - uses: crazy-max/ghaction-github-runtime@v4
+      # - uses: crazy-max/ghaction-github-runtime@v4.0.0
       # NOTE: this is Dagger's *exec/layer* cache only - it never persists the contents
       # of our withMountedCache volumes (pnpm-store, task-cache, etc), since that's a
       # separate BuildKit mechanism that export/import cache backends don't cover. It
@@ -52,11 +65,12 @@ jobs:
       #     URL="${ACTIONS_RESULTS_URL:-$ACTIONS_CACHE_URL}"
       #     echo "::add-mask::${ACTIONS_RUNTIME_TOKEN}"
       #     echo "config=type=gha,mode=max,scope=dagger-${GITHUB_REF_NAME},url=${URL},token=${ACTIONS_RUNTIME_TOKEN}" >> "$GITHUB_OUTPUT"
-      # # dagger-for-github skips its own download when a dagger matching `version` is
-      # # already on PATH, so this reuses the mise-provisioned binary above instead of
-      # # fetching a second copy.
+
+      # dagger-for-github skips its own download when a dagger matching `version` is
+      # already on PATH, so this reuses the mise-provisioned binary above instead of
+      # fetching a second copy.
       # - name: Run Dagger pipeline
-      #   uses: dagger/dagger-for-github@v8
+      #   uses: dagger/dagger-for-github@v8.4.1
       #   env:
       #     _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
       #   with:
