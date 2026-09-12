@@ -115,6 +115,15 @@ jobs:
       #     # call: ready
       #     call: check --workspace=@lightproject/library
 
+      - name: Prune previous Vite Task cache
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache list --key "vite-task-${{ runner.os }}-${{ runner.arch }}-" --json id --jq '.[].id' \
+            | xargs -r -n1 gh cache delete
+        continue-on-error: true
+
       - name: Save Vite Task cache
         if: success()
         uses: actions/cache/save@v6.1.0
