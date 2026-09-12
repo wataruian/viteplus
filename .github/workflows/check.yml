@@ -129,19 +129,19 @@ jobs:
           echo "✅ All good!"
 
       - name: Stop Dagger engine
-        if: always()
+        if: success()
         shell: bash
         run: docker stop dagger-engine-custom 2>/dev/null || true
 
       - name: Save Dagger engine volume
-        if: always()
+        if: success()
         shell: bash
         run: |
           docker run --rm -v dagger-engine-cache:/data -v "${RUNNER_TEMP}":/backup alpine \
             sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
 
       - name: Prune previous Dagger engine volume cache
-        if: always()
+        if: success()
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -151,7 +151,7 @@ jobs:
         continue-on-error: true
 
       - name: Save Dagger engine volume cache
-        if: always()
+        if: success()
         uses: actions/cache/save@v6.1.0
         with:
           path: ${{ runner.temp }}/dagger-engine-cache.tar
