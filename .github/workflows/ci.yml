@@ -25,6 +25,7 @@ jobs:
           version: 0.3.0
           cache: true
           # run-install: true
+          run-install: false
 
       - name: Resolve toolchain versions
         id: resolve-toolchain-versions
