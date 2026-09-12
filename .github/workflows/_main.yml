@@ -110,6 +110,10 @@ jobs:
         shell: bash
         run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
 
+      - name: Test
+        shell: bash
+        run: mise run dagger-artifact test "@lightproject/${{ matrix.workspace }}"
+
       - name: Deploy
         if: inputs.environment != ''
         shell: bash
