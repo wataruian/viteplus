@@ -24,9 +24,10 @@ jobs:
         with:
           version: 0.3.0
           cache: true
-          run-install: true
+          # run-install: true
 
       - name: Resolve toolchain versions
+        id: resolve-toolchain-versions
         run: |
           echo "node version:"
           node --version
@@ -36,9 +37,10 @@ jobs:
           pnpm --version
           echo ""
 
+          dagger_version="v$(dagger version | awk '{print $2}' | sed 's/^v//')"
+          echo "dagger_version=${dagger_version}" >> "$GITHUB_OUTPUT"
           echo "dagger version:"
-          dagger version
-          echo ""
+          echo "${dagger_version}"
 
           echo "vp version:"
           vp --version
@@ -46,20 +48,16 @@ jobs:
       - name: Setup Dagger
         run: dagger develop
 
-      - name: Run Vite+ pipeline
-        run: vp run ready
+      # - name: Run Vite+ pipeline
+      #   run: vp run ready
 
       - name: Run Dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         env:
           DAGGER_NO_NAG: 1
         with:
-          version: v0.21.9
+          version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
           call: ready
-
-      # - name: Resolve dagger version from mise
-      #   id: dagger-version
-      #   run: echo "version=$(dagger version | awk '{print $2}' | sed 's/^v//')" >> "$GITHUB_OUTPUT"
 
       # Exposes the GitHub Actions cache endpoint/token as env vars for the step below.
       # GitHub stopped auto-exposing these; this action re-derives them.
@@ -86,6 +84,6 @@ jobs:
       #   env:
       #     _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ steps.dagger-cache-config.outputs.config }}
       #   with:
-      #     version: ${{ steps.dagger-version.outputs.version }}
+      #     version: ${{ steps.resolve-toolchain-versions.outputs.dagger_version }}
       #     call: ready
-      #     # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+      #     cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
