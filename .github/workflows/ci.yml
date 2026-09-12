@@ -52,15 +52,17 @@ jobs:
           echo "dagger version:"
           echo "${dagger_version}"
 
-      - name: Cache Dagger SDK
-        id: cache-dagger-sdk
-        uses: actions/cache@v6.1.0
-        with:
-          path: .dagger/sdk
-          key: dagger-sdk-${{ runner.os }}-${{ steps.resolve-toolchain-versions.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
+      # - name: Cache Dagger SDK
+      #   id: cache-dagger-sdk
+      #   uses: actions/cache@v6.1.0
+      #   with:
+      #     path: .dagger/sdk
+      #     key: dagger-sdk-${{ runner.os }}-${{ steps.resolve-toolchain-versions.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
 
+      # Temporarily unconditional (was `if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'`)
+      # to isolate whether skipping `dagger develop` on a cache hit is what's causing the
+      # "failed to load local module source context: ... not found" error from `dagger call`.
       - name: Setup Dagger
-        if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
         run: dagger develop
 
       # - name: Run Vite+ pipeline
