@@ -54,6 +54,7 @@ jobs:
         env:
           DAGGER_NO_NAG: 1
         with:
+          version: v0.21.9
           call: ready
 
       # - name: Resolve dagger version from mise
