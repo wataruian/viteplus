@@ -21,28 +21,37 @@ jobs:
 
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1.19.0
+        env:
+          VP_VERSION: 0.3.0
         with:
           cache: true
           run-install: true
 
-      - name: Resolve toolchain versions
+      - name: Check toolchain
         run: |
-          echo "node:"
+          echo "node version:"
           node --version
+          echo ""
 
-          echo "pnpm:"
+          echo "pnpm version:"
           pnpm --version
+          echo ""
 
-          echo "dagger:"
+          echo "dagger version:"
           dagger version
+          echo ""
 
-          echo "vp:"
+          echo "Initializing dagger..."
+          dagger develop
+          echo ""
+
+          echo "vp version:"
           vp --version
 
       - name: Run dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         with:
-          # version: v0.21.9
+          version: v0.21.9
           call: ready
 
       # - name: Resolve dagger version from mise
