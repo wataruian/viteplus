@@ -1,4 +1,4 @@
-name: 'CI'
+name: 'Main Pipeline'
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_main.yml
+    uses: ./.github/workflows/check.yml
     with:
       environment: develop
       cacheScope: develop
@@ -24,7 +24,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_main.yml
+    uses: ./.github/workflows/check.yml
     with:
       environment: staging
       cacheScope: staging
@@ -35,7 +35,7 @@ jobs:
     permissions:
       contents: read
       actions: write
-    uses: ./.github/workflows/_main.yml
+    uses: ./.github/workflows/check.yml
     with:
       environment: production
       cacheScope: production
