@@ -43,15 +43,14 @@ jobs:
           pnpm --version
           echo " "
 
+          # echo "vp version:"
+          # vp --version
+          # echo " "
+
           dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
           echo "dagger_version=${dagger_version}" >> "$GITHUB_OUTPUT"
           echo "dagger version:"
           echo "${dagger_version}"
-          echo " "
-
-          # echo "vp version:"
-          # vp --version
-          # echo " "
 
       - name: Setup Dagger
         run: dagger develop
