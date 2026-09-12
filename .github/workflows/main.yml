@@ -18,22 +18,22 @@ jobs:
       environment: develop
     secrets: inherit
 
-  # staging:
-  #   needs: develop
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   uses: ./.github/workflows/check.yml
-  #   with:
-  #     environment: staging
-  #   secrets: inherit
+  staging:
+    needs: develop
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/check.yml
+    with:
+      environment: staging
+    secrets: inherit
 
-  # production:
-  #   needs: staging
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   uses: ./.github/workflows/check.yml
-  #   with:
-  #     environment: production
-  #   secrets: inherit
+  production:
+    needs: staging
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/check.yml
+    with:
+      environment: production
+    secrets: inherit

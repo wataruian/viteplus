@@ -7,6 +7,10 @@ on:
         description: 'Environment to run (develop, staging, production). Leave unset to run without one, e.g. for PR checks.'
         required: false
         type: string
+      workspace:
+        description: 'Single workspace to run (design-system, frontend, backend). Leave unset to run the full matrix.'
+        required: false
+        type: string
 
 jobs:
   checks:
@@ -18,10 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workspace:
-          # - design-system
-          # - frontend
-          - backend
+        workspace: ${{ inputs.workspace && fromJson(format('["{0}"]', inputs.workspace)) || fromJson('["design-system","frontend","backend"]') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
