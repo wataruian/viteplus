@@ -26,7 +26,7 @@ jobs:
           cache: true
           run-install: true
 
-      - name: Check toolchain
+      - name: Resolve toolchain versions
         run: |
           echo "node version:"
           node --version
@@ -43,11 +43,13 @@ jobs:
           echo "vp version:"
           vp --version
 
-      - name: Initialize dagger
+      - name: Setup Dagger
         run: dagger develop
 
       - name: Run dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
+        env:
+          DAGGER_NO_NAG: 1
         with:
           call: ready
 
