@@ -59,20 +59,20 @@ jobs:
 
       - name: Check
         shell: bash
-        run: mise run dagger-artifact check "${{ matrix.workspace }}"
+        run: mise run dagger-artifact check "@lightproject/${{ matrix.workspace }}"
 
       - name: Format
         shell: bash
-        run: mise run dagger-artifact format "${{ matrix.workspace }}"
+        run: mise run dagger-artifact format "@lightproject/${{ matrix.workspace }}"
 
       - name: Lint
         shell: bash
-        run: mise run dagger-artifact lint "${{ matrix.workspace }}"
+        run: mise run dagger-artifact lint "@lightproject/${{ matrix.workspace }}"
 
       - name: Type Check
         shell: bash
-        run: mise run dagger-artifact type-check "${{ matrix.workspace }}"
+        run: mise run dagger-artifact type-check "@lightproject/${{ matrix.workspace }}"
 
       - name: Build
         shell: bash
-        run: mise run dagger-artifact build "${{ matrix.workspace }}"
+        run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
