@@ -102,7 +102,14 @@ jobs:
         run: mise run dagger-artifact type-check "@lightproject/${{ matrix.workspace }}"
       - name: Build
         shell: bash
-        run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+        env:
+          REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
+        run: |
+          if [[ -n "${{ inputs.environment }}" ]]; then
+            mise run publish "@lightproject/${{ matrix.workspace }}" "${REGISTRY_ADDRESS}/${{ matrix.workspace }}" "${GITHUB_SHA::7}"
+          else
+            mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+          fi
       - name: Test
         shell: bash
         run: mise run dagger-artifact test "@lightproject/${{ matrix.workspace }}"
@@ -113,17 +120,17 @@ jobs:
           echo "Deploying: ${{ matrix.workspace }} (${{ inputs.environment }})"
           echo "✅ All good!"
       - name: Stop Dagger engine
-        if: always()
+        if: success()
         shell: bash
         run: docker stop dagger-engine-custom 2>/dev/null || true
       - name: Save Dagger engine volume
-        if: always()
+        if: success()
         shell: bash
         run: |
           docker run --rm -v dagger-engine-cache:/data -v "${RUNNER_TEMP}":/backup alpine \
             sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
       - name: Prune previous Dagger engine volume cache
-        if: always()
+        if: success()
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -132,7 +139,7 @@ jobs:
             | xargs -r -n1 gh cache delete
         continue-on-error: true
       - name: Save Dagger engine volume cache
-        if: always()
+        if: success()
         uses: actions/cache/save@v6.1.0
         with:
           path: ${{ runner.temp }}/dagger-engine-cache.tar
