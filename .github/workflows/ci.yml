@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  ready:
+  pull-requests:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,135 +16,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
 
-      - name: Set up Mise
-        uses: jdx/mise-action@v4.3.0
-        with:
-          version: 2026.7.3
+      - name: Base setup
+        uses: ./.github/actions/base
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.19.0
-        with:
-          version: 0.3.0
-          cache: true
-          run-install: true
+  dev:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
 
-      - name: Restore Vite Task cache
-        id: vite-task-cache
-        uses: actions/cache/restore@v6.1.0
-        with:
-          path: node_modules/.vite/task-cache
-          key: vite-task-${{ runner.os }}-${{ runner.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            vite-task-${{ runner.os }}-${{ runner.arch }}-
+      - name: Base setup
+        uses: ./.github/actions/base
 
-      - name: Setup configs
-        id: setup-configs
-        run: |
-          echo "mise version:"
-          mise_version="$(mise --version 2>/dev/null | head -n1 | awk '{print $1}')"
-          echo "${mise_version}"
-          echo " "
+  stage:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
 
-          echo "node version:"
-          node --version
-          echo " "
+      - name: Base setup
+        uses: ./.github/actions/base
 
-          echo "pnpm version:"
-          pnpm --version
-          echo " "
+  production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
 
-          echo "vp version:"
-          vp --version
-          echo " "
-
-          dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
-          echo "dagger_version=${dagger_version}" >> "${GITHUB_OUTPUT}"
-          echo "dagger version:"
-          echo "${dagger_version}"
-
-      - name: Cache Dagger SDK
-        id: cache-dagger-sdk
-        uses: actions/cache@v6.1.0
-        with:
-          path: .dagger/sdk
-          key: dagger-sdk-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
-
-      # - name: Restore Dagger engine volume cache
-      #   id: restore-dagger-engine-cache
-      #   uses: actions/cache/restore@v6.1.0
-      #   with:
-      #     path: dagger-engine-cache.tar
-      #     key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
-      #     restore-keys: |
-      #       dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-
-
-      # - name: Start Dagger engine
-      #   run: |
-      #     docker volume create dagger-engine-cache
-      #     if [[ -f dagger-engine-cache.tar ]]; then
-      #       docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
-      #         sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
-      #     fi
-
-      #     echo '{"gc": {"enabled": false}}' > dagger-engine.json
-
-      #     docker run -d --privileged \
-      #       --name dagger-engine-custom \
-      #       -v dagger-engine-cache:/var/lib/dagger \
-      #       -v "${PWD}/dagger-engine.json":/etc/dagger/engine.json \
-      #       "registry.dagger.io/engine:${{ steps.setup-configs.outputs.dagger_version }}"
-
-      #     echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
-
-      - name: Setup Dagger
-        if: steps.cache-dagger-sdk.outputs.cache-hit != 'true'
-        run: dagger develop
-
-      - name: Run Vite+ pipeline
-        run: vp run -r root
-
-      # - name: Run Vite+ pipeline
-      #   run: vp run ready
-
-      # - name: Run Dagger pipeline
-      #   uses: dagger/dagger-for-github@v8.4.1
-      #   env:
-      #     DAGGER_NO_NAG: 1
-      #   with:
-      #     check: '**'
-      #     version: ${{ steps.setup-configs.outputs.dagger_version }}
-      #     # call: ready
-      #     call: check --workspace=@lightproject/library
-
-      - name: Prune previous Vite Task cache
-        if: success()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --key "vite-task-${{ runner.os }}-${{ runner.arch }}-" --json id --jq '.[].id' \
-            | xargs -r -n1 gh cache delete
-        continue-on-error: true
-
-      - name: Save Vite Task cache
-        if: success()
-        uses: actions/cache/save@v6.1.0
-        with:
-          path: node_modules/.vite/task-cache
-          key: ${{ steps.vite-task-cache.outputs.cache-primary-key }}
-
-      # - name: Stop Dagger engine
-      #   if: always()
-      #   run: docker stop dagger-engine-custom 2>/dev/null || true
-
-      # - name: Save Dagger engine volume
-      #   if: always()
-      #   run: |
-      #     docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
-      #       sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
-
-      # - name: Save Dagger engine volume cache
-      #   if: always()
-      #   uses: actions/cache/save@v6.1.0
-      #   with:
-      #     path: dagger-engine-cache.tar
-      #     key: dagger-engine-volume-${{ runner.os }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Base setup
+        uses: ./.github/actions/base

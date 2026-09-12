@@ -1,0 +1,34 @@
+name: 'Run vp pipeline'
+description: 'Run `vp run` with Vite Task caching across GitHub Actions runs'
+
+inputs:
+  args:
+    description: 'Arguments passed to `vp run`'
+    default: '-r root'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore Vite Task cache
+      id: vite-task-cache
+      uses: ./.github/actions/restore-rolling-cache
+      with:
+        path: node_modules/.vite/task-cache
+        prefix: vite-task-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Run vp run ${{ inputs.args }}
+      shell: bash
+      run: vp run ${{ inputs.args }}
+
+    - name: Prune previous Vite Task cache
+      if: success()
+      uses: ./.github/actions/cache-prune
+      with:
+        prefix: vite-task-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Save Vite Task cache
+      if: success()
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: node_modules/.vite/task-cache
+        key: ${{ steps.vite-task-cache.outputs.cache-primary-key }}

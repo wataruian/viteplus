@@ -1,0 +1,19 @@
+name: 'Prune GitHub Actions cache'
+description: 'Delete previous cache entries matching a key prefix, so rolling caches do not accumulate unbounded'
+
+inputs:
+  prefix:
+    description: 'Cache key prefix to match and delete'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Prune cache entries matching ${{ inputs.prefix }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh cache list --key "${{ inputs.prefix }}" --json id --jq '.[].id' \
+          | xargs -r -n1 gh cache delete
+      continue-on-error: true

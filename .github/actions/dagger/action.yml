@@ -1,0 +1,74 @@
+name: 'Run dagger pipeline'
+description: 'Run `dagger call` with an engine volume cache across GitHub Actions runs'
+
+inputs:
+  call:
+    description: 'Target passed to `dagger call`'
+    required: true
+  dagger-version:
+    description: 'Dagger CLI/engine version (from `dagger version`)'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore Dagger engine volume cache
+      id: dagger-engine-cache
+      uses: ./.github/actions/restore-rolling-cache
+      with:
+        path: dagger-engine-cache.tar
+        prefix: dagger-engine-volume-${{ runner.os }}-${{ runner.arch }}-${{ inputs.dagger-version }}-
+
+    - name: Start Dagger engine
+      shell: bash
+      run: |
+        docker volume create dagger-engine-cache
+
+        if [[ -f dagger-engine-cache.tar ]]; then
+          docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+            sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
+        fi
+
+        echo '{"gc": {"enabled": false}}' > dagger-engine.json
+
+        docker run -d --privileged \
+          --name dagger-engine-custom \
+          -v dagger-engine-cache:/var/lib/dagger \
+          -v "${PWD}/dagger-engine.json":/etc/dagger/engine.json \
+          "registry.dagger.io/engine:${{ inputs.dagger-version }}"
+
+        echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
+
+    - name: Run dagger call ${{ inputs.call }}
+      uses: dagger/dagger-for-github@v8.4.1
+      env:
+        DAGGER_NO_NAG: 1
+      with:
+        check: '**'
+        version: ${{ inputs.dagger-version }}
+        call: ${{ inputs.call }}
+
+    - name: Stop Dagger engine
+      if: always()
+      shell: bash
+      run: docker stop dagger-engine-custom 2>/dev/null || true
+
+    - name: Save Dagger engine volume
+      if: always()
+      shell: bash
+      run: |
+        docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+          sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
+
+    - name: Prune previous Dagger engine volume cache
+      if: always()
+      uses: ./.github/actions/cache-prune
+      with:
+        prefix: dagger-engine-volume-${{ runner.os }}-${{ runner.arch }}-${{ inputs.dagger-version }}-
+
+    - name: Save Dagger engine volume cache
+      if: always()
+      uses: actions/cache/save@v6.1.0
+      with:
+        path: dagger-engine-cache.tar
+        key: ${{ steps.dagger-engine-cache.outputs.cache-primary-key }}
