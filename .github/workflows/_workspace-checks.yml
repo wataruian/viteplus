@@ -17,9 +17,9 @@ jobs:
       fail-fast: false
       matrix:
         workspace:
-          - 'backend'
-          - 'frontend'
-          - 'design-system'
+          - '@lightproject/backend'
+          - '@lightproject/frontend'
+          - '@lightproject/design-system'
     permissions:
       contents: read
       actions: write
@@ -27,39 +27,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.19.0
+      - name: Run dagger pipeline
+        uses: ./.github/actions/base
         with:
-          version: 0.3.0
-          cache: true
-          run-install: true
-
-      - name: check
-        uses: ./.github/actions/vp
-        with:
-          args: '-r check'
-          workspace: ${{ matrix.workspace }}
-
-      - name: format
-        uses: ./.github/actions/vp
-        with:
-          args: '-r format'
-          workspace: ${{ matrix.workspace }}
-
-      - name: lint
-        uses: ./.github/actions/vp
-        with:
-          args: '-r lint'
-          workspace: ${{ matrix.workspace }}
-
-      - name: build
-        uses: ./.github/actions/vp
-        with:
-          args: '-r build'
-          workspace: ${{ matrix.workspace }}
-
-      - name: test
-        uses: ./.github/actions/vp
-        with:
-          args: '--filter @lightproject/${{ matrix.workspace }} test'
-          workspace: root
+          dagger-calls: |
+            check --workspace=${{ matrix.workspace }}
+            format --workspace=${{ matrix.workspace }}
+            lint --workspace=${{ matrix.workspace }}
+            build --workspace=${{ matrix.workspace }}
+            test --workspace=${{ matrix.workspace }}

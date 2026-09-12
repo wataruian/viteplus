@@ -1,19 +1,10 @@
 name: 'Base setup'
-description: 'Set up Mise, Vite+, and the Dagger SDK, then run the vp and/or dagger pipelines'
+description: 'Set up Mise and the Dagger SDK, then run the dagger pipeline'
 
 inputs:
-  run-vp:
-    description: 'Whether to run the vp pipeline'
-    default: 'true'
-  vp-args:
-    description: 'Arguments passed to `vp run`'
-    default: '-r root'
-  run-dagger:
-    description: 'Whether to run the dagger pipeline'
-    default: 'false'
   dagger-calls:
     description: 'Newline-separated `dagger call` targets to run against one engine session'
-    default: ''
+    required: true
 
 runs:
   using: 'composite'
@@ -22,13 +13,6 @@ runs:
       uses: jdx/mise-action@v4.3.0
       with:
         version: 2026.7.3
-
-    - name: Set up Vite+
-      uses: voidzero-dev/setup-vp@v1.19.0
-      with:
-        version: 0.3.0
-        cache: true
-        run-install: true
 
     - name: Setup configs
       id: setup-configs
@@ -45,10 +29,6 @@ runs:
 
         echo "pnpm version:"
         pnpm --version
-        echo " "
-
-        echo "vp version:"
-        vp --version
         echo " "
 
         dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
@@ -75,14 +55,7 @@ runs:
         path: .dagger/sdk
         key: ${{ steps.dagger-sdk-cache.outputs.cache-primary-key }}
 
-    - name: Run vp pipeline
-      if: inputs.run-vp == 'true'
-      uses: ./.github/actions/vp
-      with:
-        args: ${{ inputs.vp-args }}
-
     - name: Run dagger pipeline
-      if: inputs.run-dagger == 'true'
       uses: ./.github/actions/dagger
       with:
         calls: ${{ inputs.dagger-calls }}
