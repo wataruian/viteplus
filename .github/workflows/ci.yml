@@ -21,9 +21,8 @@ jobs:
 
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1.19.0
-        env:
-          VP_VERSION: 0.3.0
         with:
+          version: 0.3.0
           cache: true
           run-install: true
 
@@ -41,17 +40,15 @@ jobs:
           dagger version
           echo ""
 
-          echo "Initializing dagger..."
-          dagger develop
-          echo ""
-
           echo "vp version:"
           vp --version
+
+      - name: Initialize dagger
+        run: dagger develop
 
       - name: Run dagger pipeline
         uses: dagger/dagger-for-github@v8.4.1
         with:
-          version: v0.21.9
           call: ready
 
       # - name: Resolve dagger version from mise
