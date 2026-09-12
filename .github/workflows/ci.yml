@@ -2,36 +2,41 @@ name: 'CI'
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
+
+concurrency:
+  group: ci
+  cancel-in-progress: false
+
 jobs:
   develop:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     permissions:
       contents: read
       actions: write
     uses: ./.github/workflows/_main.yml
     with:
       environment: develop
+      cacheScope: develop
     secrets: inherit
 
   staging:
     needs: develop
-    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       actions: write
     uses: ./.github/workflows/_main.yml
     with:
       environment: staging
+      cacheScope: staging
     secrets: inherit
 
   production:
     needs: staging
-    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       actions: write
     uses: ./.github/workflows/_main.yml
     with:
       environment: production
+      cacheScope: production
     secrets: inherit

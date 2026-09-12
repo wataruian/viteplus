@@ -4,7 +4,11 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'Environment to run (develop, staging, production)'
+        description: 'Environment to run (develop, staging, production). Leave unset to run without one, e.g. for PR checks.'
+        required: false
+        type: string
+      cacheScope:
+        description: 'Key used to scope the rolling Dagger engine cache (e.g. an environment name or a PR branch name)'
         required: true
         type: string
 
@@ -12,7 +16,7 @@ jobs:
   checks:
     name: ${{ matrix.workspace }}
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment || null }}
     strategy:
       fail-fast: false
       matrix:
@@ -53,6 +57,35 @@ jobs:
 
           echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
 
+      - name: Restore Dagger engine volume cache
+        id: dagger-engine-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: dagger-engine-cache.tar
+          key: dagger-engine-volume-${{ inputs.cacheScope }}-${{ matrix.workspace }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            dagger-engine-volume-${{ inputs.cacheScope }}-${{ matrix.workspace }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-
+
+      - name: Start Dagger engine
+        shell: bash
+        run: |
+          docker volume create dagger-engine-cache
+
+          if [[ -f dagger-engine-cache.tar ]]; then
+            docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+              sh -c "tar xf /backup/dagger-engine-cache.tar -C /data"
+          fi
+
+          echo '{"gc": {"enabled": false}}' > dagger-engine.json
+
+          docker run -d --privileged \
+            --name dagger-engine-custom \
+            -v dagger-engine-cache:/var/lib/dagger \
+            -v "${PWD}/dagger-engine.json":/etc/dagger/engine.json \
+            "registry.dagger.io/engine:${{ steps.setup-configs.outputs.dagger_version }}"
+
+          echo "_EXPERIMENTAL_DAGGER_RUNNER_HOST=container://dagger-engine-custom" >> "${GITHUB_ENV}"
+
       - name: Setup Dagger
         shell: bash
         run: dagger develop
@@ -76,3 +109,39 @@ jobs:
       - name: Build
         shell: bash
         run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+
+      - name: Deploy
+        if: inputs.environment != ''
+        shell: bash
+        run: |
+          echo "Deploying: ${{ matrix.workspace }} (${{ inputs.environment }})"
+          echo "✅ All good!"
+
+      - name: Stop Dagger engine
+        if: always()
+        shell: bash
+        run: docker stop dagger-engine-custom 2>/dev/null || true
+
+      - name: Save Dagger engine volume
+        if: always()
+        shell: bash
+        run: |
+          docker run --rm -v dagger-engine-cache:/data -v "${PWD}":/backup alpine \
+            sh -c "tar cf /backup/dagger-engine-cache.tar -C /data ."
+
+      - name: Prune previous Dagger engine volume cache
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache list --key "dagger-engine-volume-${{ inputs.cacheScope }}-${{ matrix.workspace }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-" --json id --jq '.[].id' \
+            | xargs -r -n1 gh cache delete
+        continue-on-error: true
+
+      - name: Save Dagger engine volume cache
+        if: always()
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: dagger-engine-cache.tar
+          key: ${{ steps.dagger-engine-cache.outputs.cache-primary-key }}
