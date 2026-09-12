@@ -1,9 +1,9 @@
 {
-  "disableDefaultFunctionCaching": true,
-  "engineVersion": "v0.21.9",
   "name": "monorepo",
+  "engineVersion": "v0.21.9",
   "sdk": {
     "source": "typescript"
   },
-  "source": ".dagger"
+  "source": ".dagger",
+  "disableDefaultFunctionCaching": true
 }
