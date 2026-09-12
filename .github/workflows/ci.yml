@@ -32,6 +32,9 @@ jobs:
       contents: read
       actions: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
       - name: check
         uses: ./.github/actions/vp
         with:
@@ -42,16 +45,19 @@ jobs:
         with:
           args: '-r format'
           workspace: ${{ matrix.workspace }}
+
       - name: lint
         uses: ./.github/actions/vp
         with:
           args: '-r lint'
           workspace: ${{ matrix.workspace }}
+
       - name: build
         uses: ./.github/actions/vp
         with:
           args: '-r build'
           workspace: ${{ matrix.workspace }}
+
       - name: test
         uses: ./.github/actions/vp
         with:
