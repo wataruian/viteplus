@@ -13,9 +13,6 @@ jobs:
     name: ${{ matrix.workspace }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    permissions:
-      contents: read
-      actions: write
     strategy:
       fail-fast: false
       matrix:
