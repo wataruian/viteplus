@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'GitHub environment to run against (develop, staging, production)'
+        description: 'Environment to run (develop, staging, production)'
         required: true
         type: string
 
@@ -17,9 +17,9 @@ jobs:
       fail-fast: false
       matrix:
         workspace:
-          - '@lightproject/backend'
-          - '@lightproject/frontend'
-          - '@lightproject/design-system'
+          - design-system
+          - frontend
+          - backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -27,4 +27,5 @@ jobs:
       - name: Run dagger pipeline
         uses: ./.github/actions/main
         with:
+          workspace: '@lightproject/${{ matrix.workspace }}'
           environment: ${{ inputs.environment }}

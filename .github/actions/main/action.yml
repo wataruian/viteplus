@@ -6,6 +6,10 @@ inputs:
     description: 'Environment to run the pipeline'
     required: true
     type: string
+  workspace:
+    description: 'Workspace to run the pipeline'
+    required: true
+    type: string
 
 runs:
   using: 'composite'
@@ -37,27 +41,22 @@ runs:
         echo "dagger version:"
         echo "${dagger_version}"
 
-    # - name: Restore Dagger SDK cache
-    #   id: dagger-sdk-cache
-    #   uses: actions/cache/restore@v6.1.0
-    #   with:
-    #     path: .dagger/sdk
-    #     key: dagger-sdk-${{ runner.os }}-${{ runner.arch }}-${{ steps.setup-configs.outputs.dagger_version }}-${{ hashFiles('dagger.json', '.dagger/src/index.ts', '.dagger/package.json', '.dagger/pnpm-lock.yaml', '.dagger/tsconfig.json') }}
+    - name: Setup Dagger
+      if: steps.dagger-sdk-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: dagger develop
 
-    # - name: Setup Dagger
-    #   if: steps.dagger-sdk-cache.outputs.cache-hit != 'true'
-    #   shell: bash
-    #   run: dagger develop
+    - name: Check
+      run: mise run dagger-artifact check "${{ inputs.workspace }}"
 
-    # - name: Save Dagger SDK cache
-    #   if: success() && steps.dagger-sdk-cache.outputs.cache-hit != 'true'
-    #   uses: actions/cache/save@v6.1.0
-    #   with:
-    #     path: .dagger/sdk
-    #     key: ${{ steps.dagger-sdk-cache.outputs.cache-primary-key }}
+    - name: Format
+      run: mise run dagger-artifact format "${{ inputs.workspace }}"
 
-    # - name: Run dagger pipeline
-    #   uses: ./.github/actions/dagger
-    #   with:
-    #     calls: ${{ inputs.dagger-calls }}
-    #     dagger-version: ${{ steps.setup-configs.outputs.dagger_version }}
+    - name: Lint
+      run: mise run dagger-artifact lint "${{ inputs.workspace }}"
+
+    - name: Type Check
+      run: mise run dagger-artifact type-check "${{ inputs.workspace }}"
+
+    - name: Build
+      run: mise run dagger-artifact build "${{ inputs.workspace }}"
