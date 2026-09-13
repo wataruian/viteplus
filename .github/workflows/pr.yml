@@ -15,6 +15,6 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: ./.github/workflows/check.yml
+    uses: ./.github/workflows/ci.yml
     with:
       environment: pr

@@ -226,14 +226,14 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
 ## 2026-09-13: CI Hardening — Explicit Secrets, Renovate
 
 - **Decision**: Removed `secrets: inherit` from `pr.yml`/`main.yml`/`trigger.yml`. It was a
-  blanket grant that `check.yml` never actually consumed (grepped — no `secrets.*` reference
+  blanket grant that `ci.yml` never actually consumed (grepped — no `secrets.*` reference
   existed anywhere in the workflow files); on the fork/PR-triggerable path it was pure unused
   blast radius against the privileged, Docker-socket-mounted self-hosted runner. `CLOUDFLARE_API_TOKEN`
-  is now declared explicitly on `check.yml`'s `workflow_call.secrets` and passed by name only from
+  is now declared explicitly on `ci.yml`'s `workflow_call.secrets` and passed by name only from
   `main.yml`/`trigger.yml` — `pr.yml` gets none, matching that its Deploy step never runs.
 - **Not done**: the actual `dagger call wrangler` deploy wiring was drafted and then deliberately
   reverted — not needed yet, revisit when a real backend Cloudflare Workers deploy is wanted.
-  `check.yml`'s Deploy step is still the placeholder echo.
+  `ci.yml`'s Deploy step is still the placeholder echo.
 - **Added `renovate.json`**: chosen over Dependabot because `pnpm-workspace.yaml`'s `catalog:`
   entries need a bot that understands the catalog protocol — Dependabot's npm ecosystem support
   doesn't resolve `catalog:`-referenced versions reliably. Scoped deliberately narrow:
