@@ -98,6 +98,9 @@ test('a rejected flushTelemetry without executionCtx.waitUntil is swallowed inst
   const res = await app.request(`${apiBaseUrl}/`);
   expect(res.status).toBe(200);
 
+  // simulate failure
+  expect(true).toBe(false);
+
   await new Promise((resolve) => {
     globalThis.setTimeout(resolve, 0);
   });

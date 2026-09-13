@@ -119,6 +119,27 @@ services:
       mimir:
         condition: service_started
 
+  registry-cache:
+    image: rpardini/docker-registry-proxy:0.7.0
+    container_name: registry-cache
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.28.0.10
+    ports:
+      - '3128:3128'
+    environment:
+      REGISTRIES: ghcr.io
+      ENABLE_MANIFEST_CACHE: 'true'
+    volumes:
+      - registry-cache-data:/docker_mirror_cache
+      - registry-cache-certs:/ca
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:3128/ca.crt']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   dagger-engine:
     image: registry.dagger.io/engine:v0.21.9
     container_name: dagger-engine
@@ -126,9 +147,16 @@ services:
     privileged: true
     environment:
       DAGGER_NO_NAG: '1'
+      HTTP_PROXY: http://172.28.0.10:3128
+      HTTPS_PROXY: http://172.28.0.10:3128
+      NO_PROXY: localhost,127.0.0.1
     volumes:
       - dagger-engine-storage:/var/lib/dagger
-      - ./configs/dagger-engine.json:/etc/dagger/engine.json
+      - ./configs/dagger-engine.toml:/etc/dagger/engine.toml
+      - registry-cache-certs:/usr/local/share/ca-certificates
+    depends_on:
+      registry-cache:
+        condition: service_healthy
 
   github-runner:
     image: myoung34/github-runner:2.337.0-ubuntu-noble
@@ -149,6 +177,8 @@ services:
     volumes:
       - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
     depends_on:
+      registry-cache:
+        condition: service_healthy
       dagger-engine:
         condition: service_started
 
@@ -189,3 +219,11 @@ volumes:
   otel-storage:
   tempo-storage:
   dagger-engine-storage:
+  registry-cache-data:
+  registry-cache-certs:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

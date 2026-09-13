@@ -151,6 +151,8 @@ Run `dagger functions` to list everything available.
 
 **Self-hosted runner + persistent engine**: CI (`.github/workflows/ci.yml`) runs on a self-hosted GitHub Actions runner rather than `ubuntu-latest`. Both the runner (`github-runner`) and a long-lived Dagger engine (`dagger-engine`) are defined in `docker-compose.yml` — the runner points at the engine via `_EXPERIMENTAL_DAGGER_RUNNER_HOST=docker-container://dagger-engine`, so the cache volumes above survive across CI runs instead of starting cold on every ephemeral GitHub-hosted VM. Bring both up with `docker compose up -d dagger-engine github-runner` (needs `GH_RUNNER_TOKEN` in `.env`, a PAT with `repo` + `manage_runners` scope).
 
+**Registry pull-through cache**: `registry-cache` (`rpardini/docker-registry-proxy`) is a transparent HTTPS caching proxy for `docker.io` and `ghcr.io` image pulls. `dagger-engine` is wired to it via `HTTP_PROXY`/`HTTPS_PROXY` (pointed at its static compose IP, since the engine's own internal build-sandbox resolver can't see compose service DNS names) plus its generated CA mounted into `/usr/local/share/ca-certificates`, which Dagger auto-trusts on startup — so every registry pull a Dagger Function makes, including CI's `mise run dagger-artifact ...` steps (via the persistent engine above), is cached automatically with no per-call or per-workflow changes needed.
+
 ## 🏗 Monorepo Conventions
 
 ### Dependency Management
