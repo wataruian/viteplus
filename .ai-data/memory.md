@@ -223,6 +223,28 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   own default `.dagger/.gitignore` — verified it regenerates automatically on `dagger call` even
   when absent, so this isn't something to "fix."
 
+## 2026-09-13: CI Hardening — Explicit Secrets, Renovate
+
+- **Decision**: Removed `secrets: inherit` from `pr.yml`/`main.yml`/`trigger.yml`. It was a
+  blanket grant that `check.yml` never actually consumed (grepped — no `secrets.*` reference
+  existed anywhere in the workflow files); on the fork/PR-triggerable path it was pure unused
+  blast radius against the privileged, Docker-socket-mounted self-hosted runner. `CLOUDFLARE_API_TOKEN`
+  is now declared explicitly on `check.yml`'s `workflow_call.secrets` and passed by name only from
+  `main.yml`/`trigger.yml` — `pr.yml` gets none, matching that its Deploy step never runs.
+- **Not done**: the actual `dagger call wrangler` deploy wiring was drafted and then deliberately
+  reverted — not needed yet, revisit when a real backend Cloudflare Workers deploy is wanted.
+  `check.yml`'s Deploy step is still the placeholder echo.
+- **Added `renovate.json`**: chosen over Dependabot because `pnpm-workspace.yaml`'s `catalog:`
+  entries need a bot that understands the catalog protocol — Dependabot's npm ecosystem support
+  doesn't resolve `catalog:`-referenced versions reliably. Scoped deliberately narrow:
+  `ignorePaths: [".dagger/**"]` keeps Renovate out of the Dagger module entirely (it's
+  Dagger-managed, not pnpm/vp-managed — see the two "hard walls" above), and the `vite-plus`/
+  `@voidzero-dev/vite-plus-core` pair is grouped with a note to hand-bump the pinned
+  `VITE_PLUS_IMAGE` tag in `.dagger/src/index.ts` and mise.toml's `viteplus` entry alongside it
+  rather than let Renovate touch the toolchain image/version pins unsupervised. Needs the Renovate
+  GitHub App installed on the repo before it does anything — not something committing this file
+  alone accomplishes.
+
 ### 2026-09-09 follow-up: module discovery, and two hard walls in Dagger's isolation
 
 - **`dagger.json` moved to repo root**: originally `dagger.json` lived inside `.dagger/` (module

@@ -17,7 +17,6 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       environment: develop
-    secrets: inherit
 
   staging:
     name: 'Staging'
@@ -28,7 +27,6 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       environment: staging
-    secrets: inherit
 
   production:
     name: 'Production'
@@ -39,4 +37,3 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       environment: production
-    secrets: inherit

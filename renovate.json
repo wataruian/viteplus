@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "dependencyDashboard": true,
+  "timezone": "UTC",
+  "schedule": ["before 4am on monday"],
+  "prConcurrentLimit": 5,
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 4am on monday"]
+  },
+  "postUpdateOptions": ["pnpmDedupe"],
+  "ignorePaths": [".dagger/**"],
+  "packageRules": [
+    {
+      "description": "The vite-plus toolchain (vp) and its vite-compatible core must move together, in lockstep with the pinned image tag in .dagger/src/index.ts (VITE_PLUS_IMAGE) and mise.toml's `viteplus` entry — bump those manually alongside this PR, then verify with `vp toolchain` and a real `vp run ready`. @vitest/coverage-v8 is included here because it peer-pins `vitest` to an exact version (verified in node_modules — not a range), and vitest itself is bundled internally by vite-plus, not a direct catalog entry.",
+      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core", "@vitest/coverage-v8"],
+      "groupName": "vite-plus toolchain",
+      "additionalBranchPrefix": "toolchain-"
+    },
+    {
+      "description": "Storybook packages must stay on matching minor versions.",
+      "matchPackageNames": ["/^@storybook//", "storybook"],
+      "groupName": "storybook"
+    },
+    {
+      "description": "OpenTelemetry SDK/exporter packages must stay in lockstep.",
+      "matchPackageNames": ["/^@opentelemetry//"],
+      "groupName": "opentelemetry"
+    },
+    {
+      "description": "Commitlint packages must stay on matching versions.",
+      "matchPackageNames": ["/^@commitlint//"],
+      "groupName": "commitlint"
+    },
+    {
+      "description": "@trpc/client pins @trpc/server to an exact version (verified in node_modules — not a range), so a version mismatch fails install outright, not just at runtime.",
+      "matchPackageNames": ["/^@trpc//"],
+      "groupName": "trpc"
+    },
+    {
+      "description": "unocss and its @unocss/* plugins pin each other to exact matching versions internally (verified: unocss's own @unocss/core dependency and peer ranges are exact, not semver ranges).",
+      "matchPackageNames": ["unocss", "/^@unocss//"],
+      "groupName": "unocss"
+    },
+    {
+      "description": "Grafana Faro packages must stay in lockstep.",
+      "matchPackageNames": ["/^@grafana\\/faro-/"],
+      "groupName": "grafana-faro"
+    }
+  ]
+}
