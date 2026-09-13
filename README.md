@@ -153,6 +153,8 @@ Run `dagger functions` to list everything available.
 
 **Registry pull-through cache**: `registry-cache` (`rpardini/docker-registry-proxy`) is a transparent HTTPS caching proxy for `docker.io` and `ghcr.io` image pulls. `dagger-engine` is wired to it via `HTTP_PROXY`/`HTTPS_PROXY` (pointed at its static compose IP, since the engine's own internal build-sandbox resolver can't see compose service DNS names) plus its generated CA mounted into `/usr/local/share/ca-certificates`, which Dagger auto-trusts on startup — so every registry pull a Dagger Function makes, including CI's `mise run dagger-artifact ...` steps (via the persistent engine above), is cached automatically with no per-call or per-workflow changes needed.
 
+Raw `docker pull`/`docker build` run directly against the host socket (from a GH Actions step, `dagger call load`, etc.) bypass this cache — `registry-cache` is only wired into `dagger-engine`'s own environment, not the host daemon itself. Caching that path would mean configuring the host daemon directly (out of scope while `github-runner` runs on Docker Desktop for local testing rather than a real Linux host).
+
 ## 🏗 Monorepo Conventions
 
 ### Dependency Management
