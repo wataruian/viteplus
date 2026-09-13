@@ -193,7 +193,7 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
 - **Decision**: Added a TypeScript Dagger module at `.dagger/` (`dagger init --sdk=typescript`)
   that wraps `pnpm install` + the `vp` task runner in a hermetic container. GitHub Actions
   (`.github/workflows/ci.yml`) now runs `dagger/dagger-for-github@v8` calling `dagger call ready`
-  instead of `voidzero-dev/setup-vp@v1` + `vp run ready` directly on the runner — the exact same
+  instead of `voidzero-dev/setup-vp@v1.20.0` + `vp run ready` directly on the runner — the exact same
   containerized pipeline now runs on a laptop (`dagger -m .dagger call ready`, or `mise run ci`)
   and in CI, closing the "works on my machine" gap.
 - **Why a container at all**: `dagger` was already added to `mise.toml`'s `[tools]` (see
