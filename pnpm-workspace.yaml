@@ -13,7 +13,7 @@ catalog:
   '@commitlint/config-conventional': npm:@commitlint/config-conventional@21.2.0
   '@commitlint/types': npm:@commitlint/types@21.2.0
   '@emnapi/core': npm:@emnapi/core@1.9.2
-  '@emnapi/runtime': npm:@emnapi/runtime@1.9.2
+  '@emnapi/runtime': npm:@emnapi/runtime@1.11.3
   '@grafana/faro-react': npm:@grafana/faro-react@2.9.0
   '@grafana/faro-web-sdk': npm:@grafana/faro-web-sdk@2.9.0
   '@grafana/faro-web-tracing': npm:@grafana/faro-web-tracing@2.9.0
