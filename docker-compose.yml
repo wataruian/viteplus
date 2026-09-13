@@ -131,6 +131,7 @@ services:
     environment:
       REGISTRIES: ghcr.io
       ENABLE_MANIFEST_CACHE: 'true'
+      DISABLE_IPV6: 'true'
     volumes:
       - registry-cache-data:/docker_mirror_cache
       - registry-cache-certs:/ca
