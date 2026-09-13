@@ -119,6 +119,28 @@ services:
       mimir:
         condition: service_started
 
+  registry-cache:
+    image: rpardini/docker-registry-proxy:0.7.0
+    container_name: registry-cache
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.28.0.10
+    ports:
+      - '3128:3128'
+    environment:
+      REGISTRIES: ghcr.io
+      ENABLE_MANIFEST_CACHE: 'true'
+      DISABLE_IPV6: 'true'
+    volumes:
+      - registry-cache-data:/docker_mirror_cache
+      - registry-cache-certs:/ca
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:3128/ca.crt']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   dagger-engine:
     image: registry.dagger.io/engine:v0.21.9
     container_name: dagger-engine
@@ -126,29 +148,38 @@ services:
     privileged: true
     environment:
       DAGGER_NO_NAG: '1'
+      HTTP_PROXY: http://172.28.0.10:3128
+      HTTPS_PROXY: http://172.28.0.10:3128
+      NO_PROXY: localhost,127.0.0.1
     volumes:
       - dagger-engine-storage:/var/lib/dagger
-      - ./configs/dagger-engine.json:/etc/dagger/engine.json
+      - ./configs/dagger-engine.toml:/etc/dagger/engine.toml
+      - registry-cache-certs:/usr/local/share/ca-certificates
+    depends_on:
+      registry-cache:
+        condition: service_healthy
 
   github-runner:
     image: myoung34/github-runner:2.337.0-ubuntu-noble
     restart: unless-stopped
     deploy:
-      replicas: ${GH_RUNNER_MIN:-1}
+      replicas: ${GH_RUNNER_MIN}
     environment:
-      REPO_URL: ${GH_REPO_URL:-https://github.com/wataruian/viteplus}
+      REPO_URL: ${GH_REPO_URL}
       ACCESS_TOKEN: ${GH_RUNNER_TOKEN}
-      RUNNER_NAME_PREFIX: ${GH_RUNNER_NAME:-gh-runner}
+      RUNNER_NAME_PREFIX: ${GH_RUNNER_NAME}
       RANDOM_RUNNER_SUFFIX: 'false'
       RUNNER_SCOPE: repo
       LABELS: self-hosted,linux,arm64,dagger
       EPHEMERAL: '1'
       DISABLE_AUTO_UPDATE: 'true'
       RUNNER_WORKDIR_ROOT: /tmp/runner/work
-      _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${_EXPERIMENTAL_DAGGER_RUNNER_HOST:-docker-container://dagger-engine}
+      _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${_EXPERIMENTAL_DAGGER_RUNNER_HOST}
     volumes:
       - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
     depends_on:
+      registry-cache:
+        condition: service_healthy
       dagger-engine:
         condition: service_started
 
@@ -158,12 +189,12 @@ services:
     restart: unless-stopped
     working_dir: /workspace
     environment:
-      GH_REPO_URL: ${GH_REPO_URL:-https://github.com/wataruian/viteplus}
+      GH_REPO_URL: ${GH_REPO_URL}
       GH_RUNNER_TOKEN: ${GH_RUNNER_TOKEN}
-      GH_RUNNER_NAME: ${GH_RUNNER_NAME:-gh-runner}
-      GH_RUNNER_MIN: ${GH_RUNNER_MIN:-1}
-      GH_RUNNER_MAX: ${GH_RUNNER_MAX:-5}
-      SCALE_INTERVAL_SECONDS: ${GH_RUNNER_SCALE_INTERVAL_SECONDS:-60}
+      GH_RUNNER_NAME: ${GH_RUNNER_NAME}
+      GH_RUNNER_MIN: ${GH_RUNNER_MIN}
+      GH_RUNNER_MAX: ${GH_RUNNER_MAX}
+      SCALE_INTERVAL_SECONDS: ${GH_RUNNER_SCALE_INTERVAL_SECONDS}
     volumes:
       - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
       - .:/workspace:ro
@@ -189,3 +220,11 @@ volumes:
   otel-storage:
   tempo-storage:
   dagger-engine-storage:
+  registry-cache-data:
+  registry-cache-certs:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

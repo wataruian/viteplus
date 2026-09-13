@@ -6,12 +6,12 @@ set -o pipefail
 
 : "${GH_RUNNER_TOKEN:?GH_RUNNER_TOKEN is required (needs actions:read)}"
 
-repoUrl="${GH_REPO_URL:-https://github.com/wataruian/viteplus}"
+repoUrl="${GH_REPO_URL}"
 repoSlug="${repoUrl#https://github.com/}"
-runnerNamePrefix="${GH_RUNNER_NAME:-gh-runner}"
+runnerNamePrefix="${GH_RUNNER_NAME}"
 
-minRunners="${GH_RUNNER_MIN:-1}"
-maxRunners="${GH_RUNNER_MAX:-5}"
+minRunners="${GH_RUNNER_MIN}"
+maxRunners="${GH_RUNNER_MAX}"
 
 composeProject="$(docker inspect dagger-engine --format '{{ index .Config.Labels "com.docker.compose.project" }}')"
 compose() { docker compose -p "${composeProject}" "$@"; }

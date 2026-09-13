@@ -16,7 +16,7 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: ./.github/workflows/check.yml
+    uses: ./.github/workflows/ci.yml
     with:
       environment: develop
 
@@ -27,7 +27,7 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: ./.github/workflows/check.yml
+    uses: ./.github/workflows/ci.yml
     with:
       environment: staging
 
@@ -38,6 +38,6 @@ jobs:
       contents: read
       actions: write
       pull-requests: write
-    uses: ./.github/workflows/check.yml
+    uses: ./.github/workflows/ci.yml
     with:
       environment: production

@@ -13,8 +13,36 @@ on:
         type: string
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: [self-hosted, dagger]
+    timeout-minutes: 5
+    outputs:
+      workspaces: ${{ steps.workspaces.outputs.workspaces }}
+      workspace_list: ${{ steps.workspaces.outputs.workspace_list }}
+    steps:
+      - name: Resolve workspaces
+        id: workspaces
+        shell: bash
+        run: |
+          if [[ -n "${{ inputs.workspace }}" ]]; then
+            list="${{ inputs.workspace }}"
+          else
+            list="design-system frontend backend"
+          fi
+
+          json="["
+          for workspace in ${list}; do
+            json+="\"${workspace}\","
+          done
+          json="${json%,}]"
+
+          echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
+          echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
+
   checks:
     name: ${{ matrix.workspace }}
+    needs: setup
     runs-on: [self-hosted, dagger]
     timeout-minutes: 30
     environment: ${{ inputs.environment || null }}
@@ -23,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workspace: ${{ inputs.workspace && fromJson(format('["{0}"]', inputs.workspace)) || fromJson('["design-system","frontend","backend"]') }}
+        workspace: ${{ fromJson(needs.setup.outputs.workspaces) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -33,32 +61,9 @@ jobs:
         with:
           version: 2026.7.3
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.20.0
-        with:
-          version: 0.3.1
-          run-install: true
-
       - name: Setup configs
         shell: bash
         run: |
-          echo "mise version:"
-          mise_version="$(mise --version 2>/dev/null | head -n1 | awk '{print $1}')"
-          echo "${mise_version}"
-          echo " "
-
-          echo "node version:"
-          node --version
-          echo " "
-
-          echo "pnpm version:"
-          pnpm --version
-          echo " "
-
-          dagger_version="$(dagger version | awk '{print $2}' | sed 's/^//')"
-          echo "dagger version:"
-          echo "${dagger_version}"
-
           echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
 
       - name: Setup Dagger
@@ -113,22 +118,20 @@ jobs:
 
   coverage-comment:
     name: Coverage comment
-    needs: checks
+    needs: [setup, checks]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, dagger]
     timeout-minutes: 10
     permissions:
+      actions: read
       pull-requests: write
     steps:
-      - name: Download coverage artifacts
-        uses: actions/download-artifact@v8.0.1
-        continue-on-error: true
-        with:
-          pattern: coverage-*
-          path: coverage-artifacts
-
-      - name: Build coverage table
+      - name: Download coverage artifacts and build table
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WORKSPACES: ${{ needs.setup.outputs.workspace_list }}
         run: |
           {
             echo '<!-- coverage-report -->'
@@ -136,8 +139,11 @@ jobs:
             echo ''
             echo '| Workspace | Lines | Statements | Functions | Branches |'
             echo '|---|---|---|---|---|'
-            for workspace in design-system frontend backend; do
-              summary="coverage-artifacts/coverage-${workspace}/coverage-summary.json"
+            for workspace in ${WORKSPACES}; do
+              dest="coverage-artifacts/${workspace}"
+              gh run download "${{ github.run_id }}" --name "coverage-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
+
+              summary="${dest}/coverage-summary.json"
               if [[ -f "${summary}" ]]; then
                 lines="$(jq -r '.total.lines.pct' "${summary}")"
                 statements="$(jq -r '.total.statements.pct' "${summary}")"
