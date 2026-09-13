@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   pull-request:
-    name: 'PR #${{ github.event.pull_request.number }} [branch: ${{ github.head_ref }}]'
+    name: 'PR #${{ github.event.pull_request.number }} (branch: ${{ github.head_ref }})'
     permissions:
       contents: read
       actions: write
