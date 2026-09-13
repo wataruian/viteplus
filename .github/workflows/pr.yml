@@ -14,4 +14,6 @@ jobs:
       contents: read
       actions: write
     uses: ./.github/workflows/check.yml
+    with:
+      environment: pr
     secrets: inherit

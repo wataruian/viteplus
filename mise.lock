@@ -78,6 +78,45 @@ checksum = "sha256:bab6910b8fe62884f7a65adcbf11e3c4f5f7fb98886c00bc442d42b8b3c01
 url = "https://github.com/depot/cli/releases/download/v2.102.7/depot_2.102.7_windows_amd64.zip"
 url_api = "https://api.github.com/repos/depot/cli/releases/assets/527378335"
 
+[[tools.jq]]
+version = "1.7.1"
+backend = "aqua:jqlang/jq"
+
+[tools.jq."platforms.linux-arm64"]
+checksum = "sha256:4dd2d8a0661df0b22f1bb9a1f9830f06b6f3b8f7d91211a1ef5d7c4f06a8b4a5"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-arm64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140520982"
+
+[tools.jq."platforms.linux-arm64-musl"]
+checksum = "sha256:4dd2d8a0661df0b22f1bb9a1f9830f06b6f3b8f7d91211a1ef5d7c4f06a8b4a5"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-arm64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140520982"
+
+[tools.jq."platforms.linux-x64"]
+checksum = "sha256:5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140520984"
+
+[tools.jq."platforms.linux-x64-musl"]
+checksum = "sha256:5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140520984"
+
+[tools.jq."platforms.macos-arm64"]
+checksum = "sha256:0bbe619e663e0de2c550be2fe0d240d076799d6f8a652b70fa04aea8a8362e8a"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-macos-arm64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140521010"
+
+[tools.jq."platforms.macos-x64"]
+checksum = "sha256:4155822bbf5ea90f5c79cf254665975eb4274d426d0709770c21774de5407443"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-macos-amd64"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140521009"
+
+[tools.jq."platforms.windows-x64"]
+checksum = "sha256:7451fbbf37feffb9bf262bd97c54f0da558c63f0748e64152dd87b0a07b6d6ab"
+url = "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe"
+url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/140521015"
+
 [[tools.node]]
 version = "24.14.1"
 backend = "core:node"

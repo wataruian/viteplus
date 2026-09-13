@@ -5,6 +5,8 @@ set -o errexit # Bail out on any error
 
 app="${1:-""}"
 
+dockerSocket="${DOCKER_SOCKET:-"/var/run/docker.sock"}"
+
 projects=(
   "@lightproject/design-system"
   "@lightproject/backend"
@@ -45,7 +47,7 @@ for project in "${projects[@]}"; do
 
   buildArgs+=(
     --workspace="${project}"
-    --docker-socket="/var/run/docker.sock"
+    --docker-socket="${dockerSocket}"
   )
 
   echo "Building: ${project}"
