@@ -2,7 +2,7 @@ name: 'PR Pipeline'
 
 on:
   pull_request:
-    branches: [main, ci]
+    branches: [main]
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
@@ -10,6 +10,7 @@ concurrency:
 
 jobs:
   pull-request:
+    name: 'Pull Request: #${{ github.event.pull_request.number }}'
     permissions:
       contents: read
       actions: write

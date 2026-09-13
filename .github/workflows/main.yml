@@ -2,14 +2,15 @@ name: 'Main Pipeline'
 
 on:
   push:
-    branches: [main, ci]
+    branches: [main]
 
 concurrency:
-  group: ci
+  group: main
   cancel-in-progress: false
 
 jobs:
   develop:
+    name: 'Develop'
     permissions:
       contents: read
       actions: write
@@ -19,6 +20,7 @@ jobs:
     secrets: inherit
 
   staging:
+    name: 'Staging'
     needs: develop
     permissions:
       contents: read
@@ -29,6 +31,7 @@ jobs:
     secrets: inherit
 
   production:
+    name: 'Production'
     needs: staging
     permissions:
       contents: read
