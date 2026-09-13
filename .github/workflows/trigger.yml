@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   trigger:
-    name: 'Trigger: ${{ github.ref_name }} [${{ inputs.environment }}]'
+    name: 'Trigger [branch: ${{ github.ref_name }}, environment: ${{ inputs.environment }}]'
     if: |
       (inputs.environment == 'pr' && github.ref != 'refs/heads/main') ||
       (inputs.environment != 'pr' && github.ref == 'refs/heads/main')
