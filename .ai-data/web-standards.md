@@ -62,7 +62,7 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
     (`pathExists`, `getScriptDir`/`FilePath`/`FileName`, `getImporterDir`/`FilePath`/`FileName`
     — via `error.stack` parsing — `getProjectRoot`, `readFile`, `createDir`, `createFile`,
     `deletePath`, `copyPath`, `movePath`, `backupPath`) was exercised unmodified under Node
-    24.14.1, Bun 1.4.2, and Deno 2.9.6 and produced identical results on all three when the
+    24.15.0, Bun 1.4.2, and Deno 2.9.6 and produced identical results on all three when the
     process has normal filesystem permissions.
   - Caveat found only under Deno: Deno denies filesystem access by default (`--allow-read`/
     `--allow-write` opt in per path). `pathExists`'s `try { fs.existsSync(...) } catch { return

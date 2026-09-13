@@ -15,10 +15,7 @@ bash_profile = { enabled = true, mode = "shims" }
 bashrc = { enabled = true, mode = "activate" }
 
 [tools]
-node = "24.14.1"
-pnpm = "11.10.0"
 dagger = "0.21.9"
-depot = "2.102.7"
 jq = "1.7.1"
 # viteplus = "0.2.7"
 
