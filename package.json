@@ -54,11 +54,11 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "11.10.0",
+      "version": "11.20.0",
       "onFail": "download"
     }
   },
   "engines": {
-    "node": "24.14.1"
+    "node": "24.15.0"
   }
 }

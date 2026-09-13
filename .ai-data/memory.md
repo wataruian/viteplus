@@ -208,7 +208,7 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   those cache volumes requires a `DAGGER_CLOUD_TOKEN` repo secret (optional, wired into
   `ci.yml`'s `cloud-token` input) — without it every CI run is a cold cache, no worse than the
   previous setup.
-- **Container needs `git`**: `node:24.14.1-slim` has no `git`; `pnpm install`'s `prepare` script
+- **Container needs `git`**: `node:24.15.0-slim` has no `git`; `pnpm install`'s `prepare` script
   runs `vp config`, which shells out to git and needs it present (it degrades gracefully to
   "`.git` can't be found" without a real repo, which is expected — `.git` itself is excluded from
   the container's mounted source).

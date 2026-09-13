@@ -59,19 +59,19 @@ When viewing logs in Grafana, you can use the following LogQL query to natively 
 
 ### Prerequisites
 
-| Tool    | Version    | Notes                         |
-| :------ | :--------- | :---------------------------- |
-| Node.js | `^24.14.1` | Defined in `.tool-versions`   |
-| mise    | `latest`   | Task runner and env manager   |
-| Vite+   | `latest`   | Global CLI for all operations |
-| pnpm    | `latest`   | Managed automatically by `vp` |
+| Tool    | Version   | Notes                         |
+| :------ | :-------- | :---------------------------- |
+| Node.js | `24.15.0` | Defined in `.tool-versions`   |
+| mise    | `latest`  | Task runner and env manager   |
+| Vite+   | `latest`  | Global CLI for all operations |
+| pnpm    | `latest`  | Managed automatically by `vp` |
 
 > [!NOTE]
 > You do not need to install `pnpm` manually; `vp` wraps it and ensures the correct version is used based on `package.json`.
 
 ### Quick Start Checklist
 
-1.  **Node.js**: Ensure you are using `v24.14.1` (check `.tool-versions`).
+1.  **Node.js**: Ensure you are using `v24.15.0` (check `.tool-versions`).
 2.  **Mise**: Install globally for task execution.
 3.  **Vite+ CLI**: Install globally: `npm i -g vite-plus`.
 4.  **Install dependencies**: Run `vp install`.
