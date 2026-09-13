@@ -21,7 +21,7 @@ catalog:
   '@hono/swagger-ui': npm:@hono/swagger-ui@0.5.0
   '@hono/trpc-server': npm:@hono/trpc-server@0.4.2
   '@hono/zod-openapi': npm:@hono/zod-openapi@1.6.1
-  '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
+  '@iconify-json/logos': npm:@iconify-json/logos@1.2.14
   '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
   '@iconify/types': npm:@iconify/types@2.0.0
   '@opentelemetry/api': npm:@opentelemetry/api@1.9.1
