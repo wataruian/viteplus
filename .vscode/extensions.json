@@ -1,6 +1,8 @@
 {
   // VoidZero.vite-plus-extension-pack - vscode
   // void-zero.vite-plus-extension-pack - antigravity
+  // github.vscode-github-actions - vscode
+  // GitHub.vscode-github-actions - antigravity
   "recommendations": [
     "oxc.oxc-vscode",
     "antfu.unocss",
@@ -9,6 +11,8 @@
     "tombi-toml.tombi",
     "openai.chatgpt",
     "Anthropic.claude-code",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "github.vscode-github-actions",
+    "GitHub.vscode-github-actions"
   ]
 }

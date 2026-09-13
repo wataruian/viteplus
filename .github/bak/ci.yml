@@ -24,9 +24,11 @@ jobs:
       - name: Resolve workspaces
         id: workspaces
         shell: bash
+        env:
+          WORKSPACE_INPUT: ${{ inputs.workspace }}
         run: |
-          if [[ -n "${{ inputs.workspace }}" ]]; then
-            list="${{ inputs.workspace }}"
+          if [[ -n "${WORKSPACE_INPUT}" ]]; then
+            list="${WORKSPACE_INPUT}"
           else
             list="design-system frontend backend"
           fi
@@ -90,11 +92,13 @@ jobs:
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          WORKSPACE: ${{ matrix.workspace }}
         run: |
-          if [[ -n "${{ inputs.environment }}" && "${{ inputs.environment }}" != "pr" ]]; then
-            mise run publish "@lightproject/${{ matrix.workspace }}" "${REGISTRY_ADDRESS}/${{ matrix.workspace }}" "${GITHUB_SHA::7}"
+          if [[ -n "${ENVIRONMENT}" && "${ENVIRONMENT}" != "pr" ]]; then
+            mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${GITHUB_SHA::7}"
           else
-            mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+            mise run dagger-artifact build "@lightproject/${WORKSPACE}"
           fi
 
       - name: Test
@@ -112,8 +116,11 @@ jobs:
       - name: Deploy
         if: inputs.environment != '' && inputs.environment != 'pr'
         shell: bash
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          WORKSPACE: ${{ matrix.workspace }}
         run: |
-          echo "Deploying: ${{ matrix.workspace }} (${{ inputs.environment }})"
+          echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
           echo "✅ All good!"
 
   coverage-comment:

@@ -48,15 +48,18 @@ jobs:
 
       - name: Resolve release version
         id: resolve
+        env:
+          RELEASE_TYPE: ${{ inputs.release }}
+          CUSTOM_VERSION: ${{ inputs.custom_version }}
         run: |
-          if [ "${{ inputs.release }}" = "custom" ]; then
-            version="${{ inputs.custom_version }}"
+          if [ "${RELEASE_TYPE}" = "custom" ]; then
+            version="${CUSTOM_VERSION}"
             if [ -z "$version" ]; then
               echo "::error::custom_version is required when release is 'custom'"
               exit 1
             fi
           else
-            version="${{ inputs.release }}"
+            version="${RELEASE_TYPE}"
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 

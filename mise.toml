@@ -15,6 +15,7 @@ bash_profile = { enabled = true, mode = "shims" }
 bashrc = { enabled = true, mode = "activate" }
 
 [tools]
+gh = "2.100.0"
 dagger = "0.21.9"
 jq = "1.7.1"
 # viteplus = "0.2.7"

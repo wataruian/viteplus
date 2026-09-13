@@ -1,0 +1,186 @@
+name: 'Sonar Scan'
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: sonar-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sonarqube:
+    name: SonarQube
+    runs-on: [self-hosted, dagger]
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Run SonarQube analysis
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${SONAR_TOKEN}" ]]; then
+            echo "::error::SONAR_TOKEN secret is not set. Generate a token in the persistent SonarQube instance (http://sonarqube:9000 on the runner host) and add it as a repository secret named SONAR_TOKEN." >&2
+            exit 1
+          fi
+
+          curl_image="curlimages/curl:8.14.1"
+
+          project_key="lightproject-viteplus"
+          sonar_url="http://sonarqube:9000"
+
+          echo "Checking SonarQube readiness..."
+          health=""
+          for _ in $(seq 1 6); do
+            health="$(docker inspect --format '{{.State.Health.Status}}' sonarqube 2>/dev/null || true)"
+            [[ "${health}" == "healthy" ]] && break
+            sleep 5
+          done
+          if [[ "${health}" != "healthy" ]]; then
+            echo "SonarQube is not ready yet (status: ${health:-unknown}). Wait for it to report healthy and re-run this job." >&2
+            docker logs --tail 200 sonarqube || true
+            exit 1
+          fi
+
+          sonarscan_image="sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1"
+
+          echo "Running sonar-scanner..."
+          container_id="$(docker create --network viteplus-net --platform linux/amd64 \
+            -e SONAR_HOST_URL="${sonar_url}" \
+            -e SONAR_TOKEN="${SONAR_TOKEN}" \
+            -w /usr/src \
+            "${sonarscan_image}" \
+            -Dsonar.qualitygate.wait=true)"
+          docker cp . "${container_id}:/usr/src"
+          docker start "${container_id}" >/dev/null
+          docker logs -f "${container_id}"
+          exit_code="$(docker wait "${container_id}")"
+          docker cp "${container_id}:/tmp/.scannerwork/report-task.txt" ./report-task.txt \
+            || echo "::warning::Could not copy report-task.txt from the scanner container; quality gate/issues report will be unavailable" >&2
+          docker rm "${container_id}" >/dev/null
+
+          if [[ -f report-task.txt ]]; then
+            ce_task_id="$(grep '^ceTaskId=' report-task.txt | cut -d= -f2-)"
+
+            echo "Waiting for the background analysis task to finish..."
+            task_json="{}"
+            for _ in $(seq 1 30); do
+              task_json="$(docker run --rm --network viteplus-net "${curl_image}" -s -u "${SONAR_TOKEN}:" \
+                "${sonar_url}/api/ce/task?id=${ce_task_id}")"
+              task_status="$(echo "${task_json}" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4 || true)"
+              [[ "${task_status}" == "SUCCESS" || "${task_status}" == "FAILED" || "${task_status}" == "CANCELED" ]] && break
+              sleep 3
+            done
+            echo "${task_json}" > ce-task.json
+
+            analysis_id="$(echo "${task_json}" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4 || true)"
+
+            if [[ -n "${analysis_id}" ]]; then
+              docker run --rm --network viteplus-net "${curl_image}" -s -u "${SONAR_TOKEN}:" \
+                "${sonar_url}/api/qualitygates/project_status?analysisId=${analysis_id}" \
+                > sonar-quality-gate.json || true
+            fi
+
+            docker run --rm --network viteplus-net "${curl_image}" -s -u "${SONAR_TOKEN}:" \
+              "${sonar_url}/api/issues/search?componentKeys=${project_key}&resolved=false&ps=50" \
+              > sonar-issues.json || true
+          fi
+
+          exit "${exit_code}"
+
+      - name: Upload Sonar report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sonar-report
+          path: |
+            report-task.txt
+            ce-task.json
+            sonar-quality-gate.json
+            sonar-issues.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Comment on PR
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo '<!-- sonarqube-report -->'
+            echo '### SonarQube report'
+            echo ''
+            if [[ -s sonar-quality-gate.json ]]; then
+              gate_status="$(jq -r '.projectStatus.status // "UNKNOWN"' sonar-quality-gate.json)"
+              if [[ "${gate_status}" == "OK" ]]; then
+                echo "✅ Quality gate **passed**."
+              else
+                echo "❌ Quality gate **${gate_status}**."
+              fi
+              echo ''
+              conditions="$(jq -r '.projectStatus.conditions[]? | select(.status != "OK")' sonar-quality-gate.json)"
+              if [[ -n "${conditions}" ]]; then
+                echo '| Status | Metric | Actual | Threshold |'
+                echo '|---|---|---|---|'
+                jq -r '
+                  .projectStatus.conditions[]? | select(.status != "OK") |
+                  [.status, .metricKey, (.actualValue // "-"), (.errorThreshold // "-")] | "| " + join(" | ") + " |"
+                ' sonar-quality-gate.json
+                echo ''
+              fi
+            else
+              echo '_No quality gate result was produced (the analysis likely errored before completing)._'
+              echo ''
+            fi
+
+            if [[ -s sonar-issues.json ]]; then
+              total="$(jq -r '.total // 0' sonar-issues.json)"
+              if [[ "${total}" -eq 0 ]]; then
+                echo '✅ No open issues.'
+              else
+                echo "Found **${total}** open issue(s):"
+                echo ''
+                echo '| Severity | Rule | Location | Message |'
+                echo '|---|---|---|---|'
+                jq -r '
+                  .issues[]? |
+                  [
+                    .severity,
+                    .rule,
+                    ((.component | split(":") | last) + ":" + (.line // "-" | tostring)),
+                    (.message | gsub("\r?\n"; " ") | gsub("\\|"; "\\|"))
+                  ] | "| " + join(" | ") + " |"
+                ' sonar-issues.json
+                if [[ "${total}" -gt 50 ]]; then
+                  echo ''
+                  echo "_Showing first 50 of ${total} issues. See the \`sonar-report\` workflow artifact for the full report._"
+                fi
+              fi
+            fi
+          } > body.md
+          cat body.md
+
+          existing_id="$(
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+              --paginate \
+              --jq '.[] | select(.body | startswith("<!-- sonarqube-report -->")) | .id' \
+              | head -1
+          )"
+
+          if [[ -n "${existing_id}" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@body.md
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@body.md
+          fi

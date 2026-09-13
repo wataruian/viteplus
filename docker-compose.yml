@@ -141,6 +141,29 @@ services:
       timeout: 3s
       retries: 10
 
+  sonarqube:
+    image: sonarqube:26.9.0.129388-community
+    container_name: sonarqube
+    restart: unless-stopped
+    ports:
+      - '9010:9000'
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: 'true'
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-logs:/opt/sonarqube/logs
+      - sonarqube-extensions:/opt/sonarqube/extensions
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl -sf http://127.0.0.1:9000/api/system/status | grep -q ''"status":"UP"''',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 90
+      start_period: 15m
+
   dagger-engine:
     image: registry.dagger.io/engine:v0.21.9
     container_name: dagger-engine
@@ -182,6 +205,8 @@ services:
         condition: service_healthy
       dagger-engine:
         condition: service_started
+      sonarqube:
+        condition: service_healthy
 
   runner-scaler:
     image: docker:27.5.1-cli
@@ -222,9 +247,13 @@ volumes:
   dagger-engine-storage:
   registry-cache-data:
   registry-cache-certs:
+  sonarqube-data:
+  sonarqube-logs:
+  sonarqube-extensions:
 
 networks:
   default:
+    name: viteplus-net
     ipam:
       config:
         - subnet: 172.28.0.0/16

@@ -74,6 +74,7 @@ This document outlines the goals, guidelines, and best practices for AI agents w
   - Use `vp <command>` (e.g., `vp dev`, `vp test`) for built-in Vite+ functionality.
   - Use `dagger call <function> [--workspace=<pkg>]` to reproduce CI locally in the same containerized environment (see CI Pipeline below).
 - **Configuration Hub**: Treat `vite.config.ts` as the source of truth for formatting, linting, and building.
+- **GitHub CLI (`gh`)**: Not part of the standard toolchain. Only use it when explicitly asked, and always ask for confirmation before running any `gh` command (including read-only ones), even mid-task.
 
 ## Exploration Strategy
 
@@ -121,6 +122,7 @@ When first entering the repository or a new package:
   - Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
   - **UnoCSS Keyframe Syntax**: When defining raw keyframe strings in `uno.config.ts`, ensure every property is followed by a semicolon (e.g., `{transform:translateX(0);opacity:1}`). Missing semicolons will cause `CssSyntaxError [postcss]` during production builds.
   - **Theme Awareness**: If UI elements are invisible or low-contrast, check if the `bg-adaptive`, `text-adaptive`, or `border-adaptive` tokens are being used correctly. Favor high-contrast pairings like `bg-inverse` for grid backgrounds.
+  - **Stuck GitHub Actions runs**: A run can get stuck `queued` with zero jobs ever assigned (a GitHub-side scheduling issue, sometimes tied to the self-hosted `dagger` runner/engine not picking it up). In that state, `gh run cancel` fails with a 409 ("not queued yet") and `gh run delete` fails with a 403 — neither works via CLI/API. It has to time out on GitHub's side; check the runner/dagger-engine health to prevent new runs from getting stuck the same way.
 - **Staged Checks**: Use `vp staged` for pre-commit checks to ensure only valid code is committed.
 - **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.
 - **Design System Sovereignty**:
