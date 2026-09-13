@@ -276,3 +276,24 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   provisions an isolated one via `yarn`. Currently removed per an explicit ask, but expect them
   to reappear after the next `dagger develop` — that's Dagger managing its own module tooling,
   not a bug, and not worth fighting (don't add a script to re-delete them after every `develop`).
+
+## 2026-09-13: Verified `disableDefaultFunctionCaching: true` Doesn't Cost Real Reuse
+
+- **Question**: `dagger.json` sets `"disableDefaultFunctionCaching": true`, which disables
+  Dagger's own function-level result memoization (an identical `dagger call` with identical
+  args would normally short-circuit entirely). Was this quietly forcing every `dagger call` to
+  redo expensive work that the mounted `CacheVolume`s (pnpm store, vite-plus package
+  manager/js-runtime, per-workspace task-cache) were supposed to make cheap?
+- **Verified empirically** (`dagger call check --workspace=@lightproject/design-system`, three
+  back-to-back runs, no `dagger cache clean` between them):
+  1. Cold-ish run: `.check()` took 39.9s.
+  2. Immediate rerun, zero source changes: `.check()` took 7.2s (~5.5x faster) — proves the
+     content-addressed layer cache and `CacheVolume`s are doing real work independent of
+     function-level caching.
+  3. Rerun after a genuine one-line content change to a tracked test file: `.check()` took
+     30.3s — back near the cold timing, proving the cache correctly invalidates on real changes
+     rather than silently serving stale results from run 2.
+- **Conclusion**: `disableDefaultFunctionCaching: true` is not costing meaningful reuse in
+  practice — the layer cache + explicit `CacheVolume`s already capture the expensive part
+  (install, lint/format/type-check tool warm-up), which is exactly what function-level caching
+  would have shortcut anyway. No change needed; leave as-is.
