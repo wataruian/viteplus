@@ -1,19 +1,19 @@
-name: 'Manual Pipeline'
+name: 'Trigger Pipeline'
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: 'Environment'
         required: true
         type: choice
         options:
+          - pr
           - develop
           - staging
           - production
-          - pr
       workspace:
-        description: 'Workspace to deploy'
+        description: 'Workspace'
         required: true
         type: choice
         default: all
@@ -24,12 +24,15 @@ on:
           - backend
 
 concurrency:
-  group: manual-deploy-${{ inputs.environment }}
+  group: trigger-${{ inputs.environment }}${{ inputs.environment == 'pr' && format('-{0}', github.ref) || '' }}
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    if: inputs.environment == 'pr' || github.ref == 'refs/heads/main'
+  trigger:
+    name: 'Trigger: ${{ github.ref_name }} [${{ inputs.environment }}]'
+    if: |
+      (inputs.environment == 'pr' && github.ref != 'refs/heads/main') ||
+      (inputs.environment != 'pr' && github.ref == 'refs/heads/main')
     permissions:
       contents: read
       actions: write

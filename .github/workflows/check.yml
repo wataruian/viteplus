@@ -4,11 +4,11 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'Environment to run (develop, staging, production, pr). "pr" only scopes the job to the GitHub environment for visibility/secrets - it does not publish or deploy. Leave unset to run without one.'
+        description: 'Environment'
         required: false
         type: string
       workspace:
-        description: 'Single workspace to run (design-system, frontend, backend). Leave unset to run the full matrix.'
+        description: 'Workspace'
         required: false
         type: string
 
