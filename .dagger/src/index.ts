@@ -3,6 +3,7 @@ import {
   type Container,
   type Directory,
   type File,
+  ReturnType,
   type Secret,
   type Socket,
   argument,
@@ -449,14 +450,31 @@ export class Monorepo {
   public async test(workspace: string, buildEnv?: string[]): Promise<Directory> {
     const container = await this.build(workspace, buildEnv);
 
-    const testContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test']);
+    const testContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test'], {
+      expect: ReturnType.Any,
+    });
 
     const workspacePath = Monorepo.workspacePath(workspace);
+
+    const [exitCode, stdout] = await Promise.all([
+      testContainer.exitCode(),
+      testContainer.stdout(),
+    ]);
+
+    let result = Monorepo.outputDirectory('test', stdout).withNewFile(
+      'test.exit-code',
+      `${exitCode}`,
+    );
+
     const coverageDir = testContainer.directory(`/app/${workspacePath}/coverage`);
+    try {
+      await coverageDir.entries();
+      result = result.withDirectory('coverage', coverageDir);
+    } catch {
+      // No coverage report to attach.
+    }
 
-    const stdout = await testContainer.stdout();
-
-    return Monorepo.outputDirectory('test', stdout).withDirectory('coverage', coverageDir);
+    return result;
   }
 
   @func()

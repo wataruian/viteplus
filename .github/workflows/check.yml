@@ -1,4 +1,4 @@
-name: 'CI Pipeline'
+name: 'CI'
 
 on:
   workflow_call:
@@ -16,6 +16,7 @@ jobs:
   checks:
     name: ${{ matrix.workspace }}
     runs-on: [self-hosted, dagger]
+    timeout-minutes: 30
     environment: ${{ inputs.environment || null }}
     env:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
@@ -89,9 +90,74 @@ jobs:
         shell: bash
         run: mise run dagger-artifact test "@lightproject/${{ matrix.workspace }}"
 
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: coverage-${{ matrix.workspace }}
+          path: tmp/artifacts/${{ matrix.workspace }}/coverage
+          retention-days: 14
+
       - name: Deploy
         if: inputs.environment != '' && inputs.environment != 'pr'
         shell: bash
         run: |
           echo "Deploying: ${{ matrix.workspace }} (${{ inputs.environment }})"
           echo "✅ All good!"
+
+  coverage-comment:
+    name: Coverage comment
+    needs: checks
+    if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v8.0.1
+        continue-on-error: true
+        with:
+          pattern: coverage-*
+          path: coverage-artifacts
+
+      - name: Build coverage table
+        shell: bash
+        run: |
+          {
+            echo '<!-- coverage-report -->'
+            echo '### Coverage report'
+            echo ''
+            echo '| Workspace | Lines | Statements | Functions | Branches |'
+            echo '|---|---|---|---|---|'
+            for workspace in design-system frontend backend; do
+              summary="coverage-artifacts/coverage-${workspace}/coverage-summary.json"
+              if [[ -f "${summary}" ]]; then
+                lines="$(jq -r '.total.lines.pct' "${summary}")"
+                statements="$(jq -r '.total.statements.pct' "${summary}")"
+                functions="$(jq -r '.total.functions.pct' "${summary}")"
+                branches="$(jq -r '.total.branches.pct' "${summary}")"
+                echo "| ${workspace} | ${lines}% | ${statements}% | ${functions}% | ${branches}% |"
+              else
+                echo "| ${workspace} | _no coverage (tests failed or skipped)_ | | | |"
+              fi
+            done
+          } > body.md
+          cat body.md
+
+      - name: Post or update PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing_id="$(
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+              --paginate \
+              --jq '.[] | select(.body | startswith("<!-- coverage-report -->")) | .id' \
+              | head -1
+          )"
+
+          if [[ -n "${existing_id}" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@body.md
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@body.md
+          fi

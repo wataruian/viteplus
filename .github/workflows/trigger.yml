@@ -1,4 +1,4 @@
-name: 'Trigger Pipeline'
+name: 'Trigger'
 
 on:
   workflow_dispatch:
