@@ -36,6 +36,7 @@ jobs:
     permissions:
       contents: read
       actions: write
+      pull-requests: write
     uses: ./.github/workflows/check.yml
     with:
       environment: ${{ inputs.environment }}
