@@ -35,6 +35,13 @@ case "${func}" in
     )
     dagger call build-artifact "${buildArgs[@]}" export --path="${path}/build"
     ;;
+  test)
+    workspace="${2:?"Usage: mise run dagger-artifact test <workspace> [path]"}"
+    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+    dagger call test --workspace="${workspace}" export --path="${path}"
+    cat "${path}/test.output"
+    exit "$(cat "${path}/test.exit-code")"
+    ;;
   *)
     workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"
     path="${3:-"./tmp/artifacts/${workspace##*/}"}"

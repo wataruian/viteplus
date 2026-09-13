@@ -238,7 +238,7 @@ const getCommonViteConfig = ({
         enabled: true,
         include: ['src/**/*.ts', 'src/**/*.tsx'],
         provider: 'v8',
-        reporter: ['text', 'json', 'html'],
+        reporter: ['text', 'json', 'json-summary', 'html'],
         reportsDirectory: 'coverage',
         thresholds: {
           branches: 100,
