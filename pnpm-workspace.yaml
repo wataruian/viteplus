@@ -18,7 +18,7 @@ catalog:
   '@grafana/faro-web-sdk': npm:@grafana/faro-web-sdk@2.9.0
   '@grafana/faro-web-tracing': npm:@grafana/faro-web-tracing@2.9.0
   '@hono/node-server': npm:@hono/node-server@2.1.1
-  '@hono/swagger-ui': npm:@hono/swagger-ui@0.5.0
+  '@hono/swagger-ui': npm:@hono/swagger-ui@0.6.1
   '@hono/trpc-server': npm:@hono/trpc-server@0.4.2
   '@hono/zod-openapi': npm:@hono/zod-openapi@1.6.1
   '@iconify-json/logos': npm:@iconify-json/logos@1.2.1
