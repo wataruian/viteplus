@@ -11,6 +11,7 @@ on:
           - develop
           - staging
           - production
+          - pr
       workspace:
         description: 'Workspace to deploy'
         required: true
@@ -28,7 +29,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: inputs.environment == 'pr' || github.ref == 'refs/heads/main'
     permissions:
       contents: read
       actions: write

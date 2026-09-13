@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+#MISE description="Scale the self-hosted github-runner pool to match queued CI demand"
+
+set -o errexit # Bail out on any error
+set -o pipefail
+
+: "${GH_RUNNER_TOKEN:?GH_RUNNER_TOKEN is required (needs actions:read)}"
+
+repoUrl="${GH_REPO_URL:-https://github.com/wataruian/viteplus}"
+repoSlug="${repoUrl#https://github.com/}"
+runnerNamePrefix="${GH_RUNNER_NAME:-gh-runner}"
+
+minRunners="${GH_RUNNER_MIN:-1}"
+maxRunners="${GH_RUNNER_MAX:-5}"
+
+composeProject="$(docker inspect dagger-engine --format '{{ index .Config.Labels "com.docker.compose.project" }}')"
+compose() { docker compose -p "${composeProject}" "$@"; }
+
+api() {
+  curl -sSf \
+    -H "Authorization: Bearer ${GH_RUNNER_TOKEN}" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/${repoSlug}/${1}"
+}
+
+runIds="$(
+  {
+    api "actions/runs?status=queued&per_page=100" | jq -r '.workflow_runs[].id'
+    api "actions/runs?status=in_progress&per_page=100" | jq -r '.workflow_runs[].id'
+  } | sort -u
+)"
+
+queuedJobs=0
+while IFS= read -r runId; do
+  [[ -z "${runId}" ]] && continue
+  jobCount="$(api "actions/runs/${runId}/jobs?per_page=100" | jq '[.jobs[] | select(.status == "queued")] | length')"
+  queuedJobs=$((queuedJobs + jobCount))
+done <<<"${runIds}"
+
+runnersJson="$(api "actions/runners?per_page=100")"
+busyRunners="$(echo "${runnersJson}" | jq '[.runners[] | select(.busy == true)] | length')"
+
+currentReplicas="$(compose ps -q github-runner | wc -l | tr -d ' ')"
+
+desired=$((busyRunners + queuedJobs))
+if ((desired < minRunners)); then
+  desired="${minRunners}"
+fi
+if ((desired > maxRunners)); then
+  desired="${maxRunners}"
+fi
+
+if ((desired < busyRunners)); then
+  desired="${busyRunners}"
+fi
+
+echo "queuedJobs=${queuedJobs} busy=${busyRunners} current=${currentReplicas} desired=${desired}"
+
+if ((desired > currentReplicas)); then
+  echo "Scaling up: ${currentReplicas} -> ${desired}"
+  compose up -d --scale "github-runner=${desired}" --no-recreate github-runner
+  exit 0
+fi
+
+if ((desired == currentReplicas)); then
+  echo "No change: ${currentReplicas} runner(s)"
+  exit 0
+fi
+
+toRemove=$((currentReplicas - desired))
+removed=0
+
+for containerId in $(compose ps -q github-runner); do
+  ((removed >= toRemove)) && break
+
+  hostname="$(docker inspect --format '{{.Config.Hostname}}' "${containerId}")"
+  runnerName="${runnerNamePrefix}-${hostname}"
+
+  isBusy="$(echo "${runnersJson}" | jq --arg name "${runnerName}" \
+    '[.runners[] | select(.name == $name) | .busy] | first')"
+
+  if [[ "${isBusy}" != "false" ]]; then
+    continue
+  fi
+
+  echo "Removing idle runner: ${runnerName} (${containerId})"
+  docker stop "${containerId}" >/dev/null
+  docker rm "${containerId}" >/dev/null
+  removed=$((removed + 1))
+done
+
+newCount=$((currentReplicas - removed))
+echo "Scaling down: ${currentReplicas} -> ${newCount} (target was ${desired})"
+if ((removed < toRemove)); then
+  echo "Warning: only ${removed}/${toRemove} idle runner(s) found - remaining runners are busy, will retry next run"
+fi
+
+compose up -d --scale "github-runner=${newCount}" --no-recreate github-runner

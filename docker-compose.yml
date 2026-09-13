@@ -132,23 +132,55 @@ services:
 
   github-runner:
     image: myoung34/github-runner:2.337.0-ubuntu-noble
-    container_name: github-runner
     restart: unless-stopped
+    deploy:
+      replicas: ${GH_RUNNER_MIN:-1}
     environment:
-      REPO_URL: ${GH_REPO_URL}
+      REPO_URL: ${GH_REPO_URL:-https://github.com/wataruian/viteplus}
       ACCESS_TOKEN: ${GH_RUNNER_TOKEN}
-      RUNNER_NAME: ${GH_RUNNER_NAME:-gh-runner-1}
+      RUNNER_NAME_PREFIX: ${GH_RUNNER_NAME:-gh-runner}
+      RANDOM_RUNNER_SUFFIX: 'false'
       RUNNER_SCOPE: repo
       LABELS: self-hosted,linux,arm64,dagger
       EPHEMERAL: '1'
       DISABLE_AUTO_UPDATE: 'true'
-      RUNNER_WORKDIR: /tmp/runner/work
-      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+      RUNNER_WORKDIR_ROOT: /tmp/runner/work
+      _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${_EXPERIMENTAL_DAGGER_RUNNER_HOST:-docker-container://dagger-engine}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - github-runner-work:/tmp/runner/work
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
     depends_on:
-      - dagger-engine
+      dagger-engine:
+        condition: service_started
+
+  runner-scaler:
+    image: docker:27-cli
+    container_name: runner-scaler
+    restart: unless-stopped
+    working_dir: /workspace
+    environment:
+      GH_REPO_URL: ${GH_REPO_URL:-https://github.com/wataruian/viteplus}
+      GH_RUNNER_TOKEN: ${GH_RUNNER_TOKEN}
+      GH_RUNNER_NAME: ${GH_RUNNER_NAME:-gh-runner}
+      GH_RUNNER_MIN: ${GH_RUNNER_MIN:-1}
+      GH_RUNNER_MAX: ${GH_RUNNER_MAX:-5}
+      SCALE_INTERVAL_SECONDS: ${GH_RUNNER_SCALE_INTERVAL_SECONDS:-60}
+    volumes:
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+      - .:/workspace:ro
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -e
+        apk add --no-cache bash curl jq docker-cli-compose
+        while true; do
+          bash /workspace/.mise/tasks/scale-runners || echo "scale-runners failed (exit $?), will retry next tick"
+          sleep "$${SCALE_INTERVAL_SECONDS}"
+        done
+    depends_on:
+      dagger-engine:
+        condition: service_started
+      github-runner:
+        condition: service_started
 
 volumes:
   grafana-storage:
@@ -157,4 +189,3 @@ volumes:
   otel-storage:
   tempo-storage:
   dagger-engine-storage:
-  github-runner-work:
