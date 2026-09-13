@@ -56,6 +56,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
 
+      - name: Test docker pull
+        shell: bash
+        run: |
+          docker pull nginx
+
       - name: Set up Mise
         uses: jdx/mise-action@v4.3.0
         with:
@@ -130,6 +135,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           WORKSPACES: ${{ needs.setup.outputs.workspace_list }}
         run: |
           {
@@ -140,7 +146,7 @@ jobs:
             echo '|---|---|---|---|---|'
             for workspace in ${WORKSPACES}; do
               dest="coverage-artifacts/${workspace}"
-              gh run download "${{ github.run_id }}" --name "coverage-${workspace}" --dir "${dest}" 2>/dev/null || true
+              gh run download "${{ github.run_id }}" --name "coverage-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
 
               summary="${dest}/coverage-summary.json"
               if [[ -f "${summary}" ]]; then
