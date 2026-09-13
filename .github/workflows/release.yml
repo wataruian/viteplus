@@ -11,6 +11,11 @@ on:
           - patch
           - minor
           - major
+          - custom
+      custom_version:
+        description: 'Explicit version (only used when release is "custom")'
+        required: false
+        type: string
 
 concurrency:
   group: release
@@ -41,6 +46,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Resolve release version
+        id: resolve
+        run: |
+          if [ "${{ inputs.release }}" = "custom" ]; then
+            version="${{ inputs.custom_version }}"
+            if [ -z "$version" ]; then
+              echo "::error::custom_version is required when release is 'custom'"
+              exit 1
+            fi
+          else
+            version="${{ inputs.release }}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - name: Bump version (lockstep across all workspaces)
         run: |
           vp exec bumpp \
@@ -50,7 +69,7 @@ jobs:
             packages/common/package.json \
             packages/design-system/package.json \
             packages/library/package.json \
-            --release "${{ inputs.release }}" \
+            --release "${{ steps.resolve.outputs.version }}" \
             --yes
 
       - name: Create GitHub Release
