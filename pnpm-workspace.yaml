@@ -51,7 +51,7 @@ catalog:
   '@types/react': npm:@types/react@19.2.14
   '@types/react-dom': npm:@types/react-dom@19.2.3
   '@types/supertest': npm:@types/supertest@7.2.0
-  '@typescript/native-preview': npm:@typescript/native-preview@7.0.0-dev.20260405.1
+  '@typescript/native-preview': npm:@typescript/native-preview@7.0.0-dev.20260707.2
   '@unocss/preset-wind3': npm:@unocss/preset-wind3@66.6.7
   '@unocss/transformer-directives': npm:@unocss/transformer-directives@66.6.7
   '@unocss/transformer-variant-group': npm:@unocss/transformer-variant-group@66.6.7
