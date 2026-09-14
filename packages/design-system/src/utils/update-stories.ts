@@ -2,13 +2,49 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
+const isWordChar = (char: string | undefined): boolean =>
+  char !== undefined && /[A-Za-z0-9_]/u.test(char);
+
+const isWhitespaceChar = (char: string | undefined): boolean =>
+  char !== undefined && /\s/u.test(char);
+
+const skipWhile = (
+  text: string,
+  from: number,
+  matches: (char: string | undefined) => boolean,
+): number => {
+  let index = from;
+  while (matches(text[index])) {
+    index += 1;
+  }
+  return index;
+};
+
 const extractArgTypeBlocks = (blocksText: string): { body: string; name: string }[] => {
   const entries: { body: string; name: string }[] = [];
-  const keyPattern = /(?<name>\w+):\s*\{/gu;
+  let index = 0;
 
-  for (let keyMatch = keyPattern.exec(blocksText); keyMatch !== null;) {
-    const name = keyMatch.groups?.['name'];
-    const braceStart = keyPattern.lastIndex - 1;
+  while (index < blocksText.length) {
+    if (!isWordChar(blocksText[index])) {
+      index += 1;
+      continue;
+    }
+
+    const nameStart = index;
+    const nameEnd = skipWhile(blocksText, index, isWordChar);
+    const name = blocksText.slice(nameStart, nameEnd);
+
+    const colonIndex = skipWhile(blocksText, nameEnd, isWhitespaceChar);
+    if (blocksText[colonIndex] !== ':') {
+      index = nameEnd;
+      continue;
+    }
+
+    const braceStart = skipWhile(blocksText, colonIndex + 1, isWhitespaceChar);
+    if (blocksText[braceStart] !== '{') {
+      index = nameEnd;
+      continue;
+    }
 
     let depth = 0;
     let braceEnd = -1;
@@ -25,12 +61,12 @@ const extractArgTypeBlocks = (blocksText: string): { body: string; name: string 
       }
     }
 
-    if (name !== undefined && braceEnd !== -1) {
-      entries.push({ body: blocksText.slice(braceStart, braceEnd + 1), name });
-      keyPattern.lastIndex = braceEnd + 1;
+    if (braceEnd === -1) {
+      break;
     }
 
-    keyMatch = keyPattern.exec(blocksText);
+    entries.push({ body: blocksText.slice(braceStart, braceEnd + 1), name });
+    index = braceEnd + 1;
   }
 
   return entries;
@@ -218,8 +254,10 @@ const updateStories = () => {
   if (filesToFix.length > 0) {
     globalThis.process.stdout.write(`Running vp check --fix on ${filesToFix.length} files...\n`);
 
+    const vpBin = path.join(globalThis.process.cwd(), 'node_modules', '.bin', 'vp');
+
     execFile(
-      'vp',
+      vpBin,
       ['check', '--fix', ...filesToFix],
       (err: Error | null, stdout: string, stderr: string) => {
         if (stdout !== '') {

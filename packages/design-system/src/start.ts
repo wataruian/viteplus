@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import path from 'node:path';
 
 const isProd = globalThis.process.argv[2] === 'true';
 
@@ -11,7 +12,9 @@ globalThis.console.log(
   `[${viteCommand}] Starting Design System (${designSystemPort}) and Storybook (${storybookPort})...`,
 );
 
-const vite = spawn('vp', [viteCommand], {
+const vpBin = path.join(globalThis.process.cwd(), 'node_modules', '.bin', 'vp');
+
+const vite = spawn(vpBin, [viteCommand], {
   shell: true,
   stdio: 'inherit',
 });
@@ -20,7 +23,7 @@ const storybookCommand = isProd
   ? ['preview', '--outDir', 'storybook-static', '--port', String(storybookPort)]
   : ['exec', 'storybook', 'dev', '-p', String(storybookPort), '--no-open'];
 
-const storybook = spawn('vp', [...storybookCommand], {
+const storybook = spawn(vpBin, [...storybookCommand], {
   shell: true,
   stdio: 'inherit',
 });
