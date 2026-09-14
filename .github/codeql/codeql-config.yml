@@ -2,6 +2,10 @@ name: 'CodeQL config'
 
 paths-ignore:
   - bak/**
+  - .templates/**
+  - .dagger/**
+  - plopfile.ts
+  - commitlint.config.ts
   - '**/node_modules/**'
   - '**/dist/**'
   - '**/out/**'
