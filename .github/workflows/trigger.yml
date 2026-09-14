@@ -23,7 +23,7 @@ on:
           - frontend
           - backend
       version:
-        description: 'Git tag/ref to deploy (required for staging/production)'
+        description: 'Git tag/ref to deploy (required for staging/production, ignored for pr)'
         required: false
         type: string
 
