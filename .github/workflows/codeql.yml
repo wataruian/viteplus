@@ -40,5 +40,5 @@ jobs:
         uses: github/codeql-action/analyze@v4.38.0
         with:
           category: '/language:${{ matrix.language }}'
-          # remove `upload: never` when GitHub Advanced Security / Code Security is enabled.
+          # Set `upload: never` when GitHub Advanced Security is not enabled, otherwise remove it.
           # upload: never
