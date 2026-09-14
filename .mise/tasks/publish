@@ -10,9 +10,10 @@ scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 rootDir="${scriptDir}/../.."
 cd "${rootDir}"
 
-workspace="${1:?"Usage: mise run publish <workspace> [address] [tag]"}"
+workspace="${1:?"Usage: mise run publish <workspace> [address] [tag] [key=value ...]"}"
 address="${2:-""}"
 tag="${3:-""}"
+buildEnvArgs=("${@:4}")
 
 if [[ -z "${address}" ]]; then
  echo "address is required"
@@ -26,5 +27,9 @@ args+=(--address="${address}")
 if [[ -n "${tag}" ]]; then
   args+=(--tag="${tag}")
 fi
+
+for buildEnv in "${buildEnvArgs[@]}"; do
+  args+=(--build-env="${buildEnv}")
+done
 
 "${args[@]}"

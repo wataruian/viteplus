@@ -22,17 +22,36 @@ on:
           - design-system
           - frontend
           - backend
+      version:
+        description: 'Git tag/ref to deploy (required for staging/production)'
+        required: false
+        type: string
 
 concurrency:
   group: trigger-${{ inputs.environment }}${{ inputs.environment == 'pr' && format('-{0}', github.ref) || '' }}
   cancel-in-progress: false
 
 jobs:
-  trigger:
-    name: 'Trigger (branch: ${{ github.ref_name }} | environment: ${{ inputs.environment }})'
-    if: |
-      (inputs.environment == 'pr' && github.ref != 'refs/heads/main') ||
-      (inputs.environment != 'pr' && github.ref == 'refs/heads/main')
+  guard:
+    name: Guard
+    runs-on: [self-hosted, dagger]
+    timeout-minutes: 2
+    steps:
+      - name: Require version for staging/production
+        if: inputs.environment == 'staging' || inputs.environment == 'production'
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ -z "${VERSION}" ]]; then
+            echo "::error::version is required when targeting staging or production"
+            exit 1
+          fi
+
+  verify:
+    name: 'Verify (branch: ${{ github.ref_name }})'
+    needs: guard
+    if: inputs.environment == 'pr' && github.ref != 'refs/heads/main'
     permissions:
       contents: read
       actions: read
@@ -40,5 +59,20 @@ jobs:
     uses: ./.github/workflows/ci.yml
     secrets: inherit
     with:
+      workspace: ${{ inputs.workspace != 'all' && inputs.workspace || '' }}
+
+  deploy:
+    name: 'Deploy (environment: ${{ inputs.environment }})'
+    needs: guard
+    if: inputs.environment != 'pr' && github.ref == 'refs/heads/main'
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: ${{ inputs.environment != 'production' }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
       environment: ${{ inputs.environment }}
       workspace: ${{ inputs.workspace != 'all' && inputs.workspace || '' }}
+      ref: ${{ inputs.version }}
