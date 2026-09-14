@@ -10,8 +10,6 @@ jobs:
     name: Commit Validation
     runs-on: [self-hosted, dagger]
     timeout-minutes: 15
-    # permissions:
-    #   contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -41,10 +39,6 @@ jobs:
     name: CodeQL (${{ matrix.language }})
     runs-on: [self-hosted, dagger]
     timeout-minutes: 15
-    # permissions:
-    #   actions: read
-    #   contents: read
-    #   security-events: write
     strategy:
       fail-fast: false
       matrix:
