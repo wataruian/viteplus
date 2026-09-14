@@ -24,8 +24,9 @@ class TestService {
       const slug = input.name
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/gu, '-')
-        .replace(/^-+/u, '')
-        .replace(/-+$/u, '');
+        .split('-')
+        .filter(Boolean)
+        .join('-');
 
       const profile = {
         id: `profile_${slug}`,

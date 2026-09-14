@@ -1,27 +1,58 @@
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+
+const extractArgTypeBlocks = (blocksText: string): { body: string; name: string }[] => {
+  const entries: { body: string; name: string }[] = [];
+  const keyPattern = /(?<name>\w+):\s*\{/gu;
+
+  for (let keyMatch = keyPattern.exec(blocksText); keyMatch !== null;) {
+    const name = keyMatch.groups?.['name'];
+    const braceStart = keyPattern.lastIndex - 1;
+
+    let depth = 0;
+    let braceEnd = -1;
+
+    for (let i = braceStart; i < blocksText.length; i += 1) {
+      if (blocksText[i] === '{') {
+        depth += 1;
+      } else if (blocksText[i] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          braceEnd = i;
+          break;
+        }
+      }
+    }
+
+    if (name !== undefined && braceEnd !== -1) {
+      entries.push({ body: blocksText.slice(braceStart, braceEnd + 1), name });
+      keyPattern.lastIndex = braceEnd + 1;
+    }
+
+    keyMatch = keyPattern.exec(blocksText);
+  }
+
+  return entries;
+};
 
 const getVariants = (content: string): Record<string, string[]> => {
   const m = /argTypes:\s*\{(?<blocks>[\s\S]*?)\}[\s,]*(?:component|tags|title):/u.exec(content);
   const variants: Record<string, string[]> = {};
   if (m?.groups?.['blocks'] !== undefined && m.groups['blocks'] !== '') {
-    const blocks = m.groups['blocks'].split(/(?=\s+\w+:\s*\{)/u);
+    for (const { body, name } of extractArgTypeBlocks(m.groups['blocks'])) {
+      if (name === 'as') {
+        continue;
+      }
 
-    for (const block of blocks) {
-      const match = /^\s+(?<name>\w+):\s*\{/u.exec(block);
+      const optMatch = /options:\s*\[(?<options>[^\]]+)\]/u.exec(body);
 
-      if (match?.groups?.['name'] !== undefined && match.groups['name'] !== 'as') {
-        const { name } = match.groups;
-        const optMatch = /options:\s*\[(?<options>[^\]]+)\]/u.exec(block);
-
-        if (optMatch?.groups?.['options'] !== undefined && optMatch.groups['options'] !== '') {
-          const opts = optMatch.groups['options']
-            .split(',')
-            .map((s) => s.trim().replaceAll(/^['"]|['"]$/gu, ''))
-            .filter(Boolean);
-          variants[name] = opts;
-        }
+      if (optMatch?.groups?.['options'] !== undefined && optMatch.groups['options'] !== '') {
+        const opts = optMatch.groups['options']
+          .split(',')
+          .map((s) => s.trim().replaceAll(/^['"]|['"]$/gu, ''))
+          .filter(Boolean);
+        variants[name] = opts;
       }
     }
   }
@@ -187,8 +218,9 @@ const updateStories = () => {
   if (filesToFix.length > 0) {
     globalThis.process.stdout.write(`Running vp check --fix on ${filesToFix.length} files...\n`);
 
-    exec(
-      `vp check --fix ${filesToFix.join(' ')}`,
+    execFile(
+      'vp',
+      ['check', '--fix', ...filesToFix],
       (err: Error | null, stdout: string, stderr: string) => {
         if (stdout !== '') {
           globalThis.process.stdout.write(stdout);
@@ -199,7 +231,7 @@ const updateStories = () => {
         if (err === null) {
           globalThis.process.stdout.write('Successfully updated and formatted story files.\n');
         } else {
-          throw new Error('Linting failed');
+          throw new Error(`Linting failed: ${err.message}`);
         }
       },
     );
@@ -215,6 +247,7 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
 }
 
 export {
+  extractArgTypeBlocks,
   generateVariantStories,
   getVariants,
   mergeExports,

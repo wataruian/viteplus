@@ -426,6 +426,38 @@ describe('getImporterDir - stack parsing branches', () => {
       expect(getImporterDir()).toBe(globalThis.process.cwd());
     });
   });
+
+  test('skips an "at ..." frame with an empty file path before finding the real caller', () => {
+    const existingFile = path.join(tempDir, 'caller5.js');
+    fs.writeFileSync(existingFile, '// caller');
+
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      '    at :12:34',
+      `    at Object.<anonymous> (${existingFile}:12:34)`,
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(path.dirname(existingFile));
+    });
+  });
+
+  test('skips an "at ..." frame with no line:column position before finding the real caller', () => {
+    const existingFile = path.join(tempDir, 'caller4.js');
+    fs.writeFileSync(existingFile, '// caller');
+
+    const stack = [
+      'Error: Getting importer directory',
+      `    at getImporterDir (${getScriptFilePath()}:26:19)`,
+      '    at Array.forEach (<anonymous>)',
+      `    at Object.<anonymous> (${existingFile}:12:34)`,
+    ].join('\n');
+
+    withStack(stack, () => {
+      expect(getImporterDir()).toBe(path.dirname(existingFile));
+    });
+  });
 });
 
 describe('getImporterFilePath - stack parsing branches', () => {

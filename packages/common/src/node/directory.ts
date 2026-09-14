@@ -22,24 +22,41 @@ const getScriptFilePath = (): string => import.meta.filename;
 
 const getScriptFileName = (): string => np.basename(import.meta.filename);
 
+const parseStackFrameLocation = (frame: string): string | undefined => {
+  if (!frame.startsWith('at ')) {
+    return undefined;
+  }
+
+  const afterAt = frame.slice(3);
+  const openParenIndex = afterAt.lastIndexOf('(');
+  const closeParenIndex = afterAt.lastIndexOf(')');
+  const location =
+    openParenIndex !== -1 && closeParenIndex === afterAt.length - 1
+      ? afterAt.slice(openParenIndex + 1, closeParenIndex)
+      : afterAt;
+
+  const positionMatch = /:\d+:\d+$/u.exec(location);
+  if (positionMatch === null) {
+    return undefined;
+  }
+
+  const file = location.slice(0, positionMatch.index).trim();
+  return file === '' ? undefined : file;
+};
+
 const getImporterDir = (): string => {
   const error = new Error('Getting importer directory');
   const stackFrames = error.stack?.split('\n') ?? [];
 
   for (let i = 2; i < stackFrames.length; i += 1) {
     const frame = stackFrames[i].trim();
+    const filePath0 = parseStackFrameLocation(frame);
 
-    const match =
-      /at\s+(?:[^(]+\s+)?\(?(?<file1>[^)]+?):\d+:\d+\)?$/u.exec(frame) ??
-      /\s+at\s+(?<file2>.+?):\d+:\d+/u.exec(frame) ??
-      /\(?(?<file3>[^)]+?):\d+:\d+\)?$/u.exec(frame);
-
-    const filePath0 = match?.[1];
-    if (filePath0 === undefined || filePath0 === '') {
+    if (filePath0 === undefined) {
       continue;
     }
 
-    let filePath = filePath0.trim();
+    let filePath = filePath0;
 
     if (filePath.startsWith('file://')) {
       filePath = fileURLToPath(filePath);
@@ -63,9 +80,9 @@ const getImporterFilePath = (): string => {
 
   for (let i = 2; i < stackFrames.length; i += 1) {
     const frame = stackFrames[i].trim();
-    const match = /(?:at\s+(?:.+?\s+\()?)(?<file>(?:file:\/\/)?[^():]+):\d+:\d+\)?$/u.exec(frame);
-    const filePath0 = match?.groups?.['file'];
-    if (filePath0 === undefined || filePath0 === '') {
+    const filePath0 = parseStackFrameLocation(frame);
+
+    if (filePath0 === undefined) {
       continue;
     }
 
@@ -354,6 +371,7 @@ export {
   getScriptFilePath,
   isDirectory,
   movePath,
+  parseStackFrameLocation,
   pathExists,
   readFile,
   resolveTransferGuard,
