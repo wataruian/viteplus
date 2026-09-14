@@ -10,12 +10,21 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate:
+    name: Validate
+    # permissions:
+    #   actions: read
+    #   contents: read
+    #   security-events: write
+    uses: ./.github/workflows/validate.yml
+
   develop:
     name: 'Develop'
-    permissions:
-      contents: read
-      actions: write
-      pull-requests: write
+    needs: validate
+    # permissions:
+    #   contents: read
+    #   actions: write
+    #   pull-requests: write
     uses: ./.github/workflows/ci.yml
     with:
       environment: develop
@@ -23,10 +32,10 @@ jobs:
   staging:
     name: 'Staging'
     needs: develop
-    permissions:
-      contents: read
-      actions: write
-      pull-requests: write
+    # permissions:
+    #   contents: read
+    #   actions: write
+    #   pull-requests: write
     uses: ./.github/workflows/ci.yml
     with:
       environment: staging
@@ -34,10 +43,10 @@ jobs:
   production:
     name: 'Production'
     needs: staging
-    permissions:
-      contents: read
-      actions: write
-      pull-requests: write
+    # permissions:
+    #   contents: read
+    #   actions: write
+    #   pull-requests: write
     uses: ./.github/workflows/ci.yml
     with:
       environment: production

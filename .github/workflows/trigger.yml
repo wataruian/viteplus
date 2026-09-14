@@ -33,10 +33,10 @@ jobs:
     if: |
       (inputs.environment == 'pr' && github.ref != 'refs/heads/main') ||
       (inputs.environment != 'pr' && github.ref == 'refs/heads/main')
-    permissions:
-      contents: read
-      actions: write
-      pull-requests: write
+    # permissions:
+    #   contents: read
+    #   actions: write
+    #   pull-requests: write
     uses: ./.github/workflows/ci.yml
     with:
       environment: ${{ inputs.environment }}
