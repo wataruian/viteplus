@@ -21,6 +21,32 @@ const TASK_CACHE_PATH = '/app/node_modules/.vite/task-cache';
 
 const NGINX_IMAGE = 'nginx:1.27.0-alpine';
 const DOCKER_CLI_VERSION = 'docker:27.5.1-cli';
+const SEMGREP_IMAGE = 'semgrep/semgrep:1.177.0';
+const SONAR_SCANNER_IMAGE = 'sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1';
+const SONAR_SCANNER_USER = 'scanner-cli';
+const SONAR_WORKING_DIRECTORY = '/tmp/.scannerwork';
+const CURL_IMAGE = 'curlimages/curl:8.14.1';
+const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000';
+const SONAR_LOCAL_DOCKER_NETWORK = 'viteplus-net';
+
+const SEMGREP_RULESETS = [
+  '--config=p/security-audit',
+  '--config=p/owasp-top-ten',
+  '--config=p/javascript',
+  '--config=p/typescript',
+  '--config=p/react',
+];
+
+const SEMGREP_EXCLUSIONS = [
+  '--exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag',
+  '--exclude-rule=package_managers.renovate.renovate-missing-minimum-release-age.renovate-missing-minimum-release-age',
+  '--exclude-rule=yaml.docker-compose.security.privileged-service.privileged-service',
+  '--exclude-rule=package_managers.pnpm.pnpm-trust-policy.pnpm-trust-policy',
+  '--exclude-rule=package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age',
+  '--exclude-rule=package_managers.pnpm.pnpm-block-exotic-sub-dependencies.pnpm-block-exotic-sub-dependencies',
+  '--exclude-rule=package_managers.npm.npm-missing-minimum-release-age.npm-missing-minimum-release-age',
+  '--exclude-rule=generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var',
+];
 
 const SOURCE_IGNORE = [
   '**/.DS_Store',
@@ -472,6 +498,301 @@ export class Monorepo {
       result = result.withDirectory('coverage', coverageDir);
     } catch {
       // No coverage report to attach.
+    }
+
+    return result;
+  }
+
+  @func()
+  public async semgrep(workspace: string): Promise<Directory> {
+    const workspacePath = Monorepo.workspacePath(workspace);
+
+    const scanRoot = dag
+      .directory()
+      .withDirectory(workspacePath, this.source.directory(workspacePath));
+
+    const semgrepCommand = [
+      'semgrep',
+      'scan',
+      ...SEMGREP_RULESETS,
+      ...SEMGREP_EXCLUSIONS,
+      '--error',
+      '--sarif',
+      '--output=/repo/semgrep.sarif',
+      '/repo',
+    ].join(' ');
+
+    const scanContainer = dag
+      .container()
+      .from(SEMGREP_IMAGE)
+      .withWorkdir('/repo')
+      .withDirectory('/repo', scanRoot)
+      .withExec(['sh', '-c', `${semgrepCommand} 2>&1`], { expect: ReturnType.Any });
+
+    const [exitCode, stdout] = await Promise.all([
+      scanContainer.exitCode(),
+      scanContainer.stdout(),
+    ]);
+
+    let result = Monorepo.outputDirectory('semgrep', stdout).withNewFile(
+      'semgrep.exit-code',
+      `${exitCode}`,
+    );
+
+    const sarif = scanContainer.file('/repo/semgrep.sarif');
+    try {
+      await sarif.contents();
+      result = result.withFile('semgrep.sarif', sarif);
+    } catch {
+      // No SARIF report to attach.
+    }
+
+    return result;
+  }
+
+  private static localSonarRunner(
+    dockerSocket: Socket,
+    scanRoot: Directory,
+    sonarToken: Secret,
+    hostUrl: string,
+    sonarArgs: string,
+    projectKey: string,
+  ): { container: Container; reportTaskPath: string } {
+    const pollScript = [
+      'set -eu',
+      'task_status=""',
+      'i=0',
+      'while [ "$i" -lt 30 ]; do',
+      `  task_json=$(curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/ce/task?id=\${CE_TASK_ID}")`,
+      `  task_status=$(echo "$task_json" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)`,
+      '  case "$task_status" in',
+      '    SUCCESS|FAILED|CANCELED) break ;;',
+      '  esac',
+      '  i=$((i + 1))',
+      '  sleep 3',
+      'done',
+      'echo "$task_json" > /tmp/ce-task.json',
+      `analysis_id=$(echo "$task_json" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4 || true)`,
+      'if [ -n "$analysis_id" ]; then',
+      `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > /tmp/sonar-quality-gate.json`,
+      'fi',
+      `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > /tmp/sonar-issues.json`,
+    ].join('\n');
+
+    const orchestrationScript = [
+      'set -eu',
+      `container_id=$(docker create --network ${SONAR_LOCAL_DOCKER_NETWORK} -e SONAR_HOST_URL -e SONAR_TOKEN -w /usr/src ${SONAR_SCANNER_IMAGE} sonar-scanner ${sonarArgs})`,
+      `docker cp /usr/src/. "\${container_id}:/usr/src"`,
+      `docker start "\${container_id}" >/dev/null`,
+      `docker logs -f "\${container_id}" 2>&1`,
+      `exit_code=$(docker wait "\${container_id}")`,
+      `docker cp "\${container_id}:${SONAR_WORKING_DIRECTORY}/report-task.txt" /tmp/report-task.txt 2>/dev/null || true`,
+      `docker rm "\${container_id}" >/dev/null`,
+      `echo "\${exit_code}" > /tmp/sonar.exit-code`,
+      '',
+      'if [ -f /tmp/report-task.txt ]; then',
+      `  ce_task_id=$(grep "^ceTaskId=" /tmp/report-task.txt | cut -d= -f2-)`,
+      `  poll_id=$(docker create --network ${SONAR_LOCAL_DOCKER_NETWORK} -e SONAR_HOST_URL -e SONAR_TOKEN -e CE_TASK_ID="\${ce_task_id}" --entrypoint sh ${CURL_IMAGE} /poll.sh)`,
+      `  docker cp /poll.sh "\${poll_id}:/poll.sh"`,
+      `  docker start -a "\${poll_id}" || true`,
+      `  docker cp "\${poll_id}:/tmp/sonar-quality-gate.json" /tmp/sonar-quality-gate.json 2>/dev/null || true`,
+      `  docker cp "\${poll_id}:/tmp/sonar-issues.json" /tmp/sonar-issues.json 2>/dev/null || true`,
+      `  docker rm "\${poll_id}" >/dev/null`,
+      'fi',
+    ].join('\n');
+
+    const container = dag
+      .container()
+      .from(DOCKER_CLI_VERSION)
+      .withUnixSocket('/var/run/docker.sock', dockerSocket)
+      .withNewFile('/poll.sh', pollScript)
+      .withWorkdir('/usr/src')
+      .withDirectory('/usr/src', scanRoot)
+      .withEnvVariable('SONAR_HOST_URL', hostUrl)
+      .withSecretVariable('SONAR_TOKEN', sonarToken)
+      .withExec(['sh', '-c', orchestrationScript]);
+
+    return { container, reportTaskPath: '/tmp/report-task.txt' };
+  }
+
+  private static remoteSonarRunner(
+    scanRoot: Directory,
+    sonarToken: Secret,
+    hostUrl: string,
+    sonarArgs: string,
+  ): { container: Container; reportTaskPath: string } {
+    const container = dag
+      .container()
+      .from(SONAR_SCANNER_IMAGE)
+      .withWorkdir('/usr/src')
+      .withDirectory('/usr/src', scanRoot, { owner: SONAR_SCANNER_USER })
+      .withSecretVariable('SONAR_TOKEN', sonarToken)
+      .withEnvVariable('SONAR_HOST_URL', hostUrl)
+      .withExec(['sh', '-c', `sonar-scanner ${sonarArgs} 2>&1; echo $? > /tmp/sonar.exit-code`], {
+        expect: ReturnType.Any,
+      });
+
+    return { container, reportTaskPath: `${SONAR_WORKING_DIRECTORY}/report-task.txt` };
+  }
+
+  @func()
+  public async sonar(
+    workspace: string,
+    sonarToken: Secret,
+    dockerSocket?: Socket,
+    sonarHostUrl?: string,
+  ): Promise<Directory> {
+    const workspacePath = Monorepo.workspacePath(workspace);
+    const shortName = workspacePath.split('/').pop() ?? workspace;
+    const projectKey = `lightproject-viteplus-${shortName}`;
+    const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;
+    const useLocalNetwork = hostUrl === SONAR_LOCAL_HOST_URL;
+
+    if (useLocalNetwork && dockerSocket === undefined) {
+      throw new Error(
+        'dockerSocket is required for the local SonarQube target (pass sonarHostUrl for a remote instance instead)',
+      );
+    }
+
+    const testResult = await this.test(workspace);
+
+    let scanRoot = this.source
+      .filter({ include: ROOT_FILES })
+      .withDirectory(workspacePath, this.source.directory(workspacePath))
+      .withFile('sonar-project.properties', this.source.file('sonar-project.properties'))
+      .withFile('pnpm-workspace.yaml', this.source.file('pnpm-workspace.yaml'))
+      .withFile('package.json', this.source.file('package.json'));
+
+    const coverageDir = testResult.directory('coverage');
+    try {
+      await coverageDir.entries();
+      scanRoot = scanRoot.withDirectory(`${workspacePath}/coverage`, coverageDir);
+    } catch {
+      // No coverage report; Sonar will just report 0% new coverage for this run.
+    }
+
+    const sonarArgs = [
+      `-Dsonar.projectKey=${projectKey}`,
+      `-Dsonar.projectName='Vite+ Monorepo - ${shortName}'`,
+      `-Dsonar.sources=${workspacePath}`,
+      `-Dsonar.javascript.lcov.reportPaths=${workspacePath}/coverage/lcov.info`,
+      '-Dsonar.qualitygate.wait=true',
+      `-Dsonar.working.directory=${SONAR_WORKING_DIRECTORY}`,
+    ].join(' ');
+
+    const { container: runnerContainer, reportTaskPath } =
+      useLocalNetwork && dockerSocket !== undefined
+        ? Monorepo.localSonarRunner(
+            dockerSocket,
+            scanRoot,
+            sonarToken,
+            hostUrl,
+            sonarArgs,
+            projectKey,
+          )
+        : Monorepo.remoteSonarRunner(scanRoot, sonarToken, hostUrl, sonarArgs);
+
+    const [stdout, exitCodeText] = await Promise.all([
+      runnerContainer.stdout(),
+      runnerContainer.file('/tmp/sonar.exit-code').contents(),
+    ]);
+
+    let result = Monorepo.outputDirectory('sonar', stdout).withNewFile(
+      'sonar.exit-code',
+      exitCodeText.trim(),
+    );
+
+    if (useLocalNetwork) {
+      const reportFiles: [string, string][] = [
+        ['sonar-quality-gate.json', '/tmp/sonar-quality-gate.json'],
+        ['sonar-issues.json', '/tmp/sonar-issues.json'],
+      ];
+
+      const availableFiles = await Promise.all(
+        reportFiles.map(async ([fileName, path]) => {
+          const file = runnerContainer.file(path);
+          try {
+            await file.contents();
+            return { file, fileName };
+          } catch {
+            return undefined;
+          }
+        }),
+      );
+
+      for (const entry of availableFiles) {
+        if (entry !== undefined) {
+          result = result.withFile(entry.fileName, entry.file);
+        }
+      }
+
+      return result;
+    }
+
+    const reportTask = runnerContainer.file(reportTaskPath);
+    let reportTaskContents: string | undefined = undefined;
+    try {
+      reportTaskContents = await reportTask.contents();
+    } catch {
+      // Scanner failed before producing a report-task.txt; nothing more to fetch.
+    }
+
+    const ceTaskId =
+      reportTaskContents === undefined
+        ? undefined
+        : /^ceTaskId=(?<id>.+)$/mu.exec(reportTaskContents)?.groups?.id;
+
+    if (ceTaskId !== undefined) {
+      const script = [
+        'set -eu',
+        'task_status=""',
+        'i=0',
+        'while [ "$i" -lt 30 ]; do',
+        `  task_json=$(curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/ce/task?id=${ceTaskId}")`,
+        `  task_status=$(echo "$task_json" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)`,
+        '  case "$task_status" in',
+        '    SUCCESS|FAILED|CANCELED) break ;;',
+        '  esac',
+        '  i=$((i + 1))',
+        '  sleep 3',
+        'done',
+        'echo "$task_json" > /tmp/ce-task.json',
+        `analysis_id=$(echo "$task_json" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4 || true)`,
+        'if [ -n "$analysis_id" ]; then',
+        `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > /tmp/sonar-quality-gate.json`,
+        'fi',
+        `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > /tmp/sonar-issues.json`,
+      ].join('\n');
+
+      const pollContainer = dag
+        .container()
+        .from(CURL_IMAGE)
+        .withSecretVariable('SONAR_TOKEN', sonarToken)
+        .withEnvVariable('SONAR_HOST_URL', hostUrl)
+        .withExec(['sh', '-c', script]);
+
+      const reportFiles: [string, string][] = [
+        ['sonar-quality-gate.json', '/tmp/sonar-quality-gate.json'],
+        ['sonar-issues.json', '/tmp/sonar-issues.json'],
+      ];
+
+      const availableFiles = await Promise.all(
+        reportFiles.map(async ([fileName, path]) => {
+          const file = pollContainer.file(path);
+          try {
+            await file.contents();
+            return { file, fileName };
+          } catch {
+            return undefined;
+          }
+        }),
+      );
+
+      for (const entry of availableFiles) {
+        if (entry !== undefined) {
+          result = result.withFile(entry.fileName, entry.file);
+        }
+      }
     }
 
     return result;

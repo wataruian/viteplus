@@ -42,6 +42,31 @@ case "${func}" in
     cat "${path}/test.output"
     exit "$(cat "${path}/test.exit-code")"
     ;;
+  semgrep)
+    workspace="${2:?"Usage: mise run dagger-artifact semgrep <workspace> [path]"}"
+    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+    dagger call semgrep --workspace="${workspace}" export --path="${path}"
+    cat "${path}/semgrep.output"
+    exit "$(cat "${path}/semgrep.exit-code")"
+    ;;
+  sonar)
+    workspace="${2:?"Usage: mise run dagger-artifact sonar <workspace> [path] [sonar_host_url]"}"
+    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+    sonarHostUrl="${4:-"${SONAR_HOST_URL}"}"
+    sonarArgs=(
+      --workspace="${workspace}"
+      --sonar-token=env:SONAR_TOKEN
+    )
+    if [[ -n "${sonarHostUrl:-}" ]]; then
+      sonarArgs+=(--sonar-host-url="${sonarHostUrl}")
+    else
+      dockerSocket="${DOCKER_SOCKET:-"/var/run/docker.sock"}"
+      sonarArgs+=(--docker-socket="${dockerSocket}")
+    fi
+    dagger call sonar "${sonarArgs[@]}" export --path="${path}"
+    cat "${path}/sonar.output"
+    exit "$(cat "${path}/sonar.exit-code")"
+    ;;
   *)
     workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"
     path="${3:-"./tmp/artifacts/${workspace##*/}"}"

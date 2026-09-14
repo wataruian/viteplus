@@ -113,6 +113,36 @@ jobs:
           path: tmp/artifacts/${{ matrix.workspace }}/coverage
           retention-days: 14
 
+      - name: Semgrep
+        shell: bash
+        run: mise run dagger-artifact semgrep "@lightproject/${{ matrix.workspace }}"
+
+      - name: Upload Semgrep report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: semgrep-${{ matrix.workspace }}
+          path: tmp/artifacts/${{ matrix.workspace }}/semgrep.sarif
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: SonarQube
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mise run dagger-artifact sonar "@lightproject/${{ matrix.workspace }}"
+
+      - name: Upload SonarQube report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sonar-${{ matrix.workspace }}
+          path: |
+            tmp/artifacts/${{ matrix.workspace }}/sonar-quality-gate.json
+            tmp/artifacts/${{ matrix.workspace }}/sonar-issues.json
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Deploy
         if: inputs.environment != '' && inputs.environment != 'pr'
         shell: bash
@@ -123,8 +153,8 @@ jobs:
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
           echo "✅ All good!"
 
-  coverage-comment:
-    name: Coverage comment
+  artifacts:
+    name: Artifacts comment
     needs: [setup, checks]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
     runs-on: [self-hosted, dagger]
@@ -179,4 +209,101 @@ jobs:
             gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@body.md
           else
             gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@body.md
+          fi
+
+      - name: Download Semgrep artifacts and build table
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WORKSPACES: ${{ needs.setup.outputs.workspace_list }}
+        run: |
+          {
+            echo '<!-- semgrep-report -->'
+            echo '### Semgrep report'
+            echo ''
+            echo '| Workspace | Findings |'
+            echo '|---|---|'
+            for workspace in ${WORKSPACES}; do
+              dest="semgrep-artifacts/${workspace}"
+              gh run download "${{ github.run_id }}" --name "semgrep-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
+
+              sarif="${dest}/semgrep.sarif"
+              if [[ -f "${sarif}" ]]; then
+                count="$(jq '[.runs[0].results[]?] | length' "${sarif}")"
+                echo "| ${workspace} | ${count} |"
+              else
+                echo "| ${workspace} | _no report (scan failed or skipped)_ |"
+              fi
+            done
+          } > semgrep-body.md
+          cat semgrep-body.md
+
+      - name: Post or update Semgrep PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing_id="$(
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+              --paginate \
+              --jq '.[] | select(.body | startswith("<!-- semgrep-report -->")) | .id' \
+              | head -1
+          )"
+
+          if [[ -n "${existing_id}" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@semgrep-body.md
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@semgrep-body.md
+          fi
+
+      - name: Download SonarQube artifacts and build table
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WORKSPACES: ${{ needs.setup.outputs.workspace_list }}
+        run: |
+          {
+            echo '<!-- sonarqube-report -->'
+            echo '### SonarQube report'
+            echo ''
+            echo '| Workspace | Quality Gate | New Coverage | New Violations |'
+            echo '|---|---|---|---|'
+            for workspace in ${WORKSPACES}; do
+              dest="sonar-artifacts/${workspace}"
+              gh run download "${{ github.run_id }}" --name "sonar-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
+
+              gate_file="${dest}/sonar-quality-gate.json"
+              if [[ -f "${gate_file}" ]]; then
+                status="$(jq -r '.projectStatus.status // "UNKNOWN"' "${gate_file}")"
+                new_coverage="$(jq -r '[.projectStatus.conditions[]? | select(.metricKey == "new_coverage") | .actualValue] | first // "-"' "${gate_file}")"
+                new_violations="$(jq -r '[.projectStatus.conditions[]? | select(.metricKey == "new_violations") | .actualValue] | first // "-"' "${gate_file}")"
+                if [[ "${status}" == "OK" ]]; then
+                  gate_display="✅ Passed"
+                else
+                  gate_display="❌ ${status}"
+                fi
+                echo "| ${workspace} | ${gate_display} | ${new_coverage} | ${new_violations} |"
+              else
+                echo "| ${workspace} | _no report (scan failed or skipped)_ | | |"
+              fi
+            done
+          } > sonar-body.md
+          cat sonar-body.md
+
+      - name: Post or update SonarQube PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing_id="$(
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+              --paginate \
+              --jq '.[] | select(.body | startswith("<!-- sonarqube-report -->")) | .id' \
+              | head -1
+          )"
+
+          if [[ -n "${existing_id}" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@sonar-body.md
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@sonar-body.md
           fi
