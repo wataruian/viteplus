@@ -231,6 +231,7 @@ const getCommonViteConfig = ({
       conditions: ['typescript'],
     },
     test: {
+      bail: 1,
       coverage: {
         clean: true,
         cleanOnRerun: true,

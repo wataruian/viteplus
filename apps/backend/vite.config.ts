@@ -51,6 +51,7 @@ export default defineConfig(({ mode }): UserConfig => {
         ...baseConfig.test?.coverage,
         exclude: ['**/index.ts', 'src/client.ts', 'src/runtimes/**'],
       },
+      isolate: true,
     },
   };
 });
