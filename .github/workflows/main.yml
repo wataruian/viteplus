@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/validate.yml
 
   develop:
-    name: 'Develop'
+    name: Develop
     needs: validate
     concurrency:
       group: deploy-develop
