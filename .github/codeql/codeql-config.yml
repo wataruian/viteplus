@@ -1,0 +1,11 @@
+name: 'CodeQL config'
+
+paths-ignore:
+  - bak/**
+  - '**/node_modules/**'
+  - '**/dist/**'
+  - '**/out/**'
+  - '**/coverage/**'
+  - '**/storybook-static/**'
+  - '**/.wrangler/**'
+  - '**/tmp/**'
