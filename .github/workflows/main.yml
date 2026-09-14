@@ -2,8 +2,7 @@ name: 'Main'
 
 on:
   push:
-    branches: [main, ci]
-  workflow_call:
+    branches: [main]
 
 jobs:
   validate:

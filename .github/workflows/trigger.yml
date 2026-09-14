@@ -28,7 +28,7 @@ on:
         type: string
 
 concurrency:
-  group: trigger-${{ inputs.environment }}${{ inputs.environment == 'pr' && format('-{0}', github.ref) || '' }}
+  group: trigger-${{ inputs.environment == 'pr' && format('pr-{0}', github.ref) || github.run_id }}
   cancel-in-progress: false
 
 jobs:
