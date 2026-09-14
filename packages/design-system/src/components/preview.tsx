@@ -336,7 +336,8 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
                                                 .map(([k, v]) => `${k}: ${v}`)
                                                 .join(', ')
                                             : '';
-                                          return `Default${defs ? ` (${defs})` : ''}`;
+                                          const suffix = defs ? ` (${defs})` : '';
+                                          return `Default${suffix}`;
                                         })()}
                                       </Typography>
                                       <div className={previewVariants({ variantList: layoutType })}>

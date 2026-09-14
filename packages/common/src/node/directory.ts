@@ -32,7 +32,7 @@ const getImporterDir = (): string => {
     const match =
       /at\s+(?:[^(]+\s+)?\(?(?<file1>[^)]+?):\d+:\d+\)?$/u.exec(frame) ??
       /\s+at\s+(?<file2>.+?):\d+:\d+/u.exec(frame) ??
-      /\(?(?<file3>.+?):\d+:\d+\)?$/u.exec(frame);
+      /\(?(?<file3>[^)]+?):\d+:\d+\)?$/u.exec(frame);
 
     const filePath0 = match?.[1];
     if (filePath0 === undefined || filePath0 === '') {
@@ -64,7 +64,7 @@ const getImporterFilePath = (): string => {
   for (let i = 2; i < stackFrames.length; i += 1) {
     const frame = stackFrames[i].trim();
     const match = /(?:at\s+(?:.+?\s+\()?)(?<file>(?:file:\/\/)?[^():]+):\d+:\d+\)?$/u.exec(frame);
-    const filePath0 = match?.[1];
+    const filePath0 = match?.groups?.['file'];
     if (filePath0 === undefined || filePath0 === '') {
       continue;
     }

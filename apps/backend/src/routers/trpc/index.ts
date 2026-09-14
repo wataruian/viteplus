@@ -111,7 +111,6 @@ trpcRouter.use('/*', async (c) => {
 });
 
 type AppRouter = typeof appRouter;
-type TrpcRouter = AppRouter;
 
 export { appRouter, isStatusCode, isTRPCErrorResponse, trpcOpenApiRouter, trpcRouter };
-export type { AppRouter, TRPCErrorResponse, TrpcRouter };
+export type { AppRouter, TRPCErrorResponse };

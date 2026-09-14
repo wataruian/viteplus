@@ -115,14 +115,12 @@ const App = () => {
           <ul>
             <li>
               <a href='https://vite.dev/' target='_blank' rel='noreferrer'>
-                <img className='logo' src={viteLogo} alt='' />
-                Explore Vite
+                <img className='logo' src={viteLogo} alt='' /> Explore Vite
               </a>
             </li>
             <li>
               <a href='https://www.typescriptlang.org' target='_blank' rel='noreferrer'>
-                <img className='button-icon' src={typescriptLogo} alt='' />
-                Learn more
+                <img className='button-icon' src={typescriptLogo} alt='' /> Learn more
               </a>
             </li>
           </ul>

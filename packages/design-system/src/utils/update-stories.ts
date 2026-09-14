@@ -3,13 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const getVariants = (content: string): Record<string, string[]> => {
-  const m = /argTypes:\s*\{(?<blocks>[\s\S]*?)\}\s*,?\s*(?:component|tags|title):/u.exec(content);
+  const m = /argTypes:\s*\{(?<blocks>[\s\S]*?)\}[\s,]*(?:component|tags|title):/u.exec(content);
   const variants: Record<string, string[]> = {};
   if (m?.groups?.['blocks'] !== undefined && m.groups['blocks'] !== '') {
-    const blocks = m.groups['blocks'].split(/(?=\s+[a-zA-Z0-9_]+:\s*\{)/u);
+    const blocks = m.groups['blocks'].split(/(?=\s+\w+:\s*\{)/u);
 
     for (const block of blocks) {
-      const match = /^\s+(?<name>[a-zA-Z0-9_]+):\s*\{/u.exec(block);
+      const match = /^\s+(?<name>\w+):\s*\{/u.exec(block);
 
       if (match?.groups?.['name'] !== undefined && match.groups['name'] !== 'as') {
         const { name } = match.groups;
@@ -28,18 +28,119 @@ const getVariants = (content: string): Record<string, string[]> => {
   return variants;
 };
 
+const RESERVED_GLOBAL_NAMES = new Set([
+  'Array',
+  'ArrayBuffer',
+  'Boolean',
+  'Date',
+  'Error',
+  'Function',
+  'Infinity',
+  'JSON',
+  'Map',
+  'Math',
+  'NaN',
+  'Number',
+  'Object',
+  'Promise',
+  'Proxy',
+  'Reflect',
+  'RegExp',
+  'Set',
+  'String',
+  'Symbol',
+  'WeakMap',
+  'WeakSet',
+  'undefined',
+]);
+
+const sanitizeStoryName = (option: string): string => {
+  let safeOption = option;
+
+  if (safeOption === 'true') {
+    safeOption = 'True';
+  }
+
+  if (safeOption === 'false') {
+    safeOption = 'False';
+  }
+
+  safeOption = safeOption.replaceAll(/\W/gu, '');
+
+  if (safeOption.length === 0) {
+    return '';
+  }
+
+  const storyName = safeOption.charAt(0).toUpperCase() + safeOption.slice(1);
+
+  return RESERVED_GLOBAL_NAMES.has(storyName) ? `${storyName}State` : storyName;
+};
+
+const generateVariantStories = (
+  variantNames: string[],
+  variants: Record<string, string[]>,
+  content: string,
+): { exportList: string[]; generatedStories: string } => {
+  const exportList: string[] = ['Default'];
+  let generatedStories = '';
+
+  for (const variantName of variantNames) {
+    for (const option of variants[variantName]) {
+      const storyName = sanitizeStoryName(option);
+
+      if (storyName === '' || storyName === 'Default') {
+        continue;
+      }
+
+      exportList.push(storyName);
+
+      if (!content.includes(`const ${storyName}: StoryObj`)) {
+        const value = option === 'true' || option === 'false' ? option : `'${option}'`;
+
+        generatedStories += `\nconst ${storyName}: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    ${variantName}: ${value},
+  },
+};\n`;
+      }
+    }
+  }
+
+  return { exportList, generatedStories };
+};
+
+const mergeExports = (content: string, exportList: string[]): string => {
+  const reservedNames = new Set(['AllVariants', 'Intent', 'Size', 'Look', 'Variant', 'State']);
+
+  return content.replace(/export\s+\{(?<exports>[^}]+)\};/u, (_match: string, group1: string) => {
+    const existingExports = group1
+      .split(',')
+      .map((s: string) => s.trim())
+      .filter((s: string) => s !== '' && !reservedNames.has(s));
+
+    const finalExports: string[] = [];
+    const allExports = new Set([...existingExports, ...exportList]);
+
+    for (const exp of allExports) {
+      if (!finalExports.some((f) => f.endsWith(` as ${exp}`) || f === exp)) {
+        finalExports.push(exp);
+      }
+    }
+
+    return `export { ${finalExports.join(', ')} };`;
+  });
+};
+
 const updateStoryFile = (storiesFile: string): boolean => {
   let content = fs.readFileSync(storiesFile, 'utf8');
 
   const variants = getVariants(content);
-
   const variantNames = Object.keys(variants);
   if (variantNames.length === 0) {
     return false;
   }
 
-  let generatedStories = '';
-  const exportList: string[] = ['Default'];
   let changed = false;
 
   if (content.includes('const AllVariants')) {
@@ -52,87 +153,21 @@ const updateStoryFile = (storiesFile: string): boolean => {
     '',
   );
 
-  for (const variantName of variantNames) {
-    const options = variants[variantName];
+  const { exportList, generatedStories } = generateVariantStories(variantNames, variants, content);
 
-    for (const option of options) {
-      let safeOption = option;
-
-      if (safeOption === 'true') {
-        safeOption = 'True';
-      }
-
-      if (safeOption === 'false') {
-        safeOption = 'False';
-      }
-
-      safeOption = safeOption.replaceAll(/[^a-zA-Z0-9_]/gu, '');
-
-      if (safeOption.length === 0) {
-        continue;
-      }
-
-      const StoryName = safeOption.charAt(0).toUpperCase() + safeOption.slice(1);
-
-      if (StoryName === 'Default') {
-        continue;
-      }
-
-      exportList.push(StoryName);
-
-      if (!content.includes(`const ${StoryName}: StoryObj`)) {
-        changed = true;
-
-        const value = option === 'true' || option === 'false' ? option : `'${option}'`;
-
-        generatedStories += `\nconst ${StoryName}: StoryObj<typeof meta> = {
-  args: {
-    ...Default.args,
-    ${variantName}: ${value},
-  },
-};\n`;
-      }
-    }
+  if (generatedStories !== '') {
+    changed = true;
   }
 
-  if (changed) {
-    content = content.replace(/(?<export>\nexport\s+\{)/u, `${generatedStories}$<export>`);
-
-    content = content.replace(
-      /export\s+\{\s*(?<exports>[^}]+)\s*\};/u,
-      (_match: string, group1: string) => {
-        const existingExports = group1
-          .split(',')
-          .map((s: string) => s.trim())
-          .filter(
-            (s: string) =>
-              s !== '' &&
-              s !== 'AllVariants' &&
-              s !== 'Intent' &&
-              s !== 'Size' &&
-              s !== 'Look' &&
-              s !== 'Variant' &&
-              s !== 'State',
-          );
-
-        const finalExports: string[] = [];
-        const allExports = new Set([...existingExports, ...exportList]);
-
-        for (const exp of allExports) {
-          if (!finalExports.some((f) => f.endsWith(` as ${exp}`) || f === exp)) {
-            finalExports.push(exp);
-          }
-        }
-
-        return `export { ${finalExports.join(', ')} };`;
-      },
-    );
-
-    fs.writeFileSync(storiesFile, content);
-    return true;
+  if (!changed) {
+    return false;
   }
 
-  return false;
+  content = content.replace(/(?<export>\nexport\s+\{)/u, `${generatedStories}$<export>`);
+  content = mergeExports(content, exportList);
+
+  fs.writeFileSync(storiesFile, content);
+  return true;
 };
 
 const updateStories = () => {
@@ -179,4 +214,11 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
   globalThis.console.log('✅ Done updating stories');
 }
 
-export { getVariants, updateStories, updateStoryFile };
+export {
+  generateVariantStories,
+  getVariants,
+  mergeExports,
+  sanitizeStoryName,
+  updateStories,
+  updateStoryFile,
+};

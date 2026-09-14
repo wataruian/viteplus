@@ -3,7 +3,7 @@ import { z } from '@hono/zod-openapi';
 import { attachSchema } from '../schema';
 
 class TestService {
-  public static hello = attachSchema(
+  public static readonly hello = attachSchema(
     (input: { name?: string | undefined }) => {
       const reply = `Hello ${input.name !== undefined && input.name.length > 0 ? input.name : 'World'}!`;
       return { reply };
@@ -14,7 +14,7 @@ class TestService {
     },
   );
 
-  public static profile = attachSchema(
+  public static readonly profile = attachSchema(
     (input: {
       age: number;
       name: string;
@@ -24,7 +24,8 @@ class TestService {
       const slug = input.name
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/gu, '-')
-        .replaceAll(/^-+|-+$/gu, '');
+        .replace(/^-+/u, '')
+        .replace(/-+$/u, '');
 
       const profile = {
         id: `profile_${slug}`,

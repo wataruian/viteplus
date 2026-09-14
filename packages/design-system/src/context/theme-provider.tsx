@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { themes } from '../utils/theme-generator';
 import { ThemeContext } from './theme-context';
@@ -16,7 +16,9 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [theme, themeList]);
 
-  return <ThemeContext.Provider value={{ setTheme, theme }}>{children}</ThemeContext.Provider>;
+  const value = useMemo(() => ({ setTheme, theme }), [setTheme, theme]);
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
 export { ThemeProvider };

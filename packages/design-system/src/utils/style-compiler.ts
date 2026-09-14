@@ -63,6 +63,23 @@ const resolvePath = (obj: unknown, path: string): unknown =>
     return undefined;
   }, obj);
 
+const parseObjectLiteral = (
+  node: ts.ObjectLiteralExpression,
+  parseChild: (expr: ts.Expression) => ASTNode,
+): Record<string, ASTNode> => {
+  const obj: Record<string, ASTNode> = {};
+
+  for (const prop of node.properties) {
+    if (!ts.isPropertyAssignment(prop)) {
+      continue;
+    }
+
+    obj[getKey(prop.name)] = parseChild(prop.initializer);
+  }
+
+  return obj;
+};
+
 const parseValue = (inputNode: ts.Expression): ASTNode => {
   const node = unwrap(inputNode);
 
@@ -101,17 +118,7 @@ const parseValue = (inputNode: ts.Expression): ASTNode => {
   }
 
   if (ts.isObjectLiteralExpression(node)) {
-    const obj: Record<string, ASTNode> = {};
-
-    for (const prop of node.properties) {
-      if (!ts.isPropertyAssignment(prop)) {
-        continue;
-      }
-
-      obj[getKey(prop.name)] = parseValue(prop.initializer);
-    }
-
-    return { kind: 'object', value: obj };
+    return { kind: 'object', value: parseObjectLiteral(node, parseValue) };
   }
 
   if (ts.isTemplateExpression(node)) {
@@ -370,6 +377,7 @@ export {
   extractStylesFromFile,
   getKey,
   getRootName,
+  parseObjectLiteral,
   parseValue,
   resolvePath,
   resolveValue,

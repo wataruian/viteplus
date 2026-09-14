@@ -1,5 +1,4 @@
-const getRandomText = () =>
-  Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15);
+const getRandomText = () => globalThis.crypto.randomUUID().replaceAll('-', '');
 
 const safeToString = (value: unknown): string => {
   if (value === null || value === undefined) {
