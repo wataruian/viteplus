@@ -89,5 +89,6 @@ jobs:
       actions: read
       contents: read
       security-events: write
+      pull-requests: write
     uses: ./.github/workflows/main.yml
     secrets: inherit
