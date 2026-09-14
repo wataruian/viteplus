@@ -1,5 +1,8 @@
 name: 'CodeQL config'
 
+paths:
+  - '**/.storybook/**'
+
 paths-ignore:
   - bak/**
   - .templates/**
