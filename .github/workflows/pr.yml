@@ -9,8 +9,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check:
+    name: Checksss
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check.yml
+
+  codeql:
+    name: CodeQL
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/codeql.yml
+
   pull-request:
     name: 'PR #${{ github.event.pull_request.number }} (branch: ${{ github.head_ref }})'
+    needs: [check, codeql]
     permissions:
       contents: read
       actions: write

@@ -1,20 +1,17 @@
-name: 'Secret Scan'
+name: 'Check'
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_call:
 
 concurrency:
-  group: secret-scan-${{ github.ref }}
+  group: check-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  gitleaks:
-    name: Gitleaks
+  check:
+    name: Check
     runs-on: [self-hosted, dagger]
-    timeout-minutes: 15
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -27,6 +24,10 @@ jobs:
         uses: jdx/mise-action@v4.3.0
         with:
           version: 2026.7.3
+
+      - name: Lint commits
+        shell: bash
+        run: mise run commitlint "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
 
       - name: Scan for secrets
         shell: bash
