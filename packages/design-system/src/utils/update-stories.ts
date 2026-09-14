@@ -2,8 +2,7 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const isWordChar = (char: string | undefined): boolean =>
-  char !== undefined && /[A-Za-z0-9_]/u.test(char);
+const isWordChar = (char: string | undefined): boolean => char !== undefined && /\w/u.test(char);
 
 const isWhitespaceChar = (char: string | undefined): boolean =>
   char !== undefined && /\s/u.test(char);
@@ -20,6 +19,51 @@ const skipWhile = (
   return index;
 };
 
+const findMatchingBraceEnd = (text: string, braceStart: number): number => {
+  let depth = 0;
+
+  for (let i = braceStart; i < text.length; i += 1) {
+    if (text[i] === '{') {
+      depth += 1;
+    } else if (text[i] === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+};
+
+const parseArgTypeEntry = (
+  blocksText: string,
+  start: number,
+): { entry: { body: string; name: string } | undefined; nextIndex: number } => {
+  const nameEnd = skipWhile(blocksText, start, isWordChar);
+  const name = blocksText.slice(start, nameEnd);
+
+  const colonIndex = skipWhile(blocksText, nameEnd, isWhitespaceChar);
+  if (blocksText[colonIndex] !== ':') {
+    return { entry: undefined, nextIndex: nameEnd };
+  }
+
+  const braceStart = skipWhile(blocksText, colonIndex + 1, isWhitespaceChar);
+  if (blocksText[braceStart] !== '{') {
+    return { entry: undefined, nextIndex: nameEnd };
+  }
+
+  const braceEnd = findMatchingBraceEnd(blocksText, braceStart);
+  if (braceEnd === -1) {
+    return { entry: undefined, nextIndex: blocksText.length };
+  }
+
+  return {
+    entry: { body: blocksText.slice(braceStart, braceEnd + 1), name },
+    nextIndex: braceEnd + 1,
+  };
+};
+
 const extractArgTypeBlocks = (blocksText: string): { body: string; name: string }[] => {
   const entries: { body: string; name: string }[] = [];
   let index = 0;
@@ -30,43 +74,11 @@ const extractArgTypeBlocks = (blocksText: string): { body: string; name: string 
       continue;
     }
 
-    const nameStart = index;
-    const nameEnd = skipWhile(blocksText, index, isWordChar);
-    const name = blocksText.slice(nameStart, nameEnd);
-
-    const colonIndex = skipWhile(blocksText, nameEnd, isWhitespaceChar);
-    if (blocksText[colonIndex] !== ':') {
-      index = nameEnd;
-      continue;
+    const { entry, nextIndex } = parseArgTypeEntry(blocksText, index);
+    if (entry !== undefined) {
+      entries.push(entry);
     }
-
-    const braceStart = skipWhile(blocksText, colonIndex + 1, isWhitespaceChar);
-    if (blocksText[braceStart] !== '{') {
-      index = nameEnd;
-      continue;
-    }
-
-    let depth = 0;
-    let braceEnd = -1;
-
-    for (let i = braceStart; i < blocksText.length; i += 1) {
-      if (blocksText[i] === '{') {
-        depth += 1;
-      } else if (blocksText[i] === '}') {
-        depth -= 1;
-        if (depth === 0) {
-          braceEnd = i;
-          break;
-        }
-      }
-    }
-
-    if (braceEnd === -1) {
-      break;
-    }
-
-    entries.push({ body: blocksText.slice(braceStart, braceEnd + 1), name });
-    index = braceEnd + 1;
+    index = nextIndex;
   }
 
   return entries;
@@ -286,6 +298,7 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
 
 export {
   extractArgTypeBlocks,
+  findMatchingBraceEnd,
   generateVariantStories,
   getVariants,
   mergeExports,
