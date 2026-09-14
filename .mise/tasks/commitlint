@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#MISE description="Lint commit messages between two refs (defaults to origin/main..HEAD) with commitlint"
+
+set -o errexit # Bail out on any error
+
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
+from="${1:-"origin/main"}"
+to="${2:-"HEAD"}"
+
+vp exec commitlint \
+  --from "${from}" \
+  --to "${to}" \
+  --config commitlint.config.ts \
+  --verbose

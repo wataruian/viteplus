@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+#MISE description="Run the Semgrep SAST scan and write semgrep.sarif to tmp/semgrep"
+
+set -o errexit # Bail out on any error
+
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
+rulesets=(
+  --config=p/security-audit
+  --config=p/owasp-top-ten
+  --config=p/javascript
+  --config=p/typescript
+  --config=p/react
+)
+
+exclusions=(
+  --exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag
+  --exclude-rule=package_managers.renovate.renovate-missing-minimum-release-age.renovate-missing-minimum-release-age
+  --exclude-rule=yaml.docker-compose.security.privileged-service.privileged-service
+  --exclude-rule=package_managers.pnpm.pnpm-trust-policy.pnpm-trust-policy
+  --exclude-rule=package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age
+  --exclude-rule=package_managers.pnpm.pnpm-block-exotic-sub-dependencies.pnpm-block-exotic-sub-dependencies
+  --exclude-rule=package_managers.npm.npm-missing-minimum-release-age.npm-missing-minimum-release-age
+  --exclude-rule=generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var
+)
+
+semgrep_image="semgrep/semgrep:1.177.0"
+
+outDir="${scriptDir}/../../tmp/semgrep"
+mkdir -p "${outDir}"
+
+echo "Running Semgrep scan..."
+container_id="$(docker create "${semgrep_image}" semgrep scan "${rulesets[@]}" "${exclusions[@]}" --error --sarif --output=/repo/semgrep.sarif /repo)"
+docker cp . "${container_id}:/repo"
+docker start "${container_id}" >/dev/null
+docker logs -f "${container_id}"
+exit_code="$(docker wait "${container_id}")"
+docker cp "${container_id}:/repo/semgrep.sarif" "${outDir}/semgrep.sarif" || true
+docker rm "${container_id}" >/dev/null
+
+if [[ "${exit_code}" == "0" ]]; then
+  echo "✅ Semgrep scan done — no blocking findings"
+else
+  echo "❌ Semgrep scan done — findings or errors detected, exit code ${exit_code}"
+fi
+
+exit "${exit_code}"

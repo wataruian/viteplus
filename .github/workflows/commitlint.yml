@@ -21,6 +21,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Mise
+        uses: jdx/mise-action@v4.3.0
+        with:
+          version: 2026.7.3
+
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1.20.0
         with:
@@ -28,9 +33,5 @@ jobs:
           run-install: true
 
       - name: Lint commits
-        run: |
-          vp exec commitlint \
-            --from "${{ github.event.pull_request.base.sha }}" \
-            --to "${{ github.event.pull_request.head.sha }}" \
-            --config commitlint.config.ts \
-            --verbose
+        shell: bash
+        run: mise run commitlint "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
