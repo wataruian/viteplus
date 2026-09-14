@@ -1,0 +1,8 @@
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "shell-interpolated variable, not a literal credential"
+regexes = ['''\\?\$\{[A-Za-z_][A-Za-z0-9_]*\}:"?$''']

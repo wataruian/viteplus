@@ -48,6 +48,8 @@ jobs:
     runs-on: [self-hosted, dagger]
     timeout-minutes: 30
     environment: ${{ inputs.environment || null }}
+    permissions:
+      contents: read
     env:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
     strategy:
@@ -159,9 +161,9 @@ jobs:
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
     runs-on: [self-hosted, dagger]
     timeout-minutes: 10
-    # permissions:
-    #   actions: read
-    #   pull-requests: write
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
       - name: Download coverage artifacts and build table
         shell: bash
