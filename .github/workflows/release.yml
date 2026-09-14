@@ -85,6 +85,19 @@ jobs:
           {
             echo "### Released ${tag}"
             echo ""
-            echo "This push already triggered an automatic deploy to **dev**."
+            echo "This release is being deployed to **dev** automatically."
             echo "To promote it to staging or production, run the [Trigger workflow](../../actions/workflows/trigger.yml) with \`version: ${tag}\`."
           } >> "${GITHUB_STEP_SUMMARY}"
+
+  deploy:
+    name: Deploy to dev
+    needs: release
+    concurrency:
+      group: deploy-develop
+      cancel-in-progress: true
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      environment: develop

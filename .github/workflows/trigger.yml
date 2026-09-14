@@ -48,6 +48,12 @@ jobs:
             exit 1
           fi
 
+      - name: Warn that version is ignored for pr
+        if: inputs.environment == 'pr' && inputs.version != ''
+        shell: bash
+        run: |
+          echo "::warning::version is ignored when targeting pr; verification always runs against the dispatched branch's tip"
+
   verify:
     name: 'Verify (branch: ${{ github.ref_name }})'
     needs: guard
