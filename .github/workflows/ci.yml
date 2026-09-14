@@ -42,12 +42,11 @@ jobs:
           echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
           echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
 
-  ci:
+  verify:
     name: ${{ matrix.workspace }}
     needs: setup
     runs-on: [self-hosted, dagger]
     timeout-minutes: 30
-    environment: ${{ inputs.environment || null }}
     permissions:
       contents: read
     env:
@@ -92,16 +91,7 @@ jobs:
 
       - name: Build
         shell: bash
-        env:
-          REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
-          ENVIRONMENT: ${{ inputs.environment }}
-          WORKSPACE: ${{ matrix.workspace }}
-        run: |
-          if [[ -n "${ENVIRONMENT}" && "${ENVIRONMENT}" != "pr" ]]; then
-            mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${GITHUB_SHA::7}"
-          else
-            mise run dagger-artifact build "@lightproject/${WORKSPACE}"
-          fi
+        run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
 
       - name: Test
         shell: bash
@@ -145,19 +135,9 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-      - name: Deploy
-        if: inputs.environment != '' && inputs.environment != 'pr'
-        shell: bash
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-          WORKSPACE: ${{ matrix.workspace }}
-        run: |
-          echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
-          echo "✅ All good!"
-
   artifacts:
     name: Publish artifacts
-    needs: [setup, ci]
+    needs: [setup, verify]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
     runs-on: [self-hosted, dagger]
     timeout-minutes: 10

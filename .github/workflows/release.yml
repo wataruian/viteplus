@@ -82,13 +82,9 @@ jobs:
           tag="v$(node -p "require('./package.json').version")"
           gh release create "${tag}" --generate-notes
 
-  deploy:
-    name: Deploy
-    needs: release
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-      pull-requests: write
-    uses: ./.github/workflows/main.yml
-    secrets: inherit
+          {
+            echo "### Released ${tag}"
+            echo ""
+            echo "This push already triggered an automatic deploy to **dev**."
+            echo "To promote it to staging or production, run the [Trigger workflow](../../actions/workflows/trigger.yml) with \`version: ${tag}\`."
+          } >> "${GITHUB_STEP_SUMMARY}"

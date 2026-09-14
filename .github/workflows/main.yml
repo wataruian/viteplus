@@ -2,12 +2,8 @@ name: 'Main'
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci]
   workflow_call:
-
-concurrency:
-  group: main
-  cancel-in-progress: false
 
 jobs:
   validate:
@@ -19,37 +15,14 @@ jobs:
     uses: ./.github/workflows/validate.yml
 
   develop:
-    name: 'Develop'
+    name: Develop
     needs: validate
+    concurrency:
+      group: deploy-develop
+      cancel-in-progress: true
     permissions:
       contents: read
-      actions: read
-      pull-requests: write
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:
       environment: develop
-
-  staging:
-    name: 'Staging'
-    needs: develop
-    permissions:
-      contents: read
-      actions: read
-      pull-requests: write
-    uses: ./.github/workflows/ci.yml
-    secrets: inherit
-    with:
-      environment: staging
-
-  production:
-    name: 'Production'
-    needs: staging
-    permissions:
-      contents: read
-      actions: read
-      pull-requests: write
-    uses: ./.github/workflows/ci.yml
-    secrets: inherit
-    with:
-      environment: production
