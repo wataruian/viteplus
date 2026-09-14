@@ -4,8 +4,9 @@ const hasEnvProperty = (obj: object): obj is object & { env: Record<string, stri
 const getEnv = (key: string, defaultValue?: string): string | undefined => {
   try {
     const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
-    if (envGlobal.process?.env !== undefined && envGlobal.process.env[key] !== undefined) {
-      return envGlobal.process.env[key];
+    const value = envGlobal.process?.env?.[key];
+    if (value !== undefined) {
+      return value;
     }
   } catch {
     // Ignore error

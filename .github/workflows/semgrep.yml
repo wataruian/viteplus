@@ -1,0 +1,118 @@
+name: 'Semgrep'
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: semgrep-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    name: Semgrep
+    runs-on: [self-hosted, dagger]
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+
+      - name: Scan for SAST findings
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rulesets=(
+            --config=p/security-audit
+            --config=p/owasp-top-ten
+            --config=p/javascript
+            --config=p/typescript
+            --config=p/react
+          )
+
+          exclusions=(
+            --exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag
+            --exclude-rule=package_managers.renovate.renovate-missing-minimum-release-age.renovate-missing-minimum-release-age
+            --exclude-rule=yaml.docker-compose.security.privileged-service.privileged-service
+            --exclude-rule=package_managers.pnpm.pnpm-trust-policy.pnpm-trust-policy
+            --exclude-rule=package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age
+            --exclude-rule=package_managers.pnpm.pnpm-block-exotic-sub-dependencies.pnpm-block-exotic-sub-dependencies
+            --exclude-rule=package_managers.npm.npm-missing-minimum-release-age.npm-missing-minimum-release-age
+            --exclude-rule=generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var
+          )
+
+          semgrep_image="semgrep/semgrep:1.177.0"
+
+          container_id="$(docker create "${semgrep_image}" semgrep scan "${rulesets[@]}" "${exclusions[@]}" --error --sarif --output=/repo/semgrep.sarif /repo)"
+          docker cp . "${container_id}:/repo"
+          docker start "${container_id}" >/dev/null
+          docker logs -f "${container_id}"
+          exit_code="$(docker wait "${container_id}")"
+          docker cp "${container_id}:/repo/semgrep.sarif" ./semgrep.sarif || true
+          docker rm "${container_id}" >/dev/null
+
+          exit "${exit_code}"
+
+      - name: Upload SARIF report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: semgrep-sarif
+          path: semgrep.sarif
+          retention-days: 14
+
+      - name: Comment on PR
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo '<!-- semgrep-report -->'
+            echo '### Semgrep report'
+            echo ''
+            if [[ -s semgrep.sarif ]]; then
+              count="$(jq '[.runs[0].results[]?] | length' semgrep.sarif)"
+              if [[ "${count}" -eq 0 ]]; then
+                echo '✅ No findings.'
+              else
+                echo "Found **${count}** finding(s):"
+                echo ''
+                echo '| Severity | Rule | Location | Message |'
+                echo '|---|---|---|---|'
+                jq -r '
+                  [.runs[0].results[]?][0:50][] |
+                  [
+                    (.level // "warning"),
+                    .ruleId,
+                    (.locations[0].physicalLocation.artifactLocation.uri + ":" + (.locations[0].physicalLocation.region.startLine | tostring)),
+                    (.message.text | gsub("\r?\n"; " ") | gsub("\\|"; "\\|"))
+                  ] | "| " + join(" | ") + " |"
+                ' semgrep.sarif
+                if [[ "${count}" -gt 50 ]]; then
+                  echo ''
+                  echo "_Showing first 50 of ${count} findings. See the \`semgrep-sarif\` workflow artifact for the full report._"
+                fi
+              fi
+            else
+              echo '_No SARIF report was produced (the scan likely errored before completing)._'
+            fi
+          } > body.md
+          cat body.md
+
+          existing_id="$(
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+              --paginate \
+              --jq '.[] | select(.body | startswith("<!-- semgrep-report -->")) | .id' \
+              | head -1
+          )"
+
+          if [[ -n "${existing_id}" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@body.md
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@body.md
+          fi

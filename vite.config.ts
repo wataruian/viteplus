@@ -231,13 +231,14 @@ const getCommonViteConfig = ({
       conditions: ['typescript'],
     },
     test: {
+      bail: 1,
       coverage: {
         clean: true,
         cleanOnRerun: true,
         enabled: true,
         include: ['src/**/*.ts', 'src/**/*.tsx'],
         provider: 'v8',
-        reporter: ['text', 'json', 'json-summary', 'html'],
+        reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
         reportsDirectory: 'coverage',
         thresholds: {
           branches: 100,

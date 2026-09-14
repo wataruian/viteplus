@@ -1,2 +1,2 @@
 export { getApp } from './app';
-export type { TrpcRouter } from './routers/trpc';
+export type { AppRouter } from './routers/trpc';

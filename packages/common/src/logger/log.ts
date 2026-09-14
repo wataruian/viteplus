@@ -55,10 +55,13 @@ class Logger {
         ? rawLogLevel
         : 'info';
 
+    const localMode = options.mode ?? (getLogFormat() === 'json' ? 'json' : 'pretty');
+    const resolvedMode: 'pretty' | 'json' = isLocal() ? localMode : 'json';
+
     this.options = {
       color: options.color ?? true,
       level: options.level ?? defaultLogLevel,
-      mode: isLocal() ? (options.mode ?? (getLogFormat() === 'json' ? 'json' : 'pretty')) : 'json',
+      mode: resolvedMode,
       redact: options.redact ?? [],
       timestamp: options.timestamp ?? true,
     };

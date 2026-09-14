@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { type Mode, ModeContext } from './mode-context';
 
@@ -21,13 +21,13 @@ const ModeProvider = ({
     root.classList.add(mode);
   }, [mode]);
 
-  const toggleMode = () => {
+  const toggleMode = useCallback(() => {
     setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  }, []);
 
-  return (
-    <ModeContext.Provider value={{ mode, setMode, toggleMode }}>{children}</ModeContext.Provider>
-  );
+  const value = useMemo(() => ({ mode, setMode, toggleMode }), [mode, toggleMode]);
+
+  return <ModeContext.Provider value={value}>{children}</ModeContext.Provider>;
 };
 
 export { ModeProvider };

@@ -40,4 +40,4 @@ jobs:
         with:
           category: '/language:${{ matrix.language }}'
           # remove `upload: never` when GitHub Advanced Security / Code Security is enabled.
-          # upload: never
+          upload: never

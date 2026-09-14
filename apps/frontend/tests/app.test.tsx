@@ -1,4 +1,4 @@
-import type { TrpcRouter } from '@lightproject/backend';
+import type { AppRouter } from '@lightproject/backend';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { act } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
@@ -58,7 +58,7 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
   }));
 
   vi.doMock('../src/providers/trpc-provider', () => ({
-    trpcClient: createTRPCClient<TrpcRouter>({
+    trpcClient: createTRPCClient<AppRouter>({
       links: [
         httpBatchLink({
           fetch: async (input, init) => {

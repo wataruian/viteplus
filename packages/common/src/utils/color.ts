@@ -31,7 +31,7 @@ const teal = chalkInstance.hex('#1ABC9C');
 
 const colors: ColorFunction[] = [green, magenta, orange, purple, pink, teal];
 
-const ansiEscapeCodeRegex = /^(?<ansi>\u001B\[[0-9;]*m)/u;
+const ansiEscapeCodeRegex = /^\u001B\[[0-9;]*m/u;
 
 const defaultColor = chalkInstance.white;
 const resetColor = chalkInstance.reset;
