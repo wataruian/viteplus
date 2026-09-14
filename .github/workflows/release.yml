@@ -86,7 +86,8 @@ jobs:
     name: Deploy
     needs: release
     permissions:
+      actions: read
       contents: read
-      actions: write
-      pull-requests: write
+      security-events: write
     uses: ./.github/workflows/main.yml
+    secrets: inherit

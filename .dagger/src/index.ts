@@ -610,6 +610,7 @@ export class Monorepo {
       .withDirectory('/usr/src', scanRoot)
       .withEnvVariable('SONAR_HOST_URL', hostUrl)
       .withSecretVariable('SONAR_TOKEN', sonarToken)
+      .withEnvVariable('CACHE_BUSTER', Date.now().toString())
       .withExec(['sh', '-c', orchestrationScript]);
 
     return { container, reportTaskPath: '/tmp/report-task.txt' };
@@ -628,6 +629,7 @@ export class Monorepo {
       .withDirectory('/usr/src', scanRoot, { owner: SONAR_SCANNER_USER })
       .withSecretVariable('SONAR_TOKEN', sonarToken)
       .withEnvVariable('SONAR_HOST_URL', hostUrl)
+      .withEnvVariable('CACHE_BUSTER', Date.now().toString())
       .withExec(['sh', '-c', `sonar-scanner ${sonarArgs} 2>&1; echo $? > /tmp/sonar.exit-code`], {
         expect: ReturnType.Any,
       });
