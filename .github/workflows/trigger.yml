@@ -34,6 +34,7 @@ jobs:
       (inputs.environment == 'pr' && github.ref != 'refs/heads/main') ||
       (inputs.environment != 'pr' && github.ref == 'refs/heads/main')
     uses: ./.github/workflows/ci.yml
+    secrets: inherit
     with:
       environment: ${{ inputs.environment }}
       workspace: ${{ inputs.workspace != 'all' && inputs.workspace || '' }}

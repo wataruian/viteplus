@@ -90,3 +90,4 @@ jobs:
       contents: read
       security-events: write
     uses: ./.github/workflows/main.yml
+    secrets: inherit
