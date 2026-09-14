@@ -14,7 +14,7 @@ jobs:
   sonarqube:
     name: SonarQube
     runs-on: [self-hosted, dagger]
-    timeout-minutes: 15
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write
@@ -35,13 +35,29 @@ jobs:
           version: 0.3.1
           run-install: true
 
-      - name: Install dependencies
+      - name: Check
         shell: bash
-        run: vp install --frozen-lockfile
+        run: vp run -r check
 
-      - name: Generate coverage reports
+      - name: Format
         shell: bash
-        run: vp run -r build && vp run -r test
+        run: vp run -r format
+
+      - name: Lint
+        shell: bash
+        run: vp run -r lint
+
+      - name: Type Check
+        shell: bash
+        run: vp run -r type-check
+
+      - name: Build
+        shell: bash
+        run: vp run -r build
+
+      - name: Test
+        shell: bash
+        run: vp run -r test
 
       - name: Run SonarQube analysis
         shell: bash
