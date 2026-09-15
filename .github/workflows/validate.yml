@@ -31,7 +31,15 @@ jobs:
 
       - name: Lint commits
         shell: bash
-        run: mise run commitlint "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [[ -n "${BASE_SHA}" && -n "${HEAD_SHA}" ]]; then
+            mise run commitlint --from "${BASE_SHA}" --to "${HEAD_SHA}"
+          else
+            mise run commitlint
+          fi
 
       - name: Scan for secrets
         shell: bash
