@@ -60,6 +60,17 @@ fi
 
 "${callArgs[@]}"
 
-if [[ "${doExport}" == "true" && "${catOutput}" == "true" ]]; then
-  cat "${exportPath}/${func}.output"
+if [[ "${doExport}" == "true" ]]; then
+  if [[ "${catOutput}" == "true" ]]; then
+    cat "${exportPath}/${func}.output"
+  fi
+
+  exitCodeFile="${exportPath}/${func}.exit-code"
+  if [[ -f "${exitCodeFile}" ]]; then
+    exitCode="$(cat "${exitCodeFile}")"
+    if [[ "${exitCode}" != "0" ]]; then
+      echo "mise dagger ${func}: failed with exit code ${exitCode} (see ${exitCodeFile})" >&2
+      exit "${exitCode}"
+    fi
+  fi
 fi

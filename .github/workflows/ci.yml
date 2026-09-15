@@ -21,16 +21,45 @@ jobs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
       workspace_list: ${{ steps.workspaces.outputs.workspace_list }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Mise
+        uses: jdx/mise-action@v4.3.0
+        with:
+          version: 2026.7.3
+
       - name: Resolve workspaces
         id: workspaces
         shell: bash
         env:
           WORKSPACE_INPUT: ${{ inputs.workspace }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
+          all="design-system frontend backend"
+
           if [[ -n "${WORKSPACE_INPUT}" ]]; then
             list="${WORKSPACE_INPUT}"
+          elif [[ "${EVENT_NAME}" == "pull_request" && -n "${BASE_SHA}" ]]; then
+            changedFiles="$(git diff --name-only "${BASE_SHA}...HEAD")"
+
+            if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages)/' <<< "${changedFiles}"; then
+              list="${all}"
+            else
+              affected="$(vp pm list -r --json --only-projects --filter "...[${BASE_SHA}]" | jq -r '.[].name')"
+              list=""
+              for workspace in ${all}; do
+                if grep -qx "@lightproject/${workspace}" <<< "${affected}"; then
+                  list+="${workspace} "
+                fi
+              done
+              list="${list% }"
+            fi
           else
-            list="design-system frontend backend"
+            list="${all}"
           fi
 
           json="["
@@ -230,8 +259,8 @@ jobs:
             echo '<!-- semgrep-report -->'
             echo '### Semgrep report'
             echo ''
-            echo '| Workspace | Findings |'
-            echo '|---|---|'
+            echo '| Workspace | Findings | Details |'
+            echo '|---|---|---|'
             for workspace in ${WORKSPACES}; do
               dest="semgrep-artifacts/${workspace}"
               gh run download "${{ github.run_id }}" --name "semgrep-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
@@ -239,9 +268,21 @@ jobs:
               sarif="${dest}/semgrep.sarif"
               if [[ -f "${sarif}" ]]; then
                 count="$(jq '[.runs[0].results[]?] | length' "${sarif}")"
-                echo "| ${workspace} | ${count} |"
+                details="$(
+                  jq -r '
+                    [.runs[0].results[]?
+                      | ( .locations[0].physicalLocation.artifactLocation.uri // "?" ) as $file
+                      | ( .locations[0].physicalLocation.region.startLine // "?" ) as $line
+                      | ( (.message.text // "") | gsub("\n"; " ") | gsub("\\|"; " ") ) as $msg
+                      | "`\(.ruleId)` \($file):\($line) — \($msg)"
+                    ] as $all
+                    | ($all[0:10] + (if ($all | length) > 10 then ["… +\(($all | length) - 10) more"] else [] end))
+                    | if length == 0 then "-" else join("<br>---<br>") end
+                  ' "${sarif}"
+                )"
+                echo "| ${workspace} | ${count} | ${details} |"
               else
-                echo "| ${workspace} | _no report (scan failed or skipped)_ |"
+                echo "| ${workspace} | _no report (scan failed or skipped)_ | |"
               fi
             done
           } > semgrep-body.md
@@ -275,25 +316,52 @@ jobs:
             echo '<!-- sonarqube-report -->'
             echo '### SonarQube report'
             echo ''
-            echo '| Workspace | Quality Gate | New Coverage | New Violations |'
-            echo '|---|---|---|---|'
+            echo '| Workspace | Quality Gate | New Coverage | New Violations | Failed Conditions | Issues |'
+            echo '|---|---|---|---|---|---|'
             for workspace in ${WORKSPACES}; do
               dest="sonar-artifacts/${workspace}"
               gh run download "${{ github.run_id }}" --name "sonar-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
 
               gate_file="${dest}/sonar-quality-gate.json"
+              issues_file="${dest}/sonar-issues.json"
               if [[ -f "${gate_file}" ]]; then
                 status="$(jq -r '.projectStatus.status // "UNKNOWN"' "${gate_file}")"
                 new_coverage="$(jq -r '[.projectStatus.conditions[]? | select(.metricKey == "new_coverage") | .actualValue] | first // "-"' "${gate_file}")"
                 new_violations="$(jq -r '[.projectStatus.conditions[]? | select(.metricKey == "new_violations") | .actualValue] | first // "-"' "${gate_file}")"
                 if [[ "${status}" == "OK" ]]; then
                   gate_display="✅ Passed"
+                  failed_conditions="-"
                 else
                   gate_display="❌ ${status}"
+                  failed_conditions="$(
+                    jq -r '
+                      { GT: ">", LT: "<", EQ: "==", NE: "!=" } as $ops
+                      | [.projectStatus.conditions[]? | select(.status != "OK")
+                          | "`\(.metricKey)` \(.actualValue) \($ops[.comparator] // .comparator) \(.errorThreshold)"]
+                      | if length == 0 then "-" else join("<br>---<br>") end
+                    ' "${gate_file}"
+                  )"
                 fi
-                echo "| ${workspace} | ${gate_display} | ${new_coverage} | ${new_violations} |"
+
+                issues="-"
+                if [[ -f "${issues_file}" ]]; then
+                  issues="$(
+                    jq -r '
+                      [.issues[]?
+                        | ( .component // "" | sub("^[^:]*:"; "") ) as $file
+                        | ( .line // "?" ) as $line
+                        | ( (.message // "") | gsub("\n"; " ") | gsub("\\|"; " ") ) as $msg
+                        | "`\(.rule)` \($file):\($line) — \($msg)"
+                      ] as $all
+                      | ($all[0:10] + (if ($all | length) > 10 then ["… +\(($all | length) - 10) more"] else [] end))
+                      | if length == 0 then "-" else join("<br>---<br>") end
+                    ' "${issues_file}"
+                  )"
+                fi
+
+                echo "| ${workspace} | ${gate_display} | ${new_coverage} | ${new_violations} | ${failed_conditions} | ${issues} |"
               else
-                echo "| ${workspace} | _no report (scan failed or skipped)_ | | |"
+                echo "| ${workspace} | _no report (scan failed or skipped)_ | | | | |"
               fi
             done
           } > sonar-body.md

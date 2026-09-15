@@ -29,7 +29,7 @@ const CURL_IMAGE = 'curlimages/curl:8.14.1';
 const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000';
 const SONAR_LOCAL_DOCKER_NETWORK = 'viteplus-net';
 
-const SEMGREP_RULESETS = [
+const SEMGREP_RULESETS: string[] = [
   '--config=p/security-audit',
   '--config=p/owasp-top-ten',
   '--config=p/javascript',
@@ -37,7 +37,7 @@ const SEMGREP_RULESETS = [
   '--config=p/react',
 ];
 
-const SEMGREP_EXCLUSIONS = [
+const SEMGREP_EXCLUSIONS: string[] = [
   '--exclude-rule=yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag',
   '--exclude-rule=package_managers.renovate.renovate-missing-minimum-release-age.renovate-missing-minimum-release-age',
   '--exclude-rule=yaml.docker-compose.security.privileged-service.privileged-service',
@@ -48,7 +48,7 @@ const SEMGREP_EXCLUSIONS = [
   '--exclude-rule=generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var',
 ];
 
-const SOURCE_IGNORE = [
+const SOURCE_IGNORE: string[] = [
   '**/.DS_Store',
   '**/.idea',
   '.ai-data',
@@ -97,7 +97,7 @@ const SOURCE_IGNORE = [
   '**/*.tsbuildinfo',
 ];
 
-const ROOT_FILES = [
+const ROOT_FILES: string[] = [
   'root.txt',
   'tsconfig.base.json',
   'tsconfig.json',
@@ -105,7 +105,7 @@ const ROOT_FILES = [
   'vite.config.ts',
 ];
 
-const MANIFEST_FILES = [
+const MANIFEST_FILES: string[] = [
   'package.json',
   '**/package.json',
   'pnpm-workspace.yaml',
@@ -139,7 +139,7 @@ const readStringRecord = (value: unknown): Record<string, string> => {
   return result;
 };
 
-const BUILD_ARTIFACT_KEEP = [
+const BUILD_ARTIFACT_KEEP: string[] = [
   'dist',
   'out',
   'storybook-static',
@@ -610,7 +610,6 @@ export class Monorepo {
       .withDirectory('/usr/src', scanRoot)
       .withEnvVariable('SONAR_HOST_URL', hostUrl)
       .withSecretVariable('SONAR_TOKEN', sonarToken)
-      .withEnvVariable('CACHE_BUSTER', Date.now().toString())
       .withExec(['sh', '-c', orchestrationScript]);
 
     return { container, reportTaskPath: '/tmp/report-task.txt' };
@@ -629,7 +628,6 @@ export class Monorepo {
       .withDirectory('/usr/src', scanRoot, { owner: SONAR_SCANNER_USER })
       .withSecretVariable('SONAR_TOKEN', sonarToken)
       .withEnvVariable('SONAR_HOST_URL', hostUrl)
-      .withEnvVariable('CACHE_BUSTER', Date.now().toString())
       .withExec(['sh', '-c', `sonar-scanner ${sonarArgs} 2>&1; echo $? > /tmp/sonar.exit-code`], {
         expect: ReturnType.Any,
       });
