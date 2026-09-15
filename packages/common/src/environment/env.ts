@@ -1,7 +1,9 @@
+import { getImportMetaEnvValue } from '#import-meta-env';
+
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
 
-const getEnv = (key: string, defaultValue?: string): string | undefined => {
+const getProcessEnv = (key: string): string | undefined => {
   try {
     const envGlobal = globalThis as { process?: { env?: Record<string, string | undefined> } };
     const value = envGlobal.process?.env?.[key];
@@ -12,8 +14,24 @@ const getEnv = (key: string, defaultValue?: string): string | undefined => {
     // Ignore error
   }
 
-  return defaultValue;
+  return undefined;
 };
+
+const getImportMetaEnv = (key: string): string | undefined => {
+  try {
+    const value = getImportMetaEnvValue(key);
+    if (value !== undefined) {
+      return value;
+    }
+  } catch {
+    // Ignore error
+  }
+
+  return undefined;
+};
+
+const getEnv = (key: string, defaultValue?: string): string | undefined =>
+  getProcessEnv(key) ?? getImportMetaEnv(key) ?? defaultValue;
 
 const isBrowser = () =>
   (globalThis as { window?: unknown }).window !== undefined &&

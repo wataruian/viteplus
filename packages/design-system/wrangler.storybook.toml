@@ -8,6 +8,8 @@ not_found_handling = "single-page-application"
 [observability.logs]
 enabled = true
 invocation_logs = true
+persist = true
 
 [observability.traces]
 enabled = true
+persist = true

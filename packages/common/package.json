@@ -9,6 +9,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
+  "imports": {
+    "#import-meta-env": "./src/environment/import-meta-env.ts"
+  },
   "exports": {
     ".": [
       {

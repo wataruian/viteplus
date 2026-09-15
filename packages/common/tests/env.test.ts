@@ -24,6 +24,7 @@ import {
   isTest,
   isVitest,
 } from '../src/environment/env';
+import { getImportMetaEnvValue } from '../src/environment/import-meta-env.node';
 
 describe('Environment Helpers', () => {
   beforeEach(() => {
@@ -64,6 +65,43 @@ describe('Environment Helpers', () => {
 
     test('getEnv should return the provided default value when unset', () => {
       expect(getEnv('NON_EXISTENT_ET93', 'fallback-value')).toBe('fallback-value');
+    });
+  });
+
+  describe('import-meta-env.node stub', () => {
+    test('always returns undefined, regardless of the key', () => {
+      expect(getImportMetaEnvValue('ANY_VAR')).toBeUndefined();
+    });
+  });
+
+  describe('import-meta-env (real browser implementation)', () => {
+    test('reads straight off import.meta.env', async () => {
+      vi.doUnmock('#import-meta-env');
+      vi.resetModules();
+      const { getImportMetaEnvValue: realGetImportMetaEnvValue } =
+        await import('../src/environment/import-meta-env');
+
+      expect(realGetImportMetaEnvValue('MODE')).toBe('test');
+      expect(realGetImportMetaEnvValue('REAL_IMPORT_META_ENV_MISSING_KEY')).toBeUndefined();
+
+      vi.doMock('#import-meta-env', () => ({ getImportMetaEnvValue: () => undefined }));
+      vi.resetModules();
+    });
+  });
+
+  describe('getEnv browser (import.meta.env) fallback', () => {
+    test('returns the import.meta.env value when process.env lacks the key', async () => {
+      vi.resetModules();
+      vi.doMock('#import-meta-env', () => ({
+        getImportMetaEnvValue: (key: string) =>
+          key === 'ONLY_IN_IMPORT_META' ? 'from-import-meta' : undefined,
+      }));
+      const { getEnv: getEnvWithMockedImportMeta } = await import('../src/environment/env');
+
+      expect(getEnvWithMockedImportMeta('ONLY_IN_IMPORT_META')).toBe('from-import-meta');
+
+      vi.doUnmock('#import-meta-env');
+      vi.resetModules();
     });
   });
 

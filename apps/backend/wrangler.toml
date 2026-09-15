@@ -8,6 +8,11 @@ compatibility_date = "2026-08-26"
 [observability.logs]
 enabled = true
 invocation_logs = true
+persist = true
 
 [observability.traces]
 enabled = true
+persist = true
+
+[vars]
+ADDITIONAL_CORS_ORIGINS = "https://lightproject-backend.wataru.workers.dev,https://lightproject-frontend.wataru.workers.dev,https://lightproject-design-system.wataru.workers.dev,https://lightproject-storybook.wataru.workers.dev,https://lightproject-admin.wataru.workers.dev,https://lightproject-site.wataru.workers.dev"

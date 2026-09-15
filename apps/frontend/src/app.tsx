@@ -1,3 +1,4 @@
+import { getEnv } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import { tracer } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
@@ -59,6 +60,20 @@ const App = () => {
           logger.info(`VITE_API_URL is set: ${url}`);
         } else {
           logger.info(`VITE_API_URL is not set, using default URL: ${config.viteApiUrl}`);
+        }
+
+        const apiUrl = getEnv('API_URL');
+        if (apiUrl !== undefined && apiUrl !== '') {
+          logger.info('apiUrl is set', { apiUrl });
+        } else {
+          logger.info('apiUrl is not set', { apiUrl });
+        }
+
+        const viteApiUrl = getEnv('VITE_API_URL');
+        if (viteApiUrl !== undefined && viteApiUrl !== '') {
+          logger.info('viteApiUrl is set', { viteApiUrl });
+        } else {
+          logger.info('viteApiUrl is not set', { viteApiUrl });
         }
 
         logger.info('Frontend Start', {

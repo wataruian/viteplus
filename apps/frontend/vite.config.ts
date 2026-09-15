@@ -100,6 +100,7 @@ export default defineConfig(({ mode }): UserConfig => {
       environment: 'jsdom',
       globalSetup: ['tests/helpers/global-setup.ts'],
       isolate: true,
+      setupFiles: ['tests/helpers/setup.ts'],
     },
   };
 });

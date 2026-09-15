@@ -6,14 +6,7 @@ vi.mock('@lightproject/common/configs', async (importOriginal) => {
   return { ...actual, adminUrl: '', apiBaseUrl: '', siteUrl: '' };
 });
 
-const baselineOrigins: string[] = [
-  // 'https://lightproject-backend.wataru.workers.dev',
-  // 'https://lightproject-frontend.wataru.workers.dev',
-  // 'https://lightproject-design-system.wataru.workers.dev',
-  // 'https://lightproject-storybook.wataru.workers.dev',
-  // 'https://lightproject-admin.wataru.workers.dev',
-  // 'https://lightproject-site.wataru.workers.dev',
-];
+const baselineOrigins: string[] = [];
 
 test('no default API/admin/site URL configured leaves only the baseline workers.dev origins', async () => {
   vi.resetModules();

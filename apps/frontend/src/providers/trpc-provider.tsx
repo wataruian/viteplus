@@ -1,12 +1,11 @@
 import type { AppRouter } from '@lightproject/backend';
+import { trpcUrl } from '@lightproject/common/configs';
 import { type TRPCClient, createTRPCClient, httpBatchLink } from '@trpc/client';
-
-import { config } from '../config';
 
 const trpcClient: TRPCClient<AppRouter> = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: config.trpcUrl,
+      url: trpcUrl,
     }),
   ],
 });
