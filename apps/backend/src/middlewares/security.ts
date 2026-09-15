@@ -5,12 +5,12 @@ import { secureHeaders } from 'hono/secure-headers';
 import { config } from '../config';
 
 const allowedOrigins: string[] = [
-  'https://lightproject-backend.wataru.workers.dev',
-  'https://lightproject-frontend.wataru.workers.dev',
-  'https://lightproject-design-system.wataru.workers.dev',
-  'https://lightproject-storybook.wataru.workers.dev',
-  'https://lightproject-admin.wataru.workers.dev',
-  'https://lightproject-site.wataru.workers.dev',
+  // 'https://lightproject-backend.wataru.workers.dev',
+  // 'https://lightproject-frontend.wataru.workers.dev',
+  // 'https://lightproject-design-system.wataru.workers.dev',
+  // 'https://lightproject-storybook.wataru.workers.dev',
+  // 'https://lightproject-admin.wataru.workers.dev',
+  // 'https://lightproject-site.wataru.workers.dev',
 ];
 
 if (apiBaseUrl) {
