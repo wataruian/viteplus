@@ -3,21 +3,28 @@
 
 set -o errexit # Bail out on any error
 
-executingDir=$(pwd)
-currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
-scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+cache="true"
+install="false"
 
-rootDir="${scriptDir}/../.."
-cd "${rootDir}"
-rootDir="$(pwd)"
-
-cache="${1:-"true"}"
-install="${2:-"false"}"
+for arg in "${@}"; do
+  case "${arg}" in
+    --no-cache)
+      cache="false"
+      ;;
+    --install)
+      install="true"
+      ;;
+    *)
+      echo "Usage: mise run check [--no-cache] [--install]"
+      exit 1
+      ;;
+  esac
+done
 
 function executeCommand() {
   local arguments=("${@}")
 
-  local outputsDir="${rootDir}/.outputs"
+  local outputsDir="./.outputs"
   mkdir -p "${outputsDir}"
 
   local commandName="${arguments[*]}"
@@ -39,7 +46,7 @@ function executeCommand() {
     echo "✅ Successfully executed command: \`${commandName}\`"
     
     if [[ "${isBuildCommand}" == "true" ]]; then
-      local stylesGeneratedJsonFile="${rootDir}/packages/design-system/tmp/compile/styles.json"
+      local stylesGeneratedJsonFile="./packages/design-system/tmp/compile/styles.json"
       local stylesMasterJsonFile="${outputsDir}/styles.json"
       
       if [[ -f "${stylesGeneratedJsonFile}" ]]; then

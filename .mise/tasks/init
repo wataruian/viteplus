@@ -3,13 +3,6 @@
 
 set -o errexit # Bail out on any error
 
-executingDir=$(pwd)
-currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
-scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
-
-rootDir="${scriptDir}/../.."
-cd "${rootDir}"
-
 vp run --no-cache init
 
 echo ""

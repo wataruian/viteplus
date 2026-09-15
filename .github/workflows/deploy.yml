@@ -101,11 +101,15 @@ jobs:
           args=()
           if [[ "${WORKSPACE}" == "design-system" || "${WORKSPACE}" == "frontend" ]]; then
             args+=(
-              "VITE_ENV=${VITE_ENV}"
-              "VITE_API_URL=${VITE_API_URL}"
+              "--build-env=VITE_ENV=${VITE_ENV}"
+              "--build-env=VITE_API_URL=${VITE_API_URL}"
             )
           fi
-          mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${tag}" "${args[@]}"
+          mise run dagger publish \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
+            --tag="${tag}" \
+            "${args[@]}"
 
       - name: Deploy
         shell: bash
@@ -123,13 +127,17 @@ jobs:
           case "${WORKSPACE}" in
             design-system|frontend)
               args+=(
-                "VITE_ENV=${VITE_ENV}"
-                "VITE_API_URL=${VITE_API_URL}"
+                "--build-env=VITE_ENV=${VITE_ENV}"
+                "--build-env=VITE_API_URL=${VITE_API_URL}"
               )
               ;;
           esac
 
-          mise run deploy "@lightproject/${WORKSPACE}" "${args[@]}"
+          mise run dagger wrangler \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN \
+            --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID \
+            "${args[@]}"
 
       - name: Smoke test
         shell: bash

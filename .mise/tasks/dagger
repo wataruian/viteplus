@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#MISE description="Call a Dagger Function, forwarding flags, with optional --export"
+
+set -o errexit # Bail out on any error
+
+func="${1:?"Usage: mise run dagger <function> [--workspace=<ws>] [--export[=<path>]] [--no-output] [--<flag>=<value> ...]"}"
+shift
+
+workspace=""
+exportPath=""
+doExport="false"
+catOutput="true"
+daggerArgs=()
+
+while [[ "${#}" -gt 0 ]]; do
+  case "${1}" in
+    --workspace=*)
+      workspace="${1#--workspace=}"
+      daggerArgs+=("${1}")
+      shift
+      ;;
+    --workspace)
+      workspace="${2}"
+      daggerArgs+=("--workspace=${workspace}")
+      shift 2
+      ;;
+    --export)
+      doExport="true"
+      if [[ "${#}" -gt 1 && "${2}" != --* ]]; then
+        exportPath="${2}"
+        shift
+      fi
+      shift
+      ;;
+    --export=*)
+      doExport="true"
+      exportPath="${1#--export=}"
+      shift
+      ;;
+    --no-output)
+      catOutput="false"
+      shift
+      ;;
+    *)
+      daggerArgs+=("${1}")
+      shift
+      ;;
+  esac
+done
+
+callArgs=(dagger call "${func}" "${daggerArgs[@]}")
+
+if [[ "${doExport}" == "true" ]]; then
+  if [[ -z "${exportPath}" ]]; then
+    exportPath="./tmp/artifacts/${workspace##*/}"
+    [[ -z "${workspace}" ]] && exportPath="./tmp/artifacts"
+  fi
+  callArgs+=(export --path="${exportPath}")
+fi
+
+"${callArgs[@]}"
+
+if [[ "${doExport}" == "true" && "${catOutput}" == "true" ]]; then
+  cat "${exportPath}/${func}.output"
+fi

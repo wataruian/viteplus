@@ -3,15 +3,33 @@
 
 set -o errexit # Bail out on any error
 
-executingDir=$(pwd)
-currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
-scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+from="origin/main"
+to="HEAD"
 
-rootDir="${scriptDir}/../.."
-cd "${rootDir}"
-
-from="${1:-"origin/main"}"
-to="${2:-"HEAD"}"
+while [[ "${#}" -gt 0 ]]; do
+  case "$1" in
+    --from=*)
+      from="${1#--from=}"
+      shift
+      ;;
+    --from)
+      from="${2}"
+      shift 2
+      ;;
+    --to=*)
+      to="${1#--to=}"
+      shift
+      ;;
+    --to)
+      to="${2}"
+      shift 2
+      ;;
+    *)
+      echo "Usage: mise run commitlint [--from=<ref>|--from <ref>] [--to=<ref>|--to <ref>]"
+      exit 1
+      ;;
+  esac
+done
 
 vp exec commitlint \
   --from "${from}" \

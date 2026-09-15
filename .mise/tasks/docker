@@ -1,16 +1,33 @@
 #!/usr/bin/env bash
-#MISE description="Run all the services with docker"
+#MISE description="Run or stop the local docker services (up|down)"
 
 set -o errexit # Bail out on any error
 
-executingDir=$(pwd)
-currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
-scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+action="${1:?"Usage: mise run docker <up|down> [--app=<name>]"}"
+shift
 
-rootDir="${scriptDir}/../.."
-cd "${rootDir}"
+if [[ "${action}" != "up" && "${action}" != "down" ]]; then
+  echo "Invalid action: ${action} (expected up or down)"
+  exit 1
+fi
 
-app="${1:-""}"
+app=""
+while [[ "${#}" -gt 0 ]]; do
+  case "${1}" in
+    --app=*)
+      app="${1#--app=}"
+      shift
+      ;;
+    --app)
+      app="${2}"
+      shift 2
+      ;;
+    *)
+      echo "Unknown flag: ${1}"
+      exit 1
+      ;;
+  esac
+done
 
 dockerSocket="${DOCKER_SOCKET:-"/var/run/docker.sock"}"
 
@@ -27,15 +44,22 @@ fi
 for project in "${projects[@]}"; do
   name="${project##*/}"
 
+  if [[ "${action}" == "down" ]]; then
+    echo "Stopping: ${project}"
+    docker rm -f "${name}" || true
+    echo "✅ ${name} is stopped"
+    continue
+  fi
+
   storybookPort=""
   containerPort="80"
   storybookContainerPort="81"
-  buildArgs=()
+  buildEnvArgs=()
 
   if [[ "${name}" == "design-system" || "${name}" == "frontend" ]]; then
-    buildArgs+=(
-      --build-env="VITE_ENV=${VITE_ENV}"
-      --build-env="VITE_API_URL=${VITE_API_URL}"
+    buildEnvArgs+=(
+      "--build-env=VITE_ENV=${VITE_ENV}"
+      "--build-env=VITE_API_URL=${VITE_API_URL}"
     )
   fi
 
@@ -57,14 +81,12 @@ for project in "${projects[@]}"; do
       ;;
   esac
 
-  buildArgs+=(
-    --workspace="${project}"
-    --docker-socket="${dockerSocket}"
-  )
-
   echo "Building: ${project}"
 
-  dagger call load "${buildArgs[@]}"
+  "$(dirname -- "${BASH_SOURCE[0]}")/dagger" load \
+    --workspace="${project}" \
+    --docker-socket="${dockerSocket}" \
+    "${buildEnvArgs[@]}"
 
   docker rm -f "${name}" || true
 

@@ -23,5 +23,8 @@ jq = "1.7.1"
 [env]
 _.file = ".env"
 
+[task_config]
+dir = "{{config_root}}"
+
 [tasks]
 hello = { description = "A simple hello task for testing", run = "echo hello from mise: ${TEST_VAR}" }

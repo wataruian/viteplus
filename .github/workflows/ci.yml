@@ -75,27 +75,45 @@ jobs:
 
       - name: Check
         shell: bash
-        run: mise run dagger-artifact check "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger check --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Format
         shell: bash
-        run: mise run dagger-artifact format "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger format --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Lint
         shell: bash
-        run: mise run dagger-artifact lint "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger lint --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Type Check
         shell: bash
-        run: mise run dagger-artifact type-check "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger type-check --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Build
         shell: bash
-        run: mise run dagger-artifact build "@lightproject/${{ matrix.workspace }}"
+        env:
+          WORKSPACE: ${{ matrix.workspace }}
+          VITE_ENV: ${{ inputs.environment }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: |
+          args=()
+          case "${WORKSPACE}" in
+            design-system|frontend)
+              args+=(
+                "--build-env=VITE_ENV=${VITE_ENV}"
+                "--build-env=VITE_API_URL=${VITE_API_URL}"
+              )
+              ;;
+          esac
+          mise run dagger build-artifact \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --export="./tmp/artifacts/${WORKSPACE}/build" \
+            --no-output \
+            "${args[@]}"
 
       - name: Test
         shell: bash
-        run: mise run dagger-artifact test "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger test --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Upload coverage
         if: always()
@@ -107,7 +125,7 @@ jobs:
 
       - name: Semgrep
         shell: bash
-        run: mise run dagger-artifact semgrep "@lightproject/${{ matrix.workspace }}"
+        run: mise run dagger semgrep --workspace="@lightproject/${{ matrix.workspace }}" --export
 
       - name: Upload Semgrep report
         if: always()
@@ -122,7 +140,15 @@ jobs:
         shell: bash
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mise run dagger-artifact sonar "@lightproject/${{ matrix.workspace }}"
+          WORKSPACE: ${{ matrix.workspace }}
+        run: |
+          args=(--sonar-token=env:SONAR_TOKEN)
+          if [[ -n "${SONAR_HOST_URL}" ]]; then
+            args+=(--sonar-host-url="${SONAR_HOST_URL}")
+          else
+            args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
+          fi
+          mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
 
       - name: Upload SonarQube report
         if: always()

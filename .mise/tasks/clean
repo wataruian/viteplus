@@ -3,17 +3,31 @@
 
 set -o errexit # Bail out on any error
 
-executingDir=$(pwd)
-currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
-scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+modules="false"
+tools="false"
+ai="false"
+install="true"
 
-rootDir="${scriptDir}/../.."
-cd "${rootDir}"
-
-modules="${1:-"true"}"
-tools="${2:-"false"}"
-ai="${3:-"false"}"
-install="${4:-"true"}"
+for arg in "${@}"; do
+  case "${arg}" in
+    --modules)
+      modules="true"
+      ;;
+    --tools)
+      tools="true"
+      ;;
+    --ai)
+      ai="true"
+      ;;
+    --no-install)
+      install="false"
+      ;;
+    *)
+      echo "Usage: mise run clean [--modules] [--tools] [--ai] [--no-install]"
+      exit 1
+      ;;
+  esac
+done
 
 if [[ "${tools}" == "true" ]]; then
   vp run --no-cache clean:tools
