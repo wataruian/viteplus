@@ -948,26 +948,20 @@ export class Monorepo {
   public async wrangler(
     workspace: string,
     cloudflareApiToken: Secret,
-    cloudflareAccountId?: string,
+    cloudflareAccountId: Secret,
     buildEnv?: string[],
   ): Promise<string> {
     const container = await this.build(workspace, buildEnv);
 
     const workspacePath = Monorepo.workspacePath(workspace);
 
-    let deployContainer = container
+    const deployContainer = container
       .withWorkdir(`/app/${workspacePath}`)
-      .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken);
-
-    if (cloudflareAccountId !== undefined && cloudflareAccountId !== '') {
-      deployContainer = deployContainer.withEnvVariable(
-        'CLOUDFLARE_ACCOUNT_ID',
-        cloudflareAccountId,
-      );
-    }
+      .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken)
+      .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId);
 
     return Monorepo.withBuildEnv(deployContainer, workspace, buildEnv)
-      .withExec(['vp', 'exec', 'wrangler', 'deploy'])
+      .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy'])
       .stdout();
   }
 }

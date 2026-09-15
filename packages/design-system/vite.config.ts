@@ -5,23 +5,27 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
 
+  const rootDir = path.resolve(dir, '../..');
+
+  const commonRunProps = getCommonRunProps(rootDir, mode);
+
   const baseConfig = getPackageViteConfig({
     buildCommand:
       'tsx --conditions=typescript ./src/utils/update-stories.ts && tsx --conditions=typescript ./src/utils/compile.ts && vp pack && vp build && storybook build',
     buildType: 'custom',
-    devCommand: 'tsx watch --conditions=typescript ./src/start.ts false',
+    devCommand: 'tsx watch --conditions=typescript ./src/start.ts false false',
     dir,
     excludeDevCommand: false,
     excludeStartCommand: false,
     mode,
-    startCommand: 'tsx watch --conditions=typescript ./src/start.ts true',
+    startCommand: 'tsx watch --conditions=typescript ./src/start.ts true false',
   });
 
   const basePack = baseConfig.pack && !Array.isArray(baseConfig.pack) ? baseConfig.pack : {};
@@ -79,6 +83,26 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     resolve: {
       ...baseConfig.resolve,
+    },
+    run: {
+      ...baseConfig.run,
+      tasks: {
+        ...baseConfig.run?.tasks,
+        'wrangler:delete': {
+          command:
+            'wrangler delete --config wrangler.design-system.toml && wrangler delete --config wrangler.storybook.toml',
+          ...commonRunProps,
+        },
+        'wrangler:deploy': {
+          command:
+            'wrangler deploy --config wrangler.design-system.toml && wrangler deploy --config wrangler.storybook.toml',
+          ...commonRunProps,
+        },
+        'wrangler:dev': {
+          cache: false,
+          command: 'tsx watch --conditions=typescript ./src/start.ts false true',
+        },
+      },
     },
     server: {
       port: designSystemPort,

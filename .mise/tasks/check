@@ -7,12 +7,12 @@ executingDir=$(pwd)
 currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
 scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 
-cache="${1:-"true"}"
-install="${2:-"false"}"
-
 rootDir="${scriptDir}/../.."
 cd "${rootDir}"
 rootDir="$(pwd)"
+
+cache="${1:-"true"}"
+install="${2:-"false"}"
 
 function executeCommand() {
   local arguments=("${@}")

@@ -39,8 +39,16 @@ export default defineConfig(({ mode }): UserConfig => {
       ...baseConfig.run,
       tasks: {
         ...baseConfig.run?.tasks,
-        wrangler: {
-          command: `wrangler dev --port ${port}`,
+        'wrangler:delete': {
+          command: `wrangler delete`,
+          ...commonRunProps,
+        },
+        'wrangler:deploy': {
+          command: `wrangler deploy`,
+          ...commonRunProps,
+        },
+        'wrangler:dev': {
+          command: `wrangler dev --port ${port} --show-interactive-dev-session=false`,
           ...commonRunProps,
         },
       },

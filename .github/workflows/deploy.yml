@@ -108,9 +108,20 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
           WORKSPACE: ${{ matrix.workspace }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
-          echo "✅ All good!"
+
+          case "${WORKSPACE}" in
+            frontend)
+              mise run deploy "@lightproject/${WORKSPACE}" "" "" "VITE_API_URL=${VITE_API_URL}"
+              ;;
+            *)
+              mise run deploy "@lightproject/${WORKSPACE}"
+              ;;
+          esac
 
       # Skips gracefully until HEALTH_CHECK_URL is configured per environment
       # (GitHub Environment variable), so this starts enforcing itself the

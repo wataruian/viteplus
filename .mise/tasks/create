@@ -3,6 +3,13 @@
 
 set -o errexit # Bail out on any error
 
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
 type="${1:-"backend"}"
 name="${2:-"sample"}"
 

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#MISE description="Deploy workspace to cloudflare workers"
+
+set -o errexit # Bail out on any error
+
+executingDir=$(pwd)
+currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
+scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+rootDir="${scriptDir}/../.."
+cd "${rootDir}"
+
+workspace="${1:?"Usage: mise run deploy <workspace> [cloudflare_account_id] [cloudflare_api_token] [key=value ...]"}"
+cloudflareAccountId="${2:-"${CLOUDFLARE_ACCOUNT_ID}"}"
+cloudflareApiToken="${3:-"${CLOUDFLARE_API_TOKEN}"}"
+buildEnvArgs=("${@:4}")
+
+export CLOUDFLARE_ACCOUNT_ID="${cloudflareAccountId}"
+export CLOUDFLARE_API_TOKEN="${cloudflareApiToken}"
+
+args=(
+  dagger call wrangler
+  --workspace="${workspace}"
+  --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN
+  --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID
+)
+
+for buildEnv in "${buildEnvArgs[@]}"; do
+  args+=(--build-env="${buildEnv}")
+done
+
+"${args[@]}"

@@ -5,12 +5,16 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
+
+  const rootDir = path.resolve(dir, '../..');
+
+  const commonRunProps = getCommonRunProps(rootDir, mode);
 
   const baseConfig = getPackageViteConfig({
     buildType: 'build',
@@ -64,6 +68,24 @@ export default defineConfig(({ mode }): UserConfig => {
         '@lightproject/backend': path.resolve(dir, '../../apps/backend/src/client.ts'),
         '@lightproject/common': path.resolve(dir, '../../packages/common/src'),
         '@lightproject/design-system': path.resolve(dir, '../../packages/design-system/src'),
+      },
+    },
+    run: {
+      ...baseConfig.run,
+      tasks: {
+        ...baseConfig.run?.tasks,
+        'wrangler:delete': {
+          command: `wrangler delete`,
+          ...commonRunProps,
+        },
+        'wrangler:deploy': {
+          command: `wrangler deploy`,
+          ...commonRunProps,
+        },
+        'wrangler:dev': {
+          command: `wrangler dev --port ${port} --show-interactive-dev-session=false`,
+          ...commonRunProps,
+        },
       },
     },
     server: {
