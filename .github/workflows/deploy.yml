@@ -99,18 +99,18 @@ jobs:
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
-          buildEnvArgs=()
+          args=()
           if [[ "${WORKSPACE}" == "design-system" || "${WORKSPACE}" == "frontend" ]]; then
-            buildEnvArgs+=(
+            args+=(
               "VITE_ENV=${VITE_ENV}"
               "VITE_API_URL=${VITE_API_URL}"
             )
           else
-            buildEnvArgs+=(
+            args+=(
               "ENV=${ENV}"
             )
           fi
-          mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${tag}" "${buildEnvArgs[@]}"
+          mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${tag}" "${args[@]}"
 
       - name: Deploy
         shell: bash
@@ -125,14 +125,22 @@ jobs:
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
+          args=()
           case "${WORKSPACE}" in
             design-system|frontend)
-              mise run deploy "@lightproject/${WORKSPACE}" "" "" "VITE_ENV=${VITE_ENV}" "VITE_API_URL=${VITE_API_URL}"
+              args+=(
+                "VITE_ENV=${VITE_ENV}"
+                "VITE_API_URL=${VITE_API_URL}"
+              )
               ;;
             *)
-              mise run deploy "@lightproject/${WORKSPACE}" "" "" "ENV=${ENV}"
+              args+=(
+                "ENV=${ENV}"
+              )
               ;;
           esac
+
+          mise run deploy "@lightproject/${WORKSPACE}" "${args[@]}"
 
       - name: Smoke test
         shell: bash

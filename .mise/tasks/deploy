@@ -10,13 +10,8 @@ scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 rootDir="${scriptDir}/../.."
 cd "${rootDir}"
 
-workspace="${1:?"Usage: mise run deploy <workspace> [cloudflare_account_id] [cloudflare_api_token] [key=value ...]"}"
-cloudflareAccountId="${2:-"${CLOUDFLARE_ACCOUNT_ID}"}"
-cloudflareApiToken="${3:-"${CLOUDFLARE_API_TOKEN}"}"
-buildEnvArgs=("${@:4}")
-
-export CLOUDFLARE_ACCOUNT_ID="${cloudflareAccountId}"
-export CLOUDFLARE_API_TOKEN="${cloudflareApiToken}"
+workspace="${1:?"Usage: mise run deploy <workspace> [key=value ...]"}"
+buildEnvArgs=("${@:2}")
 
 args=(
   dagger call wrangler
