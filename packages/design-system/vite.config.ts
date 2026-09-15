@@ -99,7 +99,6 @@ export default defineConfig(({ mode }): UserConfig => {
           ...commonRunProps,
         },
         'wrangler:dev': {
-          cache: false,
           command: 'tsx watch --conditions=typescript ./src/start.ts false true',
         },
       },

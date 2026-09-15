@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Start the dev or prod server"
+#MISE description="Start the dev, prod, or wrangler server"
 
 set -o errexit # Bail out on any error
 
@@ -12,7 +12,7 @@ cd "${rootDir}"
 
 mode="${1:-"dev"}"
 
-if [[ "${mode}" != "dev" && "${mode}" != "prod" ]]; then
+if [[ "${mode}" != "dev" && "${mode}" != "prod" && "${mode}" != "wrangler" ]]; then
   echo "Invalid mode: ${mode}"
   exit 1
 fi

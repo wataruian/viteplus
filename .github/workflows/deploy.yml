@@ -123,32 +123,45 @@ jobs:
               ;;
           esac
 
-      # Skips gracefully until HEALTH_CHECK_URL is configured per environment
-      # (GitHub Environment variable), so this starts enforcing itself the
-      # moment real deploy infra exists instead of needing a follow-up wire-up.
       - name: Smoke test
         shell: bash
         env:
-          HEALTH_CHECK_URL: ${{ vars.HEALTH_CHECK_URL }}
           WORKSPACE: ${{ matrix.workspace }}
         run: |
-          echo "Success"
-          exit 0
+          case "${WORKSPACE}" in
+            backend)
+              urls=("https://lightproject-backend.wataru.workers.dev")
+              ;;
+            frontend)
+              urls=("https://lightproject-frontend.wataru.workers.dev")
+              ;;
+            design-system)
+              urls=(
+                "https://lightproject-design-system.wataru.workers.dev"
+                "https://lightproject-storybook.wataru.workers.dev"
+              )
+              ;;
+            *)
+              echo "::warning::No health check URL configured for ${WORKSPACE}; skipping."
+              exit 0
+              ;;
+          esac
 
-          # if [[ -z "${HEALTH_CHECK_URL}" ]]; then
-          #   echo "::warning::HEALTH_CHECK_URL is not set for this environment; skipping smoke test for ${WORKSPACE}"
-          #   exit 0
-          # fi
+          for url in "${urls[@]}"; do
+            passed=false
+            for attempt in 1 2 3 4 5; do
+              status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${url}" || echo "000")"
+              if [[ "${status}" == "200" ]]; then
+                echo "Smoke test passed for ${url} (HTTP ${status})"
+                passed=true
+                break
+              fi
+              echo "Attempt ${attempt}/5 for ${url}: HTTP ${status}, retrying in 5s..."
+              sleep 5
+            done
 
-          # for attempt in 1 2 3 4 5; do
-          #   status="$(curl -s -o /dev/null -w '%{http_code}' "${HEALTH_CHECK_URL}" || echo "000")"
-          #   if [[ "${status}" == "200" ]]; then
-          #     echo "Smoke test passed (HTTP ${status})"
-          #     exit 0
-          #   fi
-          #   echo "Attempt ${attempt}/5: HTTP ${status}, retrying in 5s..."
-          #   sleep 5
-          # done
-
-          # echo "::error::Smoke test failed for ${WORKSPACE} against ${HEALTH_CHECK_URL}"
-          # exit 1
+            if [[ "${passed}" != true ]]; then
+              echo "::error::Smoke test failed for ${url}"
+              exit 1
+            fi
+          done

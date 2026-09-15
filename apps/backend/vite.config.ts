@@ -48,7 +48,7 @@ export default defineConfig(({ mode }): UserConfig => {
           ...commonRunProps,
         },
         'wrangler:dev': {
-          command: `wrangler dev --port ${port} --show-interactive-dev-session=false`,
+          command: `wrangler dev --port ${port} --inspector-port 9230 --show-interactive-dev-session=false`,
           ...commonRunProps,
         },
       },
