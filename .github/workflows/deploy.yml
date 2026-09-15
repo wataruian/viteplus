@@ -91,7 +91,6 @@ jobs:
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
-          ENV: ${{ inputs.environment }}
           VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           WORKSPACE: ${{ matrix.workspace }}
@@ -105,10 +104,6 @@ jobs:
               "VITE_ENV=${VITE_ENV}"
               "VITE_API_URL=${VITE_API_URL}"
             )
-          else
-            args+=(
-              "ENV=${ENV}"
-            )
           fi
           mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${tag}" "${args[@]}"
 
@@ -117,7 +112,6 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
           WORKSPACE: ${{ matrix.workspace }}
-          ENV: ${{ inputs.environment }}
           VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -131,11 +125,6 @@ jobs:
               args+=(
                 "VITE_ENV=${VITE_ENV}"
                 "VITE_API_URL=${VITE_API_URL}"
-              )
-              ;;
-            *)
-              args+=(
-                "ENV=${ENV}"
               )
               ;;
           esac
