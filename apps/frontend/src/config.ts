@@ -1,4 +1,4 @@
-import { apiBaseUrl } from '@lightproject/common/configs';
+import { apiBaseUrl, trpcEndpoint } from '@lightproject/common/configs';
 import { commonEnvSchema, validateEnv } from '@lightproject/common/environment';
 import { z } from 'zod';
 
@@ -23,6 +23,9 @@ const config = {
   get adminPort() {
     const port = get('ADMIN_PORT') ?? get('VITE_ADMIN_PORT');
     return port !== undefined && port !== '' ? Math.trunc(Number(port)) : 3001;
+  },
+  get trpcUrl() {
+    return this.viteApiUrl + trpcEndpoint;
   },
   get viteApiUrl() {
     const url = get('API_URL') ?? get('VITE_API_URL');

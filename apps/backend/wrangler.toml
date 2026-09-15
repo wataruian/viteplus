@@ -4,3 +4,10 @@ main = "src/runtimes/edge.ts"
 compatibility_date = "2026-08-26"
 # uncomment when nodejs_compat is needed
 # compatibility_flags = ["nodejs_compat"]
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = true
