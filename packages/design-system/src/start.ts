@@ -1,4 +1,5 @@
 import { execFileSync, spawn } from 'node:child_process';
+import { writeSync } from 'node:fs';
 import path from 'node:path';
 
 const FORCE_KILL_GRACE_PERIOD_MS = 5000;
@@ -78,7 +79,7 @@ const collectDescendantPids = (rootPid: number): number[] => {
 
   const getChildPids = (): number[] => {
     try {
-      return execFileSync('pgrep', ['-P', String(rootPid)])
+      return execFileSync('/usr/bin/pgrep', ['-P', String(rootPid)])
         .toString()
         .split('\n')
         .map((line) => Number(line.trim()))
@@ -126,12 +127,12 @@ const cleanup = () => {
   if (isWrangler) {
     const deadline = Date.now() + FORCE_KILL_GRACE_PERIOD_MS;
 
+    if (descendantPids.some((pid) => isPidAlive(pid))) {
+      writeSync(1, '[cleanup] Still exiting, waiting for processes to stop...\n');
+    }
+
     while (Date.now() < deadline && descendantPids.some((pid) => isPidAlive(pid))) {
-      try {
-        execFileSync('sleep', ['0.2']);
-      } catch {
-        break;
-      }
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200);
     }
 
     for (const pid of descendantPids) {

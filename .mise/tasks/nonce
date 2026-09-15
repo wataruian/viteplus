@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#MISE description="Replace nonce.txt with a freshly generated nonce"
+
+set -o errexit # Bail out on any error
+
+usage="Usage: mise run nonce [--root | --all | --workspace=@lightproject/<name>]"
+
+workspace=""
+mode="root"
+
+while [[ "${#}" -gt 0 ]]; do
+  case "${1}" in
+    --root)
+      mode="root"
+      shift
+      ;;
+    --all)
+      mode="all"
+      shift
+      ;;
+    --workspace=*)
+      workspace="${1#--workspace=}"
+      mode="workspace"
+      shift
+      ;;
+    --workspace)
+      workspace="${2:?"${usage}"}"
+      mode="workspace"
+      shift 2
+      ;;
+    *)
+      echo "${usage}"
+      exit 1
+      ;;
+  esac
+done
+
+write_nonce() {
+  local noncePath="${1%/}/nonce.txt"
+  head -c 32 /dev/urandom | base64 > "${noncePath}"
+  echo "✅ ${noncePath} regenerated"
+}
+
+case "${mode}" in
+  root)
+    write_nonce "."
+    ;;
+  all)
+    while IFS= read -r path; do
+      write_nonce "${path}"
+    done < <(vp pm list -r --json --only-projects | jq -r '.[].path')
+    ;;
+  workspace)
+    target="$(vp pm list -r --json --only-projects --filter "${workspace}" | jq -r '.[0].path // empty')"
+    if [[ -z "${target}" ]]; then
+      echo "Workspace not found: ${workspace}"
+      exit 1
+    fi
+    write_nonce "${target}"
+    ;;
+esac
