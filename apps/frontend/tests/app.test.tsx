@@ -47,8 +47,6 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
   vi.unstubAllEnvs();
   vi.stubEnv('LOG_FORMAT', 'json');
   vi.stubEnv('LOG_LEVEL', 'info');
-  vi.stubEnv('API_URL', apiUrl);
-  vi.stubEnv('VITE_API_URL', apiUrl);
 
   vi.doMock('@lightproject/common/configs', () => ({
     apiBaseUrl: apiUrl ?? defaultApiUrl,
