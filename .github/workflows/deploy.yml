@@ -91,6 +91,8 @@ jobs:
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
+          ENV: ${{ inputs.environment }}
+          VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           WORKSPACE: ${{ matrix.workspace }}
           VERSION_REF: ${{ inputs.ref }}
@@ -98,8 +100,15 @@ jobs:
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
           buildEnvArgs=()
-          if [[ "${WORKSPACE}" == "frontend" ]]; then
-            buildEnvArgs+=("VITE_API_URL=${VITE_API_URL}")
+          if [[ "${WORKSPACE}" == "design-system" || "${WORKSPACE}" == "frontend" ]]; then
+            buildEnvArgs+=(
+              "VITE_ENV=${VITE_ENV}"
+              "VITE_API_URL=${VITE_API_URL}"
+            )
+          else
+            buildEnvArgs+=(
+              "ENV=${ENV}"
+            )
           fi
           mise run publish "@lightproject/${WORKSPACE}" "${REGISTRY_ADDRESS}/${WORKSPACE}" "${tag}" "${buildEnvArgs[@]}"
 
@@ -108,6 +117,8 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
           WORKSPACE: ${{ matrix.workspace }}
+          ENV: ${{ inputs.environment }}
+          VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -115,11 +126,11 @@ jobs:
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
           case "${WORKSPACE}" in
-            frontend)
-              mise run deploy "@lightproject/${WORKSPACE}" "" "" "VITE_API_URL=${VITE_API_URL}"
+            design-system|frontend)
+              mise run deploy "@lightproject/${WORKSPACE}" "" "" "VITE_ENV=${VITE_ENV}" "VITE_API_URL=${VITE_API_URL}"
               ;;
             *)
-              mise run deploy "@lightproject/${WORKSPACE}"
+              mise run deploy "@lightproject/${WORKSPACE}" "" "" "ENV=${ENV}"
               ;;
           esac
 

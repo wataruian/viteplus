@@ -12,64 +12,61 @@ cd "${rootDir}"
 
 func="${1:?"Usage: mise run dagger-artifact <function> [workspace] [path]"}"
 
+command="${func}"
+checkOutput="true"
+checkExitCode="true"
+
+args=()
+if [[ "${func}" == "root" || \
+  "${func}" == "madge" || \
+  "${func}" == "ready" ]]; then
+  path="${2:-"./tmp/artifacts"}"
+else
+  workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"
+  path="${3:-"./tmp/artifacts/${workspace##*/}"}"
+  checkExitCode="false"
+  args+=(--workspace="${workspace}")
+fi
+
+outputFile="${path}/${func}.output"
+exitCodeFile="${path}/${func}.exit-code"
+exportPath="${path}"
+
 case "${func}" in
-  root|madge|ready)
-    path="${2:-"./tmp/artifacts"}"
-    dagger call "${func}" export --path="${path}" && cat "${path}/${func}.output"
-    ;;
   build)
-    workspace="${2:?"Usage: mise run dagger-artifact build <workspace> [path]"}"
-    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    buildArgs=()
+    command="build-artifact"
+    exportPath="${path}/build"
+    checkOutput="false"
+    checkExitCode="false"
     case "${workspace}" in
-      "@lightproject/frontend")
-        buildArgs+=(
-          --build-env="VITE_API_URL=${VITE_API_URL}"
-        )
-        ;;
-      *)
-        ;;
+      "@lightproject/design-system"|"@lightproject/frontend")
+        args+=(--build-env="VITE_ENV=${VITE_ENV}")
+        args+=(--build-env="VITE_API_URL=${VITE_API_URL}")
+      ;;
     esac
-    buildArgs+=(
-      --workspace="${workspace}"
-    )
-    dagger call build-artifact "${buildArgs[@]}" export --path="${path}/build"
-    ;;
-  test)
-    workspace="${2:?"Usage: mise run dagger-artifact test <workspace> [path]"}"
-    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    dagger call test --workspace="${workspace}" export --path="${path}"
-    cat "${path}/test.output"
-    exit "$(cat "${path}/test.exit-code")"
-    ;;
-  semgrep)
-    workspace="${2:?"Usage: mise run dagger-artifact semgrep <workspace> [path]"}"
-    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    dagger call semgrep --workspace="${workspace}" export --path="${path}"
-    cat "${path}/semgrep.output"
-    exit "$(cat "${path}/semgrep.exit-code")"
     ;;
   sonar)
-    workspace="${2:?"Usage: mise run dagger-artifact sonar <workspace> [path] [sonar_host_url]"}"
-    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    sonarHostUrl="${4:-"${SONAR_HOST_URL}"}"
-    sonarArgs=(
-      --workspace="${workspace}"
-      --sonar-token=env:SONAR_TOKEN
-    )
-    if [[ -n "${sonarHostUrl:-}" ]]; then
-      sonarArgs+=(--sonar-host-url="${sonarHostUrl}")
+    args+=(--sonar-token=env:SONAR_TOKEN)
+    if [[ -n "${SONAR_HOST_URL}" ]]; then
+      args+=(--sonar-host-url="${SONAR_HOST_URL}")
     else
-      dockerSocket="${DOCKER_SOCKET:-"/var/run/docker.sock"}"
-      sonarArgs+=(--docker-socket="${dockerSocket}")
+      args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
     fi
-    dagger call sonar "${sonarArgs[@]}" export --path="${path}"
-    cat "${path}/sonar.output"
-    exit "$(cat "${path}/sonar.exit-code")"
     ;;
   *)
-    workspace="${2:?"Usage: mise run dagger-artifact <function> <workspace> [path]"}"
-    path="${3:-"./tmp/artifacts/${workspace##*/}"}"
-    dagger call "${func}" --workspace="${workspace}" export --path="${path}" && cat "${path}/${func}.output"
+    checkExitCode="false"
     ;;
 esac
+
+args=(dagger call "${command}" "${args[@]}")
+args+=(export --path="${exportPath}")
+
+"${args[@]}"
+
+if [[ "${checkOutput}" == "true" ]]; then
+  cat "${outputFile}"
+fi
+
+if [[ "${checkExitCode}" == "true" ]]; then
+  exit "$(cat "${exitCodeFile}")"
+fi

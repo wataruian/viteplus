@@ -31,20 +31,25 @@ for project in "${projects[@]}"; do
   containerPort="80"
   storybookContainerPort="81"
   buildArgs=()
+
+  if [[ "${name}" == "design-system" || "${name}" == "frontend" ]]; then
+    buildArgs+=(
+      --build-env="VITE_ENV=${VITE_ENV}"
+      --build-env="VITE_API_URL=${VITE_API_URL}"
+    )
+  fi
+
   case "${name}" in
     "backend")
       port="${API_PORT:-"3000"}"
       containerPort="3000"
       ;;
-    "frontend")
-      port="${ADMIN_PORT:-"3001"}"
-      buildArgs+=(
-        --build-env="VITE_API_URL=${VITE_API_URL}"
-      )
-      ;;
     "design-system")
       port="${DESIGN_SYSTEM_PORT:-"6007"}"
       storybookPort="${STORYBOOK_PORT:-"6006"}"
+      ;;
+    "frontend")
+      port="${ADMIN_PORT:-"3001"}"
       ;;
     *)
       echo "Invalid project: ${project}"
