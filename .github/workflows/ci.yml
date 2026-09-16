@@ -87,24 +87,10 @@ jobs:
           echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
           echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
 
-  # Dependency graph (mirrors `vp pm list -r --json --only-projects`):
-  #   common, design-system, library -> no internal deps
-  #   backend                        -> common
-  #   frontend                       -> common, design-system, backend
-  #
-  # Each job only runs if its workspace is in the affected list (`setup` output).
-  # The `if:` on a dependent job explicitly ignores upstream `skipped` results
-  # (a dependency wasn't affected, so nothing to fail) but blocks on real
-  # `failure`/`cancelled` results. The leading `!cancelled()` is required for
-  # this to work at all: GitHub silently ANDs an implicit `success()` onto any
-  # `if:` that doesn't literally call success()/failure()/cancelled()/always(),
-  # and that implicit success() is false whenever a needed job was `skipped`
-  # (e.g. design-system, when unaffected) - which would skip the dependent job
-  # even when it IS affected, regardless of the explicit result checks below.
-
   library:
     needs: setup
     if: >-
+      !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'library')
     permissions:
@@ -118,6 +104,7 @@ jobs:
   common:
     needs: setup
     if: >-
+      !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'common')
     permissions:
@@ -131,6 +118,7 @@ jobs:
   design-system:
     needs: setup
     if: >-
+      !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
     permissions:
