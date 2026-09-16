@@ -89,6 +89,7 @@ jobs:
 
   library:
     needs: setup
+    name: verify
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -103,6 +104,7 @@ jobs:
 
   common:
     needs: setup
+    name: verify
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -117,6 +119,7 @@ jobs:
 
   design-system:
     needs: setup
+    name: verify
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -131,6 +134,7 @@ jobs:
 
   backend:
     needs: [setup, common]
+    name: verify
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -147,6 +151,7 @@ jobs:
 
   frontend:
     needs: [setup, common, design-system, backend]
+    name: verify
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
