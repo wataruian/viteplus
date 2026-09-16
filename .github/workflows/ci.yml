@@ -95,9 +95,12 @@ jobs:
   # Each job only runs if its workspace is in the affected list (`setup` output).
   # The `if:` on a dependent job explicitly ignores upstream `skipped` results
   # (a dependency wasn't affected, so nothing to fail) but blocks on real
-  # `failure`/`cancelled` results, since GitHub's default `needs:` condition
-  # (`success()`) would otherwise treat "skipped" the same as "failed" and
-  # skip the dependent job even when it IS affected.
+  # `failure`/`cancelled` results. The leading `!cancelled()` is required for
+  # this to work at all: GitHub silently ANDs an implicit `success()` onto any
+  # `if:` that doesn't literally call success()/failure()/cancelled()/always(),
+  # and that implicit success() is false whenever a needed job was `skipped`
+  # (e.g. design-system, when unaffected) - which would skip the dependent job
+  # even when it IS affected, regardless of the explicit result checks below.
 
   library:
     needs: setup
@@ -141,6 +144,7 @@ jobs:
   backend:
     needs: [setup, common]
     if: >-
+      !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
       needs.common.result != 'failure' &&
@@ -156,6 +160,7 @@ jobs:
   frontend:
     needs: [setup, common, design-system, backend]
     if: >-
+      !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
       needs.common.result != 'failure' &&
