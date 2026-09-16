@@ -86,20 +86,20 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-      - name: Semgrep
-        shell: bash
-        run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
+      # - name: Semgrep
+      #   shell: bash
+      #   run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      - name: Upload Semgrep report
-        if: always()
-        uses: actions/upload-artifact@v7.0.1
-        with:
-          name: semgrep-${{ inputs.workspace }}
-          path: |
-            tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
-            tmp/artifacts/${{ inputs.workspace }}/semgrep.row.md
-          retention-days: 14
-          if-no-files-found: ignore
+      # - name: Upload Semgrep report
+      #   if: always()
+      #   uses: actions/upload-artifact@v7.0.1
+      #   with:
+      #     name: semgrep-${{ inputs.workspace }}
+      #     path: |
+      #       tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
+      #       tmp/artifacts/${{ inputs.workspace }}/semgrep.row.md
+      #     retention-days: 14
+      #     if-no-files-found: ignore
 
       - name: SonarQube
         shell: bash

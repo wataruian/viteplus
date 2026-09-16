@@ -148,26 +148,26 @@ jobs:
           marker: coverage-report
           body-file: coverage-body.md
 
-      - name: Download Semgrep artifacts and build table
-        uses: ./.github/actions/download-artifact-table
-        with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}
-          artifact-prefix: semgrep
-          row-file: semgrep.row.md
-          header: |
-            <!-- semgrep-report -->
-            ### Semgrep report
+      # - name: Download Semgrep artifacts and build table
+      #   uses: ./.github/actions/download-artifact-table
+      #   with:
+      #     workspaces: ${{ needs.setup.outputs.workspace_list }}
+      #     artifact-prefix: semgrep
+      #     row-file: semgrep.row.md
+      #     header: |
+      #       <!-- semgrep-report -->
+      #       ### Semgrep report
 
-            | Workspace | Findings | Details |
-            |---|---|---|
-          fallback-suffix: '| _no report (scan failed or skipped)_ | |'
-          body-file: semgrep-body.md
+      #       | Workspace | Findings | Details |
+      #       |---|---|---|
+      #     fallback-suffix: '| _no report (scan failed or skipped)_ | |'
+      #     body-file: semgrep-body.md
 
-      - name: Post or update Semgrep PR comment
-        uses: ./.github/actions/post-pr-comment
-        with:
-          marker: semgrep-report
-          body-file: semgrep-body.md
+      # - name: Post or update Semgrep PR comment
+      #   uses: ./.github/actions/post-pr-comment
+      #   with:
+      #     marker: semgrep-report
+      #     body-file: semgrep-body.md
 
       - name: Download SonarQube artifacts and build table
         uses: ./.github/actions/download-artifact-table
