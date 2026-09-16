@@ -78,133 +78,58 @@ jobs:
           done
           json="${json%,}]"
 
+          echo "::group::Resolved workspaces"
+          echo "before sha: ${BEFORE_SHA}"
+          echo "changed files:"
+          echo "${changedFiles:-<none>}"
+          echo "affected (vp pm list):"
+          echo "${affected:-<none>}"
+          echo "resolved list: ${list}"
+          echo "workspaces json: ${json}"
+          echo "::endgroup::"
+
           echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
 
-  deploy:
-    name: ${{ matrix.workspace }}
+  design-system:
     needs: setup
-    runs-on: [self-hosted, dagger]
-    timeout-minutes: 20
-    environment: ${{ inputs.environment }}
+    if: >-
+      !cancelled() &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
     permissions:
       contents: read
-    env:
-      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
-    strategy:
-      fail-fast: false
-      matrix:
-        workspace: ${{ fromJson(needs.setup.outputs.workspaces) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ inputs.ref || github.ref }}
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: design-system
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
 
-      - name: Set up Mise
-        uses: jdx/mise-action@v4.3.0
-        with:
-          version: 2026.7.3
+  backend:
+    needs: setup
+    if: >-
+      !cancelled() &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'backend')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: backend
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
 
-      - name: Setup configs
-        shell: bash
-        run: |
-          echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
-
-      - name: Setup Dagger
-        shell: bash
-        run: dagger develop
-
-      - name: Build and publish
-        shell: bash
-        env:
-          REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
-          VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          WORKSPACE: ${{ matrix.workspace }}
-          VERSION_REF: ${{ inputs.ref }}
-        run: |
-          tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
-
-          args=()
-          if [[ "${WORKSPACE}" == "design-system" || "${WORKSPACE}" == "frontend" ]]; then
-            args+=(
-              "--build-env=VITE_ENV=${VITE_ENV}"
-              "--build-env=VITE_API_URL=${VITE_API_URL}"
-            )
-          fi
-          mise run dagger publish \
-            --workspace="@lightproject/${WORKSPACE}" \
-            --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
-            --tag="${tag}" \
-            "${args[@]}"
-
-      - name: Deploy
-        shell: bash
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-          WORKSPACE: ${{ matrix.workspace }}
-          VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
-
-          args=()
-          case "${WORKSPACE}" in
-            design-system|frontend)
-              args+=(
-                "--build-env=VITE_ENV=${VITE_ENV}"
-                "--build-env=VITE_API_URL=${VITE_API_URL}"
-              )
-              ;;
-          esac
-
-          mise run dagger wrangler \
-            --workspace="@lightproject/${WORKSPACE}" \
-            --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN \
-            --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID \
-            "${args[@]}"
-
-      - name: Smoke test
-        shell: bash
-        env:
-          WORKSPACE: ${{ matrix.workspace }}
-        run: |
-          case "${WORKSPACE}" in
-            backend)
-              urls=("https://lightproject-backend.wataru.workers.dev")
-              ;;
-            frontend)
-              urls=("https://lightproject-frontend.wataru.workers.dev")
-              ;;
-            design-system)
-              urls=(
-                "https://lightproject-design-system.wataru.workers.dev"
-                "https://lightproject-storybook.wataru.workers.dev"
-              )
-              ;;
-            *)
-              echo "::warning::No health check URL configured for ${WORKSPACE}; skipping."
-              exit 0
-              ;;
-          esac
-
-          for url in "${urls[@]}"; do
-            passed=false
-            for attempt in 1 2 3 4 5; do
-              status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${url}" || echo "000")"
-              if [[ "${status}" == "200" ]]; then
-                echo "Smoke test passed for ${url} (HTTP ${status})"
-                passed=true
-                break
-              fi
-              echo "Attempt ${attempt}/5 for ${url}: HTTP ${status}, retrying in 5s..."
-              sleep 5
-            done
-
-            if [[ "${passed}" != true ]]; then
-              echo "::error::Smoke test failed for ${url}"
-              exit 1
-            fi
-          done
+  frontend:
+    needs: [setup, backend]
+    if: >-
+      !cancelled() &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.backend.result != 'failure' &&
+      needs.backend.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: frontend
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
