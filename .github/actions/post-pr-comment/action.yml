@@ -1,0 +1,34 @@
+name: 'Post or update PR comment'
+description: 'Create a PR comment, or update it in place if one with the same marker already exists'
+
+inputs:
+  marker:
+    description: 'HTML comment marker used to find an existing comment to update (e.g. coverage-report)'
+    required: true
+  body-file:
+    description: 'Path to the markdown file containing the comment body'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Post or update PR comment
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        MARKER: ${{ inputs.marker }}
+        BODY_FILE: ${{ inputs.body-file }}
+      run: |
+        jqExpr=".[] | select(.body | startswith(\"<!-- ${MARKER} -->\")) | .id"
+        existing_id="$(
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            --paginate \
+            --jq "${jqExpr}" \
+            | head -1
+        )"
+
+        if [[ -n "${existing_id}" ]]; then
+          gh api -X PATCH "repos/${{ github.repository }}/issues/comments/${existing_id}" -F body=@"${BODY_FILE}"
+        else
+          gh api -X POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -F body=@"${BODY_FILE}"
+        fi

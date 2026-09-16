@@ -18,6 +18,10 @@ const ignorePatterns = [
   '.wrangler',
   '.dagger/sdk',
   '.pruned',
+  // TEMPORARY: scratch files for manually testing the semgrep/sonar CI
+  // findings row (packages/common/src/). Remove once CI testing is done.
+  '__test_findings_semgrep.ts',
+  '__test_findings_sonar.ts',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -216,7 +220,14 @@ const getCommonViteConfig = ({
         generator: 'tsgo',
         sourcemap: isLocal,
       },
-      entry: ['src/**/*.ts', 'src/**/*.tsx', '!src/**/*.stories.ts', '!src/**/*.stories.tsx'],
+      entry: [
+        'src/**/*.ts',
+        'src/**/*.tsx',
+        '!src/**/*.stories.ts',
+        '!src/**/*.stories.tsx',
+        '!src/**/__test_findings_semgrep.ts',
+        '!src/**/__test_findings_sonar.ts',
+      ],
       exports: false,
       format: ['esm', 'cjs'],
       minify: !isLocal,

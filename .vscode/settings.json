@@ -55,5 +55,9 @@
   "unocss.root": ["./packages/design-system"],
   "unocss.selectionStyle": true,
   "unocss.strictAnnotationMatch": true,
-  "unocss.underline": true
+  "unocss.underline": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-action.json": ".github/actions/**/action.yml",
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+  }
 }

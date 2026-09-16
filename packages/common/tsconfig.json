@@ -3,7 +3,13 @@
     "types": ["node"]
   },
   "display": "Common",
-  "exclude": ["node_modules", "dist", "coverage"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "src/__test_findings_semgrep.ts",
+    "src/__test_findings_sonar.ts"
+  ],
   "extends": "../../tsconfig.json",
   "include": ["./**/*.ts", "../../vite.config.ts"]
 }

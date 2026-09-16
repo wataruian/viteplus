@@ -1,0 +1,54 @@
+name: 'Download artifact table'
+description: "Download a per-workspace artifact and assemble a markdown table from each workspace's pre-built row file"
+
+inputs:
+  workspaces:
+    description: 'Space-separated list of workspace names'
+    required: true
+  artifact-prefix:
+    description: 'Artifact name prefix (artifacts are named "<prefix>-<workspace>")'
+    required: true
+  row-file:
+    description: 'Filename of the pre-built row file inside each downloaded artifact'
+    required: true
+  header:
+    description: 'Multi-line markdown header to prepend to the table (marker comment, title, column header, separator)'
+    required: true
+  fallback-suffix:
+    description: 'Markdown printed after "| <workspace> " when the artifact or row file is missing'
+    required: true
+  body-file:
+    description: 'Path to write the assembled markdown body to'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Download artifacts and build table
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        RUN_ID: ${{ github.run_id }}
+        WORKSPACES: ${{ inputs.workspaces }}
+        ARTIFACT_PREFIX: ${{ inputs.artifact-prefix }}
+        ROW_FILE: ${{ inputs.row-file }}
+        HEADER: ${{ inputs.header }}
+        FALLBACK_SUFFIX: ${{ inputs.fallback-suffix }}
+        BODY_FILE: ${{ inputs.body-file }}
+      run: |
+        {
+          printf '%s' "${HEADER}"
+          for workspace in ${WORKSPACES}; do
+            dest="${ARTIFACT_PREFIX}-artifacts/${workspace}"
+            gh run download "${RUN_ID}" --name "${ARTIFACT_PREFIX}-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
+
+            row="${dest}/${ROW_FILE}"
+            if [[ -f "${row}" ]]; then
+              cat "${row}"
+            else
+              echo "| ${workspace} ${FALLBACK_SUFFIX}"
+            fi
+          done
+        } > "${BODY_FILE}"
+        cat "${BODY_FILE}"

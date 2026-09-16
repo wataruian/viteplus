@@ -37,52 +37,10 @@ jobs:
 
       - name: Resolve workspaces
         id: workspaces
-        shell: bash
-        env:
-          WORKSPACE_INPUT: ${{ inputs.workspace }}
-          EVENT_NAME: ${{ github.event_name }}
-          BEFORE_SHA: ${{ github.event.before }}
-        run: |
-          all="design-system frontend backend"
-
-          if [[ -n "${WORKSPACE_INPUT}" ]]; then
-            list="${WORKSPACE_INPUT}"
-          elif [[ "${EVENT_NAME}" == "push" && -n "${BEFORE_SHA}" && "${BEFORE_SHA}" != "0000000000000000000000000000000000000000" ]]; then
-            changedFiles="$(git diff --name-only "${BEFORE_SHA}...HEAD")"
-
-            if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages)/' <<< "${changedFiles}"; then
-              list="${all}"
-            else
-              affected="$(vp pm list -r --json --only-projects --filter "...[${BEFORE_SHA}]" | jq -r '.[].name')"
-              list=""
-              for workspace in ${all}; do
-                if grep -qx "@lightproject/${workspace}" <<< "${affected}"; then
-                  list+="${workspace} "
-                fi
-              done
-              list="${list% }"
-            fi
-          else
-            list="${all}"
-          fi
-
-          json="["
-          for workspace in ${list}; do
-            json+="\"${workspace}\","
-          done
-          json="${json%,}]"
-
-          echo "::group::Resolved workspaces"
-          echo "before sha: ${BEFORE_SHA}"
-          echo "changed files:"
-          echo "${changedFiles:-<none>}"
-          echo "affected (vp pm list):"
-          echo "${affected:-<none>}"
-          echo "resolved list: ${list}"
-          echo "workspaces json: ${json}"
-          echo "::endgroup::"
-
-          echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
+        uses: ./.github/actions/resolve-workspaces
+        with:
+          workspace-input: ${{ inputs.workspace }}
+          all-workspaces: 'design-system frontend backend'
 
   design-system:
     needs: setup

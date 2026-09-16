@@ -80,8 +80,11 @@ jobs:
         uses: actions/upload-artifact@v7.0.1
         with:
           name: coverage-${{ inputs.workspace }}
-          path: tmp/artifacts/${{ inputs.workspace }}/coverage
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/coverage
+            tmp/artifacts/${{ inputs.workspace }}/test.row.md
           retention-days: 14
+          if-no-files-found: ignore
 
       - name: Semgrep
         shell: bash
@@ -92,7 +95,9 @@ jobs:
         uses: actions/upload-artifact@v7.0.1
         with:
           name: semgrep-${{ inputs.workspace }}
-          path: tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
+            tmp/artifacts/${{ inputs.workspace }}/semgrep.row.md
           retention-days: 14
           if-no-files-found: ignore
 
@@ -118,5 +123,6 @@ jobs:
           path: |
             tmp/artifacts/${{ inputs.workspace }}/sonar-quality-gate.json
             tmp/artifacts/${{ inputs.workspace }}/sonar-issues.json
+            tmp/artifacts/${{ inputs.workspace }}/sonar.row.md
           retention-days: 14
           if-no-files-found: ignore

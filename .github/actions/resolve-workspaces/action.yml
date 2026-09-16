@@ -1,0 +1,81 @@
+name: 'Resolve workspaces'
+description: 'Resolve which workspaces are affected by the triggering push/pull_request, or use an explicit override'
+
+inputs:
+  workspace-input:
+    description: 'Explicit workspace override; when set, skips diff-based resolution'
+    required: false
+    default: ''
+  all-workspaces:
+    description: 'Space-separated list of all workspace names to resolve against'
+    required: true
+
+outputs:
+  workspaces:
+    description: 'JSON array of resolved workspace names'
+    value: ${{ steps.resolve.outputs.workspaces }}
+  workspace_list:
+    description: 'Space-separated list of resolved workspace names'
+    value: ${{ steps.resolve.outputs.workspace_list }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Resolve workspaces
+      id: resolve
+      shell: bash
+      env:
+        WORKSPACE_INPUT: ${{ inputs.workspace-input }}
+        ALL_WORKSPACES: ${{ inputs.all-workspaces }}
+        EVENT_NAME: ${{ github.event_name }}
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        BEFORE_SHA: ${{ github.event.before }}
+      run: |
+        all="${ALL_WORKSPACES}"
+
+        case "${EVENT_NAME}" in
+          pull_request) comparisonSha="${BASE_SHA}" ;;
+          push) comparisonSha="${BEFORE_SHA}" ;;
+          *) comparisonSha="" ;;
+        esac
+
+        if [[ -n "${WORKSPACE_INPUT}" ]]; then
+          list="${WORKSPACE_INPUT}"
+        elif [[ -n "${comparisonSha}" && "${comparisonSha}" != "0000000000000000000000000000000000000000" ]]; then
+          changedFiles="$(git diff --name-only "${comparisonSha}...HEAD")"
+
+          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages)/' <<< "${changedFiles}"; then
+            list="${all}"
+          else
+            affected="$(vp pm list -r --json --only-projects --filter "...[${comparisonSha}]" | jq -r '.[].name')"
+            list=""
+            for workspace in ${all}; do
+              if grep -qx "@lightproject/${workspace}" <<< "${affected}"; then
+                list+="${workspace} "
+              fi
+            done
+            list="${list% }"
+          fi
+        else
+          list="${all}"
+        fi
+
+        json="["
+        for workspace in ${list}; do
+          json+="\"${workspace}\","
+        done
+        json="${json%,}]"
+
+        echo "::group::Resolved workspaces"
+        echo "event: ${EVENT_NAME}"
+        echo "comparison sha: ${comparisonSha}"
+        echo "changed files:"
+        echo "${changedFiles:-<none>}"
+        echo "affected (vp pm list):"
+        echo "${affected:-<none>}"
+        echo "resolved list: ${list}"
+        echo "workspaces json: ${json}"
+        echo "::endgroup::"
+
+        echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
+        echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
