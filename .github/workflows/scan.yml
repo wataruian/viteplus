@@ -1,4 +1,4 @@
-name: 'Validate'
+name: 'Scan'
 
 on:
   schedule:
@@ -6,8 +6,8 @@ on:
   workflow_call:
 
 jobs:
-  commit-validation:
-    name: Commit Validation
+  scan-commit:
+    name: Scan Commit
     runs-on: [self-hosted, dagger]
     timeout-minutes: 15
     permissions:
