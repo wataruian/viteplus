@@ -19,7 +19,7 @@ on:
 jobs:
   setup:
     name: Setup
-    runs-on: [self-hosted, dagger]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 5
     outputs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}

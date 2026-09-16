@@ -34,7 +34,7 @@ concurrency:
 jobs:
   guard:
     name: Guard
-    runs-on: [self-hosted, dagger]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 2
     steps:
       - name: Require version for staging/production

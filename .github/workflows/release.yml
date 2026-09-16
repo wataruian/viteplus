@@ -24,7 +24,7 @@ concurrency:
 jobs:
   release:
     name: Release
-    runs-on: [self-hosted, dagger]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
     permissions:

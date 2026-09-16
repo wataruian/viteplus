@@ -15,7 +15,7 @@ on:
 jobs:
   setup:
     name: Setup
-    runs-on: [self-hosted, dagger]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 5
     outputs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
@@ -120,7 +120,7 @@ jobs:
     name: Publish artifacts
     needs: [setup, common, design-system, library, backend, frontend]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
-    runs-on: [self-hosted, dagger]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     permissions:
       actions: read
