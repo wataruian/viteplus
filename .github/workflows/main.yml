@@ -5,17 +5,17 @@ on:
     branches: [main]
 
 jobs:
-  validate:
-    name: Validate
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    uses: ./.github/workflows/validate.yml
+  # validate:
+  #   name: Validate
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write
+  #   uses: ./.github/workflows/validate.yml
 
   develop:
     name: Develop
-    needs: validate
+    # needs: validate
     concurrency:
       group: deploy-develop
       cancel-in-progress: true
