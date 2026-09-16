@@ -119,7 +119,10 @@ jobs:
   artifacts:
     name: Publish artifacts
     needs: [setup, common, design-system, library, backend, frontend]
-    if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
+    if: >-
+      !cancelled() &&
+      inputs.environment == 'pr' &&
+      github.event_name == 'pull_request'
     runs-on: [ubuntu-latest]
     timeout-minutes: 10
     permissions:
