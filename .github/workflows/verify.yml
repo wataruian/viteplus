@@ -38,19 +38,19 @@ jobs:
           workspace-input: ${{ inputs.workspace }}
           all-workspaces: 'design-system frontend backend common library'
 
-  # library:
-  #   needs: setup
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'library')
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: library
-  #     environment: ${{ inputs.environment }}
+  library:
+    needs: setup
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'library')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: library
+      environment: ${{ inputs.environment }}
 
   common:
     needs: setup
@@ -66,60 +66,59 @@ jobs:
       workspace: common
       environment: ${{ inputs.environment }}
 
-  # design-system:
-  #   needs: setup
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: design-system
-  #     environment: ${{ inputs.environment }}
+  design-system:
+    needs: setup
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: design-system
+      environment: ${{ inputs.environment }}
 
-  # backend:
-  #   needs: [setup, common]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
-  #     needs.common.result != 'failure' &&
-  #     needs.common.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: backend
-  #     environment: ${{ inputs.environment }}
+  backend:
+    needs: [setup, common]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: backend
+      environment: ${{ inputs.environment }}
 
-  # frontend:
-  #   needs: [setup, common, design-system, backend]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
-  #     needs.common.result != 'failure' &&
-  #     needs.common.result != 'cancelled' &&
-  #     needs.design-system.result != 'failure' &&
-  #     needs.design-system.result != 'cancelled' &&
-  #     needs.backend.result != 'failure' &&
-  #     needs.backend.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: frontend
-  #     environment: ${{ inputs.environment }}
+  frontend:
+    needs: [setup, common, design-system, backend]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled' &&
+      needs.design-system.result != 'failure' &&
+      needs.design-system.result != 'cancelled' &&
+      needs.backend.result != 'failure' &&
+      needs.backend.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: frontend
+      environment: ${{ inputs.environment }}
 
   artifacts:
     name: Publish artifacts
-    # needs: [setup, common, design-system, library, backend, frontend]
-    needs: [setup, common]
+    needs: [setup, common, design-system, library, backend, frontend]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
     runs-on: [self-hosted, dagger]
     timeout-minutes: 10
