@@ -5,17 +5,17 @@ on:
     branches: [main]
 
 jobs:
-  # scan:
-  #   name: Scan
-  #   permissions:
-  #     actions: read
-  #     contents: read
-  #     security-events: write
-  #   uses: ./.github/workflows/scan.yml
+  scan:
+    name: Scan
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/scan.yml
 
   develop:
     name: Develop
-    # needs: scan
+    needs: scan
     concurrency:
       group: deploy-develop
       cancel-in-progress: true
