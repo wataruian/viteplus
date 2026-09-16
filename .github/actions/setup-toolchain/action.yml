@@ -1,0 +1,40 @@
+name: 'Setup toolchain'
+description: 'Set up Mise and Vite+ (assumes the repo is already checked out)'
+
+inputs:
+  setup-mise:
+    description: 'Whether to set up Mise'
+    required: false
+    default: 'true'
+  mise-version:
+    description: 'Mise version'
+    required: false
+    default: '2026.7.3'
+  setup-vp:
+    description: 'Whether to set up Vite+'
+    required: false
+    default: 'true'
+  vp-version:
+    description: 'Vite+ version'
+    required: false
+    default: '0.3.1'
+  run-install:
+    description: 'Run vp install after setup'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Mise
+      if: ${{ inputs.setup-mise == 'true' }}
+      uses: jdx/mise-action@v4.3.0
+      with:
+        version: ${{ inputs.mise-version }}
+
+    - name: Set up Vite+
+      if: ${{ inputs.setup-vp == 'true' }}
+      uses: voidzero-dev/setup-vp@v1.20.0
+      with:
+        version: ${{ inputs.vp-version }}
+        run-install: ${{ inputs.run-install }}

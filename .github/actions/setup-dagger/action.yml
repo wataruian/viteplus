@@ -1,0 +1,14 @@
+name: 'Setup Dagger'
+description: 'Configure Dagger env vars and run dagger develop (assumes Mise is already set up)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup configs
+      shell: bash
+      run: |
+        echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
+
+    - name: Setup Dagger
+      shell: bash
+      run: dagger develop

@@ -35,11 +35,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1.20.0
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
         with:
-          version: 0.3.1
-          run-install: true
+          setup-mise: 'false'
 
       - name: Configure git identity
         run: |
