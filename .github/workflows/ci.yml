@@ -45,7 +45,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          all="design-system frontend backend"
+          all="design-system frontend backend common library"
 
           if [[ -n "${WORKSPACE_INPUT}" ]]; then
             list="${WORKSPACE_INPUT}"
