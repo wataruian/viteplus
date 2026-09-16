@@ -119,10 +119,12 @@ jobs:
       ref: ${{ inputs.ref }}
 
   frontend:
-    needs: [setup, backend]
+    needs: [setup, design-system, backend]
     if: >-
       !cancelled() &&
       contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.design-system.result != 'failure' &&
+      needs.design-system.result != 'cancelled' &&
       needs.backend.result != 'failure' &&
       needs.backend.result != 'cancelled'
     permissions:
