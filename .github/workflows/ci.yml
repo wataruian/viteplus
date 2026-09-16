@@ -77,128 +77,100 @@ jobs:
           echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
           echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
 
-  verify:
-    name: ${{ matrix.workspace }}
+  # Dependency graph (mirrors `vp pm list -r --json --only-projects`):
+  #   common, design-system, library -> no internal deps
+  #   backend                        -> common
+  #   frontend                       -> common, design-system, backend
+  #
+  # Each job only runs if its workspace is in the affected list (`setup` output).
+  # The `if:` on a dependent job explicitly ignores upstream `skipped` results
+  # (a dependency wasn't affected, so nothing to fail) but blocks on real
+  # `failure`/`cancelled` results, since GitHub's default `needs:` condition
+  # (`success()`) would otherwise treat "skipped" the same as "failed" and
+  # skip the dependent job even when it IS affected.
+
+  verify-common:
+    name: common
     needs: setup
-    runs-on: [self-hosted, dagger]
-    timeout-minutes: 30
+    if: >-
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'common')
     permissions:
       contents: read
-    env:
-      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
-    strategy:
-      fail-fast: false
-      matrix:
-        workspace: ${{ fromJson(needs.setup.outputs.workspaces) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
+    uses: ./.github/workflows/verify.yml
+    secrets: inherit
+    with:
+      workspace: common
+      environment: ${{ inputs.environment }}
 
-      - name: Set up Mise
-        uses: jdx/mise-action@v4.3.0
-        with:
-          version: 2026.7.3
+  verify-design-system:
+    name: design-system
+    needs: setup
+    if: >-
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify.yml
+    secrets: inherit
+    with:
+      workspace: design-system
+      environment: ${{ inputs.environment }}
 
-      - name: Setup configs
-        shell: bash
-        run: |
-          echo "DAGGER_NO_NAG=1" >> "${GITHUB_ENV}"
+  verify-library:
+    name: library
+    needs: setup
+    if: >-
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'library')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify.yml
+    secrets: inherit
+    with:
+      workspace: library
+      environment: ${{ inputs.environment }}
 
-      - name: Setup Dagger
-        shell: bash
-        run: dagger develop
+  verify-backend:
+    name: backend
+    needs: [setup, verify-common]
+    if: >-
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
+      needs.verify-common.result != 'failure' &&
+      needs.verify-common.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify.yml
+    secrets: inherit
+    with:
+      workspace: backend
+      environment: ${{ inputs.environment }}
 
-      - name: Check
-        shell: bash
-        run: mise run dagger check --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Format
-        shell: bash
-        run: mise run dagger format --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Lint
-        shell: bash
-        run: mise run dagger lint --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Type Check
-        shell: bash
-        run: mise run dagger type-check --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Build
-        shell: bash
-        env:
-          WORKSPACE: ${{ matrix.workspace }}
-          VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-        run: |
-          args=()
-          case "${WORKSPACE}" in
-            design-system|frontend)
-              args+=(
-                "--build-env=VITE_ENV=${VITE_ENV}"
-                "--build-env=VITE_API_URL=${VITE_API_URL}"
-              )
-              ;;
-          esac
-          mise run dagger build-artifact \
-            --workspace="@lightproject/${WORKSPACE}" \
-            --export="./tmp/artifacts/${WORKSPACE}/build" \
-            --no-output \
-            "${args[@]}"
-
-      - name: Test
-        shell: bash
-        run: mise run dagger test --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Upload coverage
-        if: always()
-        uses: actions/upload-artifact@v7.0.1
-        with:
-          name: coverage-${{ matrix.workspace }}
-          path: tmp/artifacts/${{ matrix.workspace }}/coverage
-          retention-days: 14
-
-      - name: Semgrep
-        shell: bash
-        run: mise run dagger semgrep --workspace="@lightproject/${{ matrix.workspace }}" --export
-
-      - name: Upload Semgrep report
-        if: always()
-        uses: actions/upload-artifact@v7.0.1
-        with:
-          name: semgrep-${{ matrix.workspace }}
-          path: tmp/artifacts/${{ matrix.workspace }}/semgrep.sarif
-          retention-days: 14
-          if-no-files-found: ignore
-
-      - name: SonarQube
-        shell: bash
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          WORKSPACE: ${{ matrix.workspace }}
-        run: |
-          args=(--sonar-token=env:SONAR_TOKEN)
-          if [[ -n "${SONAR_HOST_URL}" ]]; then
-            args+=(--sonar-host-url="${SONAR_HOST_URL}")
-          else
-            args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
-          fi
-          mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
-
-      - name: Upload SonarQube report
-        if: always()
-        uses: actions/upload-artifact@v7.0.1
-        with:
-          name: sonar-${{ matrix.workspace }}
-          path: |
-            tmp/artifacts/${{ matrix.workspace }}/sonar-quality-gate.json
-            tmp/artifacts/${{ matrix.workspace }}/sonar-issues.json
-          retention-days: 14
-          if-no-files-found: ignore
+  verify-frontend:
+    name: frontend
+    needs: [setup, verify-common, verify-design-system, verify-backend]
+    if: >-
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.verify-common.result != 'failure' &&
+      needs.verify-common.result != 'cancelled' &&
+      needs.verify-design-system.result != 'failure' &&
+      needs.verify-design-system.result != 'cancelled' &&
+      needs.verify-backend.result != 'failure' &&
+      needs.verify-backend.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify.yml
+    secrets: inherit
+    with:
+      workspace: frontend
+      environment: ${{ inputs.environment }}
 
   artifacts:
     name: Publish artifacts
-    needs: [setup, verify]
+    needs:
+      [setup, verify-common, verify-design-system, verify-library, verify-backend, verify-frontend]
     if: always() && inputs.environment == 'pr' && github.event_name == 'pull_request'
     runs-on: [self-hosted, dagger]
     timeout-minutes: 10
