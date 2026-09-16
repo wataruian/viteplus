@@ -62,7 +62,7 @@ jobs:
       contents: read
       actions: read
       pull-requests: write
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/verify.yml
     secrets: inherit
     with:
       workspace: ${{ inputs.workspace != 'all' && inputs.workspace || '' }}
