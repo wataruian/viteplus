@@ -8,6 +8,8 @@ if (typeof globalThis.process.versions.node !== 'string') {
   );
 }
 
+const testSample = () => '';
+
 const pathExists = (path: string): boolean => {
   try {
     return fs.existsSync(path);
@@ -375,4 +377,5 @@ export {
   pathExists,
   readFile,
   resolveTransferGuard,
+  testSample,
 };

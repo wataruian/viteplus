@@ -34,11 +34,7 @@ export default defineConfig(({ mode }): UserConfig => {
       ...baseConfig.test,
       coverage: {
         ...baseConfig.test?.coverage,
-        exclude: [
-          '**/index.ts',
-          'src/**/__test_findings_semgrep.ts',
-          'src/**/__test_findings_sonar.ts',
-        ],
+        exclude: ['**/index.ts'],
       },
       setupFiles: ['./tests/helpers/setup.ts'],
     },
