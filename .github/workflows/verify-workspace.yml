@@ -77,7 +77,7 @@ jobs:
         run: mise run dagger test --workspace="@lightproject/${{ inputs.workspace }}" --export
 
       - name: Upload coverage
-        if: always()
+        if: '!cancelled()'
         uses: actions/upload-artifact@v7.0.1
         with:
           name: coverage-${{ inputs.workspace }}
@@ -92,7 +92,7 @@ jobs:
         run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
 
       - name: Upload Semgrep report
-        if: always()
+        if: '!cancelled()'
         uses: actions/upload-artifact@v7.0.1
         with:
           name: semgrep-${{ inputs.workspace }}
@@ -117,7 +117,7 @@ jobs:
           mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
 
       - name: Upload SonarQube report
-        if: always()
+        if: '!cancelled()'
         uses: actions/upload-artifact@v7.0.1
         with:
           name: sonar-${{ inputs.workspace }}
