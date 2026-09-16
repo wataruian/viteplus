@@ -19,7 +19,7 @@ const markdownList = (lines: string[], max = 10): string => {
 
 const coverageRow = (shortName: string, summaryJson: string | undefined): string => {
   if (summaryJson === undefined) {
-    return `| ${shortName} | _no coverage (tests failed or skipped)_ | | | |`;
+    return `| ${shortName} | _no coverage (tests failed or skipped)_ | | | |\n`;
   }
 
   const total = readRecord(readRecord(JSON.parse(summaryJson)).total);
@@ -28,12 +28,12 @@ const coverageRow = (shortName: string, summaryJson: string | undefined): string
     return value === undefined ? '' : `${value}%`;
   };
 
-  return `| ${shortName} | ${pct('lines')} | ${pct('statements')} | ${pct('functions')} | ${pct('branches')} |`;
+  return `| ${shortName} | ${pct('lines')} | ${pct('statements')} | ${pct('functions')} | ${pct('branches')} |\n`;
 };
 
 const semgrepRow = (shortName: string, sarifJson: string | undefined): string => {
   if (sarifJson === undefined) {
-    return `| ${shortName} | _no report (scan failed or skipped)_ | |`;
+    return `| ${shortName} | _no report (scan failed or skipped)_ | |\n`;
   }
 
   const runs = readArray(readRecord(JSON.parse(sarifJson)).runs);
@@ -50,7 +50,7 @@ const semgrepRow = (shortName: string, sarifJson: string | undefined): string =>
     return `\`${ruleId}\` ${file}:${line} — ${message}`;
   });
 
-  return `| ${shortName} | ${results.length} | ${markdownList(lines)} |`;
+  return `| ${shortName} | ${results.length} | ${markdownList(lines)} |\n`;
 };
 
 const SONAR_COMPARATORS: Record<string, string> = { EQ: '==', GT: '>', LT: '<', NE: '!=' };
@@ -61,7 +61,7 @@ const sonarRow = (
   issuesJson: string | undefined,
 ): string => {
   if (qualityGateJson === undefined) {
-    return `| ${shortName} | _no report (scan failed or skipped)_ | | | | |`;
+    return `| ${shortName} | _no report (scan failed or skipped)_ | | | | |\n`;
   }
 
   const projectStatus = readRecord(readRecord(JSON.parse(qualityGateJson)).projectStatus);
@@ -102,7 +102,7 @@ const sonarRow = (
     issues = markdownList(issueLines);
   }
 
-  return `| ${shortName} | ${gateDisplay} | ${newCoverage} | ${newViolations} | ${failedConditions} | ${issues} |`;
+  return `| ${shortName} | ${gateDisplay} | ${newCoverage} | ${newViolations} | ${failedConditions} | ${issues} |\n`;
 };
 
 const attachSonarRow = async (result: Directory, shortName: string): Promise<Directory> => {
