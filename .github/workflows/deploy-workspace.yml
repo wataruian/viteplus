@@ -24,8 +24,8 @@ jobs:
     environment: ${{ inputs.environment }}
     permissions:
       contents: read
-    env:
-      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+    # env:
+    #   _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
