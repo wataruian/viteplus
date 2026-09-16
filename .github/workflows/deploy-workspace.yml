@@ -18,7 +18,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy ${{ inputs.workspace }}
+    name: ${{ inputs.workspace }}
     runs-on: [self-hosted, dagger]
     timeout-minutes: 20
     environment: ${{ inputs.environment }}

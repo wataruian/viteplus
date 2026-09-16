@@ -92,6 +92,7 @@ jobs:
 
   design-system:
     needs: setup
+    name: deploy
     if: >-
       !cancelled() &&
       contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
@@ -106,6 +107,7 @@ jobs:
 
   backend:
     needs: setup
+    name: deploy
     if: >-
       !cancelled() &&
       contains(fromJson(needs.setup.outputs.workspaces), 'backend')
@@ -120,6 +122,7 @@ jobs:
 
   frontend:
     needs: [setup, design-system, backend]
+    name: deploy
     if: >-
       !cancelled() &&
       contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
