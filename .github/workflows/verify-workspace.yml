@@ -25,105 +25,105 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
 
-      # - name: Set up toolchain
-      #   uses: ./.github/actions/setup-toolchain
-      #   with:
-      #     setup-vp: 'false'
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          setup-vp: 'false'
 
-      # - name: Set up Dagger
-      #   uses: ./.github/actions/setup-dagger
+      - name: Set up Dagger
+        uses: ./.github/actions/setup-dagger
 
-      # - name: Check
-      #   shell: bash
-      #   run: mise run dagger check --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Check
+        shell: bash
+        run: mise run dagger check --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Format
-      #   shell: bash
-      #   run: mise run dagger format --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Format
+        shell: bash
+        run: mise run dagger format --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Lint
-      #   shell: bash
-      #   run: mise run dagger lint --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Lint
+        shell: bash
+        run: mise run dagger lint --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Type Check
-      #   shell: bash
-      #   run: mise run dagger type-check --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Type Check
+        shell: bash
+        run: mise run dagger type-check --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Build
-      #   shell: bash
-      #   env:
-      #     WORKSPACE: ${{ inputs.workspace }}
-      #     VITE_ENV: ${{ inputs.environment }}
-      #     VITE_API_URL: ${{ vars.VITE_API_URL }}
-      #   run: |
-      #     args=()
-      #     case "${WORKSPACE}" in
-      #       design-system|frontend)
-      #         args+=(
-      #           "--build-env=VITE_ENV=${VITE_ENV}"
-      #           "--build-env=VITE_API_URL=${VITE_API_URL}"
-      #         )
-      #         ;;
-      #     esac
+      - name: Build
+        shell: bash
+        env:
+          WORKSPACE: ${{ inputs.workspace }}
+          VITE_ENV: ${{ inputs.environment }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: |
+          args=()
+          case "${WORKSPACE}" in
+            design-system|frontend)
+              args+=(
+                "--build-env=VITE_ENV=${VITE_ENV}"
+                "--build-env=VITE_API_URL=${VITE_API_URL}"
+              )
+              ;;
+          esac
 
-      #     mise run dagger build-artifact \
-      #       --workspace="@lightproject/${WORKSPACE}" \
-      #       --export="./tmp/artifacts/${WORKSPACE}/build" \
-      #       --no-output \
-      #       "${args[@]}"
+          mise run dagger build-artifact \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --export="./tmp/artifacts/${WORKSPACE}/build" \
+            --no-output \
+            "${args[@]}"
 
-      # - name: Test
-      #   shell: bash
-      #   run: mise run dagger test --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Test
+        shell: bash
+        run: mise run dagger test --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Upload coverage
-      #   if: always()
-      #   uses: actions/upload-artifact@v7.0.1
-      #   with:
-      #     name: coverage-${{ inputs.workspace }}
-      #     path: |
-      #       tmp/artifacts/${{ inputs.workspace }}/coverage
-      #       tmp/artifacts/${{ inputs.workspace }}/test.row.md
-      #     retention-days: 14
-      #     if-no-files-found: ignore
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: coverage-${{ inputs.workspace }}
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/coverage
+            tmp/artifacts/${{ inputs.workspace }}/test.row.md
+          retention-days: 14
+          if-no-files-found: ignore
 
-      # - name: Semgrep
-      #   shell: bash
-      #   run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
+      - name: Semgrep
+        shell: bash
+        run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
 
-      # - name: Upload Semgrep report
-      #   if: always()
-      #   uses: actions/upload-artifact@v7.0.1
-      #   with:
-      #     name: semgrep-${{ inputs.workspace }}
-      #     path: |
-      #       tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
-      #       tmp/artifacts/${{ inputs.workspace }}/semgrep.row.md
-      #     retention-days: 14
-      #     if-no-files-found: ignore
+      - name: Upload Semgrep report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: semgrep-${{ inputs.workspace }}
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/semgrep.sarif
+            tmp/artifacts/${{ inputs.workspace }}/semgrep.row.md
+          retention-days: 14
+          if-no-files-found: ignore
 
-      # - name: SonarQube
-      #   shell: bash
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     WORKSPACE: ${{ inputs.workspace }}
-      #   run: |
-      #     args=(--sonar-token=env:SONAR_TOKEN)
-      #     if [[ -n "${SONAR_HOST_URL}" ]]; then
-      #       args+=(--sonar-host-url="${SONAR_HOST_URL}")
-      #     else
-      #       args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
-      #     fi
-      #     mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
+      - name: SonarQube
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          WORKSPACE: ${{ inputs.workspace }}
+        run: |
+          args=(--sonar-token=env:SONAR_TOKEN)
+          if [[ -n "${SONAR_HOST_URL}" ]]; then
+            args+=(--sonar-host-url="${SONAR_HOST_URL}")
+          else
+            args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
+          fi
+          mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
 
-      # - name: Upload SonarQube report
-      #   if: always()
-      #   uses: actions/upload-artifact@v7.0.1
-      #   with:
-      #     name: sonar-${{ inputs.workspace }}
-      #     path: |
-      #       tmp/artifacts/${{ inputs.workspace }}/sonar-quality-gate.json
-      #       tmp/artifacts/${{ inputs.workspace }}/sonar-issues.json
-      #       tmp/artifacts/${{ inputs.workspace }}/sonar.row.md
-      #     retention-days: 14
-      #     if-no-files-found: ignore
+      - name: Upload SonarQube report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sonar-${{ inputs.workspace }}
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/sonar-quality-gate.json
+            tmp/artifacts/${{ inputs.workspace }}/sonar-issues.json
+            tmp/artifacts/${{ inputs.workspace }}/sonar.row.md
+          retention-days: 14
+          if-no-files-found: ignore

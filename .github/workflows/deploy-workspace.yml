@@ -32,108 +32,108 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.ref }}
 
-      # - name: Set up toolchain
-      #   uses: ./.github/actions/setup-toolchain
-      #   with:
-      #     setup-vp: 'false'
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          setup-vp: 'false'
 
-      # - name: Set up Dagger
-      #   uses: ./.github/actions/setup-dagger
+      - name: Set up Dagger
+        uses: ./.github/actions/setup-dagger
 
-      # - name: Build and publish
-      #   shell: bash
-      #   env:
-      #     REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
-      #     VITE_ENV: ${{ inputs.environment }}
-      #     VITE_API_URL: ${{ vars.VITE_API_URL }}
-      #     WORKSPACE: ${{ inputs.workspace }}
-      #     VERSION_REF: ${{ inputs.ref }}
-      #   run: |
-      #     tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
+      - name: Build and publish
+        shell: bash
+        env:
+          REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
+          VITE_ENV: ${{ inputs.environment }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          WORKSPACE: ${{ inputs.workspace }}
+          VERSION_REF: ${{ inputs.ref }}
+        run: |
+          tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
-      #     args=()
-      #     case "${WORKSPACE}" in
-      #       design-system|frontend)
-      #         args+=(
-      #           "--build-env=VITE_ENV=${VITE_ENV}"
-      #           "--build-env=VITE_API_URL=${VITE_API_URL}"
-      #         )
-      #         ;;
-      #     esac
+          args=()
+          case "${WORKSPACE}" in
+            design-system|frontend)
+              args+=(
+                "--build-env=VITE_ENV=${VITE_ENV}"
+                "--build-env=VITE_API_URL=${VITE_API_URL}"
+              )
+              ;;
+          esac
 
-      #     mise run dagger publish \
-      #       --workspace="@lightproject/${WORKSPACE}" \
-      #       --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
-      #       --tag="${tag}" \
-      #       "${args[@]}"
+          mise run dagger publish \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
+            --tag="${tag}" \
+            "${args[@]}"
 
-      # - name: Deploy
-      #   shell: bash
-      #   env:
-      #     ENVIRONMENT: ${{ inputs.environment }}
-      #     WORKSPACE: ${{ inputs.workspace }}
-      #     VITE_ENV: ${{ inputs.environment }}
-      #     VITE_API_URL: ${{ vars.VITE_API_URL }}
-      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #   run: |
-      #     echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
+      - name: Deploy
+        shell: bash
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          WORKSPACE: ${{ inputs.workspace }}
+          VITE_ENV: ${{ inputs.environment }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
-      #     args=()
-      #     case "${WORKSPACE}" in
-      #       design-system|frontend)
-      #         args+=(
-      #           "--build-env=VITE_ENV=${VITE_ENV}"
-      #           "--build-env=VITE_API_URL=${VITE_API_URL}"
-      #         )
-      #         ;;
-      #     esac
+          args=()
+          case "${WORKSPACE}" in
+            design-system|frontend)
+              args+=(
+                "--build-env=VITE_ENV=${VITE_ENV}"
+                "--build-env=VITE_API_URL=${VITE_API_URL}"
+              )
+              ;;
+          esac
 
-      #     mise run dagger wrangler \
-      #       --workspace="@lightproject/${WORKSPACE}" \
-      #       --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN \
-      #       --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID \
-      #       "${args[@]}"
+          mise run dagger wrangler \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN \
+            --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID \
+            "${args[@]}"
 
-      # - name: Smoke test
-      #   shell: bash
-      #   env:
-      #     WORKSPACE: ${{ inputs.workspace }}
-      #   run: |
-      #     case "${WORKSPACE}" in
-      #       backend)
-      #         urls=("https://lightproject-backend.wataru.workers.dev")
-      #         ;;
-      #       frontend)
-      #         urls=("https://lightproject-frontend.wataru.workers.dev")
-      #         ;;
-      #       design-system)
-      #         urls=(
-      #           "https://lightproject-design-system.wataru.workers.dev"
-      #           "https://lightproject-storybook.wataru.workers.dev"
-      #         )
-      #         ;;
-      #       *)
-      #         echo "::warning::No health check URL configured for ${WORKSPACE}; skipping."
-      #         exit 0
-      #         ;;
-      #     esac
+      - name: Smoke test
+        shell: bash
+        env:
+          WORKSPACE: ${{ inputs.workspace }}
+        run: |
+          case "${WORKSPACE}" in
+            backend)
+              urls=("https://lightproject-backend.wataru.workers.dev")
+              ;;
+            frontend)
+              urls=("https://lightproject-frontend.wataru.workers.dev")
+              ;;
+            design-system)
+              urls=(
+                "https://lightproject-design-system.wataru.workers.dev"
+                "https://lightproject-storybook.wataru.workers.dev"
+              )
+              ;;
+            *)
+              echo "::warning::No health check URL configured for ${WORKSPACE}; skipping."
+              exit 0
+              ;;
+          esac
 
-      #     for url in "${urls[@]}"; do
-      #       passed=false
-      #       for attempt in 1 2 3 4 5; do
-      #         status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${url}" || echo "000")"
-      #         if [[ "${status}" == "200" ]]; then
-      #           echo "Smoke test passed for ${url} (HTTP ${status})"
-      #           passed=true
-      #           break
-      #         fi
-      #         echo "Attempt ${attempt}/5 for ${url}: HTTP ${status}, retrying in 5s..."
-      #         sleep 5
-      #       done
+          for url in "${urls[@]}"; do
+            passed=false
+            for attempt in 1 2 3 4 5; do
+              status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${url}" || echo "000")"
+              if [[ "${status}" == "200" ]]; then
+                echo "Smoke test passed for ${url} (HTTP ${status})"
+                passed=true
+                break
+              fi
+              echo "Attempt ${attempt}/5 for ${url}: HTTP ${status}, retrying in 5s..."
+              sleep 5
+            done
 
-      #       if [[ "${passed}" != true ]]; then
-      #         echo "::error::Smoke test failed for ${url}"
-      #         exit 1
-      #       fi
-      #     done
+            if [[ "${passed}" != true ]]; then
+              echo "::error::Smoke test failed for ${url}"
+              exit 1
+            fi
+          done
