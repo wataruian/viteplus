@@ -89,8 +89,8 @@ jobs:
             echo "To promote it to staging or production, run the [Trigger workflow](../../actions/workflows/trigger.yml) with \`version: ${tag}\`."
           } >> "${GITHUB_STEP_SUMMARY}"
 
-  deploy:
-    name: Deploy to dev
+  develop:
+    name: Develop
     needs: release
     concurrency:
       group: deploy-develop
