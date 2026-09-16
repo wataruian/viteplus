@@ -15,12 +15,12 @@ on:
 jobs:
   verify:
     name: Verify ${{ inputs.workspace }}
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, dagger]
     timeout-minutes: 30
     permissions:
       contents: read
-    # env:
-    #   _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+    env:
+      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1

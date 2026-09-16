@@ -8,7 +8,7 @@ on:
 jobs:
   scan-commit:
     name: Scan Commit
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, dagger]
     timeout-minutes: 15
     permissions:
       contents: read
@@ -39,7 +39,7 @@ jobs:
 
   codeql:
     name: CodeQL (${{ matrix.language }})
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, dagger]
     timeout-minutes: 15
     permissions:
       actions: read
