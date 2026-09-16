@@ -24,16 +24,52 @@ jobs:
     outputs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Set up Mise
+        uses: jdx/mise-action@v4.3.0
+        with:
+          version: 2026.7.3
+
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1.20.0
+        with:
+          version: 0.3.1
+          run-install: true
+
       - name: Resolve workspaces
         id: workspaces
         shell: bash
         env:
           WORKSPACE_INPUT: ${{ inputs.workspace }}
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
+          all="design-system frontend backend"
+
           if [[ -n "${WORKSPACE_INPUT}" ]]; then
             list="${WORKSPACE_INPUT}"
+          elif [[ "${EVENT_NAME}" == "push" && -n "${BEFORE_SHA}" && "${BEFORE_SHA}" != "0000000000000000000000000000000000000000" ]]; then
+            changedFiles="$(git diff --name-only "${BEFORE_SHA}...HEAD")"
+
+            if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages)/' <<< "${changedFiles}"; then
+              list="${all}"
+            else
+              affected="$(vp pm list -r --json --only-projects --filter "...[${BEFORE_SHA}]" | jq -r '.[].name')"
+              list=""
+              for workspace in ${all}; do
+                if grep -qx "@lightproject/${workspace}" <<< "${affected}"; then
+                  list+="${workspace} "
+                fi
+              done
+              list="${list% }"
+            fi
           else
-            list="design-system frontend backend"
+            list="${all}"
           fi
 
           json="["
@@ -78,15 +114,6 @@ jobs:
         shell: bash
         run: dagger develop
 
-      # Verification (check/lint/type-check/test/Semgrep/Sonar) already ran once in
-      # the PR that merged this commit. Vite bakes environment variables into the
-      # bundle at build time, so the frontend still needs a per-environment build
-      # here; other workspaces don't need env-specific input but are rebuilt too
-      # since there's no cross-workflow artifact promotion yet.
-      #
-      # Images are tagged by the requested version (e.g. a release tag being
-      # promoted to staging/production) when one was given, otherwise by the
-      # short SHA of whatever was actually checked out above.
       - name: Build and publish
         shell: bash
         env:
