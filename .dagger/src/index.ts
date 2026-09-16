@@ -11,7 +11,7 @@ import {
   object,
 } from '@dagger.io/dagger';
 
-import { install, mountFiles, prune, withInstalledRootSource } from './build-pipeline';
+import { install, mountFiles, prune, withInstalledRootSource } from './helpers/build';
 import {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
@@ -25,10 +25,10 @@ import {
   SONAR_WORKING_DIRECTORY,
   SOURCE_IGNORE,
   VITE_PLUS_USER,
-} from './constants';
-import { isFrontend, outputDirectory, withBuildEnv, workspacePath } from './container-helpers';
-import { attachSonarRow, coverageRow, semgrepRow } from './report-rows';
-import { localSonarRunner, remoteSonarRunner } from './sonar-runners';
+} from './helpers/constants';
+import { isFrontend, outputDirectory, withBuildEnv, workspacePath } from './helpers/container';
+import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
+import { localSonarRunner, remoteSonarRunner } from './helpers/sonar';
 
 @object()
 export class Monorepo {

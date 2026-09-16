@@ -7,8 +7,8 @@ import {
   VITE_PLUS_USER,
   WORKSPACE_NAMES,
 } from './constants';
-import { installArgs, withInstallCaches, withTaskCache, workspacePath } from './container-helpers';
-import { readStringRecord } from './json-utils';
+import { installArgs, withInstallCaches, withTaskCache, workspacePath } from './container';
+import { readStringRecord } from './json';
 
 const withRootSource = (rootSource: Directory): Container =>
   withInstallCaches(

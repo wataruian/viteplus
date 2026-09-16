@@ -1,6 +1,6 @@
 import type { Directory } from '@dagger.io/dagger';
 
-import { readArray, readNumber, readRecord, readScalarAsString, readString } from './json-utils';
+import { readArray, readNumber, readRecord, readScalarAsString, readString } from './json';
 
 const markdownCell = (text: string): string => text.replaceAll('\n', ' ').replaceAll('|', ' ');
 
