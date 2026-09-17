@@ -10,6 +10,7 @@ import {
   resetTelemetryForTests,
   shutdownTelemetry,
 } from '../src/server/telemetry';
+import { getTelemetryConfig } from '../src/utils';
 
 const {
   forceFlushLoggerMock,
@@ -365,6 +366,31 @@ describe('prometheusExporter.getMetricsResponse once initialized', () => {
     const response = await prometheusExporter.getMetricsResponse();
 
     expect(response.status).toBe(503);
+  });
+});
+
+describe('getTelemetryConfig', () => {
+  afterEach(() => {
+    resetTelemetryForTests();
+  });
+
+  test('returns undefined before initialization', () => {
+    expect(getTelemetryConfig()).toBeUndefined();
+  });
+
+  test('returns the resolved config after initialization', async () => {
+    await initializeTelemetry({
+      otlpEndpoint: 'http://otlp.example.com',
+      serviceName: '@acme/api',
+      serviceVersion: '1.0.0',
+    });
+
+    expect(getTelemetryConfig()).toStrictEqual({
+      environment: 'local',
+      otlpEndpoint: 'http://otlp.example.com',
+      serviceName: '@acme/api',
+      serviceVersion: '1.0.0',
+    });
   });
 });
 

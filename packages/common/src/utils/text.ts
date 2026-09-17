@@ -1,5 +1,8 @@
 const getRandomText = () => globalThis.crypto.randomUUID().replaceAll('-', '');
 
+const escapeRegExp = (value: string): string =>
+  value.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
+
 const safeToString = (value: unknown): string => {
   if (value === null || value === undefined) {
     return '';
@@ -80,6 +83,7 @@ const toPascalCase = (str: string): string =>
     .join('');
 
 export {
+  escapeRegExp,
   generateShortUuid,
   generateUuid,
   getRandomText,

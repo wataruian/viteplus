@@ -1,4 +1,9 @@
 import type { z } from '@hono/zod-openapi';
+import type { Span } from '@lightproject/common/utils';
+
+interface AppEnv {
+  Variables: { sessionId: string; span: Span };
+}
 
 type ServiceFn<S extends z.ZodRawShape, O extends Record<string, unknown>> = ((
   input: z.output<z.ZodObject<S>>,
@@ -12,4 +17,4 @@ const attachSchema = <S extends z.ZodRawShape, O extends Record<string, unknown>
 ): ServiceFn<S, O> => Object.assign(fn, { schema });
 
 export { attachSchema };
-export type { ServiceFn };
+export type { AppEnv, ServiceFn };

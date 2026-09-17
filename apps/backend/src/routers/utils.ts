@@ -6,13 +6,9 @@ import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 import packageJson from '../../package.json' with { type: 'json' };
-import type { ServiceFn } from '../schema';
+import type { AppEnv, ServiceFn } from '../schema';
 
 type RouteMethod = 'get' | 'post' | 'put' | 'delete';
-
-interface HttpEnv {
-  Variables: { sessionId: string };
-}
 
 interface RouteDefinition<S extends z.ZodRawShape, O extends Record<string, unknown>> {
   handlerFn: ServiceFn<S, O>;
@@ -222,14 +218,14 @@ const getOpenApiDocument = (
   });
 };
 
-const validationErrorHook: Hook<unknown, HttpEnv, string, unknown> = (result) => {
+const validationErrorHook: Hook<unknown, AppEnv, string, unknown> = (result) => {
   if (!result.success) {
     throw new HTTPException(400, { message: result.error.message });
   }
 };
 
 const createHttpRouter = (routesList: HttpRoute[]) => {
-  const router = new OpenAPIHono<HttpEnv>({ defaultHook: validationErrorHook });
+  const router = new OpenAPIHono<AppEnv>({ defaultHook: validationErrorHook });
 
   for (const { method, path, schema, handle } of routesList) {
     const tag = path.split('/').find((s) => s.length > 0) ?? 'default';
@@ -240,7 +236,7 @@ const createHttpRouter = (routesList: HttpRoute[]) => {
         ? createRoute(base)
         : createRoute({ ...base, request: buildRequestConfig(method, schema.request) });
 
-    const handler = async (c: Context<HttpEnv>) => {
+    const handler = async (c: Context<AppEnv>) => {
       const result = await handle(method === 'get' ? c.req.query() : await c.req.json());
       return c.json(successEnvelope(result, c.get('sessionId')), 200);
     };
@@ -267,8 +263,8 @@ const normalizeTrpcGetQuery = (request: Request, query: Record<string, string>):
   return new globalThis.Request(newUrl.toString(), request);
 };
 
-const mergeHttpRouters = (routers: Record<string, OpenAPIHono<HttpEnv>>) => {
-  const app = new OpenAPIHono<HttpEnv>();
+const mergeHttpRouters = (routers: Record<string, OpenAPIHono<AppEnv>>) => {
+  const app = new OpenAPIHono<AppEnv>();
 
   for (const router of Object.values(routers)) {
     app.route('/', router);
@@ -277,7 +273,7 @@ const mergeHttpRouters = (routers: Record<string, OpenAPIHono<HttpEnv>>) => {
   return app;
 };
 
-const assertHttpRoutesDocumented = (router: OpenAPIHono<HttpEnv>) => {
+const assertHttpRoutesDocumented = (router: OpenAPIHono<AppEnv>) => {
   const registeredKeys = new Set(router.routes.map((route) => `${route.method} ${route.path}`));
   const documentedKeys = new Set(
     router.openAPIRegistry.definitions
@@ -320,7 +316,6 @@ export {
   walkTrpcProcedureTree,
 };
 export type {
-  HttpEnv,
   HttpRoute,
   OpenApiRegistryDefinition,
   OpenApiRouteDefinition,

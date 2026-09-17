@@ -4,9 +4,17 @@ import { metrics } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
 
+import { apiBaseUrl } from '../configs';
 import { getEnv, isBrowser } from '../environment';
+import { flushExemplarMetrics } from '../server/exemplar-metrics';
+import { setTelemetryConfig } from './telemetry';
+import { escapeRegExp } from './text';
 
 interface RumOptions {
   serviceName?: string;
@@ -14,13 +22,14 @@ interface RumOptions {
   environment?: string;
   faroEndpoint?: string;
   otlpEndpoint?: string;
+  apiUrl?: string;
 }
 
 let isInitialized = false;
 let meterProviderInstance: MeterProvider | undefined = undefined;
 
 const flushRum = async () => {
-  await meterProviderInstance?.forceFlush();
+  await Promise.allSettled([meterProviderInstance?.forceFlush(), flushExemplarMetrics()]);
 };
 
 const registerLifecycleFlush = () => {
@@ -71,6 +80,10 @@ const initializeRum = (options: RumOptions = {}) => {
     getEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT') ??
     'http://localhost:4318';
 
+  const apiUrl = options.apiUrl ?? apiBaseUrl;
+
+  setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
+
   meterProviderInstance = new MeterProvider({
     readers: [
       new PeriodicExportingMetricReader({
@@ -82,6 +95,8 @@ const initializeRum = (options: RumOptions = {}) => {
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: serviceName,
       [ATTR_SERVICE_VERSION]: serviceVersion,
+      [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: environment,
+      'deployment.environment': environment,
     }),
   });
 
@@ -99,7 +114,11 @@ const initializeRum = (options: RumOptions = {}) => {
       ...getWebInstrumentations({
         captureConsole: true,
       }),
-      new TracingInstrumentation(),
+      new TracingInstrumentation({
+        instrumentationOptions: {
+          propagateTraceHeaderCorsUrls: [new RegExp(`^${escapeRegExp(apiUrl)}`, 'u')],
+        },
+      }),
     ],
     url: `${faroEndpoint}/collect`,
   });

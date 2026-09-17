@@ -1,11 +1,12 @@
-import { logger, requestContextStorage } from '@lightproject/common/logger';
+import { logger, runWithRequestContext } from '@lightproject/common/logger';
 import type { Context, ErrorHandler, NotFoundHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { StatusCode } from 'hono/utils/http-status';
 
 import { config } from '../config';
+import type { AppEnv } from '../schema';
 
-type AppContext = Context<{ Variables: { sessionId: string } }>;
+type AppContext = Context<AppEnv>;
 
 const getSessionIdFromCtx = (c: AppContext): string => c.get('sessionId');
 
@@ -28,14 +29,16 @@ const buildErrorBody = (
   success: false,
 });
 
-const notFoundHandler: NotFoundHandler = (c) => {
-  const sessionId = getSessionIdFromCtx(c as AppContext);
+const notFoundHandler: NotFoundHandler<AppEnv> = (c) => {
+  const sessionId = getSessionIdFromCtx(c);
   const status = 404;
 
-  logger.warn(`Not Found: [${c.req.method}] ${c.req.url}`, {
-    method: c.req.method,
-    path: c.req.path,
-    url: c.req.url,
+  runWithRequestContext(c.get('span'), { sessionId }, () => {
+    logger.warn(`Not Found: [${c.req.method}] ${c.req.url}`, {
+      method: c.req.method,
+      path: c.req.path,
+      url: c.req.url,
+    });
   });
 
   return c.json(buildErrorBody(status, 'NOT_FOUND', 'Not Found', sessionId), status);
@@ -50,7 +53,7 @@ const respondWithError = (
   logLabel: string,
   message: string,
 ) => {
-  requestContextStorage.run({ sessionId }, () => {
+  runWithRequestContext(c.get('span'), { sessionId }, () => {
     logger.error(`${logLabel}: ${err.message} [${c.req.method}] ${c.req.url}`, {
       err,
       method: c.req.method,
@@ -63,12 +66,12 @@ const respondWithError = (
   return c.json(buildErrorBody(status, errorCode, message, sessionId, err.stack), status);
 };
 
-const globalErrorHandler: ErrorHandler = (err, c) => {
-  const sessionId = getSessionIdFromCtx(c as AppContext);
+const globalErrorHandler: ErrorHandler<AppEnv> = (err, c) => {
+  const sessionId = getSessionIdFromCtx(c);
 
   if (err instanceof HTTPException) {
     return respondWithError(
-      c as AppContext,
+      c,
       err,
       sessionId,
       err.status,
@@ -79,7 +82,7 @@ const globalErrorHandler: ErrorHandler = (err, c) => {
   }
 
   return respondWithError(
-    c as AppContext,
+    c,
     err,
     sessionId,
     500,

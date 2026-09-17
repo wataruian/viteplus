@@ -1,7 +1,9 @@
+import { tracer } from '@lightproject/common/utils';
 import { Hono } from 'hono';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { globalErrorHandler } from '../src/middlewares/error-handler';
+import type { AppEnv } from '../src/schema';
 import { expectErrorEnvelope, parseErrorEnvelope, runtimes, stripVolatile } from './helpers/utils';
 
 afterEach(() => {
@@ -9,10 +11,11 @@ afterEach(() => {
 });
 
 test('a plain (non-HTTPException) error thrown by a handler produces a generic 500 envelope', async () => {
-  const app = new Hono<{ Variables: { sessionId: string } }>();
+  const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
     c.set('sessionId', 'unit-test-session');
+    c.set('span', tracer.startSpan('unit-test-span'));
     await next();
   });
 
@@ -34,10 +37,11 @@ test('a plain (non-HTTPException) error thrown by a handler produces a generic 5
 });
 
 test('a plain error with an empty message falls back to a generic message', async () => {
-  const app = new Hono<{ Variables: { sessionId: string } }>();
+  const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
     c.set('sessionId', 'unit-test-session');
+    c.set('span', tracer.startSpan('unit-test-span'));
     await next();
   });
 

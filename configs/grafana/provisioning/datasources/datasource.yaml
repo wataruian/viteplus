@@ -2,27 +2,72 @@ apiVersion: 1
 
 datasources:
   - name: Loki
-
+    uid: loki
     type: loki
-
     access: proxy
-
     url: http://loki:3100
-
     isDefault: false
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherType: label
+          matcherRegex: trace_id
+          name: TraceID
+          url: '$${__value.raw}'
+          urlDisplayLabel: View Trace
+        - datasourceUid: tempo
+          matcherType: regex
+          matcherRegex: 'traceID=([0-9a-f]+)'
+          name: TraceID (Faro)
+          url: '$${__value.raw}'
+          urlDisplayLabel: View Trace
+        - datasourceUid: tempo
+          matcherType: regex
+          matcherRegex: '"traceId":"([0-9a-f]+)"'
+          name: TraceID (Faro JSON)
+          url: '$${__value.raw}'
+          urlDisplayLabel: View Trace
 
   - name: Tempo
-
+    uid: tempo
     type: tempo
-
     access: proxy
-
     url: http://tempo:3200
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-5m'
+        spanEndTimeShift: '5m'
+        filterByTraceID: true
+        filterBySpanID: false
+        tags:
+          - key: service.name
+            value: service_name
+      tracesToMetrics:
+        datasourceUid: mimir
+        spanStartTimeShift: '-5m'
+        spanEndTimeShift: '5m'
+        tags:
+          - key: service.name
+            value: service_name
+        queries:
+          - name: Request rate
+            query: sum(rate(request_hits_total{$$__tags}[5m]))
+          - name: Server request duration (exemplars)
+            query: http_server_duration_seconds{$$__tags}
+          - name: Button clicks
+            query: sum(rate(button_clicks_total{$$__tags}[5m]))
+          - name: Client request duration (exemplars)
+            query: http_client_duration_seconds{$$__tags}
+      serviceMap:
+        datasourceUid: mimir
 
   - name: Mimir
-
+    uid: mimir
     type: prometheus
-
     access: proxy
-
     url: http://mimir:9009/prometheus
+    jsonData:
+      exemplarTraceIdDestinations:
+        - datasourceUid: tempo
+          name: trace_id

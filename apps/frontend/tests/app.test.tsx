@@ -1,4 +1,5 @@
 import type { AppRouter } from '@lightproject/backend';
+import type * as CommonLoggerModule from '@lightproject/common/logger';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { act } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
@@ -13,6 +14,7 @@ const parsedLogEntrySchema = z.object({
   context: z.record(z.string(), z.unknown()).optional(),
   level: z.string(),
   message: z.string(),
+  sessionId: z.string().optional(),
   timestamp: z.string(),
 });
 
@@ -151,7 +153,7 @@ const assertRenderedHtml = (container: HTMLDivElement) => {
 
 const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   const startEntry = findEntry(entries, 'Frontend Start');
-  expect(startEntry.context?.['clientId']).toMatch(uuidPattern);
+  expect(startEntry.sessionId).toMatch(uuidPattern);
   expect(startEntry.context?.['platform']).toEqual(expect.any(String));
   expect(startEntry.context?.['timestamp']).toMatch(isoTimestampPattern);
 
@@ -369,6 +371,39 @@ describe('App error handling', () => {
     },
   );
 
+  test('still completes initialization when recording the tRPC exemplar metric fails', async () => {
+    vi.doMock('@lightproject/common/server', () => ({
+      recordGaugeWithExemplar: vi.fn().mockRejectedValue(new Error('otlp unreachable')),
+    }));
+
+    const unhandledRejectionSpy = vi.fn();
+    const handleUnhandledRejection = (reason: unknown): void => {
+      unhandledRejectionSpy(reason);
+    };
+    globalThis.process.on('unhandledRejection', handleUnhandledRejection);
+
+    const { cleanup, logSpy } = await renderAppWithMocks({
+      configModule: { config: { viteApiUrl: undefined } },
+      trpcQuery: () => successfulTrpcResult,
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(
+          parseLogEntries(logSpy.mock.calls).some((entry) =>
+            entry.message.includes('Frontend Start'),
+          ),
+        ).toBe(true);
+      });
+
+      expect(unhandledRejectionSpy).not.toHaveBeenCalled();
+    } finally {
+      globalThis.process.off('unhandledRejection', handleUnhandledRejection);
+      cleanup();
+      vi.doUnmock('@lightproject/common/server');
+    }
+  });
+
   test('swallows a rejection from the initialize effect when starting the span itself throws', async () => {
     vi.resetModules();
     vi.unstubAllEnvs();
@@ -379,23 +414,28 @@ describe('App error handling', () => {
       apiBaseUrl: defaultApiUrl,
     }));
 
-    vi.doMock('@lightproject/common/utils', () => ({
-      tracer: {
-        startSpan: () => {
+    vi.doMock('@lightproject/common/logger', async () => {
+      const actual = await vi.importActual<typeof CommonLoggerModule>(
+        '@lightproject/common/logger',
+      );
+      return {
+        ...actual,
+        startSpanWithSession: () => {
           throw new Error('failed to start span');
         },
-      },
-    }));
+      };
+    });
 
     vi.doMock('../src/config', () => ({
       config: { viteApiUrl: undefined },
     }));
 
+    const queryMock = vi.fn(() => successfulTrpcResult);
     vi.doMock('../src/providers/trpc-provider', () => ({
       trpcClient: {
         test: {
           hello: {
-            query: () => successfulTrpcResult,
+            query: queryMock,
           },
         },
       },
@@ -426,10 +466,12 @@ describe('App error handling', () => {
           </ThemeProvider>
         </SessionProvider>,
       );
-      await Promise.resolve();
-      await Promise.resolve();
+      await new Promise((resolve) => {
+        globalThis.setTimeout(resolve, 0);
+      });
     });
 
+    expect(queryMock).not.toHaveBeenCalled();
     expect(unhandledRejectionSpy).not.toHaveBeenCalled();
     expect(
       parseLogEntries(logSpy.mock.calls).some((entry) => entry.message.includes('Frontend Start')),
@@ -443,7 +485,7 @@ describe('App error handling', () => {
     logSpy.mockRestore();
     vi.doUnmock('../src/providers/trpc-provider');
     vi.doUnmock('../src/config');
-    vi.doUnmock('@lightproject/common/utils');
+    vi.doUnmock('@lightproject/common/logger');
     vi.doUnmock('@lightproject/common/configs');
   });
 });

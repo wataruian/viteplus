@@ -1,6 +1,14 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-import { type Context, type ContextManager, ROOT_CONTEXT, context } from '@opentelemetry/api';
+import * as faroSdk from '@grafana/faro-web-sdk';
+import {
+  type Context,
+  type ContextManager,
+  ROOT_CONTEXT,
+  TraceFlags,
+  context,
+  trace,
+} from '@opentelemetry/api';
 import {
   afterAll,
   afterEach,
@@ -16,13 +24,18 @@ import {
   getColor,
   getRequestContext,
   getSessionId,
+  getTraceContext,
   isRequestContext,
   requestContextStorage,
+  runWithRequestContext,
+  setSessionId,
+  startSpanWithSession,
 } from '../src/logger/context';
 import { type LogEntry, type LogLevel, formatJSON, formatPretty } from '../src/logger/formatters';
 import { Logger, type LoggerOptions, isFaroLogLevel } from '../src/logger/log';
 import { defaultRedactValue, getRedactFn, redact } from '../src/logger/redactor';
 import { chalkInstance, defaultColor, getRandomColor } from '../src/utils/color';
+import { tracer } from '../src/utils/telemetry';
 
 const createAsyncHooksContextManager = (): ContextManager => {
   const storage = new AsyncLocalStorage<Context>();
@@ -41,6 +54,12 @@ const createAsyncHooksContextManager = (): ContextManager => {
 
 const customRedactValue = '[SENSITIVE]';
 const callableRedactStub = () => 'called';
+
+const validSpanContext = {
+  spanId: 'b7ad6b7169203331',
+  traceFlags: TraceFlags.SAMPLED,
+  traceId: '0af7651916cd43dd8448eb211c80319c',
+};
 
 const getLastConsoleLog = (): string => {
   const { calls } = vi.mocked(globalThis.console.log).mock;
@@ -359,9 +378,280 @@ describe('Logger Integration - Session ID Color', () => {
     const expectedColoredMessage = color('hello from session');
     expect(output).toContain(expectedColoredMessage);
 
-    const expectedMetadataStr = JSON.stringify({ foo: 'bar', sessionId }, undefined, 5);
+    const expectedMetadataStr = JSON.stringify(
+      Object.fromEntries([
+        ['sessionId', sessionId],
+        ['foo', 'bar'],
+      ]),
+      undefined,
+      5,
+    );
     const expectedColoredMetadata = chalkInstance.gray(expectedMetadataStr);
     expect(output).toContain(expectedColoredMetadata);
+  });
+
+  test('lets metadata explicitly override the auto-detected sessionId', () => {
+    let output = '';
+    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
+      output = testLoggerCall({
+        level: 'info',
+        message: 'override test',
+        metadata: { sessionId: 'explicit-session-id' },
+        options: { mode: 'json' },
+      });
+    });
+
+    expect(JSON.parse(output)).toMatchObject({
+      context: { sessionId: 'explicit-session-id' },
+      sessionId: 'explicit-session-id',
+    });
+  });
+});
+
+describe('Logger Integration - Trace Context', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
+  beforeEach(() => {
+    vi.stubEnv('ENV', 'local');
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  test('includes traceId and spanId in the log entry when an active span context exists', () => {
+    let output = '';
+    context.with(trace.setSpanContext(context.active(), validSpanContext), () => {
+      output = testLoggerCall({
+        level: 'info',
+        message: 'traced log',
+        options: { mode: 'json' },
+      });
+    });
+
+    expect(JSON.parse(output)).toMatchObject({
+      spanId: validSpanContext.spanId,
+      traceId: validSpanContext.traceId,
+    });
+  });
+
+  test('passes an explicit spanContext to Faro instead of relying on its own ambient lookup', () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    const pushLogSpy = vi.spyOn(faroSdk.faro.api, 'pushLog').mockImplementation(() => {});
+
+    context.with(trace.setSpanContext(context.active(), validSpanContext), () => {
+      testLoggerCall({ level: 'info', message: 'browser traced log', options: { mode: 'json' } });
+    });
+
+    expect(pushLogSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        spanContext: { spanId: validSpanContext.spanId, traceId: validSpanContext.traceId },
+      }),
+    );
+  });
+
+  test('omits spanContext from the Faro call when there is no active span', () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    const pushLogSpy = vi.spyOn(faroSdk.faro.api, 'pushLog').mockImplementation(() => {});
+
+    testLoggerCall({ level: 'info', message: 'no active span', options: { mode: 'json' } });
+
+    const [, options] = pushLogSpy.mock.calls[0] ?? [];
+    expect(options).not.toHaveProperty('spanContext');
+  });
+});
+
+describe('runWithRequestContext', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
+  test('re-enters both the given span and the given request-scoped store in one call', () => {
+    const span = trace.wrapSpanContext(validSpanContext);
+
+    runWithRequestContext(span, { sessionId: 'combined-session-id' }, () => {
+      expect(getTraceContext()).toStrictEqual({
+        spanId: validSpanContext.spanId,
+        traceId: validSpanContext.traceId,
+      });
+      expect(getSessionId()).toBe('combined-session-id');
+    });
+  });
+});
+
+describe('getSessionId - Faro fallback in the browser', () => {
+  afterEach(() => {
+    vi.doUnmock('@grafana/faro-web-sdk');
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  test('falls back to the Faro session id when there is no active request context', async () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    vi.doMock('@grafana/faro-web-sdk', () => ({
+      faro: { api: { getSession: () => ({ id: 'faro-session-id' }) } },
+    }));
+
+    const { getSessionId: getSessionIdWithFaroMock } = await import('../src/logger/context');
+
+    expect(getSessionIdWithFaroMock()).toBe('faro-session-id');
+  });
+
+  test('returns "no-id" when Faro has no active session', async () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    vi.doMock('@grafana/faro-web-sdk', () => ({
+      faro: { api: { getSession: () => undefined } },
+    }));
+
+    const { getSessionId: getSessionIdWithFaroMock } = await import('../src/logger/context');
+
+    expect(getSessionIdWithFaroMock()).toBe('no-id');
+  });
+
+  test('does not consult Faro outside the browser', async () => {
+    vi.doMock('@grafana/faro-web-sdk', () => ({
+      faro: { api: { getSession: () => ({ id: 'should-not-be-used' }) } },
+    }));
+
+    const { getSessionId: getSessionIdWithFaroMock } = await import('../src/logger/context');
+
+    expect(getSessionIdWithFaroMock()).toBe('no-id');
+  });
+});
+
+describe('setSessionId', () => {
+  afterEach(() => {
+    setSessionId(undefined);
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  test('overrides getSessionId even when Faro has a session of its own', () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    vi.spyOn(faroSdk.faro.api, 'getSession').mockReturnValue({ id: 'faro-session-id' });
+    vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
+
+    setSessionId('app-session-id');
+
+    expect(getSessionId()).toBe('app-session-id');
+  });
+
+  test('also drives Faro’s own session in the browser, since Faro tags its own signals from that, not from our override', () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    const setSessionSpy = vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
+    const resetSessionSpy = vi.spyOn(faroSdk.faro.api, 'resetSession').mockImplementation(() => {});
+
+    setSessionId('app-session-id');
+    expect(setSessionSpy).toHaveBeenCalledWith({ id: 'app-session-id' });
+    expect(resetSessionSpy).not.toHaveBeenCalled();
+
+    setSessionId(undefined);
+    expect(resetSessionSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not touch Faro outside the browser', () => {
+    const setSessionSpy = vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
+    const resetSessionSpy = vi.spyOn(faroSdk.faro.api, 'resetSession').mockImplementation(() => {});
+
+    setSessionId('app-session-id');
+    setSessionId(undefined);
+
+    expect(setSessionSpy).not.toHaveBeenCalled();
+    expect(resetSessionSpy).not.toHaveBeenCalled();
+  });
+
+  test('falls back through the normal resolution order again once cleared', () => {
+    setSessionId('app-session-id');
+    expect(getSessionId()).toBe('app-session-id');
+
+    setSessionId(undefined);
+    expect(getSessionId()).toBe('no-id');
+  });
+});
+
+describe('startSpanWithSession', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('auto-attaches session.id from the active request context', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+
+    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
+      startSpanWithSession('test-span', { attributes: { foo: 'bar' } });
+    });
+
+    expect(startSpanSpy).toHaveBeenCalledWith(
+      'test-span',
+      { attributes: { foo: 'bar', 'session.id': 'auto-session-id' } },
+      undefined,
+    );
+  });
+
+  test('omits session.id when there is no active request context', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+
+    startSpanWithSession('test-span', { attributes: { foo: 'bar' } });
+
+    expect(startSpanSpy).toHaveBeenCalledWith(
+      'test-span',
+      { attributes: { foo: 'bar' } },
+      undefined,
+    );
+  });
+
+  test('lets an explicitly-specified session.id attribute win over the auto-set one', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+
+    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
+      startSpanWithSession('test-span', { attributes: { 'session.id': 'explicit-session-id' } });
+    });
+
+    expect(startSpanSpy).toHaveBeenCalledWith(
+      'test-span',
+      { attributes: { 'session.id': 'explicit-session-id' } },
+      undefined,
+    );
+  });
+
+  test('forwards the given parent context to tracer.startSpan', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+    const parentContext = trace.setSpanContext(context.active(), validSpanContext);
+
+    startSpanWithSession('test-span', {}, parentContext);
+
+    expect(startSpanSpy).toHaveBeenCalledWith('test-span', { attributes: {} }, parentContext);
   });
 });
 
@@ -381,6 +671,10 @@ describe('isFaroLogLevel', () => {
 describe('Logger Context - no active request context', () => {
   test('getSessionId returns "no-id"', () => {
     expect(getSessionId()).toBe('no-id');
+  });
+
+  test('getTraceContext returns undefined', () => {
+    expect(getTraceContext()).toBeUndefined();
   });
 
   test('getRequestContext returns undefined', () => {
@@ -438,6 +732,22 @@ describe('Logger Context and Formatters - with an active request context', () =>
     });
   });
 
+  test('getTraceContext returns the active span context when it is valid', () => {
+    context.with(trace.setSpanContext(context.active(), validSpanContext), () => {
+      expect(getTraceContext()).toStrictEqual({
+        spanId: validSpanContext.spanId,
+        traceId: validSpanContext.traceId,
+      });
+    });
+  });
+
+  test('getTraceContext returns undefined when the active span context is invalid', () => {
+    const invalidSpanContext = { ...validSpanContext, spanId: '0000000000000000' };
+    context.with(trace.setSpanContext(context.active(), invalidSpanContext), () => {
+      expect(getTraceContext()).toBeUndefined();
+    });
+  });
+
   test('formatPretty colorizes using the active store when the entry has no context', () => {
     requestContextStorage.run({ sessionId: 'format-store-id' }, () => {
       const entry: LogEntry = { level: 'info', message: 'hello', timestamp: '2024-01-01' };
@@ -491,6 +801,45 @@ describe('Logger Formatters - direct unit tests', () => {
     };
     const output = formatPretty(entry, true);
     expect(output).toContain(getRandomColor('explicit-in-context')('explicit session'));
+  });
+
+  test('formatPretty appends trace and span ids when both are present', () => {
+    const entry: LogEntry = {
+      level: 'info',
+      message: 'traced',
+      spanId: 'b7ad6b7169203331',
+      timestamp: '2024-01-01',
+      traceId: '0af7651916cd43dd8448eb211c80319c',
+    };
+    expect(formatPretty(entry, false)).toBe(
+      '[2024-01-01] INFO : traced trace=0af7651916cd43dd8448eb211c80319c span=b7ad6b7169203331',
+    );
+  });
+
+  test('formatPretty colors the trace/span suffix when color is enabled', () => {
+    const entry: LogEntry = {
+      level: 'info',
+      message: 'traced',
+      spanId: 'b7ad6b7169203331',
+      timestamp: '2024-01-01',
+      traceId: '0af7651916cd43dd8448eb211c80319c',
+    };
+    const output = formatPretty(entry, true);
+    expect(output).toContain(
+      chalkInstance.gray('trace=0af7651916cd43dd8448eb211c80319c span=b7ad6b7169203331'),
+    );
+  });
+
+  test('formatPretty appends an empty span when only the trace id is present', () => {
+    const entry: LogEntry = {
+      level: 'info',
+      message: 'traced',
+      timestamp: '2024-01-01',
+      traceId: '0af7651916cd43dd8448eb211c80319c',
+    };
+    expect(formatPretty(entry, false)).toBe(
+      '[2024-01-01] INFO : traced trace=0af7651916cd43dd8448eb211c80319c span=',
+    );
   });
 
   test('formatPretty with color leaves the message uncolored when there is no session and no active store', () => {

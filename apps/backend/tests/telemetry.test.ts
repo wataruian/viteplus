@@ -70,10 +70,24 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
       const res = await app.request('/');
       expect(res.status).toBe(200);
 
+      const hasMetricNamed = (request: { body: unknown }, name: string) => {
+        const parsed = metricBodySchema.safeParse(request.body);
+        return (
+          parsed.success &&
+          parsed.data.resourceMetrics.some((resourceMetric) =>
+            resourceMetric.scopeMetrics.some((scopeMetric) =>
+              scopeMetric.metrics.some((item) => item.name === name),
+            ),
+          )
+        );
+      };
+
       const [traceRequest, logRequest, metricRequest] = await Promise.all([
         collector.waitForRequest('/v1/traces'),
         collector.waitForRequest('/v1/logs'),
-        collector.waitForRequest('/v1/metrics'),
+        collector.waitForRequest('/v1/metrics', (request) =>
+          hasMetricNamed(request, 'request_hits'),
+        ),
       ]);
 
       const trace = traceBodySchema.parse(traceRequest.body);

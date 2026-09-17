@@ -5,12 +5,12 @@ import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { apiRouter } from '../../src/routers/http';
 import {
-  type HttpEnv,
   type HttpRoute,
   assertHttpRoutesDocumented,
   createHttpRouter,
   defineHttpRoute,
 } from '../../src/routers/utils';
+import type { AppEnv } from '../../src/schema';
 import { DefaultService } from '../../src/services/default';
 import { TestService } from '../../src/services/test';
 import { httpEnvelope, runtimes } from '../helpers/utils';
@@ -78,7 +78,7 @@ test('createHttpRouter builds a requestless route when a route has no request sc
   };
 
   const router = createHttpRouter([route]);
-  const app = new Hono<HttpEnv>();
+  const app = new Hono<AppEnv>();
   app.use('*', async (c, next) => {
     c.set('sessionId', 'unit-test-session');
     await next();

@@ -1,5 +1,5 @@
-import { logger } from '@lightproject/common/logger';
-import { type Counter, getMeter } from '@lightproject/common/utils';
+import { logger, startSpanWithSession } from '@lightproject/common/logger';
+import { type Counter, getMeter, runWithSpan } from '@lightproject/common/utils';
 
 const INITIAL_COUNT = 0;
 const INCREMENT_STEP = 1;
@@ -14,22 +14,28 @@ const setupCounter = (element: HTMLButtonElement): (() => void) => {
   };
 
   const onHandleClick = (): void => {
-    const nextCount = counter + INCREMENT_STEP;
-    logger.info('Counter incremented', {
-      nextCount,
-      previousCount: counter,
-    });
-    setCounter(nextCount);
+    const span = startSpanWithSession('counter.increment');
 
-    try {
-      buttonClicksCounter ??= getMeter().createCounter('button_clicks', {
-        description: 'frontend button clicks',
+    runWithSpan(span, () => {
+      const nextCount = counter + INCREMENT_STEP;
+      logger.info('Counter incremented', {
+        nextCount,
+        previousCount: counter,
       });
-      buttonClicksCounter.add(1);
-      logger.info('Pushed button_clicks metric');
-    } catch {
-      // Skip metric counter if it fails
-    }
+      setCounter(nextCount);
+
+      try {
+        buttonClicksCounter ??= getMeter().createCounter('button_clicks', {
+          description: 'frontend button clicks',
+        });
+        buttonClicksCounter.add(1);
+        logger.info('Pushed button_clicks metric');
+      } catch {
+        // Skip metric counter if it fails
+      }
+    });
+
+    span.end();
   };
 
   element.addEventListener('click', onHandleClick);

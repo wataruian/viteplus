@@ -4,15 +4,19 @@ import type * as RumModule from '../src/utils/rum';
 import { flushRum, registerLifecycleFlush } from '../src/utils/rum';
 
 const {
+  flushExemplarMetricsMock,
   forceFlushMock,
   initializeFaroMock,
   resourceFromAttributesMock,
   setGlobalMeterProviderMock,
+  setTelemetryConfigMock,
 } = vi.hoisted(() => ({
+  flushExemplarMetricsMock: vi.fn().mockResolvedValue(undefined),
   forceFlushMock: vi.fn().mockResolvedValue(undefined),
   initializeFaroMock: vi.fn(() => ({ initializedFaro: true })),
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   setGlobalMeterProviderMock: vi.fn(),
+  setTelemetryConfigMock: vi.fn(),
 }));
 
 vi.mock('@grafana/faro-web-sdk', () => ({
@@ -47,6 +51,14 @@ vi.mock('@opentelemetry/sdk-metrics', () => {
   };
 });
 
+vi.mock('../src/utils/telemetry', () => ({
+  setTelemetryConfig: setTelemetryConfigMock,
+}));
+
+vi.mock('../src/server/exemplar-metrics', () => ({
+  flushExemplarMetrics: flushExemplarMetricsMock,
+}));
+
 const importFreshRumModule = async (): Promise<typeof RumModule> => {
   vi.resetModules();
   return await import('../src/utils/rum');
@@ -61,6 +73,12 @@ afterEach(() => {
 describe('flushRum', () => {
   test('resolves without throwing when no meter provider has been initialized', async () => {
     await expect(flushRum()).resolves.toBeUndefined();
+  });
+
+  test('also flushes any buffered exemplar metrics', async () => {
+    await flushRum();
+
+    expect(flushExemplarMetricsMock).toHaveBeenCalled();
   });
 });
 
@@ -88,6 +106,8 @@ describe('initializeRum', () => {
     });
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
+      'deployment.environment': 'custom-env',
+      'deployment.environment.name': 'custom-env',
       'service.name': 'my-service',
       'service.version': '9.9.9',
     });
@@ -98,6 +118,12 @@ describe('initializeRum', () => {
       }),
     );
     expect(setGlobalMeterProviderMock).toHaveBeenCalled();
+    expect(setTelemetryConfigMock).toHaveBeenCalledWith({
+      environment: 'custom-env',
+      otlpEndpoint: 'https://otlp.example.com',
+      serviceName: 'my-service',
+      serviceVersion: '9.9.9',
+    });
   });
 
   test('falls back to primary env vars when options are omitted', async () => {
@@ -112,6 +138,8 @@ describe('initializeRum', () => {
     rum.initializeRum();
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
+      'deployment.environment': 'staging',
+      'deployment.environment.name': 'staging',
       'service.name': 'env-service',
       'service.version': '2.0.0',
     });
@@ -141,6 +169,8 @@ describe('initializeRum', () => {
     rum.initializeRum();
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
+      'deployment.environment': 'vite-staging',
+      'deployment.environment.name': 'vite-staging',
       'service.name': 'vite-service',
       'service.version': '3.0.0',
     });
@@ -169,6 +199,8 @@ describe('initializeRum', () => {
     rum.initializeRum();
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
+      'deployment.environment': 'local',
+      'deployment.environment.name': 'local',
       'service.name': '@lightproject/app',
       'service.version': '1.0.0',
     });
@@ -225,5 +257,42 @@ describe('initializeRum', () => {
     await vi.waitFor(() => {
       expect(forceFlushMock).toHaveBeenCalledTimes(1);
     });
+  });
+
+  test('swallows a synchronous flush failure raised when the page becomes hidden, without producing an unhandled rejection', async () => {
+    const rum = await importFreshRumModule();
+    rum.initializeRum({ serviceName: 'lifecycle-sync-failure' });
+
+    const documentListener = vi.fn<(eventName: string, listener: () => void) => void>();
+    const documentStub: { addEventListener: typeof documentListener; visibilityState: string } = {
+      addEventListener: documentListener,
+      visibilityState: 'hidden',
+    };
+
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', documentStub);
+    vi.stubGlobal('addEventListener', vi.fn());
+
+    rum.registerLifecycleFlush();
+
+    const [, flushOnHide] = documentListener.mock.calls[0] ?? ['', () => {}];
+
+    flushExemplarMetricsMock.mockImplementationOnce(() => {
+      throw new Error('synchronous flush failure');
+    });
+
+    const unhandledRejectionSpy = vi.fn();
+    const handleUnhandledRejection = (reason: unknown): void => {
+      unhandledRejectionSpy(reason);
+    };
+    globalThis.process.on('unhandledRejection', handleUnhandledRejection);
+
+    flushOnHide();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(unhandledRejectionSpy).not.toHaveBeenCalled();
+
+    globalThis.process.off('unhandledRejection', handleUnhandledRejection);
   });
 });

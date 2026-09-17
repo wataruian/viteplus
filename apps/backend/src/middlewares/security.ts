@@ -27,7 +27,15 @@ const uniqueOrigins = [...new Set(allowedOrigins)];
 
 const corsMiddleware = () =>
   cors({
-    allowHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Authorization', 'Content-Type'],
+    allowHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Accept',
+      'Authorization',
+      'Content-Type',
+      'traceparent',
+      'tracestate',
+    ],
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
     origin: uniqueOrigins,

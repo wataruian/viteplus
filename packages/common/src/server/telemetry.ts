@@ -1,4 +1,11 @@
-import { DiagConsoleLogger, DiagLogLevel, diag, metrics, trace } from '@opentelemetry/api';
+import {
+  DiagConsoleLogger,
+  DiagLogLevel,
+  diag,
+  metrics,
+  propagation,
+  trace,
+} from '@opentelemetry/api';
 import { logs } from '@opentelemetry/api-logs';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
@@ -14,16 +21,22 @@ import {
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
 import { BatchSpanProcessor, WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
 
 import { getEnv } from '../environment';
 import { logger } from '../logger';
-import { tracer } from '../utils/telemetry';
+import { setTelemetryConfig, tracer } from '../utils/telemetry';
+import { flushExemplarMetrics } from './exemplar-metrics';
 
 interface TelemetryOptions {
   serviceName?: string;
   serviceVersion?: string;
   otlpEndpoint?: string;
+  environment?: string;
 }
 
 class PullMetricReader extends MetricReader {
@@ -65,6 +78,7 @@ const flushTelemetry = async () => {
       tracerProviderInstance?.forceFlush(),
       meterProviderInstance?.forceFlush(),
       loggerProviderInstance?.forceFlush(),
+      flushExemplarMetrics(),
     ]);
   } catch (error) {
     logger.error('Failed to flush telemetry', { error });
@@ -105,10 +119,15 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
 
   const serviceName = options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app';
   const serviceVersion = options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0';
+  const environment = options.environment ?? getEnv('ENV') ?? 'local';
+
+  setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
 
   const resource = resourceFromAttributes({
     [ATTR_SERVICE_NAME]: serviceName,
     [ATTR_SERVICE_VERSION]: serviceVersion,
+    [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: environment,
+    'deployment.environment': environment,
   });
 
   tracerProviderInstance = new WebTracerProvider({
@@ -175,6 +194,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   span.end();
 
   logger.info('OpenTelemetry initialized', {
+    environment,
     otlpEndpoint,
     serviceName,
     serviceVersion,
@@ -198,7 +218,9 @@ const resetTelemetryForTests = () => {
   trace.disable();
   metrics.disable();
   logs.disable();
+  propagation.disable();
   initialized = false;
+  setTelemetryConfig(undefined);
 };
 
 export {

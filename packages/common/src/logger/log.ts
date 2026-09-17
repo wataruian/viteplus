@@ -3,7 +3,7 @@ import { SeverityNumber, logs } from '@opentelemetry/api-logs';
 
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
 import { isRecord } from '../validators/validate';
-import { getSessionId } from './context';
+import { getSessionId, getTraceContext } from './context';
 import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
 import { redact } from './redactor';
 
@@ -103,16 +103,22 @@ class Logger {
       metadata === undefined ? undefined : redact(metadata, this.options.redact);
 
     const sessionId = getSessionId();
+    const traceContext = getTraceContext();
 
     const resolvedMetadata = {
-      ...(isRecord(redactedMetadata) ? redactedMetadata : {}),
       ...(sessionId === 'no-id' ? {} : { sessionId }),
+      ...(isRecord(redactedMetadata) ? redactedMetadata : {}),
     };
+
+    const resolvedSessionId =
+      typeof resolvedMetadata.sessionId === 'string' ? resolvedMetadata.sessionId : undefined;
 
     const entry: LogEntry = {
       level,
       message,
       ...(Object.keys(resolvedMetadata).length > 0 ? { context: resolvedMetadata } : {}),
+      ...(resolvedSessionId === undefined ? {} : { sessionId: resolvedSessionId }),
+      ...(traceContext ? { spanId: traceContext.spanId, traceId: traceContext.traceId } : {}),
       timestamp: this.options.timestamp ? new Date().toISOString() : '',
     };
 
@@ -125,14 +131,16 @@ class Logger {
     }
 
     const context = entry.context ?? {};
+    const { spanId: _spanId, traceId: _traceId, ...otelEntry } = entry;
 
     this.otelLogger.emit({
       attributes: {
         context: Object.keys(context).length > 0 ? JSON.stringify(context) : undefined,
         logger: 'application',
+        sessionId: entry.sessionId,
         timestamp: entry.timestamp,
       },
-      body: JSON.stringify(entry),
+      body: JSON.stringify(otelEntry),
       severityNumber: otelSeverity[entry.level],
       severityText: entry.level.toUpperCase(),
     });
@@ -143,7 +151,12 @@ class Logger {
       return;
     }
 
-    const options: faroSdk.PushLogOptions = { level: faroLogLevel[entry.level] };
+    const options: faroSdk.PushLogOptions = {
+      level: faroLogLevel[entry.level],
+      ...(entry.traceId === undefined || entry.spanId === undefined
+        ? {}
+        : { spanContext: { spanId: entry.spanId, traceId: entry.traceId } }),
+    };
 
     faroSdk.faro.api.pushLog([JSON.stringify(entry)], options);
   }

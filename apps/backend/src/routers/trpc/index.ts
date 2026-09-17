@@ -10,6 +10,7 @@ import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { StatusCode } from 'hono/utils/http-status';
 
+import type { AppEnv } from '../../schema';
 import { collectTrpcOpenApiRoutes, getOpenApiDocument, normalizeTrpcGetQuery, t } from '../utils';
 import { defaultRouter } from './default';
 import { testRouter } from './test';
@@ -60,7 +61,7 @@ const appRouter = t.router({
   test: testRouter,
 });
 
-const trpcRouter = new Hono<{ Variables: { sessionId: string } }>();
+const trpcRouter = new Hono<AppEnv>();
 const trpcOpenApiRouter = new Hono();
 
 if (isLocal()) {

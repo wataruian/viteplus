@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vite-plus/test';
 
 import {
+  escapeRegExp,
   generateShortUuid,
   generateUuid,
   getRandomText,
@@ -119,6 +120,36 @@ describe('upperCaseFirstLetter', () => {
 describe('uppercasePerWord', () => {
   test('uppercases the first letter of every word', () => {
     expect(uppercasePerWord('hello there world')).toBe('Hello There World');
+  });
+});
+
+describe('escapeRegExp', () => {
+  test('prefixes every regex metacharacter with a backslash', () => {
+    const special = String.raw`$()*+.?[\]^{|}`;
+    expect(escapeRegExp(special)).toBe(String.raw`\$\(\)\*\+\.\?\[\\\]\^\{\|\}`);
+  });
+
+  test('leaves ordinary characters unchanged', () => {
+    expect(escapeRegExp('hello-world_123')).toBe('hello-world_123');
+  });
+
+  test('produces a pattern that matches the original string literally, not as a wildcard', () => {
+    const value = 'http://localhost:3000';
+    const pattern = new RegExp(`^${escapeRegExp(value)}$`, 'u');
+
+    expect(pattern.test(value)).toBe(true);
+    expect(pattern.test('http://localhostx3000')).toBe(false);
+  });
+
+  test('produces a valid, non-throwing pattern from a string containing unresolved template syntax', () => {
+    const value = `http://localhost:\${API_PORT}`;
+
+    expect(() => new RegExp(`^${escapeRegExp(value)}$`, 'u')).not.toThrow();
+    expect(new RegExp(`^${escapeRegExp(value)}$`, 'u').test(value)).toBe(true);
+  });
+
+  test('returns an empty string unchanged', () => {
+    expect(escapeRegExp('')).toBe('');
   });
 });
 

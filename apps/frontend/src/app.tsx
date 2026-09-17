@@ -1,5 +1,6 @@
-import { logger } from '@lightproject/common/logger';
-import { tracer } from '@lightproject/common/utils';
+import { logger, setSessionId, startSpanWithSession } from '@lightproject/common/logger';
+import { recordGaugeWithExemplar } from '@lightproject/common/server';
+import { runWithSpan } from '@lightproject/common/utils';
 import { useSession } from '@lightproject/design-system/context';
 import { type RefCallback, useEffect, useRef } from 'react';
 
@@ -26,15 +27,20 @@ const App = () => {
   };
 
   useEffect(() => {
+    setSessionId(sessionId);
+    return () => {
+      setSessionId(undefined);
+    };
+  }, [sessionId]);
+
+  useEffect(() => {
     const run = async () => {
-      const span = tracer.startSpan('app.initialize', {
-        attributes: {
-          'client.id': sessionId,
-        },
-        root: true,
-      });
+      const span = startSpanWithSession('app.initialize', { root: true });
 
       try {
+        const trpcCallStart = globalThis.performance.now();
+        let trpcCallSucceeded = true;
+
         try {
           span.addEvent('Executing tRPC test mutation');
 
@@ -42,29 +48,47 @@ const App = () => {
 
           span.setAttribute('trpc.test.success', true);
 
-          logger.info('tRPC Sample Result', {
-            result,
+          runWithSpan(span, () => {
+            logger.info('tRPC Sample Result', {
+              result,
+            });
           });
         } catch (error: unknown) {
+          trpcCallSucceeded = false;
           span.recordException(error instanceof Error ? error : String(error));
           span.setAttribute('trpc.test.success', false);
 
-          logger.error('Failed to call tRPC server', {
-            error,
+          runWithSpan(span, () => {
+            logger.error('Failed to call tRPC server', {
+              error,
+            });
           });
         }
 
-        const url = get('API_URL') ?? get('VITE_API_URL');
-        if (url !== undefined && url !== '') {
-          logger.info(`VITE_API_URL is set: ${url}`);
-        } else {
-          logger.info(`VITE_API_URL is not set, using default URL: ${config.viteApiUrl}`);
-        }
+        runWithSpan(span, () => {
+          recordGaugeWithExemplar({
+            attributes: { 'rpc.method': 'test.hello', 'rpc.success': trpcCallSucceeded },
+            description: 'Duration of the most recently completed tRPC client call',
+            name: 'http_client_duration_seconds',
+            unit: 's',
+            value: (globalThis.performance.now() - trpcCallStart) / 1000,
+          }).catch(() => {
+            // Skip exemplar metric if it fails
+          });
+        });
 
-        logger.info('Frontend Start', {
-          clientId: sessionId,
-          platform: globalThis.navigator.userAgent,
-          timestamp: new Date().toISOString(),
+        runWithSpan(span, () => {
+          const url = get('API_URL') ?? get('VITE_API_URL');
+          if (url !== undefined && url !== '') {
+            logger.info(`VITE_API_URL is set: ${url}`);
+          } else {
+            logger.info(`VITE_API_URL is not set, using default URL: ${config.viteApiUrl}`);
+          }
+
+          logger.info('Frontend Start', {
+            platform: globalThis.navigator.userAgent,
+            timestamp: new Date().toISOString(),
+          });
         });
 
         span.setAttribute('app.initialized', true);
@@ -72,7 +96,9 @@ const App = () => {
         span.recordException(error instanceof Error ? error : String(error));
         span.setAttribute('app.initialized', false);
 
-        logger.error('Failed to initialize frontend', { error });
+        runWithSpan(span, () => {
+          logger.error('Failed to initialize frontend', { error });
+        });
       } finally {
         span.end();
       }

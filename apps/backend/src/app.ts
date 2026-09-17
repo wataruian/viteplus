@@ -17,6 +17,7 @@ import { trustProxy } from './middlewares/trust-proxy';
 import { docsRouter } from './routers/docs';
 import { httpRouter } from './routers/http';
 import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
+import type { AppEnv } from './schema';
 
 const getApp = async () => {
   const port = get('API_PORT');
@@ -31,7 +32,7 @@ const getApp = async () => {
     serviceVersion: packageJson.version,
   });
 
-  const app = new Hono<{ Variables: { sessionId: string } }>();
+  const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
     const sessionId = generateUuid();

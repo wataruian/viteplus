@@ -10,6 +10,9 @@ interface LogEntry {
   message: string;
   timestamp: string;
   context?: Record<string, unknown> | object;
+  sessionId?: string;
+  spanId?: string;
+  traceId?: string;
 }
 
 const formatColors = {
@@ -39,6 +42,11 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
   }
 
   let output = `[${timestamp}] ${coloredLevel}: ${messageText}`;
+
+  if (entry.traceId !== undefined) {
+    const traceStr = `trace=${entry.traceId} span=${entry.spanId ?? ''}`;
+    output += ` ${useColor ? chalkInstance.gray(traceStr) : traceStr}`;
+  }
 
   if (entry.context !== undefined && Object.keys(entry.context).length > 0) {
     const contextStr = JSON.stringify(entry.context, undefined, 5);
