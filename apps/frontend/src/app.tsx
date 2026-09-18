@@ -50,9 +50,12 @@ const App = () => {
 
           runWithSpan(span, () => {
             const { viteTestVar } = config;
-            logger.info('VITE_TEST_VAR', {
-              viteTestVar,
-            });
+            if (viteTestVar !== undefined && viteTestVar !== '') {
+              logger.info(`VITE_TEST_VAR is set: ${viteTestVar}`);
+            } else {
+              logger.info('VITE_TEST_VAR is not set');
+            }
+
             logger.info('tRPC Sample Result', {
               result,
             });

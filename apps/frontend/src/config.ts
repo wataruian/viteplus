@@ -5,6 +5,7 @@ import { z } from 'zod';
 const schema = commonEnvSchema.extend({
   ADMIN_PORT: z.string().optional(),
   API_URL: z.string().optional(),
+  TEST_VAR: z.string().optional(),
   VITE_ADMIN_PORT: z.string().optional(),
   VITE_API_URL: z.string().optional(),
   VITE_TEST_VAR: z.string().optional(),
@@ -22,7 +23,7 @@ const config = {
     return url !== undefined && url !== '' ? url : apiBaseUrl;
   },
   get viteTestVar() {
-    return get('VITE_TEST_VAR');
+    return get('TEST_VAR') ?? get('VITE_TEST_VAR') ?? undefined;
   },
 };
 

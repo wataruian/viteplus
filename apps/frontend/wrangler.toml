@@ -15,4 +15,5 @@ enabled = true
 persist = true
 
 [vars]
-VITE_TEST_VAR = "somevarfromwrangler"
+TEST_VAR = "testvar_fromwrangler"
+VITE_TEST_VAR = "vite_testvar_fromwrangler"
