@@ -2,6 +2,8 @@ import { logger } from '../logger';
 import { getSessionId, getTraceContext } from '../logger/context';
 import { getTelemetryConfig } from '../utils/telemetry';
 
+type AttributeValue = boolean | number | string;
+
 interface OtlpAttributeValue {
   boolValue?: boolean;
   doubleValue?: number;
@@ -50,9 +52,9 @@ interface OtlpMetricsExportRequest {
 }
 
 interface GaugeExemplarOptions {
-  attributes?: Record<string, boolean | number | string>;
+  attributes?: Record<string, AttributeValue>;
   description?: string;
-  exemplarAttributes?: Record<string, boolean | number | string>;
+  exemplarAttributes?: Record<string, AttributeValue>;
   name: string;
   unit?: string;
   value: number;
@@ -71,7 +73,7 @@ const MAX_BUFFERED_DATA_POINTS = 20;
 const metricBuffer = new Map<string, BufferedMetric>();
 let flushTimer: ReturnType<typeof globalThis.setTimeout> | undefined = undefined;
 
-const toOtlpAttributeValue = (value: boolean | number | string): OtlpAttributeValue => {
+const toOtlpAttributeValue = (value: AttributeValue): OtlpAttributeValue => {
   if (typeof value === 'boolean') {
     return { boolValue: value };
   }
@@ -81,7 +83,7 @@ const toOtlpAttributeValue = (value: boolean | number | string): OtlpAttributeVa
   return { stringValue: value };
 };
 
-const toOtlpAttributes = (attributes: Record<string, boolean | number | string>): OtlpKeyValue[] =>
+const toOtlpAttributes = (attributes: Record<string, AttributeValue>): OtlpKeyValue[] =>
   Object.entries(attributes).map(([key, value]) => ({ key, value: toOtlpAttributeValue(value) }));
 
 const countBufferedDataPoints = (): number =>
@@ -227,6 +229,7 @@ export {
   toOtlpMetric,
 };
 export type {
+  AttributeValue,
   BufferedMetric,
   GaugeExemplarOptions,
   OtlpAttributeValue,
