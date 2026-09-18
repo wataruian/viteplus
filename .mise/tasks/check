@@ -71,6 +71,11 @@ fi
 
 executeCommand vp run -r madge
 executeCommand vp run -r root --fix
+executeCommand vp run -r dagger:check --fix
+executeCommand vp run -r dagger:format --write
+executeCommand vp run -r dagger:lint --fix
+executeCommand vp run -r dagger:type-check
+executeCommand vp run -r dagger:test
 executeCommand vp run -r check --fix
 executeCommand vp run -r format --write
 executeCommand vp run -r lint --fix

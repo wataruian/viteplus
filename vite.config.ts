@@ -242,12 +242,12 @@ const getCommonViteConfig = ({
         provider: 'v8',
         reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
         reportsDirectory: 'coverage',
-        // thresholds: {
-        //   branches: 100,
-        //   functions: 100,
-        //   lines: 100,
-        //   statements: 100,
-        // },
+        thresholds: {
+          branches: 100,
+          functions: 100,
+          lines: 100,
+          statements: 100,
+        },
       },
       env: {
         LOG_LEVEL: 'silent',
@@ -421,6 +421,26 @@ const getRootViteConfig = (): UserConfig => {
         commit: {
           cache: false,
           command: 'cz',
+        },
+        'dagger:check': {
+          command: 'cd .dagger && vp check',
+          ...commonRunProps,
+        },
+        'dagger:format': {
+          command: 'cd .dagger && vp format',
+          ...commonRunProps,
+        },
+        'dagger:lint': {
+          command: 'cd .dagger && vp lint',
+          ...commonRunProps,
+        },
+        'dagger:test': {
+          command: 'cd .dagger && vp test',
+          ...commonRunProps,
+        },
+        'dagger:type-check': {
+          command: 'cd .dagger && tsc',
+          ...commonRunProps,
         },
         madge: {
           command:

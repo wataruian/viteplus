@@ -22,7 +22,7 @@
     "init": "vp install --frozen-lockfile && vp run ready",
     "prepare": "vp config",
     "prune": "vp exec turbo prune --out-dir ./.pruned --docker",
-    "ready": "vp run -r madge && vp run -r root && vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
+    "ready": "vp run -r madge && vp run -r root && vp run -r dagger:check && vp run -r dagger:format && vp run -r dagger:lint && vp run -r dagger:type-check && vp run -r dagger:test && vp run -r check && vp run -r format && vp run -r lint && vp run -r type-check && vp run -r build && vp run -r test",
     "serve:dev": "vp run -r --parallel dev",
     "serve:prod": "vp run -r --parallel start",
     "serve:wrangler": "vp run -r --parallel wrangler:dev",

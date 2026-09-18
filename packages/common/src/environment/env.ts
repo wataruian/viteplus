@@ -1,19 +1,5 @@
 import { getImportMetaEnvValue } from '#import-meta-env';
 
-const testFunc = () => {
-  const test = 'adasds';
-  const zxc = 123;
-  const bbb = {
-    test,
-  };
-  const aaa = {
-    bbb,
-    test,
-    zxc,
-  };
-  return aaa;
-};
-
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
 
@@ -140,5 +126,4 @@ export {
   isTest,
   isTrue,
   isVitest,
-  testFunc,
 };
