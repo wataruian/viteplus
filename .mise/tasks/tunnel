@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#MISE description="Expose local OTEL + Faro telemetry ports via free Cloudflare quick tunnels"
+
+set -o errexit # Bail out on any error
+
+otelPort="${OTEL_TUNNEL_PORT:-4318}"
+faroPort="${FARO_TUNNEL_PORT:-12347}"
+
+command -v cloudflared >/dev/null 2>&1 || {
+  echo "cloudflared is not installed. Run: mise use -g cloudflared"
+  exit 1
+}
+
+otelLog="$(mktemp)"
+faroLog="$(mktemp)"
+
+cleanup() {
+  echo ""
+  echo "Stopping tunnels..."
+  kill "${otelPid}" "${faroPid}" 2>/dev/null || true
+  rm -f "${otelLog}" "${faroLog}"
+}
+trap cleanup EXIT INT TERM
+
+echo "Starting Cloudflare quick tunnels for localhost:${otelPort} and localhost:${faroPort}..."
+
+cloudflared tunnel --url "http://localhost:${otelPort}" >"${otelLog}" 2>&1 &
+otelPid="${!}"
+
+cloudflared tunnel --url "http://localhost:${faroPort}" >"${faroLog}" 2>&1 &
+faroPid="${!}"
+
+extractUrl() {
+  local log="${1}"
+  local url=""
+  for _ in $(seq 1 30); do
+    url="$(grep -oE 'https://[a-zA-Z0-9.-]+\.trycloudflare\.com' "${log}" | head -1 || true)"
+    if [[ -n "${url}" ]]; then
+      echo "${url}"
+      return 0
+    fi
+    sleep 1
+  done
+  echo ""
+}
+
+otelUrl="$(extractUrl "${otelLog}")"
+faroUrl="$(extractUrl "${faroLog}")"
+
+if [[ -z "${otelUrl}" || -z "${faroUrl}" ]]; then
+  echo "❌ Failed to get a tunnel URL. Log output:"
+  cat "${otelLog}" "${faroLog}"
+  exit 1
+fi
+
+echo ""
+echo "✅ OTEL_EXPORTER_OTLP_ENDPOINT | VITE_OTEL_EXPORTER_OTLP_ENDPOINT = ${otelUrl}"
+echo "✅ FARO_ENDPOINT | VITE_FARO_ENDPOINT = ${faroUrl}"
+echo ""
+echo "Set these on your deployed Worker's environment, then press Ctrl+C here to stop the tunnels when done."
+echo ""
+
+wait "${otelPid}" "${faroPid}"

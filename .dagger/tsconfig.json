@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "experimentalDecorators": true,
+    "module": "esnext",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "paths": {
       "@dagger.io/dagger": ["./sdk/index.ts"],
       "@dagger.io/dagger/telemetry": ["./sdk/telemetry.ts"]

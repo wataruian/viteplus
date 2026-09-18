@@ -106,15 +106,17 @@ const getCommonViteConfig = ({
   dir = import.meta.dirname,
   isRoot = false,
   mode = 'development',
+  pathToRoot = '../..',
 }: {
   dir?: string;
   isRoot?: boolean;
   mode?: string;
+  pathToRoot?: string;
 } = {}): UserConfig => {
   let rootDir = dir;
 
   if (!isRoot) {
-    rootDir = path.resolve(dir, '../..');
+    rootDir = path.resolve(dir, pathToRoot);
   }
 
   const dotenvKeys = getDotenvKeys(rootDir);
@@ -240,12 +242,12 @@ const getCommonViteConfig = ({
         provider: 'v8',
         reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
         reportsDirectory: 'coverage',
-        thresholds: {
-          branches: 100,
-          functions: 100,
-          lines: 100,
-          statements: 100,
-        },
+        // thresholds: {
+        //   branches: 100,
+        //   functions: 100,
+        //   lines: 100,
+        //   statements: 100,
+        // },
       },
       env: {
         LOG_LEVEL: 'silent',

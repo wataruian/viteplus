@@ -22,23 +22,18 @@ const workspacePath = (workspaceName: string): string => workspace(workspaceName
 
 const isFrontend = (workspaceName: string): boolean => workspace(workspaceName).isFrontend;
 
+const shortWorkspaceName = (workspaceDir: string): string => {
+  const [, name] = workspaceDir.split('/');
+  return name;
+};
+
 const outputDirectory = (taskName: string, content: string): Directory =>
   dag.directory().withNewFile(`${taskName}.output`, content);
 
-const installArgs = (mode: 'dev' | 'prod' = 'dev'): string[] => {
-  switch (mode) {
-    case 'dev': {
-      return ['vp', 'install', '--frozen-lockfile'];
-    }
-    case 'prod': {
-      return ['vp', 'install', '--prod', '--frozen-lockfile'];
-    }
-    default: {
-      const exhaustive: never = mode;
-      throw new Error(`mode must be 'dev' or 'prod', got '${exhaustive as string}'`);
-    }
-  }
-};
+const installArgs = (mode: 'dev' | 'prod' = 'dev'): string[] =>
+  mode === 'prod'
+    ? ['vp', 'install', '--prod', '--frozen-lockfile']
+    : ['vp', 'install', '--frozen-lockfile'];
 
 const withInstallCaches = (container: Container): Container =>
   container
@@ -94,6 +89,7 @@ export {
   installArgs,
   isFrontend,
   outputDirectory,
+  shortWorkspaceName,
   withBuildEnv,
   withInstallCaches,
   withTaskCache,

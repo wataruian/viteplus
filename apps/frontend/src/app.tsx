@@ -49,6 +49,10 @@ const App = () => {
           span.setAttribute('trpc.test.success', true);
 
           runWithSpan(span, () => {
+            const { viteTestVar } = config;
+            logger.info('VITE_TEST_VAR', {
+              viteTestVar,
+            });
             logger.info('tRPC Sample Result', {
               result,
             });

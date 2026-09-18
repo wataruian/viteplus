@@ -13,3 +13,6 @@ persist = true
 [observability.traces]
 enabled = true
 persist = true
+
+[vars]
+VITE_TEST_VAR = "somevarfromwrangler"

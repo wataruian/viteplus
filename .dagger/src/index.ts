@@ -26,7 +26,13 @@ import {
   SOURCE_IGNORE,
   VITE_PLUS_USER,
 } from './helpers/constants';
-import { isFrontend, outputDirectory, withBuildEnv, workspacePath } from './helpers/container';
+import {
+  isFrontend,
+  outputDirectory,
+  shortWorkspaceName,
+  withBuildEnv,
+  workspacePath,
+} from './helpers/container';
 import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
 import { localSonarRunner, remoteSonarRunner } from './helpers/sonar';
 
@@ -169,7 +175,7 @@ export class Monorepo {
       // No coverage report to attach.
     }
 
-    const shortName = workspaceDir.split('/').pop() ?? workspace;
+    const shortName = shortWorkspaceName(workspaceDir);
     return result.withNewFile('test.row.md', coverageRow(shortName, summaryJson));
   }
 
@@ -215,7 +221,7 @@ export class Monorepo {
       // No SARIF report to attach.
     }
 
-    const shortName = workspaceDir.split('/').pop() ?? workspace;
+    const shortName = shortWorkspaceName(workspaceDir);
     return result.withNewFile('semgrep.row.md', semgrepRow(shortName, sarifJson));
   }
 
@@ -227,7 +233,7 @@ export class Monorepo {
     sonarHostUrl?: string,
   ): Promise<Directory> {
     const workspaceDir = workspacePath(workspace);
-    const shortName = workspaceDir.split('/').pop() ?? workspace;
+    const shortName = shortWorkspaceName(workspaceDir);
     const projectKey = `lightproject-viteplus-${shortName}`;
     const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;
     const useLocalNetwork = hostUrl === SONAR_LOCAL_HOST_URL;
@@ -471,7 +477,7 @@ export class Monorepo {
       : await this.vp(workspace, buildEnv);
 
     const workspaceDir = workspacePath(workspace);
-    const imageName = workspaceDir.split('/').pop();
+    const imageName = shortWorkspaceName(workspaceDir);
 
     const refs = [`${imageName}:latest`];
     if (tag !== undefined && tag !== '') {
