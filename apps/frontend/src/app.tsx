@@ -49,13 +49,6 @@ const App = () => {
           span.setAttribute('trpc.test.success', true);
 
           runWithSpan(span, () => {
-            const { viteTestVar } = config;
-            if (viteTestVar !== undefined && viteTestVar !== '') {
-              logger.info(`VITE_TEST_VAR is set: ${viteTestVar}`);
-            } else {
-              logger.info('VITE_TEST_VAR is not set');
-            }
-
             logger.info('tRPC Sample Result', {
               result,
             });

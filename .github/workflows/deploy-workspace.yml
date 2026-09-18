@@ -48,8 +48,6 @@ jobs:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           WORKSPACE: ${{ inputs.workspace }}
           VERSION_REF: ${{ inputs.ref }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
@@ -59,8 +57,6 @@ jobs:
               args+=(
                 "--build-env=VITE_ENV=${VITE_ENV}"
                 "--build-env=VITE_API_URL=${VITE_API_URL}"
-                "--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}"
-                "--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}"
               )
               ;;
           esac
@@ -80,8 +76,6 @@ jobs:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
@@ -91,8 +85,6 @@ jobs:
               args+=(
                 "--build-env=VITE_ENV=${VITE_ENV}"
                 "--build-env=VITE_API_URL=${VITE_API_URL}"
-                "--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}"
-                "--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}"
               )
               ;;
           esac
