@@ -44,7 +44,7 @@ import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
 import { localSonarRunner, remoteSonarRunner } from './helpers/sonar';
 
 @object()
-class Monorepo {
+export class Monorepo {
   public source: Directory;
   public rootSource: Directory;
 
@@ -586,5 +586,3 @@ class Monorepo {
       .stdout();
   }
 }
-
-export { Monorepo };
