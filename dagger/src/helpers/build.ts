@@ -132,7 +132,7 @@ const mountFiles = async (
 const mountDaggerFiles = (rootSource: Directory): Container => {
   const combined = rootSource
     .filter({ include: MANIFEST_FILES })
-    .withDirectory('.dagger', rootSource.directory('.dagger'));
+    .withDirectory('dagger', rootSource.directory('dagger'));
 
   const container = withInstallCaches(
     dag

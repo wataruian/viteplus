@@ -130,7 +130,7 @@ Only code that passes these checks can be committed.
 
 ## 🐳 CI Pipeline (Dagger)
 
-CI runs entirely through a [Dagger](https://dagger.io/) module in `.dagger/src/index.ts` (the `Monorepo` object), inside the official `ghcr.io/voidzero-dev/vite-plus` image — so CI runs the exact same containerized environment you can reproduce locally with the `dagger` CLI.
+CI runs entirely through a [Dagger](https://dagger.io/) module in `dagger/src/index.ts` (the `Monorepo` object), inside the official `ghcr.io/voidzero-dev/vite-plus` image — so CI runs the exact same containerized environment you can reproduce locally with the `dagger` CLI.
 
 | Function                              | Description                                                                                                                    |
 | :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------- |

@@ -4,6 +4,6 @@
   "sdk": {
     "source": "typescript"
   },
-  "source": ".dagger",
+  "source": "dagger",
   "disableDefaultFunctionCaching": true
 }

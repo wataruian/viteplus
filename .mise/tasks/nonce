@@ -49,11 +49,11 @@ case "${mode}" in
     while IFS= read -r path; do
       write_nonce "${path}"
     done < <(vp pm list -r --json --only-projects | jq -r '.[].path')
-    write_nonce ".dagger"
+    write_nonce "dagger"
     ;;
   workspace)
     if [[ "${workspace}" == "dagger" ]]; then
-      target=".dagger"
+      target="dagger"
     else
       target="$(vp pm list -r --json --only-projects --filter "${workspace}" | jq -r '.[0].path // empty')"
     fi
