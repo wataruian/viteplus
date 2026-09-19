@@ -7,6 +7,11 @@ on:
         description: 'Workspace'
         required: true
         type: string
+      workspace-id:
+        description: 'Dagger workspace identifier (defaults to @lightproject/<workspace>)'
+        required: false
+        type: string
+        default: ''
       environment:
         description: 'Environment'
         required: false
@@ -35,24 +40,34 @@ jobs:
 
       - name: Check
         shell: bash
-        run: mise run dagger check --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger check --workspace="${WORKSPACE_ID}" --export
 
       - name: Format
         shell: bash
-        run: mise run dagger format --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger format --workspace="${WORKSPACE_ID}" --export
 
       - name: Lint
         shell: bash
-        run: mise run dagger lint --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger lint --workspace="${WORKSPACE_ID}" --export
 
       - name: Type Check
         shell: bash
-        run: mise run dagger type-check --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger type-check --workspace="${WORKSPACE_ID}" --export
 
       - name: Build
+        if: inputs.workspace != 'dagger'
         shell: bash
         env:
           WORKSPACE: ${{ inputs.workspace }}
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
           VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
@@ -67,14 +82,16 @@ jobs:
           esac
 
           mise run dagger build-artifact \
-            --workspace="@lightproject/${WORKSPACE}" \
+            --workspace="${WORKSPACE_ID}" \
             --export="./tmp/artifacts/${WORKSPACE}/build" \
             --no-output \
             "${args[@]}"
 
       - name: Test
         shell: bash
-        run: mise run dagger test --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger test --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload coverage
         if: '!cancelled()'
@@ -89,7 +106,9 @@ jobs:
 
       - name: Semgrep
         shell: bash
-        run: mise run dagger semgrep --workspace="@lightproject/${{ inputs.workspace }}" --export
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger semgrep --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload Semgrep report
         if: '!cancelled()'
@@ -107,6 +126,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           WORKSPACE: ${{ inputs.workspace }}
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: |
           args=(--sonar-token=env:SONAR_TOKEN)
           if [[ -n "${SONAR_HOST_URL}" ]]; then
@@ -114,7 +134,7 @@ jobs:
           else
             args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
           fi
-          mise run dagger sonar --workspace="@lightproject/${WORKSPACE}" --export "${args[@]}"
+          mise run dagger sonar --workspace="${WORKSPACE_ID}" --export "${args[@]}"
 
       - name: Upload SonarQube report
         if: '!cancelled()'

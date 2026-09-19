@@ -219,11 +219,13 @@ class Monorepo {
 
   @func()
   public async semgrep(workspace: string): Promise<Directory> {
-    const workspaceDir = workspacePath(workspace);
+    const isDagger = workspace === DAGGER_WORKSPACE;
+    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const sourceRoot = isDagger ? this.rootSource : this.source;
 
     const scanRoot = dag
       .directory()
-      .withDirectory(workspaceDir, this.source.directory(workspaceDir));
+      .withDirectory(workspaceDir, sourceRoot.directory(workspaceDir));
 
     const semgrepCommand = [
       'semgrep',
@@ -259,7 +261,7 @@ class Monorepo {
       // No SARIF report to attach.
     }
 
-    const shortName = shortWorkspaceName(workspaceDir);
+    const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
     return result.withNewFile('semgrep.row.md', semgrepRow(shortName, sarifJson));
   }
 
@@ -270,8 +272,9 @@ class Monorepo {
     dockerSocket?: Socket,
     sonarHostUrl?: string,
   ): Promise<Directory> {
-    const workspaceDir = workspacePath(workspace);
-    const shortName = shortWorkspaceName(workspaceDir);
+    const isDagger = workspace === DAGGER_WORKSPACE;
+    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
     const projectKey = `lightproject-viteplus-${shortName}`;
     const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;
     const useLocalNetwork = hostUrl === SONAR_LOCAL_HOST_URL;
@@ -283,10 +286,11 @@ class Monorepo {
     }
 
     const testResult = await this.test(workspace);
+    const sourceRoot = isDagger ? this.rootSource : this.source;
 
     let scanRoot = this.source
       .filter({ include: ROOT_FILES })
-      .withDirectory(workspaceDir, this.source.directory(workspaceDir))
+      .withDirectory(workspaceDir, sourceRoot.directory(workspaceDir))
       .withFile('sonar-project.properties', this.source.file('sonar-project.properties'))
       .withFile('pnpm-workspace.yaml', this.source.file('pnpm-workspace.yaml'))
       .withFile('package.json', this.source.file('package.json'));

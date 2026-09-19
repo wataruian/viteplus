@@ -3,7 +3,7 @@
 
 set -o errexit # Bail out on any error
 
-usage="Usage: mise run nonce [--root | --all | --workspace=@lightproject/<name>]"
+usage="Usage: mise run nonce [--root | --all | --workspace=@lightproject/<name>|dagger]"
 
 workspace=""
 mode="root"
@@ -49,9 +49,14 @@ case "${mode}" in
     while IFS= read -r path; do
       write_nonce "${path}"
     done < <(vp pm list -r --json --only-projects | jq -r '.[].path')
+    write_nonce ".dagger"
     ;;
   workspace)
-    target="$(vp pm list -r --json --only-projects --filter "${workspace}" | jq -r '.[0].path // empty')"
+    if [[ "${workspace}" == "dagger" ]]; then
+      target=".dagger"
+    else
+      target="$(vp pm list -r --json --only-projects --filter "${workspace}" | jq -r '.[0].path // empty')"
+    fi
     if [[ -z "${target}" ]]; then
       echo "Workspace not found: ${workspace}"
       exit 1
