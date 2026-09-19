@@ -47,6 +47,7 @@ fi
 
 if [[ "${install}" == "true" ]]; then
   vp install --frozen-lockfile
+  vp hooks enable
   dagger develop
 fi
 
