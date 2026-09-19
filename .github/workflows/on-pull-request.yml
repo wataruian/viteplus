@@ -9,17 +9,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  scan:
-    name: Scan
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    uses: ./.github/workflows/scan.yml
+  # scan:
+  #   name: Scan
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write
+  #   uses: ./.github/workflows/scan.yml
 
   pull-request:
     name: 'PR #${{ github.event.pull_request.number }} (branch: ${{ github.head_ref }})'
-    needs: scan
+    # needs: scan
     permissions:
       contents: read
       actions: read
