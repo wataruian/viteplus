@@ -1,6 +1,7 @@
 import { type Container, type Directory, dag } from '@dagger.io/dagger';
 
 import {
+  DAGGER_WORKSPACE,
   MANIFEST_FILES,
   ROOT_FILES,
   VITE_PLUS_IMAGE,
@@ -128,9 +129,26 @@ const mountFiles = async (
   return withTaskCache(container, workspacePath(workspace).replaceAll('/', '-'));
 };
 
+const mountDaggerFiles = (rootSource: Directory): Container => {
+  const combined = rootSource
+    .filter({ include: MANIFEST_FILES })
+    .withDirectory('.dagger', rootSource.directory('.dagger'));
+
+  const container = withInstallCaches(
+    dag
+      .container()
+      .from(VITE_PLUS_IMAGE)
+      .withWorkdir('/app')
+      .withDirectory('/app', combined, { owner: VITE_PLUS_USER }),
+  ).withExec(installArgs());
+
+  return withTaskCache(container, DAGGER_WORKSPACE).withWorkdir('/app');
+};
+
 export {
   install,
   internalDependencyPaths,
+  mountDaggerFiles,
   mountFiles,
   prune,
   withInstalledRootSource,

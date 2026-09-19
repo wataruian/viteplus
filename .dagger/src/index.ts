@@ -11,10 +11,17 @@ import {
   object,
 } from '@dagger.io/dagger';
 
-import { install, mountFiles, prune, withInstalledRootSource } from './helpers/build';
+import {
+  install,
+  mountDaggerFiles,
+  mountFiles,
+  prune,
+  withInstalledRootSource,
+} from './helpers/build';
 import {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
+  DAGGER_WORKSPACE,
   DOCKER_CLI_VERSION,
   NGINX_IMAGE,
   ROOT_FILES,
@@ -37,7 +44,7 @@ import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
 import { localSonarRunner, remoteSonarRunner } from './helpers/sonar';
 
 @object()
-export class Monorepo {
+class Monorepo {
   public source: Directory;
   public rootSource: Directory;
 
@@ -47,13 +54,15 @@ export class Monorepo {
     @argument({ defaultPath: '.templates' }) templatesSource: Directory,
     @argument({ defaultPath: 'commitlint.config.ts' }) commitlintConfig: File,
     @argument({ defaultPath: 'plopfile.ts' }) plopfile: File,
+    @argument({ defaultPath: 'dagger.json' }) daggerJson: File,
   ) {
     this.source = source;
     this.rootSource = source
       .withDirectory('.dagger', daggerSource)
       .withDirectory('.templates', templatesSource)
       .withFile('commitlint.config.ts', commitlintConfig)
-      .withFile('plopfile.ts', plopfile);
+      .withFile('plopfile.ts', plopfile)
+      .withFile('dagger.json', daggerJson);
   }
 
   @func()
@@ -83,38 +92,61 @@ export class Monorepo {
     return outputDirectory('ready', stdout);
   }
 
+  private async mountWorkspaceFiles(workspace: string): Promise<Container> {
+    if (workspace === DAGGER_WORKSPACE) {
+      return mountDaggerFiles(this.rootSource);
+    }
+    return await mountFiles(this.source, workspace);
+  }
+
   @func()
   public async check(workspace: string): Promise<Directory> {
-    const container = await mountFiles(this.source, workspace);
+    const container = await this.mountWorkspaceFiles(workspace);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'check']).stdout();
+    const execArgs =
+      workspace === DAGGER_WORKSPACE
+        ? ['vp', 'run', '-r', 'dagger:check']
+        : ['vp', 'run', '-r', 'check'];
+    const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('check', stdout);
   }
 
   @func()
   public async format(workspace: string): Promise<Directory> {
-    const container = await mountFiles(this.source, workspace);
+    const container = await this.mountWorkspaceFiles(workspace);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'format']).stdout();
+    const execArgs =
+      workspace === DAGGER_WORKSPACE
+        ? ['vp', 'run', '-r', 'dagger:format']
+        : ['vp', 'run', '-r', 'format'];
+    const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('format', stdout);
   }
 
   @func()
   public async lint(workspace: string): Promise<Directory> {
-    const container = await mountFiles(this.source, workspace);
+    const container = await this.mountWorkspaceFiles(workspace);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'lint']).stdout();
+    const execArgs =
+      workspace === DAGGER_WORKSPACE
+        ? ['vp', 'run', '-r', 'dagger:lint']
+        : ['vp', 'run', '-r', 'lint'];
+    const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('lint', stdout);
   }
 
   @func()
   public async typeCheck(workspace: string): Promise<Directory> {
-    const container = await mountFiles(this.source, workspace);
+    const container = await this.mountWorkspaceFiles(workspace);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'type-check']).stdout();
+    const execArgs =
+      workspace === DAGGER_WORKSPACE
+        ? ['vp', 'run', '-r', 'dagger:type-check']
+        : ['vp', 'run', '-r', 'type-check'];
+    const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('type-check', stdout);
   }
@@ -150,13 +182,16 @@ export class Monorepo {
 
   @func()
   public async test(workspace: string, buildEnv?: string[]): Promise<Directory> {
-    const container = await this.build(workspace, buildEnv);
+    const isDagger = workspace === DAGGER_WORKSPACE;
 
-    const testContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test'], {
-      expect: ReturnType.Any,
-    });
+    const container = isDagger
+      ? mountDaggerFiles(this.rootSource)
+      : await this.build(workspace, buildEnv);
 
-    const workspaceDir = workspacePath(workspace);
+    const testExecArgs = isDagger
+      ? ['vp', 'run', '-r', 'dagger:test']
+      : ['vp', 'run', '--filter', workspace, 'test'];
+    const testContainer = container.withExec(testExecArgs, { expect: ReturnType.Any });
 
     const [exitCode, stdout] = await Promise.all([
       testContainer.exitCode(),
@@ -165,7 +200,11 @@ export class Monorepo {
 
     let result = outputDirectory('test', stdout).withNewFile('test.exit-code', `${exitCode}`);
 
-    const coverageDir = testContainer.directory(`/app/${workspaceDir}/coverage`);
+    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const coveragePath = `/app/${workspaceDir}/coverage`;
+    const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
+
+    const coverageDir = testContainer.directory(coveragePath);
     let summaryJson: string | undefined = undefined;
     try {
       await coverageDir.entries();
@@ -175,7 +214,6 @@ export class Monorepo {
       // No coverage report to attach.
     }
 
-    const shortName = shortWorkspaceName(workspaceDir);
     return result.withNewFile('test.row.md', coverageRow(shortName, summaryJson));
   }
 
@@ -544,3 +582,5 @@ export class Monorepo {
       .stdout();
   }
 }
+
+export { Monorepo };

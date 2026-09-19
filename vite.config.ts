@@ -422,6 +422,26 @@ const getRootViteConfig = (): UserConfig => {
           cache: false,
           command: 'cz',
         },
+        'dagger:check': {
+          command: 'cd .dagger && vp check',
+          ...commonRunProps,
+        },
+        'dagger:format': {
+          command: 'cd .dagger && vp format',
+          ...commonRunProps,
+        },
+        'dagger:lint': {
+          command: 'cd .dagger && vp lint',
+          ...commonRunProps,
+        },
+        'dagger:test': {
+          command: 'cd .dagger && vp test',
+          ...commonRunProps,
+        },
+        'dagger:type-check': {
+          command: 'cd .dagger && tsc',
+          ...commonRunProps,
+        },
         madge: {
           command:
             "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.dagger|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",

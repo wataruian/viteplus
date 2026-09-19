@@ -6,6 +6,7 @@ const wranglerEntryPath = path.resolve(
   import.meta.dirname,
   '../../../backend/src/runtimes/edge.ts',
 );
+
 const wranglerConfigPath = path.resolve(import.meta.dirname, '../../../backend/wrangler.toml');
 
 export default async function setup(): Promise<() => Promise<void>> {
