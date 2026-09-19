@@ -142,78 +142,78 @@ jobs:
       workspace: frontend
       environment: ${{ inputs.environment }}
 
-  artifacts:
-    name: Publish artifacts
-    needs: [setup, common, design-system, library, backend, frontend, dagger]
-    if: >-
-      !cancelled() &&
-      inputs.environment == 'pr' &&
-      github.event_name == 'pull_request'
-    runs-on: [self-hosted, dagger]
-    timeout-minutes: 10
-    permissions:
-      actions: read
-      pull-requests: write
-    steps:
-      - name: Download coverage artifacts and build table
-        uses: ./.github/actions/download-artifact-table
-        with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
-          artifact-prefix: coverage
-          row-file: test.row.md
-          header: |
-            <!-- coverage-report -->
-            ### Coverage report
+  # artifacts:
+  #   name: Publish artifacts
+  #   needs: [setup, common, design-system, library, backend, frontend, dagger]
+  #   if: >-
+  #     !cancelled() &&
+  #     inputs.environment == 'pr' &&
+  #     github.event_name == 'pull_request'
+  #   runs-on: [self-hosted, dagger]
+  #   timeout-minutes: 10
+  #   permissions:
+  #     actions: read
+  #     pull-requests: write
+  #   steps:
+  #     - name: Download coverage artifacts and build table
+  #       uses: ./.github/actions/download-artifact-table
+  #       with:
+  #         workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
+  #         artifact-prefix: coverage
+  #         row-file: test.row.md
+  #         header: |
+  #           <!-- coverage-report -->
+  #           ### Coverage report
 
-            | Workspace | Lines | Statements | Functions | Branches |
-            |---|---|---|---|---|
-          fallback-suffix: '| _no coverage (tests failed or skipped)_ | | | |'
-          body-file: coverage-body.md
+  #           | Workspace | Lines | Statements | Functions | Branches |
+  #           |---|---|---|---|---|
+  #         fallback-suffix: '| _no coverage (tests failed or skipped)_ | | | |'
+  #         body-file: coverage-body.md
 
-      - name: Post or update PR comment
-        uses: ./.github/actions/post-pr-comment
-        with:
-          marker: coverage-report
-          body-file: coverage-body.md
+  #     - name: Post or update PR comment
+  #       uses: ./.github/actions/post-pr-comment
+  #       with:
+  #         marker: coverage-report
+  #         body-file: coverage-body.md
 
-      - name: Download Semgrep artifacts and build table
-        uses: ./.github/actions/download-artifact-table
-        with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
-          artifact-prefix: semgrep
-          row-file: semgrep.row.md
-          header: |
-            <!-- semgrep-report -->
-            ### Semgrep report
+  #     - name: Download Semgrep artifacts and build table
+  #       uses: ./.github/actions/download-artifact-table
+  #       with:
+  #         workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
+  #         artifact-prefix: semgrep
+  #         row-file: semgrep.row.md
+  #         header: |
+  #           <!-- semgrep-report -->
+  #           ### Semgrep report
 
-            | Workspace | Findings | Details |
-            |---|---|---|
-          fallback-suffix: '| _no report (scan failed or skipped)_ | |'
-          body-file: semgrep-body.md
+  #           | Workspace | Findings | Details |
+  #           |---|---|---|
+  #         fallback-suffix: '| _no report (scan failed or skipped)_ | |'
+  #         body-file: semgrep-body.md
 
-      - name: Post or update Semgrep PR comment
-        uses: ./.github/actions/post-pr-comment
-        with:
-          marker: semgrep-report
-          body-file: semgrep-body.md
+  #     - name: Post or update Semgrep PR comment
+  #       uses: ./.github/actions/post-pr-comment
+  #       with:
+  #         marker: semgrep-report
+  #         body-file: semgrep-body.md
 
-      - name: Download SonarQube artifacts and build table
-        uses: ./.github/actions/download-artifact-table
-        with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
-          artifact-prefix: sonar
-          row-file: sonar.row.md
-          header: |
-            <!-- sonarqube-report -->
-            ### SonarQube report
+  #     - name: Download SonarQube artifacts and build table
+  #       uses: ./.github/actions/download-artifact-table
+  #       with:
+  #         workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
+  #         artifact-prefix: sonar
+  #         row-file: sonar.row.md
+  #         header: |
+  #           <!-- sonarqube-report -->
+  #           ### SonarQube report
 
-            | Workspace | Quality Gate | New Coverage | New Violations | Failed Conditions | Issues |
-            |---|---|---|---|---|---|
-          fallback-suffix: '| _no report (scan failed or skipped)_ | | | | |'
-          body-file: sonar-body.md
+  #           | Workspace | Quality Gate | New Coverage | New Violations | Failed Conditions | Issues |
+  #           |---|---|---|---|---|---|
+  #         fallback-suffix: '| _no report (scan failed or skipped)_ | | | | |'
+  #         body-file: sonar-body.md
 
-      - name: Post or update SonarQube PR comment
-        uses: ./.github/actions/post-pr-comment
-        with:
-          marker: sonarqube-report
-          body-file: sonar-body.md
+  #     - name: Post or update SonarQube PR comment
+  #       uses: ./.github/actions/post-pr-comment
+  #       with:
+  #         marker: sonarqube-report
+  #         body-file: sonar-body.md
