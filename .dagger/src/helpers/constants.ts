@@ -100,6 +100,8 @@ const MANIFEST_FILES: string[] = [
   ...ROOT_FILES,
 ];
 
+const DAGGER_WORKSPACE = 'dagger';
+
 const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
   '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
@@ -122,6 +124,7 @@ const BUILD_ARTIFACT_KEEP: string[] = [
 export {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
+  DAGGER_WORKSPACE,
   DOCKER_CLI_VERSION,
   MANIFEST_FILES,
   NGINX_IMAGE,

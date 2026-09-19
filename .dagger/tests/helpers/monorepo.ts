@@ -8,8 +8,16 @@ const createMonorepo = (): Monorepo => {
   const templatesSource = new FakeDirectory(world);
   const commitlintConfig = FakeFile.of('');
   const plopfile = FakeFile.of('');
+  const daggerJson = FakeFile.of('');
 
-  return new Monorepo(source, daggerSource, templatesSource, commitlintConfig, plopfile);
+  return new Monorepo(
+    source,
+    daggerSource,
+    templatesSource,
+    commitlintConfig,
+    plopfile,
+    daggerJson,
+  );
 };
 
 export { createMonorepo };

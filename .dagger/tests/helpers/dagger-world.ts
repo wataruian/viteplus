@@ -16,4 +16,5 @@ const resetDaggerWorld = (): void => {
 
 const joinPath = (base: string, name: string): string => (base === '' ? name : `${base}/${name}`);
 
-export { type DaggerWorld, joinPath, resetDaggerWorld, world };
+export { joinPath, resetDaggerWorld, world };
+export type { DaggerWorld };

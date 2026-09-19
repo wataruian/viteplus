@@ -51,4 +51,4 @@ const cspMiddleware = () =>
     },
   });
 
-export { allowedOrigins, corsMiddleware, cspMiddleware, uniqueOrigins };
+export { additionalOrigins, allowedOrigins, corsMiddleware, cspMiddleware, uniqueOrigins };

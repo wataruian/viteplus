@@ -2,6 +2,8 @@ import type { Directory } from '@dagger.io/dagger';
 
 import { readArray, readNumber, readRecord, readScalarAsString, readString } from './json';
 
+const SONAR_COMPARATORS: Record<string, string> = { EQ: '==', GT: '>', LT: '<', NE: '!=' };
+
 const markdownCell = (text: string): string => text.replaceAll('\n', ' ').replaceAll('|', ' ');
 
 const markdownList = (lines: string[], max = 10): string => {
@@ -52,8 +54,6 @@ const semgrepRow = (shortName: string, sarifJson: string | undefined): string =>
 
   return `| ${shortName} | ${results.length} | ${markdownList(lines)} |\n`;
 };
-
-const SONAR_COMPARATORS: Record<string, string> = { EQ: '==', GT: '>', LT: '<', NE: '!=' };
 
 const sonarRow = (
   shortName: string,

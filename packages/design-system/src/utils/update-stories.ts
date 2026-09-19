@@ -2,6 +2,32 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
+const RESERVED_GLOBAL_NAMES = new Set([
+  'Array',
+  'ArrayBuffer',
+  'Boolean',
+  'Date',
+  'Error',
+  'Function',
+  'Infinity',
+  'JSON',
+  'Map',
+  'Math',
+  'NaN',
+  'Number',
+  'Object',
+  'Promise',
+  'Proxy',
+  'Reflect',
+  'RegExp',
+  'Set',
+  'String',
+  'Symbol',
+  'WeakMap',
+  'WeakSet',
+  'undefined',
+]);
+
 const isWordChar = (char: string | undefined): boolean => char !== undefined && /\w/u.test(char);
 
 const isWhitespaceChar = (char: string | undefined): boolean =>
@@ -106,32 +132,6 @@ const getVariants = (content: string): Record<string, string[]> => {
   }
   return variants;
 };
-
-const RESERVED_GLOBAL_NAMES = new Set([
-  'Array',
-  'ArrayBuffer',
-  'Boolean',
-  'Date',
-  'Error',
-  'Function',
-  'Infinity',
-  'JSON',
-  'Map',
-  'Math',
-  'NaN',
-  'Number',
-  'Object',
-  'Promise',
-  'Proxy',
-  'Reflect',
-  'RegExp',
-  'Set',
-  'String',
-  'Symbol',
-  'WeakMap',
-  'WeakSet',
-  'undefined',
-]);
 
 const sanitizeStoryName = (option: string): string => {
   let safeOption = option;
@@ -302,6 +302,7 @@ export {
   generateVariantStories,
   getVariants,
   mergeExports,
+  parseArgTypeEntry,
   sanitizeStoryName,
   updateStories,
   updateStoryFile,

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test } from 'vite-plus/test';
 import {
   install,
   internalDependencyPaths,
+  mountDaggerFiles,
   mountFiles,
   prune,
   withInstalledRootSource,
@@ -214,5 +215,18 @@ describe('mountFiles', () => {
 
     expect(fake.capturedDirectoryPaths).not.toContain('/app/apps');
     expect(fake.capturedDirectoryPaths).not.toContain('/app/packages');
+  });
+});
+
+describe('mountDaggerFiles', () => {
+  test('mounts only the root manifest files plus .dagger, installs, and sets the workdir', () => {
+    const container = mountDaggerFiles(new FakeDirectory(world));
+    const fake = asFakeContainer(container);
+
+    expect(fake.capturedImage).toBe(VITE_PLUS_IMAGE);
+    expect(fake.capturedDirectoryPaths).toStrictEqual(['/app']);
+    expect(fake.capturedExecCalls).toStrictEqual([installArgs()]);
+    expect(fake.capturedCachePaths).toContain(TASK_CACHE_PATH);
+    expect(fake.capturedWorkdir).toBe('/app');
   });
 });

@@ -53,6 +53,20 @@ describe('check', () => {
     expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'check']);
     await expect(result.file('check.output').contents()).resolves.toBe('check output');
   });
+
+  test('runs vp run -r dagger:check for the dagger workspace', async () => {
+    world.execStdout = 'dagger check output';
+
+    const result = await createMonorepo().check('dagger');
+
+    expect(getLastContainer().capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '-r',
+      'dagger:check',
+    ]);
+    await expect(result.file('check.output').contents()).resolves.toBe('dagger check output');
+  });
 });
 
 describe('format', () => {
@@ -64,6 +78,20 @@ describe('format', () => {
 
     expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'format']);
     await expect(result.file('format.output').contents()).resolves.toBe('format output');
+  });
+
+  test('runs vp run -r dagger:format for the dagger workspace', async () => {
+    world.execStdout = 'dagger format output';
+
+    const result = await createMonorepo().format('dagger');
+
+    expect(getLastContainer().capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '-r',
+      'dagger:format',
+    ]);
+    await expect(result.file('format.output').contents()).resolves.toBe('dagger format output');
   });
 });
 
@@ -77,6 +105,15 @@ describe('lint', () => {
     expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'lint']);
     await expect(result.file('lint.output').contents()).resolves.toBe('lint output');
   });
+
+  test('runs vp run -rdagger:lint for the dagger workspace', async () => {
+    world.execStdout = 'dagger lint output';
+
+    const result = await createMonorepo().lint('dagger');
+
+    expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'dagger:lint']);
+    await expect(result.file('lint.output').contents()).resolves.toBe('dagger lint output');
+  });
 });
 
 describe('typeCheck', () => {
@@ -88,5 +125,21 @@ describe('typeCheck', () => {
 
     expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'type-check']);
     await expect(result.file('type-check.output').contents()).resolves.toBe('type-check output');
+  });
+
+  test('runs vp run -r dagger:type-check for the dagger workspace', async () => {
+    world.execStdout = 'dagger type-check output';
+
+    const result = await createMonorepo().typeCheck('dagger');
+
+    expect(getLastContainer().capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '-r',
+      'dagger:type-check',
+    ]);
+    await expect(result.file('type-check.output').contents()).resolves.toBe(
+      'dagger type-check output',
+    );
   });
 });
