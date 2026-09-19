@@ -17,6 +17,9 @@ outputs:
   workspace_list:
     description: 'Space-separated list of resolved workspace names'
     value: ${{ steps.resolve.outputs.workspace_list }}
+  run-dagger-verify:
+    description: 'true when .dagger/ or root-level files changed and dagger verification should run'
+    value: ${{ steps.resolve.outputs.run_dagger_verify }}
 
 runs:
   using: 'composite'
@@ -40,11 +43,18 @@ runs:
         esac
 
         if [[ -n "${WORKSPACE_INPUT}" ]]; then
+          runDaggerVerify="false"
           list="${WORKSPACE_INPUT}"
         elif [[ -n "${comparisonSha}" && "${comparisonSha}" != "0000000000000000000000000000000000000000" ]]; then
           changedFiles="$(git diff --name-only "${comparisonSha}...HEAD")"
 
-          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages)/' <<< "${changedFiles}"; then
+          if grep -q '^\.dagger/' <<< "${changedFiles}"; then
+            runDaggerVerify="true"
+          else
+            runDaggerVerify="false"
+          fi
+
+          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages|\.dagger)/' <<< "${changedFiles}"; then
             list="${all}"
           else
             affected="$(vp pm list -r --json --only-projects --filter "...[${comparisonSha}]" | jq -r '.[].name')"
@@ -57,6 +67,7 @@ runs:
             list="${list% }"
           fi
         else
+          runDaggerVerify="true"
           list="${all}"
         fi
 
@@ -75,7 +86,9 @@ runs:
         echo "${affected:-<none>}"
         echo "resolved list: ${list}"
         echo "workspaces json: ${json}"
+        echo "run dagger verify: ${runDaggerVerify}"
         echo "::endgroup::"
 
         echo "workspaces=${json}" >> "${GITHUB_OUTPUT}"
         echo "workspace_list=${list}" >> "${GITHUB_OUTPUT}"
+        echo "run_dagger_verify=${runDaggerVerify}" >> "${GITHUB_OUTPUT}"

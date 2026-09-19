@@ -20,6 +20,7 @@ jobs:
     outputs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
       workspace_list: ${{ steps.workspaces.outputs.workspace_list }}
+      run-dagger-verify: ${{ steps.workspaces.outputs.run-dagger-verify }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -38,12 +39,29 @@ jobs:
           workspace-input: ${{ inputs.workspace }}
           all-workspaces: 'design-system frontend backend common library'
 
-  library:
+  dagger:
     needs: setup
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'library')
+      needs.setup.outputs.run-dagger-verify == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: dagger
+      workspace-id: dagger
+      environment: ${{ inputs.environment }}
+
+  library:
+    needs: [setup, dagger]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'library') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
@@ -53,11 +71,13 @@ jobs:
       environment: ${{ inputs.environment }}
 
   common:
-    needs: setup
+    needs: [setup, dagger]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'common')
+      contains(fromJson(needs.setup.outputs.workspaces), 'common') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
@@ -67,11 +87,13 @@ jobs:
       environment: ${{ inputs.environment }}
 
   design-system:
-    needs: setup
+    needs: [setup, dagger]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
@@ -81,11 +103,13 @@ jobs:
       environment: ${{ inputs.environment }}
 
   backend:
-    needs: [setup, common]
+    needs: [setup, dagger, common]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
       needs.common.result != 'failure' &&
       needs.common.result != 'cancelled'
     permissions:
@@ -97,11 +121,13 @@ jobs:
       environment: ${{ inputs.environment }}
 
   frontend:
-    needs: [setup, common, design-system, backend]
+    needs: [setup, dagger, common, design-system, backend]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
       needs.common.result != 'failure' &&
       needs.common.result != 'cancelled' &&
       needs.design-system.result != 'failure' &&
@@ -118,7 +144,7 @@ jobs:
 
   artifacts:
     name: Publish artifacts
-    needs: [setup, common, design-system, library, backend, frontend]
+    needs: [setup, common, design-system, library, backend, frontend, dagger]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&
@@ -132,7 +158,7 @@ jobs:
       - name: Download coverage artifacts and build table
         uses: ./.github/actions/download-artifact-table
         with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}
+          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
           artifact-prefix: coverage
           row-file: test.row.md
           header: |
@@ -153,7 +179,7 @@ jobs:
       - name: Download Semgrep artifacts and build table
         uses: ./.github/actions/download-artifact-table
         with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}
+          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
           artifact-prefix: semgrep
           row-file: semgrep.row.md
           header: |
@@ -174,7 +200,7 @@ jobs:
       - name: Download SonarQube artifacts and build table
         uses: ./.github/actions/download-artifact-table
         with:
-          workspaces: ${{ needs.setup.outputs.workspace_list }}
+          workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
           artifact-prefix: sonar
           row-file: sonar.row.md
           header: |

@@ -63,6 +63,18 @@ describe('semgrep', () => {
       '| backend | _no report (scan failed or skipped)_ | |\n',
     );
   });
+
+  test('scans the .dagger directory for the dagger workspace', async () => {
+    world.execStdout = 'clean scan';
+    world.execExitCode = 0;
+
+    const result = await createMonorepo().semgrep('dagger');
+
+    await expect(result.file('semgrep.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('semgrep.row.md').contents()).resolves.toBe(
+      '| dagger | _no report (scan failed or skipped)_ | |\n',
+    );
+  });
 });
 
 describe('sonar', () => {
@@ -174,6 +186,36 @@ describe('sonar', () => {
 
     await expect(result.file('sonar.row.md').contents()).resolves.toBe(
       '| backend | _no report (scan failed or skipped)_ | | | | |\n',
+    );
+  });
+
+  test('runs the local scanner for the dagger workspace, attaching coverage from .dagger', async () => {
+    world.execStdout = 'local scan output';
+    world.execExitCode = 0;
+    world.dirs.set('/app/.dagger/coverage', ['coverage-summary.json']);
+    world.files.set(
+      '/app/.dagger/coverage/coverage-summary.json',
+      JSON.stringify({
+        total: {
+          branches: { pct: 100 },
+          functions: { pct: 100 },
+          lines: { pct: 100 },
+          statements: { pct: 100 },
+        },
+      }),
+    );
+    world.files.set('/tmp/sonar.exit-code', '0');
+    world.files.set(
+      '/tmp/sonar-quality-gate.json',
+      JSON.stringify({ projectStatus: { conditions: [], status: 'OK' } }),
+    );
+    world.files.set('/tmp/sonar-issues.json', JSON.stringify({ issues: [] }));
+
+    const result = await createMonorepo().sonar('dagger', fakeSecret, fakeSocket);
+
+    await expect(result.file('sonar.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('sonar.row.md').contents()).resolves.toBe(
+      '| dagger | ✅ Passed | - | - | - | - |\n',
     );
   });
 });
