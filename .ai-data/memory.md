@@ -190,16 +190,16 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
 
 ## 2026-09-09: Dagger Pipeline for Local + CI Parity
 
-- **Decision**: Added a TypeScript Dagger module at `.dagger/` (`dagger init --sdk=typescript`)
+- **Decision**: Added a TypeScript Dagger module at `dagger/` (`dagger init --sdk=typescript`)
   that wraps `pnpm install` + the `vp` task runner in a hermetic container. GitHub Actions
   (`.github/workflows/ci.yml`) now runs `dagger/dagger-for-github@v8` calling `dagger call ready`
   instead of `voidzero-dev/setup-vp@v1.20.0` + `vp run ready` directly on the runner — the exact same
-  containerized pipeline now runs on a laptop (`dagger -m .dagger call ready`, or `mise run ci`)
+  containerized pipeline now runs on a laptop (`dagger -m dagger call ready`, or `mise run ci`)
   and in CI, closing the "works on my machine" gap.
 - **Why a container at all**: `dagger` was already added to `mise.toml`'s `[tools]` (see
   `mise.lock`/`mise.toml` diff from an earlier session) before this module existed — this entry
   fills in the module itself.
-- **Caching design** (`.dagger/src/index.ts`): dependency install is cached on manifests alone
+- **Caching design** (`dagger/src/index.ts`): dependency install is cached on manifests alone
   (`package.json` + `pnpm-lock.yaml` + `pnpm-workspace.yaml`, via `Directory.filter`) so Dagger's
   own content-addressed cache skips `pnpm install` entirely when only source files change — the
   common case. The pnpm store and vp's own task cache (`.vite-hooks/`, see `clean:build` script)
@@ -219,8 +219,8 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   before testing; the Dagger module's `test()` function now does the same (`build` then `test`)
   so it's safe to call standalone, matching what `ready()` does implicitly. `check()` (format/
   lint/type-check) doesn't have this issue — it's static analysis, not runtime imports.
-- **Not committed**: `.dagger/sdk/` (Dagger's vendored TS SDK client) is gitignored by Dagger's
-  own default `.dagger/.gitignore` — verified it regenerates automatically on `dagger call` even
+- **Not committed**: `dagger/sdk/` (Dagger's vendored TS SDK client) is gitignored by Dagger's
+  own default `dagger/.gitignore` — verified it regenerates automatically on `dagger call` even
   when absent, so this isn't something to "fix."
 
 ## 2026-09-13: CI Hardening — Explicit Secrets, Renovate
@@ -237,25 +237,25 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
 - **Added `renovate.json`**: chosen over Dependabot because `pnpm-workspace.yaml`'s `catalog:`
   entries need a bot that understands the catalog protocol — Dependabot's npm ecosystem support
   doesn't resolve `catalog:`-referenced versions reliably. Scoped deliberately narrow:
-  `ignorePaths: [".dagger/**"]` keeps Renovate out of the Dagger module entirely (it's
+  `ignorePaths: ["dagger/**"]` keeps Renovate out of the Dagger module entirely (it's
   Dagger-managed, not pnpm/vp-managed — see the two "hard walls" above), and the `vite-plus`/
   `@voidzero-dev/vite-plus-core` pair is grouped with a note to hand-bump the pinned
-  `VITE_PLUS_IMAGE` tag in `.dagger/src/index.ts` and mise.toml's `viteplus` entry alongside it
+  `VITE_PLUS_IMAGE` tag in `dagger/src/index.ts` and mise.toml's `viteplus` entry alongside it
   rather than let Renovate touch the toolchain image/version pins unsupervised. Needs the Renovate
   GitHub App installed on the repo before it does anything — not something committing this file
   alone accomplishes.
 
 ### 2026-09-09 follow-up: module discovery, and two hard walls in Dagger's isolation
 
-- **`dagger.json` moved to repo root**: originally `dagger.json` lived inside `.dagger/` (module
-  root = `.dagger/`), which meant every invocation needed `dagger -m .dagger call ...`. Re-ran
-  `dagger init --sdk=typescript --name=viteplus --source=.dagger .` from the repo root instead —
-  this puts `dagger.json` at the repo root with `"source": ".dagger"` pointing at the actual
+- **`dagger.json` moved to repo root**: originally `dagger.json` lived inside `dagger/` (module
+  root = `dagger/`), which meant every invocation needed `dagger -m dagger call ...`. Re-ran
+  `dagger init --sdk=typescript --name=viteplus --source=dagger .` from the repo root instead —
+  this puts `dagger.json` at the repo root with `"source": "dagger"` pointing at the actual
   module code, and `dagger call`/`dagger functions`/`mise run ci` now all work with **no `-m`
   flag** from anywhere in the repo (Dagger's own module auto-discovery finds root `dagger.json`).
   `.github/workflows/ci.yml`'s `dagger/dagger-for-github` step no longer needs a `module:` input
   either, for the same reason.
-- **Wall #1 — can't `extends` a tsconfig outside `.dagger/`**: tried making `.dagger/tsconfig.json`
+- **Wall #1 — can't `extends` a tsconfig outside `dagger/`**: tried making `dagger/tsconfig.json`
   extend the root `tsconfig.base.json` (to stop duplicating `strict`/`target`/etc.) via
   `"extends": "../tsconfig.base.json"` plus `dagger.json`'s `"include": ["tsconfig.base.json"]`.
   This reproducibly fails with `Error: File '../tsconfig.base.json' not found` from inside the
@@ -263,11 +263,11 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   which resolves `tsconfig.json#extends` against the container's disk **before** any Dagger API
   call runs — and `include` only makes extra repo files fetchable _through_ the Dagger API
   (`dag.currentModule().source()`) at runtime, not present on disk at that early boot point. So
-  `.dagger/tsconfig.json` **must stay self-contained** (reverted to the plain `dagger init`
+  `dagger/tsconfig.json` **must stay self-contained** (reverted to the plain `dagger init`
   version: `target`/`moduleResolution`/`experimentalDecorators`/`strict`/`skipLibCheck` +
   the `paths` mapping to `./sdk`). This is a hard constraint of how the TS SDK boots, not a
   config mistake — don't retry this without a different mechanism.
-- **Wall #2 — `.dagger/package.json`'s `typescript` dependency + `yarn.lock` keep coming back**:
+- **Wall #2 — `dagger/package.json`'s `typescript` dependency + `yarn.lock` keep coming back**:
   removed both (module doesn't need a local `typescript` install to execute — `tsx` handles
   transpilation itself, and `dagger call` runs fine without them, confirmed). But `dagger develop`
   (needed whenever the module's exported functions change, or the pinned `engineVersion` bumps)

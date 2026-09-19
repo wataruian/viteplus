@@ -24,7 +24,7 @@
   // "npm.scriptRunner": "vp",
   "oxc.fmt.configPath": "./vite.config.ts",
   "search.exclude": {
-    ".dagger/sdk/**": true,
+    "dagger/sdk/**": true,
     "**/.pruned": true,
     "**/.wrangler": true,
     "**/bak": true,
@@ -47,7 +47,7 @@
     "**/storybook-static/**",
     "**/.wrangler/**",
     "**/.pruned/**",
-    ".dagger/sdk/**"
+    "dagger/sdk/**"
   ],
   "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],
   "unocss.remToPxPreview": true,

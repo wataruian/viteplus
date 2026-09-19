@@ -18,7 +18,7 @@ outputs:
     description: 'Space-separated list of resolved workspace names'
     value: ${{ steps.resolve.outputs.workspace_list }}
   run-dagger-verify:
-    description: 'true when .dagger/ or root-level files changed and dagger verification should run'
+    description: 'true when dagger/ or root-level files changed and dagger verification should run'
     value: ${{ steps.resolve.outputs.run_dagger_verify }}
 
 runs:
@@ -49,11 +49,11 @@ runs:
         elif [[ -n "${comparisonSha}" && "${comparisonSha}" != "0000000000000000000000000000000000000000" ]]; then
           changedFiles="$(git diff --name-only "${comparisonSha}...HEAD")"
 
-          if grep -q '^\.dagger/' <<< "${changedFiles}"; then
+          if grep -q '^\dagger/' <<< "${changedFiles}"; then
             runDaggerVerify="true"
           fi
 
-          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages|\.dagger)/' <<< "${changedFiles}"; then
+          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages|\dagger)/' <<< "${changedFiles}"; then
             runDaggerVerify="true"
             list="${all}"
           else

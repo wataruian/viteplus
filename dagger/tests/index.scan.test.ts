@@ -64,7 +64,7 @@ describe('semgrep', () => {
     );
   });
 
-  test('scans the .dagger directory for the dagger workspace', async () => {
+  test('scans the dagger directory for the dagger workspace', async () => {
     world.execStdout = 'clean scan';
     world.execExitCode = 0;
 
@@ -189,12 +189,12 @@ describe('sonar', () => {
     );
   });
 
-  test('runs the local scanner for the dagger workspace, attaching coverage from .dagger', async () => {
+  test('runs the local scanner for the dagger workspace, attaching coverage from dagger', async () => {
     world.execStdout = 'local scan output';
     world.execExitCode = 0;
-    world.dirs.set('/app/.dagger/coverage', ['coverage-summary.json']);
+    world.dirs.set('/app/dagger/coverage', ['coverage-summary.json']);
     world.files.set(
-      '/app/.dagger/coverage/coverage-summary.json',
+      '/app/dagger/coverage/coverage-summary.json',
       JSON.stringify({
         total: {
           branches: { pct: 100 },

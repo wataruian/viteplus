@@ -50,7 +50,7 @@ export class Monorepo {
 
   public constructor(
     @argument({ defaultPath: '/', ignore: SOURCE_IGNORE }) source: Directory,
-    @argument({ defaultPath: '.dagger' }) daggerSource: Directory,
+    @argument({ defaultPath: 'dagger' }) daggerSource: Directory,
     @argument({ defaultPath: '.templates' }) templatesSource: Directory,
     @argument({ defaultPath: 'commitlint.config.ts' }) commitlintConfig: File,
     @argument({ defaultPath: 'plopfile.ts' }) plopfile: File,
@@ -58,7 +58,7 @@ export class Monorepo {
   ) {
     this.source = source;
     this.rootSource = source
-      .withDirectory('.dagger', daggerSource)
+      .withDirectory('dagger', daggerSource)
       .withDirectory('.templates', templatesSource)
       .withFile('commitlint.config.ts', commitlintConfig)
       .withFile('plopfile.ts', plopfile)
@@ -200,7 +200,7 @@ export class Monorepo {
 
     let result = outputDirectory('test', stdout).withNewFile('test.exit-code', `${exitCode}`);
 
-    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const coveragePath = `/app/${workspaceDir}/coverage`;
     const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
 
@@ -220,7 +220,7 @@ export class Monorepo {
   @func()
   public async semgrep(workspace: string): Promise<Directory> {
     const isDagger = workspace === DAGGER_WORKSPACE;
-    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const sourceRoot = isDagger ? this.rootSource : this.source;
 
     const scanRoot = dag
@@ -273,7 +273,7 @@ export class Monorepo {
     sonarHostUrl?: string,
   ): Promise<Directory> {
     const isDagger = workspace === DAGGER_WORKSPACE;
-    const workspaceDir = isDagger ? '.dagger' : workspacePath(workspace);
+    const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
     const projectKey = `lightproject-viteplus-${shortName}`;
     const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;

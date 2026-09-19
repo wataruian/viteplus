@@ -219,7 +219,7 @@ describe('mountFiles', () => {
 });
 
 describe('mountDaggerFiles', () => {
-  test('mounts only the root manifest files plus .dagger, installs, and sets the workdir', () => {
+  test('mounts only the root manifest files plus dagger, installs, and sets the workdir', () => {
     const container = mountDaggerFiles(new FakeDirectory(world));
     const fake = asFakeContainer(container);
 

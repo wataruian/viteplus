@@ -97,12 +97,12 @@ describe('test', () => {
     );
   });
 
-  test('runs vp run -r dagger:test and reads coverage from .dagger for the dagger workspace', async () => {
+  test('runs vp run -r dagger:test and reads coverage from dagger for the dagger workspace', async () => {
     world.execStdout = 'all dagger tests passed';
     world.execExitCode = 0;
-    world.dirs.set('/app/.dagger/coverage', ['coverage-summary.json']);
+    world.dirs.set('/app/dagger/coverage', ['coverage-summary.json']);
     world.files.set(
-      '/app/.dagger/coverage/coverage-summary.json',
+      '/app/dagger/coverage/coverage-summary.json',
       JSON.stringify({
         total: {
           branches: { pct: 100 },

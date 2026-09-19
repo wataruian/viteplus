@@ -40,7 +40,7 @@ const SOURCE_IGNORE: string[] = [
   '.ai-data',
   '.aiassistant',
   '.cursor',
-  '.dagger',
+  'dagger',
   '.git',
   '.github',
   '.mise',

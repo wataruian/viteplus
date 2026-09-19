@@ -43,7 +43,6 @@ const scaffold = (type: string) => {
     'out',
     'storybook-static',
     '.wrangler',
-    '.dagger',
     '.pruned',
     'coverage',
     'tmp',
