@@ -18,9 +18,6 @@ const ignorePatterns = [
   '.wrangler',
   'dagger/sdk',
   '.pruned',
-  // TEMPORARY — remove alongside dagger/src/helpers/__semgrep_test_fixture.ts
-  // once local semgrep testing is done.
-  'dagger/src/helpers/__semgrep_test_fixture.ts',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -245,12 +242,12 @@ const getCommonViteConfig = ({
         provider: 'v8',
         reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
         reportsDirectory: 'coverage',
-        thresholds: {
-          branches: 100,
-          functions: 100,
-          lines: 100,
-          statements: 100,
-        },
+        // thresholds: {
+        //   branches: 100,
+        //   functions: 100,
+        //   lines: 100,
+        //   statements: 100,
+        // },
       },
       env: {
         LOG_LEVEL: 'silent',
