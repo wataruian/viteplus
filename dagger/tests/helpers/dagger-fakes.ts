@@ -1,30 +1,4 @@
 import type * as DaggerModule from '@dagger.io/dagger';
-import type {
-  CacheVolume as CacheVolumeType,
-  ClientCacheVolumeOpts,
-  Client as ClientType,
-  Container as ContainerType,
-  ContainerWithDirectoryOpts,
-  ContainerWithEnvVariableOpts,
-  ContainerWithExecOpts,
-  ContainerWithExposedPortOpts,
-  ContainerWithFileOpts,
-  ContainerWithMountedCacheOpts,
-  ContainerWithMountedFileOpts,
-  ContainerWithNewFileOpts,
-  ContainerWithUnixSocketOpts,
-  ContainerWithWorkdirOpts,
-  DirectoryEntriesOpts,
-  DirectoryFilterOpts,
-  Directory as DirectoryType,
-  DirectoryWithDirectoryOpts,
-  DirectoryWithFileOpts,
-  DirectoryWithNewFileOpts,
-  FileContentsOpts,
-  File as FileType,
-  Secret,
-  Socket,
-} from '@dagger.io/dagger';
 import { vi } from 'vite-plus/test';
 
 import { type DaggerWorld, joinPath } from './dagger-world';
@@ -51,7 +25,7 @@ class FakeFile extends File {
     });
   }
 
-  public override contents = async (_opts?: FileContentsOpts): Promise<string> =>
+  public override contents = async (_opts?: DaggerModule.FileContentsOpts): Promise<string> =>
     await this.resolve();
 }
 
@@ -81,7 +55,7 @@ class FakeDirectory extends Directory {
   public override withNewFile = (
     name: string,
     content: string,
-    _opts?: DirectoryWithNewFileOpts,
+    _opts?: DaggerModule.DirectoryWithNewFileOpts,
   ): this => {
     this.localFiles.set(name, content);
     return this;
@@ -89,8 +63,8 @@ class FakeDirectory extends Directory {
 
   public override withFile = (
     name: string,
-    file: FileType,
-    _opts?: DirectoryWithFileOpts,
+    file: DaggerModule.File,
+    _opts?: DaggerModule.DirectoryWithFileOpts,
   ): this => {
     this.localFileRefs.set(name, file instanceof FakeFile ? file : FakeFile.of(''));
     return this;
@@ -98,14 +72,14 @@ class FakeDirectory extends Directory {
 
   public override withDirectory = (
     name: string,
-    dir: DirectoryType,
-    _opts?: DirectoryWithDirectoryOpts,
+    dir: DaggerModule.Directory,
+    _opts?: DaggerModule.DirectoryWithDirectoryOpts,
   ): this => {
     this.localDirs.set(name, dir instanceof FakeDirectory ? dir : new FakeDirectory(this.world));
     return this;
   };
 
-  public override filter = (_opts?: DirectoryFilterOpts): this => this;
+  public override filter = (_opts?: DaggerModule.DirectoryFilterOpts): this => this;
 
   public override file = (name: string): FakeFile => {
     const ref = this.localFileRefs.get(name);
@@ -130,7 +104,9 @@ class FakeDirectory extends Directory {
     return new FakeDirectory(this.world, joinPath(this.path, name));
   };
 
-  public override entries = async (_opts?: DirectoryEntriesOpts): Promise<string[]> => {
+  public override entries = async (
+    _opts?: DaggerModule.DirectoryEntriesOpts,
+  ): Promise<string[]> => {
     await tick();
 
     if (this.localFiles.size > 0 || this.localFileRefs.size > 0 || this.localDirs.size > 0) {
@@ -171,15 +147,18 @@ class FakeContainer extends Container {
     return this;
   };
 
-  public override withWorkdir = (path: string, _opts?: ContainerWithWorkdirOpts): this => {
+  public override withWorkdir = (
+    path: string,
+    _opts?: DaggerModule.ContainerWithWorkdirOpts,
+  ): this => {
     this.capturedWorkdir = path;
     return this;
   };
 
   public override withDirectory = (
     path: string,
-    _source: DirectoryType,
-    _opts?: ContainerWithDirectoryOpts,
+    _source: DaggerModule.Directory,
+    _opts?: DaggerModule.ContainerWithDirectoryOpts,
   ): this => {
     this.capturedDirectoryPaths.push(path);
     return this;
@@ -187,26 +166,26 @@ class FakeContainer extends Container {
 
   public override withFile = (
     _path: string,
-    _source: FileType,
-    _opts?: ContainerWithFileOpts,
+    _source: DaggerModule.File,
+    _opts?: DaggerModule.ContainerWithFileOpts,
   ): this => this;
 
   public override withNewFile = (
     _path: string,
     _contents: string,
-    _opts?: ContainerWithNewFileOpts,
+    _opts?: DaggerModule.ContainerWithNewFileOpts,
   ): this => this;
 
   public override withMountedFile = (
     _path: string,
-    _source: FileType,
-    _opts?: ContainerWithMountedFileOpts,
+    _source: DaggerModule.File,
+    _opts?: DaggerModule.ContainerWithMountedFileOpts,
   ): this => this;
 
   public override withMountedCache = (
     path: string,
-    _cache: CacheVolumeType,
-    _opts?: ContainerWithMountedCacheOpts,
+    _cache: DaggerModule.CacheVolume,
+    _opts?: DaggerModule.ContainerWithMountedCacheOpts,
   ): this => {
     this.capturedCachePaths.push(path);
     return this;
@@ -215,29 +194,31 @@ class FakeContainer extends Container {
   public override withEnvVariable = (
     name: string,
     value: string,
-    _opts?: ContainerWithEnvVariableOpts,
+    _opts?: DaggerModule.ContainerWithEnvVariableOpts,
   ): this => {
     this.capturedEnvVariables.set(name, value);
     return this;
   };
 
-  public override withSecretVariable = (_name: string, _secret: Secret): this => this;
+  public override withSecretVariable = (_name: string, _secret: DaggerModule.Secret): this => this;
 
   public override withUnixSocket = (
     _path: string,
-    _source: Socket,
-    _opts?: ContainerWithUnixSocketOpts,
+    _source: DaggerModule.Socket,
+    _opts?: DaggerModule.ContainerWithUnixSocketOpts,
   ): this => this;
 
-  public override withExposedPort = (_port: number, _opts?: ContainerWithExposedPortOpts): this =>
-    this;
+  public override withExposedPort = (
+    _port: number,
+    _opts?: DaggerModule.ContainerWithExposedPortOpts,
+  ): this => this;
 
   public override withDefaultArgs = (args: string[]): this => {
     this.capturedDefaultArgs = args;
     return this;
   };
 
-  public override withExec = (args: string[], _opts?: ContainerWithExecOpts): this => {
+  public override withExec = (args: string[], _opts?: DaggerModule.ContainerWithExecOpts): this => {
     this.capturedExecCalls.push(args);
     return this;
   };
@@ -277,7 +258,10 @@ class FakeClient extends Client {
     this.world = world;
   }
 
-  public override cacheVolume = (key: string, _opts?: ClientCacheVolumeOpts): CacheVolumeType => {
+  public override cacheVolume = (
+    key: string,
+    _opts?: DaggerModule.ClientCacheVolumeOpts,
+  ): DaggerModule.CacheVolume => {
     this.capturedCacheVolumeKeys.push(key);
     return new CacheVolume();
   };
@@ -291,7 +275,7 @@ class FakeClient extends Client {
   public override directory = (): FakeDirectory => new FakeDirectory(this.world);
 }
 
-const createFakeDag = (world: DaggerWorld): ClientType => new FakeClient(world);
+const createFakeDag = (world: DaggerWorld): DaggerModule.Client => new FakeClient(world);
 
 const getLastContainer = (): FakeContainer => {
   if (!lastContainer) {
@@ -304,16 +288,16 @@ const resetLastContainer = (): void => {
   lastContainer = undefined;
 };
 
-const asFakeDirectory = (directory: DirectoryType): FakeDirectory => {
+const asFakeDirectory = (directory: DaggerModule.Directory): FakeDirectory => {
   if (!(directory instanceof FakeDirectory)) {
-    throw new Error('expected a FakeDirectory');
+    throw new TypeError('expected a FakeDirectory');
   }
   return directory;
 };
 
-const asFakeContainer = (container: ContainerType): FakeContainer => {
+const asFakeContainer = (container: DaggerModule.Container): FakeContainer => {
   if (!(container instanceof FakeContainer)) {
-    throw new Error('expected a FakeContainer');
+    throw new TypeError('expected a FakeContainer');
   }
   return container;
 };
