@@ -18,6 +18,9 @@ const ignorePatterns = [
   '.wrangler',
   'dagger/sdk',
   '.pruned',
+  // TEMPORARY — remove alongside dagger/src/helpers/__semgrep_test_fixture.ts
+  // once local semgrep testing is done.
+  'dagger/src/helpers/__semgrep_test_fixture.ts',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
