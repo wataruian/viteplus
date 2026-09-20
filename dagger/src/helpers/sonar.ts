@@ -16,15 +16,19 @@ import {
   SONAR_WORKING_DIRECTORY,
 } from './constants';
 
-const localSonarRunner = (
-  dockerSocket: Socket,
-  scanRoot: Directory,
-  sonarToken: Secret,
-  hostUrl: string,
-  sonarArgs: string,
-  projectKey: string,
-): { container: Container; reportTaskPath: string } => {
-  const pollScript = [
+interface SonarRunResult {
+  container: Container;
+  reportTaskPath: string;
+  exitCodePath: string;
+}
+
+const POLL_CONTAINER_HOME = '/home/curl_user';
+const LOCAL_ORCHESTRATOR_HOME = '/root';
+
+const REPORT_FILE_NAMES = ['sonar-quality-gate.json', 'sonar-issues.json'];
+
+const buildPollScript = (projectKey: string, outputDir: string): string =>
+  [
     'set -eu',
     'task_status=""',
     'i=0',
@@ -37,13 +41,65 @@ const localSonarRunner = (
     '  i=$((i + 1))',
     '  sleep 3',
     'done',
-    'echo "$task_json" > /tmp/ce-task.json',
+    `echo "$task_json" > ${outputDir}/ce-task.json`,
     `analysis_id=$(echo "$task_json" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4 || true)`,
     'if [ -n "$analysis_id" ]; then',
-    `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > /tmp/sonar-quality-gate.json`,
+    `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > ${outputDir}/sonar-quality-gate.json`,
     'fi',
-    `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > /tmp/sonar-issues.json`,
+    `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > ${outputDir}/sonar-issues.json`,
   ].join('\n');
+
+const attachReportFiles = async (
+  container: Container,
+  outputDir: string,
+  result: Directory,
+): Promise<Directory> => {
+  let attached = result;
+
+  const files = await Promise.all(
+    REPORT_FILE_NAMES.map(async (fileName) => {
+      const file = container.file(`${outputDir}/${fileName}`);
+      try {
+        await file.contents();
+        return { file, fileName };
+      } catch {
+        return undefined;
+      }
+    }),
+  );
+
+  for (const entry of files) {
+    if (entry !== undefined) {
+      attached = attached.withFile(entry.fileName, entry.file);
+    }
+  }
+
+  return attached;
+};
+
+const pollQualityGate = (
+  sonarToken: Secret,
+  hostUrl: string,
+  projectKey: string,
+  ceTaskId: string,
+): Container =>
+  dag
+    .container()
+    .from(CURL_IMAGE)
+    .withSecretVariable('SONAR_TOKEN', sonarToken)
+    .withEnvVariable('SONAR_HOST_URL', hostUrl)
+    .withEnvVariable('CE_TASK_ID', ceTaskId)
+    .withExec(['sh', '-c', buildPollScript(projectKey, POLL_CONTAINER_HOME)]);
+
+const localSonarRunner = (
+  dockerSocket: Socket,
+  scanRoot: Directory,
+  sonarToken: Secret,
+  hostUrl: string,
+  sonarArgs: string,
+  projectKey: string,
+): SonarRunResult => {
+  const pollScript = buildPollScript(projectKey, POLL_CONTAINER_HOME);
 
   const orchestrationScript = [
     'set -eu',
@@ -52,17 +108,17 @@ const localSonarRunner = (
     `docker start "\${container_id}" >/dev/null`,
     `docker logs -f "\${container_id}" 2>&1`,
     `exit_code=$(docker wait "\${container_id}")`,
-    `docker cp "\${container_id}:${SONAR_WORKING_DIRECTORY}/report-task.txt" /tmp/report-task.txt 2>/dev/null || true`,
+    `docker cp "\${container_id}:${SONAR_WORKING_DIRECTORY}/report-task.txt" ${LOCAL_ORCHESTRATOR_HOME}/report-task.txt 2>/dev/null || true`,
     `docker rm "\${container_id}" >/dev/null`,
-    `echo "\${exit_code}" > /tmp/sonar.exit-code`,
+    `echo "\${exit_code}" > ${LOCAL_ORCHESTRATOR_HOME}/sonar.exit-code`,
     '',
-    'if [ -f /tmp/report-task.txt ]; then',
-    `  ce_task_id=$(grep "^ceTaskId=" /tmp/report-task.txt | cut -d= -f2-)`,
+    `if [ -f ${LOCAL_ORCHESTRATOR_HOME}/report-task.txt ]; then`,
+    `  ce_task_id=$(grep "^ceTaskId=" ${LOCAL_ORCHESTRATOR_HOME}/report-task.txt | cut -d= -f2-)`,
     `  poll_id=$(docker create --network ${SONAR_LOCAL_DOCKER_NETWORK} -e SONAR_HOST_URL -e SONAR_TOKEN -e CE_TASK_ID="\${ce_task_id}" --entrypoint sh ${CURL_IMAGE} /poll.sh)`,
     `  docker cp /poll.sh "\${poll_id}:/poll.sh"`,
     `  docker start -a "\${poll_id}" || true`,
-    `  docker cp "\${poll_id}:/tmp/sonar-quality-gate.json" /tmp/sonar-quality-gate.json 2>/dev/null || true`,
-    `  docker cp "\${poll_id}:/tmp/sonar-issues.json" /tmp/sonar-issues.json 2>/dev/null || true`,
+    `  docker cp "\${poll_id}:${POLL_CONTAINER_HOME}/sonar-quality-gate.json" ${LOCAL_ORCHESTRATOR_HOME}/sonar-quality-gate.json 2>/dev/null || true`,
+    `  docker cp "\${poll_id}:${POLL_CONTAINER_HOME}/sonar-issues.json" ${LOCAL_ORCHESTRATOR_HOME}/sonar-issues.json 2>/dev/null || true`,
     `  docker rm "\${poll_id}" >/dev/null`,
     'fi',
   ].join('\n');
@@ -78,7 +134,11 @@ const localSonarRunner = (
     .withSecretVariable('SONAR_TOKEN', sonarToken)
     .withExec(['sh', '-c', orchestrationScript]);
 
-  return { container, reportTaskPath: '/tmp/report-task.txt' };
+  return {
+    container,
+    exitCodePath: `${LOCAL_ORCHESTRATOR_HOME}/sonar.exit-code`,
+    reportTaskPath: `${LOCAL_ORCHESTRATOR_HOME}/report-task.txt`,
+  };
 };
 
 const remoteSonarRunner = (
@@ -86,7 +146,9 @@ const remoteSonarRunner = (
   sonarToken: Secret,
   hostUrl: string,
   sonarArgs: string,
-): { container: Container; reportTaskPath: string } => {
+): SonarRunResult => {
+  const exitCodePath = '/usr/src/sonar.exit-code';
+
   const container = dag
     .container()
     .from(SONAR_SCANNER_IMAGE)
@@ -94,11 +156,21 @@ const remoteSonarRunner = (
     .withDirectory('/usr/src', scanRoot, { owner: SONAR_SCANNER_USER })
     .withSecretVariable('SONAR_TOKEN', sonarToken)
     .withEnvVariable('SONAR_HOST_URL', hostUrl)
-    .withExec(['sh', '-c', `sonar-scanner ${sonarArgs} 2>&1; echo $? > /tmp/sonar.exit-code`], {
+    .withExec(['sh', '-c', `sonar-scanner ${sonarArgs} 2>&1; echo $? > ${exitCodePath}`], {
       expect: ReturnType.Any,
     });
 
-  return { container, reportTaskPath: `${SONAR_WORKING_DIRECTORY}/report-task.txt` };
+  return { container, exitCodePath, reportTaskPath: `${SONAR_WORKING_DIRECTORY}/report-task.txt` };
 };
 
-export { localSonarRunner, remoteSonarRunner };
+export {
+  LOCAL_ORCHESTRATOR_HOME,
+  POLL_CONTAINER_HOME,
+  REPORT_FILE_NAMES,
+  attachReportFiles,
+  buildPollScript,
+  localSonarRunner,
+  pollQualityGate,
+  remoteSonarRunner,
+};
+export type { SonarRunResult };

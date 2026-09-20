@@ -2,6 +2,7 @@ import { Secret, Socket } from '@dagger.io/dagger';
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
 import { SONAR_WORKING_DIRECTORY } from '../src/helpers/constants';
+import { LOCAL_ORCHESTRATOR_HOME, POLL_CONTAINER_HOME } from '../src/helpers/sonar';
 import { resetLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 import { seedMountFiles } from './helpers/fixtures';
@@ -100,12 +101,12 @@ describe('sonar', () => {
         },
       }),
     );
-    world.files.set('/tmp/sonar.exit-code', '0');
+    world.files.set(`${LOCAL_ORCHESTRATOR_HOME}/sonar.exit-code`, '0');
     world.files.set(
-      '/tmp/sonar-quality-gate.json',
+      `${LOCAL_ORCHESTRATOR_HOME}/sonar-quality-gate.json`,
       JSON.stringify({ projectStatus: { conditions: [], status: 'OK' } }),
     );
-    world.files.set('/tmp/sonar-issues.json', JSON.stringify({ issues: [] }));
+    world.files.set(`${LOCAL_ORCHESTRATOR_HOME}/sonar-issues.json`, JSON.stringify({ issues: [] }));
 
     const result = await createMonorepo().sonar('@lightproject/backend', fakeSecret, fakeSocket);
 
@@ -119,7 +120,7 @@ describe('sonar', () => {
     seedMountFiles();
     world.execStdout = 'local scan output';
     world.execExitCode = 1;
-    world.files.set('/tmp/sonar.exit-code', '1');
+    world.files.set(`${LOCAL_ORCHESTRATOR_HOME}/sonar.exit-code`, '1');
 
     const result = await createMonorepo().sonar('@lightproject/backend', fakeSecret, fakeSocket);
 
@@ -133,10 +134,10 @@ describe('sonar', () => {
     seedMountFiles();
     world.execStdout = 'remote scan output';
     world.execExitCode = 0;
-    world.files.set('/tmp/sonar.exit-code', '0');
+    world.files.set('/usr/src/sonar.exit-code', '0');
     world.files.set(`${SONAR_WORKING_DIRECTORY}/report-task.txt`, 'ceTaskId=AB-123\nother=stuff');
     world.files.set(
-      '/tmp/sonar-quality-gate.json',
+      `${POLL_CONTAINER_HOME}/sonar-quality-gate.json`,
       JSON.stringify({ projectStatus: { conditions: [], status: 'OK' } }),
     );
 
@@ -156,7 +157,7 @@ describe('sonar', () => {
     seedMountFiles();
     world.execStdout = 'remote scan output';
     world.execExitCode = 1;
-    world.files.set('/tmp/sonar.exit-code', '1');
+    world.files.set('/usr/src/sonar.exit-code', '1');
 
     const result = await createMonorepo().sonar(
       '@lightproject/backend',
@@ -174,7 +175,7 @@ describe('sonar', () => {
     seedMountFiles();
     world.execStdout = 'remote scan output';
     world.execExitCode = 1;
-    world.files.set('/tmp/sonar.exit-code', '1');
+    world.files.set('/usr/src/sonar.exit-code', '1');
     world.files.set(`${SONAR_WORKING_DIRECTORY}/report-task.txt`, 'no task id here');
 
     const result = await createMonorepo().sonar(
@@ -204,12 +205,12 @@ describe('sonar', () => {
         },
       }),
     );
-    world.files.set('/tmp/sonar.exit-code', '0');
+    world.files.set(`${LOCAL_ORCHESTRATOR_HOME}/sonar.exit-code`, '0');
     world.files.set(
-      '/tmp/sonar-quality-gate.json',
+      `${LOCAL_ORCHESTRATOR_HOME}/sonar-quality-gate.json`,
       JSON.stringify({ projectStatus: { conditions: [], status: 'OK' } }),
     );
-    world.files.set('/tmp/sonar-issues.json', JSON.stringify({ issues: [] }));
+    world.files.set(`${LOCAL_ORCHESTRATOR_HOME}/sonar-issues.json`, JSON.stringify({ issues: [] }));
 
     const result = await createMonorepo().sonar('dagger', fakeSecret, fakeSocket);
 

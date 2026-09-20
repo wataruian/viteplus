@@ -10,9 +10,13 @@ const DOCKER_CLI_VERSION = 'docker:27.5.1-cli';
 const SEMGREP_IMAGE = 'semgrep/semgrep:1.177.0';
 const SONAR_SCANNER_IMAGE = 'sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1';
 const SONAR_SCANNER_USER = 'scanner-cli';
-const SONAR_WORKING_DIRECTORY = '/tmp/.scannerwork';
+const SONAR_WORKING_DIRECTORY = '/usr/src/.scannerwork';
 const CURL_IMAGE = 'curlimages/curl:8.14.1';
-const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000';
+
+// Internal-only address on the docker-compose network; SonarQube
+// Community Edition has no built-in TLS termination to put behind it.
+const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000'; // NOSONAR
+
 const SONAR_LOCAL_DOCKER_NETWORK = 'viteplus-net';
 
 const SEMGREP_RULESETS: string[] = [
