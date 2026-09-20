@@ -20,7 +20,6 @@ import {
 } from './helpers/build';
 import {
   BUILD_ARTIFACT_KEEP,
-  CURL_IMAGE,
   DAGGER_WORKSPACE,
   DOCKER_CLI_VERSION,
   NGINX_IMAGE,
@@ -41,7 +40,14 @@ import {
   workspacePath,
 } from './helpers/container';
 import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
-import { localSonarRunner, remoteSonarRunner } from './helpers/sonar';
+import {
+  LOCAL_ORCHESTRATOR_HOME,
+  POLL_CONTAINER_HOME,
+  attachReportFiles,
+  localSonarRunner,
+  pollQualityGate,
+  remoteSonarRunner,
+} from './helpers/sonar';
 
 @object()
 export class Monorepo {
@@ -312,14 +318,17 @@ export class Monorepo {
       `-Dsonar.working.directory=${SONAR_WORKING_DIRECTORY}`,
     ].join(' ');
 
-    const { container: runnerContainer, reportTaskPath } =
-      useLocalNetwork && dockerSocket !== undefined
-        ? localSonarRunner(dockerSocket, scanRoot, sonarToken, hostUrl, sonarArgs, projectKey)
-        : remoteSonarRunner(scanRoot, sonarToken, hostUrl, sonarArgs);
+    const {
+      container: runnerContainer,
+      reportTaskPath,
+      exitCodePath,
+    } = useLocalNetwork && dockerSocket !== undefined
+      ? localSonarRunner(dockerSocket, scanRoot, sonarToken, hostUrl, sonarArgs, projectKey)
+      : remoteSonarRunner(scanRoot, sonarToken, hostUrl, sonarArgs);
 
     const [stdout, exitCodeText] = await Promise.all([
       runnerContainer.stdout(),
-      runnerContainer.file('/tmp/sonar.exit-code').contents(),
+      runnerContainer.file(exitCodePath).contents(),
     ]);
 
     let result = outputDirectory('sonar', stdout).withNewFile(
@@ -328,29 +337,7 @@ export class Monorepo {
     );
 
     if (useLocalNetwork) {
-      const reportFiles: [string, string][] = [
-        ['sonar-quality-gate.json', '/tmp/sonar-quality-gate.json'],
-        ['sonar-issues.json', '/tmp/sonar-issues.json'],
-      ];
-
-      const availableFiles = await Promise.all(
-        reportFiles.map(async ([fileName, path]) => {
-          const file = runnerContainer.file(path);
-          try {
-            await file.contents();
-            return { file, fileName };
-          } catch {
-            return undefined;
-          }
-        }),
-      );
-
-      for (const entry of availableFiles) {
-        if (entry !== undefined) {
-          result = result.withFile(entry.fileName, entry.file);
-        }
-      }
-
+      result = await attachReportFiles(runnerContainer, LOCAL_ORCHESTRATOR_HOME, result);
       return attachSonarRow(result, shortName);
     }
 
@@ -368,56 +355,8 @@ export class Monorepo {
         : /^ceTaskId=(?<id>.+)$/mu.exec(reportTaskContents)?.groups?.id;
 
     if (ceTaskId !== undefined) {
-      const script = [
-        'set -eu',
-        'task_status=""',
-        'i=0',
-        'while [ "$i" -lt 30 ]; do',
-        `  task_json=$(curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/ce/task?id=${ceTaskId}")`,
-        `  task_status=$(echo "$task_json" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)`,
-        '  case "$task_status" in',
-        '    SUCCESS|FAILED|CANCELED) break ;;',
-        '  esac',
-        '  i=$((i + 1))',
-        '  sleep 3',
-        'done',
-        'echo "$task_json" > /tmp/ce-task.json',
-        `analysis_id=$(echo "$task_json" | grep -o '"analysisId":"[^"]*"' | cut -d'"' -f4 || true)`,
-        'if [ -n "$analysis_id" ]; then',
-        `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > /tmp/sonar-quality-gate.json`,
-        'fi',
-        `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > /tmp/sonar-issues.json`,
-      ].join('\n');
-
-      const pollContainer = dag
-        .container()
-        .from(CURL_IMAGE)
-        .withSecretVariable('SONAR_TOKEN', sonarToken)
-        .withEnvVariable('SONAR_HOST_URL', hostUrl)
-        .withExec(['sh', '-c', script]);
-
-      const reportFiles: [string, string][] = [
-        ['sonar-quality-gate.json', '/tmp/sonar-quality-gate.json'],
-        ['sonar-issues.json', '/tmp/sonar-issues.json'],
-      ];
-
-      const availableFiles = await Promise.all(
-        reportFiles.map(async ([fileName, path]) => {
-          const file = pollContainer.file(path);
-          try {
-            await file.contents();
-            return { file, fileName };
-          } catch {
-            return undefined;
-          }
-        }),
-      );
-
-      for (const entry of availableFiles) {
-        if (entry !== undefined) {
-          result = result.withFile(entry.fileName, entry.file);
-        }
-      }
+      const pollContainer = pollQualityGate(sonarToken, hostUrl, projectKey, ceTaskId);
+      result = await attachReportFiles(pollContainer, POLL_CONTAINER_HOME, result);
     }
 
     return attachSonarRow(result, shortName);
@@ -526,9 +465,11 @@ export class Monorepo {
       refs.push(`${imageName}:${tag}`);
     }
 
+    const imageTarPath = '/root/image.tar';
+
     const script = [
       'set -eu',
-      'output=$(docker load -i /tmp/image.tar)',
+      `output=$(docker load -i ${imageTarPath})`,
       'echo "$output"',
       'id=$(echo "$output" | awk \'{print $NF}\')',
       ...refs.map((ref) => `docker tag "$id" "${ref}"`),
@@ -539,7 +480,7 @@ export class Monorepo {
       .container()
       .from(DOCKER_CLI_VERSION)
       .withUnixSocket('/var/run/docker.sock', dockerSocket)
-      .withMountedFile('/tmp/image.tar', container.asTarball())
+      .withMountedFile(imageTarPath, container.asTarball())
       .withExec(['sh', '-c', script])
       .stdout();
   }

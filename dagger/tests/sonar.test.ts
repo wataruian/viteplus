@@ -2,7 +2,7 @@ import { Secret, Socket } from '@dagger.io/dagger';
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
 import { SONAR_WORKING_DIRECTORY } from '../src/helpers/constants';
-import { localSonarRunner, remoteSonarRunner } from '../src/helpers/sonar';
+import { LOCAL_ORCHESTRATOR_HOME, localSonarRunner, remoteSonarRunner } from '../src/helpers/sonar';
 import { FakeDirectory } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 
@@ -25,7 +25,7 @@ describe('localSonarRunner', () => {
     );
 
     expect(container).toBeDefined();
-    expect(reportTaskPath).toBe('/tmp/report-task.txt');
+    expect(reportTaskPath).toBe(`${LOCAL_ORCHESTRATOR_HOME}/report-task.txt`);
   });
 });
 
