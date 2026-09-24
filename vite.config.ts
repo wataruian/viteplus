@@ -48,76 +48,22 @@ const getEnvArray = (rootDir: string, mode: string) => {
   return Object.keys(env).map((key) => key);
 };
 
-const getCommonRunProps = (rootDir: string, mode: string, isPackage = true) => {
-  const envArray = getEnvArray(rootDir, mode);
-
-  const commonRootInputs = [
-    '.env',
-    '.npmrc',
-    'package.json',
-    'pnpm-lock.yaml',
-    'pnpm-workspace.yaml',
-    'tsconfig.base.json',
-    'tsconfig.json',
-    'tsconfig.madge.json',
-    'vite.config.ts',
-    'commitlint.config.ts',
-    'plopfile.ts',
-  ];
-
-  const rootInputs = ['**/*.ts', '**/*.tsx'];
-
-  const packageInputs = [
-    'package.json',
-    'tsconfig.json',
-    'vite.config.ts',
-    'uno.config.ts',
-    '**/*.html',
-    '**/*.css',
-    '**/*.svg',
-    '**/*.ts',
-    '**/*.tsx',
-  ];
-
-  const input: (string | { base: 'package' | 'workspace'; pattern: string })[] = isPackage
-    ? [
-        ...commonRootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
-        ...packageInputs.map((pattern) => ({ base: 'package' as const, pattern })),
-      ]
-    : [
-        ...commonRootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
-        ...rootInputs.map((pattern) => ({ base: 'workspace' as const, pattern })),
-        ...packageInputs.map((pattern) => ({
-          base: 'workspace' as const,
-          pattern: `packages/**/*/${pattern}`,
-        })),
-        ...packageInputs.map((pattern) => ({
-          base: 'workspace' as const,
-          pattern: `apps/**/*/${pattern}`,
-        })),
-      ];
-
-  const allInput = [...input, ...ignorePatterns.map((pattern) => `!**/${pattern}/**`)];
-
-  return { env: envArray, input: allInput };
+const getCommonRunProps = (rootDir: string, mode: string) => {
+  const env = getEnvArray(rootDir, mode);
+  const input = [{ auto: true } as const, ...ignorePatterns.map((pattern) => `!**/${pattern}/**`)];
+  return { env, input };
 };
 
 const getCommonViteConfig = ({
   dir = import.meta.dirname,
-  isRoot = false,
   mode = 'development',
   pathToRoot = '../..',
 }: {
   dir?: string;
-  isRoot?: boolean;
   mode?: string;
   pathToRoot?: string;
 } = {}): UserConfig => {
-  let rootDir = dir;
-
-  if (!isRoot) {
-    rootDir = path.resolve(dir, pathToRoot);
-  }
+  const rootDir = path.resolve(dir, pathToRoot);
 
   const dotenvKeys = getDotenvKeys(rootDir);
   const env = loadEnv(mode, rootDir, dotenvKeys.length > 0 ? dotenvKeys : ['VITE_']);
@@ -146,71 +92,6 @@ const getCommonViteConfig = ({
       minify: !isLocal,
       outDir: 'dist',
       sourcemap: isLocal,
-    },
-    fmt: {
-      arrowParens: 'always',
-      bracketSameLine: false,
-      bracketSpacing: true,
-      endOfLine: 'lf',
-      ignorePatterns,
-      insertFinalNewline: true,
-      jsxSingleQuote: true,
-      quoteProps: 'as-needed',
-      semi: true,
-      singleQuote: true,
-      sortImports: true,
-      trailingComma: 'all',
-      useTabs: false,
-    },
-    lint: {
-      categories: {
-        correctness: 'error',
-        nursery: 'error',
-        pedantic: 'error',
-        perf: 'error',
-        restriction: 'error',
-        style: 'error',
-        suspicious: 'error',
-      },
-      ignorePatterns,
-      jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
-      options: { typeAware: true, typeCheck: true },
-      rules: {
-        'capitalized-comments': 'off',
-        'id-length': 'off',
-        'max-classes-per-file': 'off',
-        'max-depth': 'off',
-        'max-lines': 'off',
-        'max-lines-per-function': 'off',
-        'max-params': 'off',
-        'max-statements': 'off',
-        'new-cap': 'off',
-        'no-continue': 'off',
-        'no-control-regex': 'off',
-        'no-empty-function': 'off',
-        'no-eq-null': 'off',
-        'no-inline-comments': 'off',
-        'no-magic-numbers': 'off',
-        'no-ternary': 'off',
-        'no-undefined': 'off',
-        'no-underscore-dangle': ['error', { allow: ['_def'] }],
-        'one-var': 'off',
-        'oxc/no-async-await': 'off',
-        'oxc/no-optional-chaining': 'off',
-        'oxc/no-rest-spread-properties': 'off',
-        'sort-imports': ['error', { ignoreDeclarationSort: true }],
-        'typescript/explicit-function-return-type': 'off',
-        'typescript/explicit-module-boundary-types': 'off',
-        'typescript/no-extraneous-class': 'off',
-        'typescript/prefer-readonly-parameter-types': 'off',
-        'typescript/return-await': 'off',
-        'unicorn/max-nested-calls': 'off',
-        'unicorn/no-array-reduce': 'off',
-        'unicorn/no-null': 'off',
-        'unicorn/no-object-as-default-parameter': 'off',
-        'unicorn/no-useless-undefined': 'off',
-        'vite-plus/prefer-vite-plus-imports': 'error',
-      },
     },
     pack: {
       clean: true,
@@ -266,7 +147,6 @@ const getCommonViteConfig = ({
 const getPackageViteConfig = ({
   dir = import.meta.dirname,
   mode = 'development',
-  isRoot = false,
   buildType = 'pack',
   devCommand = 'tsx watch --conditions=typescript src/index.ts',
   buildCommand = '',
@@ -275,7 +155,6 @@ const getPackageViteConfig = ({
   excludeStartCommand = true,
 }: {
   dir?: string;
-  isRoot?: boolean;
   mode?: string;
   buildType?: 'build' | 'pack' | 'custom';
   buildCommand?: string;
@@ -284,11 +163,7 @@ const getPackageViteConfig = ({
   excludeDevCommand?: boolean;
   excludeStartCommand?: boolean;
 } = {}): UserConfig => {
-  let rootDir = dir;
-
-  if (!isRoot) {
-    rootDir = path.resolve(dir, '../..');
-  }
+  const rootDir = path.resolve(dir, '../..');
 
   if (buildType === 'custom' && (!buildCommand || buildCommand.trim() === '')) {
     throw new Error('buildCommand is required for custom build type');
@@ -302,7 +177,7 @@ const getPackageViteConfig = ({
   const commonRunProps = getCommonRunProps(rootDir, mode);
 
   return {
-    ...getCommonViteConfig({ dir, isRoot, mode }),
+    ...getCommonViteConfig({ dir, mode }),
     run: {
       tasks: {
         build: {
@@ -382,17 +257,11 @@ const getPackageViteConfig = ({
 
 const getRootViteConfig = (): UserConfig => {
   const dir = import.meta.dirname;
-  const isRoot = true;
   const mode = globalThis.process.env['NODE_ENV'] ?? 'development';
 
-  const commonRunProps = getCommonRunProps(dir, mode, false);
+  const commonRunProps = getCommonRunProps(dir, mode);
 
   return {
-    ...getCommonViteConfig({
-      dir,
-      isRoot,
-      mode,
-    }),
     create: {
       templates: [
         {
@@ -411,6 +280,71 @@ const getRootViteConfig = (): UserConfig => {
           template: './.templates/library',
         },
       ],
+    },
+    fmt: {
+      arrowParens: 'always',
+      bracketSameLine: false,
+      bracketSpacing: true,
+      endOfLine: 'lf',
+      ignorePatterns,
+      insertFinalNewline: true,
+      jsxSingleQuote: true,
+      quoteProps: 'as-needed',
+      semi: true,
+      singleQuote: true,
+      sortImports: true,
+      trailingComma: 'all',
+      useTabs: false,
+    },
+    lint: {
+      categories: {
+        correctness: 'error',
+        nursery: 'error',
+        pedantic: 'error',
+        perf: 'error',
+        restriction: 'error',
+        style: 'error',
+        suspicious: 'error',
+      },
+      ignorePatterns,
+      jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
+      options: { typeAware: true, typeCheck: true },
+      rules: {
+        'capitalized-comments': 'off',
+        'id-length': 'off',
+        'max-classes-per-file': 'off',
+        'max-depth': 'off',
+        'max-lines': 'off',
+        'max-lines-per-function': 'off',
+        'max-params': 'off',
+        'max-statements': 'off',
+        'new-cap': 'off',
+        'no-continue': 'off',
+        'no-control-regex': 'off',
+        'no-empty-function': 'off',
+        'no-eq-null': 'off',
+        'no-inline-comments': 'off',
+        'no-magic-numbers': 'off',
+        'no-ternary': 'off',
+        'no-undefined': 'off',
+        'no-underscore-dangle': ['error', { allow: ['_def'] }],
+        'one-var': 'off',
+        'oxc/no-async-await': 'off',
+        'oxc/no-optional-chaining': 'off',
+        'oxc/no-rest-spread-properties': 'off',
+        'sort-imports': ['error', { ignoreDeclarationSort: true }],
+        'typescript/explicit-function-return-type': 'off',
+        'typescript/explicit-module-boundary-types': 'off',
+        'typescript/no-extraneous-class': 'off',
+        'typescript/prefer-readonly-parameter-types': 'off',
+        'typescript/return-await': 'off',
+        'unicorn/max-nested-calls': 'off',
+        'unicorn/no-array-reduce': 'off',
+        'unicorn/no-null': 'off',
+        'unicorn/no-object-as-default-parameter': 'off',
+        'unicorn/no-useless-undefined': 'off',
+        'vite-plus/prefer-vite-plus-imports': 'error',
+      },
     },
     run: {
       cache: {

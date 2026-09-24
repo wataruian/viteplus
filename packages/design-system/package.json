@@ -71,6 +71,7 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "esbuild": "catalog:",
     "jsdom": "catalog:",
     "storybook": "catalog:",
     "typescript": "catalog:",

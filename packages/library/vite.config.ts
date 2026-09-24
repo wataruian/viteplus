@@ -1,18 +1,21 @@
-import { type UserConfig, defineConfig } from 'vite-plus';
+import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
 import { getPackageViteConfig } from '../../vite.config.ts';
 
 export default defineConfig(({ mode }): UserConfig => {
-  const baseConfig = getPackageViteConfig({ dir: import.meta.dirname, mode });
+  const dir = import.meta.dirname;
 
-  return {
-    ...baseConfig,
-    test: {
-      ...baseConfig.test,
-      coverage: {
-        ...baseConfig.test?.coverage,
-        exclude: ['**/index.ts'],
+  return mergeConfig(
+    getPackageViteConfig({
+      dir,
+      mode,
+    }),
+    {
+      test: {
+        coverage: {
+          exclude: ['**/index.ts'],
+        },
       },
-    },
-  };
+    } satisfies UserConfig,
+  );
 });

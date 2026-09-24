@@ -17,7 +17,7 @@ inputs:
   vp-version:
     description: 'Vite+ version'
     required: false
-    default: '0.3.1'
+    default: '0.3.3'
   run-install:
     description: 'Run vp install after setup'
     required: false
