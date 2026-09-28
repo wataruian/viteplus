@@ -15,6 +15,7 @@ const schema = commonEnvSchema.extend({
   BLOCK_ALL_IPS: z.enum(['true', 'false']).optional(),
   ENABLE_ERROR_STACK: z.enum(['true', 'false']).optional(),
   SKIP_OPENTELEMETRY: z.enum(['true', 'false']).optional(),
+  TRUSTED_PROXIES: z.string().optional(),
 });
 
 const { get } = validateEnv(schema);
@@ -48,6 +49,9 @@ const config = {
   },
   get skipOpenTelemetry() {
     return isTrue(get('SKIP_OPENTELEMETRY'));
+  },
+  get trustedProxies() {
+    return get('TRUSTED_PROXIES');
   },
 };
 

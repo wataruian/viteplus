@@ -26,6 +26,11 @@ We adhere to **The Vite+ Way**, which emphasizes:
 - **`design-system`**: Shared UI component library using UnoCSS and React.
 - **`library`**: General purpose shared library templates.
 
+### Archive (`bak/`)
+
+- **Intentionally tracked**: `bak/` preserves earlier app/library setups (including their build caches and a Prisma engine binary) for future reuse. It is not a pnpm workspace member and is excluded from linting/formatting (`ignorePatterns` in `vite.config.ts`), Sonar, and CodeQL.
+- **Not a cleanup target**: Its size and contents are known and accepted — don't remove it from Git or list it as a TODO.
+
 ### AI Context (`.ai-data/`)
 
 - **Persistent Memory**: The `.ai-data` directory stores architectural decisions, guidelines, and context for AI agents. This directory should be checked into version control to share knowledge across the team.
@@ -87,13 +92,14 @@ When viewing logs in Grafana, you can use the following LogQL query to natively 
 
 We use `mise` as the primary task runner for high-level repository automation. Tasks are defined in `.mise/tasks/`.
 
-| Command           | Description                                                 |
-| :---------------- | :---------------------------------------------------------- |
-| `mise run check`  | Run type checking, formatting, linting, building, and tests |
-| `mise run clean`  | Clean up build artifacts, tools, and AI caches              |
-| `mise run create` | Create standard backend, frontend, and library templates    |
-| `mise run init`   | Initialize the workspace                                    |
-| `mise run start`  | Start the dev or prod server                                |
+| Command                                    | Description                                                 |
+| :----------------------------------------- | :---------------------------------------------------------- |
+| `mise run check`                           | Run type checking, formatting, linting, building, and tests |
+| `mise run clean`                           | Clean up build artifacts, tools, and AI caches              |
+| `mise run create`                          | Create standard backend, frontend, and library templates    |
+| `mise run init`                            | Initialize the workspace                                    |
+| `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action         |
+| `mise run start`                           | Start the dev or prod server                                |
 
 ### The `vp` Command Reference
 
@@ -184,7 +190,7 @@ To fully leverage the speed of the Vite+ toolchain, we recommend the following V
 
 ## 🧪 Testing & Coverage
 
-Testing is powered by Vitest, integrated directly into the `vp` CLI.
+Testing is powered by Vitest, integrated directly into the `vp` CLI. Every workspace keeps unit tests in `tests/unit/` (the only place `vp test` looks, via the shared `include` in the root `vite.config.ts`) and browser tests in `tests/e2e/`.
 
 ```bash
 # Run tests
@@ -195,3 +201,19 @@ vp test --coverage
 ```
 
 Coverage reports are generated in the `coverage/` directory of each individual package.
+
+### Browser (e2e) tests
+
+`packages/design-system` and `apps/frontend` also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce — e.g. the light/dark toggle updating in place on Storybook's docs and variant pages, and on the frontend's `/preview` page.
+
+```bash
+# One-time: download the Chromium build Playwright expects
+vp exec --filter @lightproject/design-system playwright install chromium
+
+# Run them (each starts its own server on a dedicated port: Storybook 6116, frontend 3111)
+vp run -r test:e2e
+```
+
+### Share tags (`apps/frontend`)
+
+`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys pass it from the GitHub Environment variable `vars.VITE_ADMIN_URL`, so set it per environment (`dev`/`staging`/`production`). The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.

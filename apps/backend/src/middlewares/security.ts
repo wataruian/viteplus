@@ -1,5 +1,6 @@
-import { adminUrl, apiBaseUrl, siteUrl } from '@lightproject/common/configs';
+import { adminUrl, apiBaseUrl, docsEndpoint, siteUrl } from '@lightproject/common/configs';
 import { cors } from 'hono/cors';
+import { createMiddleware } from 'hono/factory';
 import { secureHeaders } from 'hono/secure-headers';
 
 import { config } from '../config';
@@ -41,8 +42,19 @@ const corsMiddleware = () =>
     origin: uniqueOrigins,
   });
 
-const cspMiddleware = () =>
-  secureHeaders({
+const isDocsPath = (path: string) => path === docsEndpoint || path.startsWith(`${docsEndpoint}/`);
+
+const cspMiddleware = () => {
+  const strict = secureHeaders({
+    contentSecurityPolicy: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", ...uniqueOrigins],
+      styleSrc: ["'self'"],
+      workerSrc: ["'self'", ...uniqueOrigins],
+    },
+  });
+
+  const docs = secureHeaders({
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', ...uniqueOrigins],
@@ -51,4 +63,16 @@ const cspMiddleware = () =>
     },
   });
 
-export { additionalOrigins, allowedOrigins, corsMiddleware, cspMiddleware, uniqueOrigins };
+  return createMiddleware(async (c, next) => {
+    await (isDocsPath(c.req.path) ? docs(c, next) : strict(c, next));
+  });
+};
+
+export {
+  additionalOrigins,
+  allowedOrigins,
+  corsMiddleware,
+  cspMiddleware,
+  isDocsPath,
+  uniqueOrigins,
+};

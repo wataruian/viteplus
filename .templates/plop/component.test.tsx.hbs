@@ -1,0 +1,24 @@
+import { describe, expect, test } from 'vite-plus/test';
+
+import { {{pascalCase name}} } from '../../src/components/{{name}}';
+import { render } from './helpers/render';
+
+describe('{{pascalCase name}}', () => {
+  test('renders children inside a div with variant classes by default', () => {
+    const { container, unmount } = render(<{{pascalCase name}} intent='outline'>Content</{{pascalCase name}}>);
+    const div = container.querySelector('div');
+    expect(div?.textContent).toBe('Content');
+    expect(div?.className.length).toBeGreaterThan(0);
+    unmount();
+  });
+
+  test('uses className directly when useDefault is false', () => {
+    const { container, unmount } = render(
+      <{{pascalCase name}} className='bare' useDefault={false}>
+        Bare
+      </{{pascalCase name}}>,
+    );
+    expect(container.querySelector('div')?.className).toBe('bare');
+    unmount();
+  });
+});

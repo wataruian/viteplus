@@ -1,52 +1,54 @@
 import { isCi, isLocal, isOtherEnvironment, isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
-import type { MiddlewareHandler } from 'hono';
+import type { Context } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 
 import { config } from '../config';
+import type { AppEnv, NodeBindings } from '../schema';
 
-interface NodeEnv {
-  incoming?: { socket?: { remoteAddress?: unknown } };
-}
+const ipv4MappedPrefix = '::ffff:';
 
-const isNodeEnv = (env: unknown): env is NodeEnv => typeof env === 'object' && env !== null;
-
-const getRequestIp = (c: Parameters<MiddlewareHandler>[0]): string => {
-  let remoteAddress: string | undefined = undefined;
-
-  const env: unknown = c.env;
-  if (isNodeEnv(env)) {
-    const { incoming } = env;
-    const socket = incoming?.socket;
-    const addr = socket?.remoteAddress;
-    remoteAddress = typeof addr === 'string' ? addr : undefined;
-  }
-
-  return (
-    c.req.header('x-forwarded-for')?.split(',')[0].trim() ??
-    c.req.header('x-real-ip') ??
-    c.req.header('cf-connecting-ip') ??
-    remoteAddress ??
-    ''
-  );
+const normalizeIp = (ip: string): string => {
+  const trimmed = ip.trim();
+  return trimmed.toLowerCase().startsWith(ipv4MappedPrefix) && trimmed.includes('.')
+    ? trimmed.slice(ipv4MappedPrefix.length)
+    : trimmed;
 };
 
-const getAllowedIps = (additionalIps?: string): Set<string> => {
-  const allowedIps = new Set(['127.0.0.1', '::1']);
-  if (additionalIps !== undefined && additionalIps !== '') {
-    for (const ip of additionalIps.split(',')) {
-      const trimmed = ip.trim();
-      if (trimmed !== '') {
-        allowedIps.add(trimmed);
-      }
-    }
+const parseIpList = (raw?: string): string[] =>
+  raw === undefined
+    ? []
+    : raw
+        .split(',')
+        .map((ip) => normalizeIp(ip))
+        .filter((ip) => ip !== '');
+
+const getSocketAddress = (env: NodeBindings | undefined): string | undefined =>
+  env?.incoming?.socket?.remoteAddress;
+
+const getRequestIp = (c: Context<AppEnv>): string => {
+  const socketAddress = getSocketAddress(c.env);
+
+  if (socketAddress === undefined) {
+    return normalizeIp(c.req.header('cf-connecting-ip') ?? '');
   }
-  return allowedIps;
+
+  const peer = normalizeIp(socketAddress);
+  const trustedProxies = new Set(parseIpList(config.trustedProxies));
+  if (!trustedProxies.has(peer)) {
+    return peer;
+  }
+
+  const hops = parseIpList(c.req.header('x-forwarded-for'));
+  return hops.findLast((hop) => !trustedProxies.has(hop)) ?? peer;
 };
+
+const getAllowedIps = (additionalIps?: string): Set<string> =>
+  new Set(['127.0.0.1', '::1', ...parseIpList(additionalIps)]);
 
 const trustProxy = () =>
-  createMiddleware(async (c, next) => {
+  createMiddleware<AppEnv>(async (c, next) => {
     const allowedIps = getAllowedIps(config.allowedIps);
     const requestIp = getRequestIp(c);
 
@@ -67,5 +69,4 @@ const trustProxy = () =>
     await next();
   });
 
-export { getAllowedIps, getRequestIp, isNodeEnv, trustProxy };
-export type { NodeEnv };
+export { getAllowedIps, getRequestIp, getSocketAddress, normalizeIp, parseIpList, trustProxy };

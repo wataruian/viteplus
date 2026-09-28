@@ -1,10 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { {{pascalCase name}} } from './{{name}}';
 
 const meta = {
   argTypes: {
-    // argTypes
+    intent: {
+      control: 'select',
+      options: ['outline', 'primary'],
+    },
   },
   component: {{pascalCase name}},
   tags: ['autodocs'],
@@ -13,9 +16,17 @@ const meta = {
 
 const Default: StoryObj<typeof meta> = {
   args: {
-    // args
+    children: '{{pascalCase name}} Content',
+    intent: 'primary',
   },
 };
 
-export { Default };
+const Outline: StoryObj<typeof meta> = {
+  args: {
+    ...Default.args,
+    intent: 'outline',
+  },
+};
+
+export { Default, Outline };
 export default meta;

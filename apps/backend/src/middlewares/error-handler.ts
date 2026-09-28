@@ -1,7 +1,7 @@
 import { logger, runWithRequestContext } from '@lightproject/common/logger';
 import type { Context, ErrorHandler, NotFoundHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { StatusCode } from 'hono/utils/http-status';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 import { config } from '../config';
 import type { AppEnv } from '../schema';
@@ -11,7 +11,7 @@ type AppContext = Context<AppEnv>;
 const getSessionIdFromCtx = (c: AppContext): string => c.get('sessionId');
 
 const buildErrorBody = (
-  statusCode: StatusCode,
+  statusCode: ContentfulStatusCode,
   errorCode: string,
   message: string,
   sessionId: string,
@@ -48,7 +48,7 @@ const respondWithError = (
   c: AppContext,
   err: Error,
   sessionId: string,
-  status: StatusCode,
+  status: ContentfulStatusCode,
   errorCode: string,
   logLabel: string,
   message: string,

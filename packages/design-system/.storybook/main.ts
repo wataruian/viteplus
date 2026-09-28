@@ -3,7 +3,7 @@ import unocss from 'unocss/vite';
 import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
-  addons: ['@storybook/addon-essentials'],
+  addons: ['@storybook/addon-docs'],
   core: {
     disableTelemetry: true,
   },

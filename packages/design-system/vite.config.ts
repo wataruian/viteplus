@@ -5,14 +5,14 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 
 export default defineConfig(({ mode }): UserConfig => {
   const designSystemPort = Math.trunc(
     Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'),
   );
   const dir = import.meta.dirname;
-  const commonRunProps = getCommonRunProps(path.resolve(dir, '../..'), mode);
+  const commonTaskProps = getCommonTaskProps(path.resolve(dir, '../..'), mode);
 
   return mergeConfig(
     getPackageViteConfig({
@@ -51,6 +51,9 @@ export default defineConfig(({ mode }): UserConfig => {
           '!src/main.tsx',
           '!src/start.ts',
           '!.storybook/main.ts',
+          '!.storybook/manager.ts',
+          '!.storybook/mode-channel.ts',
+          '!.storybook/mode.tsx',
           '!.storybook/preview.tsx',
         ],
       },
@@ -72,15 +75,19 @@ export default defineConfig(({ mode }): UserConfig => {
       },
       run: {
         tasks: {
+          'test:e2e': {
+            cache: false,
+            command: 'playwright test',
+          },
           'wrangler:delete': {
+            ...commonTaskProps,
             command:
               'wrangler delete --config wrangler.design-system.toml && wrangler delete --config wrangler.storybook.toml',
-            ...commonRunProps,
           },
           'wrangler:deploy': {
+            ...commonTaskProps,
             command:
               'wrangler deploy --config wrangler.design-system.toml && wrangler deploy --config wrangler.storybook.toml',
-            ...commonRunProps,
           },
           'wrangler:dev': {
             command: 'tsx watch --conditions=typescript ./src/start.ts false true',
@@ -102,6 +109,13 @@ export default defineConfig(({ mode }): UserConfig => {
             '**/*.stories.tsx',
             'src/utils/compile.ts',
             'src/utils/update-stories.ts',
+          ],
+          include: [
+            'src/**/*.ts',
+            'src/**/*.tsx',
+            '.storybook/manager.ts',
+            '.storybook/mode-channel.ts',
+            '.storybook/mode.tsx',
           ],
         },
         environment: 'jsdom',

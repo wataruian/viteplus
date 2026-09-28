@@ -1,12 +1,46 @@
-import type { ComponentProps } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
+import { type HTMLAttributes, forwardRef } from 'react';
 
-type {{pascalCase name}}Props = ComponentProps<'div'>;
+import { baseStyles } from '../tokens/base';
+import type { BaseComponentProps } from './base';
 
-const {{pascalCase name}} = ({ className, ...props }: {{pascalCase name}}Props) => (
-  <div className={className} {...props}>
-    {{pascalCase name}} Component
-  </div>
+const {{camelCase name}}Styles = {
+  base: 'rounded-2xl p-4 transition-all duration-300',
+  default: {
+    intent: 'primary' as const,
+  },
+  variants: {
+    intent: {
+      outline: `${baseStyles.colors.bg.transparent} ring-1 ${baseStyles.colors.ring.inverseSurface}/10`,
+      primary: `${baseStyles.colors.bg.adaptivePrimary} shadow-sm`,
+    },
+  },
+} as const;
+
+const {{camelCase name}}Variants = cva({{camelCase name}}Styles.base, {
+  defaultVariants: {{camelCase name}}Styles.default,
+  variants: {{camelCase name}}Styles.variants,
+});
+
+type {{pascalCase name}}Variants = VariantProps<typeof {{camelCase name}}Variants>;
+
+interface {{pascalCase name}}Props
+  extends BaseComponentProps<HTMLAttributes<HTMLDivElement>>,
+    {{pascalCase name}}Variants {}
+
+const {{pascalCase name}} = forwardRef<HTMLDivElement, {{pascalCase name}}Props>(
+  ({ children, className = '', intent, props, useDefault = true }, ref) => {
+    const finalClass = useDefault ? {{camelCase name}}Variants({ className, intent }) : className;
+
+    return (
+      <div {...props} ref={ref} className={finalClass}>
+        {children}
+      </div>
+    );
+  },
 );
 
-export { {{pascalCase name}} };
-export type { {{pascalCase name}}Props };
+{{pascalCase name}}.displayName = '{{pascalCase name}}';
+
+export { {{pascalCase name}}, {{camelCase name}}Styles };
+export type { {{pascalCase name}}Props, {{pascalCase name}}Variants };

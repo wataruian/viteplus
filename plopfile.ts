@@ -1,29 +1,45 @@
+import { execFileSync } from 'node:child_process';
+
 import type { NodePlopAPI } from 'plop';
 
+const componentPath = 'packages/design-system/src/components/{{name}}.tsx';
+const testPath = 'packages/design-system/tests/unit/{{name}}.test.tsx';
+const storiesPath = 'packages/design-system/src/components/{{name}}.stories.tsx';
+const registryPath = 'packages/design-system/src/components/registry.ts';
+
 const plopfile = (plop: NodePlopAPI) => {
+  plop.setActionType('format', (answers) => {
+    const files = [componentPath, testPath, storiesPath, registryPath].map((file) =>
+      plop.renderString(file, answers),
+    );
+    execFileSync('vp', ['fmt', ...files], { stdio: 'inherit' });
+    return `formatted ${files.length} files`;
+  });
+
   plop.setGenerator('component', {
     actions: [
       {
-        path: 'packages/design-system/src/components/{{name}}.tsx',
+        path: componentPath,
         templateFile: '.templates/plop/component.tsx.hbs',
         type: 'add',
       },
       {
-        path: 'packages/design-system/tests/{{name}}.test.ts',
-        templateFile: '.templates/plop/component.test.ts.hbs',
+        path: testPath,
+        templateFile: '.templates/plop/component.test.tsx.hbs',
         type: 'add',
       },
       {
-        path: 'packages/design-system/src/components/{{name}}.stories.tsx',
+        path: storiesPath,
         templateFile: '.templates/plop/component.stories.tsx.hbs',
         type: 'add',
       },
       {
-        path: 'packages/design-system/src/components/registry.ts',
+        path: registryPath,
         separator: '',
-        template: "export * from './{{name}}';",
+        template: "export * from './{{name}}';\n",
         type: 'append',
       },
+      { type: 'format' },
     ],
     description: 'Create a new design-system component',
     prompts: [

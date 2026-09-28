@@ -28,8 +28,7 @@ jobs:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
-
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up toolchain
         uses: ./.github/actions/setup-toolchain
         with:
@@ -95,7 +94,7 @@ jobs:
 
       - name: Upload coverage
         if: '!cancelled()'
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-${{ inputs.workspace }}
           path: |
@@ -112,7 +111,7 @@ jobs:
 
       - name: Upload Semgrep report
         if: '!cancelled()'
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: semgrep-${{ inputs.workspace }}
           path: |
@@ -138,7 +137,7 @@ jobs:
 
       - name: Upload SonarQube report
         if: '!cancelled()'
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sonar-${{ inputs.workspace }}
           path: |

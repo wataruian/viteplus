@@ -48,11 +48,40 @@ const getEnvArray = (rootDir: string, mode: string) => {
   return Object.keys(env).map((key) => key);
 };
 
-const getCommonRunProps = (rootDir: string, mode: string) => {
+const artifactExclusions = [...ignorePatterns, '.git'].map((pattern) => `!**/${pattern}/**`);
+
+type RunTasks = NonNullable<NonNullable<UserConfig['run']>['tasks']>;
+type TaskCache = Extract<RunTasks[string], { command: unknown }>['cache'];
+type TaskCacheConfig = Exclude<TaskCache, boolean | undefined>;
+interface CommonTaskProps {
+  cache: TaskCacheConfig;
+}
+
+const getTaskCache = (
+  rootDir: string,
+  mode: string,
+  scope: 'package' | 'workspace' = 'package',
+): TaskCacheConfig => {
   const env = getEnvArray(rootDir, mode);
-  const input = [{ auto: true } as const, ...ignorePatterns.map((pattern) => `!**/${pattern}/**`)];
+  const input =
+    scope === 'package'
+      ? [
+          { auto: true } as const,
+          '**',
+          ...ignorePatterns.flatMap((pattern) => [`!${pattern}`, `!**/${pattern}`]),
+          ...artifactExclusions,
+          '!.',
+          '!../*',
+        ]
+      : [{ auto: true } as const, '**', ...artifactExclusions, '!apps/*', '!packages/*', '!dagger'];
   return { env, input };
 };
+
+const getCommonTaskProps = (
+  rootDir: string,
+  mode: string,
+  scope: 'package' | 'workspace' = 'package',
+): CommonTaskProps => ({ cache: getTaskCache(rootDir, mode, scope) });
 
 const getCommonViteConfig = ({
   dir = import.meta.dirname,
@@ -98,6 +127,7 @@ const getCommonViteConfig = ({
       dts: {
         generator: 'tsgo',
         sourcemap: isLocal,
+        tsconfig: 'tsconfig.pack.json',
       },
       entry: ['src/**/*.ts', 'src/**/*.tsx', '!src/**/*.stories.ts', '!src/**/*.stories.tsx'],
       exports: false,
@@ -135,7 +165,7 @@ const getCommonViteConfig = ({
       },
       environment: 'node',
       fileParallelism: true,
-      include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+      include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
       isolate: false,
       pool: 'forks',
       testTimeout: 30_000,
@@ -174,65 +204,71 @@ const getPackageViteConfig = ({
     resolvedBuildCommand = buildCommand;
   }
 
-  const commonRunProps = getCommonRunProps(rootDir, mode);
+  const commonTaskProps = getCommonTaskProps(rootDir, mode);
 
   return {
     ...getCommonViteConfig({ dir, mode }),
     run: {
       tasks: {
         build: {
+          cache: {
+            ...commonTaskProps.cache,
+            output: [
+              {
+                base: 'package',
+                pattern: 'tmp/compile/**/*',
+              },
+              {
+                base: 'package',
+                pattern: 'dist/**/*',
+              },
+              {
+                base: 'package',
+                pattern: 'out/**/*',
+              },
+              {
+                base: 'package',
+                pattern: 'storybook-static/**/*',
+              },
+            ],
+          },
           command: resolvedBuildCommand,
-          ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'tmp/compile/**/*',
-            },
-            {
-              base: 'package',
-              pattern: 'dist/**/*',
-            },
-            {
-              base: 'package',
-              pattern: 'out/**/*',
-            },
-            {
-              base: 'package',
-              pattern: 'storybook-static/**/*',
-            },
-          ],
         },
         check: {
+          ...commonTaskProps,
           command: 'vp check',
-          ...commonRunProps,
         },
         format: {
+          ...commonTaskProps,
           command: 'vp format',
-          ...commonRunProps,
         },
         lint: {
+          ...commonTaskProps,
           command: 'vp lint',
-          ...commonRunProps,
         },
         test: {
+          cache: {
+            ...commonTaskProps.cache,
+            output: [
+              {
+                base: 'package',
+                pattern: 'coverage/**/*',
+              },
+            ],
+          },
           command: 'vp test',
-          ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'coverage/**/*',
-            },
-          ],
         },
         'type-check': {
+          cache: {
+            ...commonTaskProps.cache,
+            output: [
+              {
+                base: 'package',
+                pattern: 'tsconfig.tsbuildinfo',
+              },
+            ],
+          },
           command: 'tsc',
-          ...commonRunProps,
-          output: [
-            {
-              base: 'package',
-              pattern: 'tsconfig.tsbuildinfo',
-            },
-          ],
         },
         ...(!excludeDevCommand && devCommand
           ? {
@@ -259,7 +295,7 @@ const getRootViteConfig = (): UserConfig => {
   const dir = import.meta.dirname;
   const mode = globalThis.process.env['NODE_ENV'] ?? 'development';
 
-  const commonRunProps = getCommonRunProps(dir, mode);
+  const commonTaskProps = getCommonTaskProps(dir, mode, 'workspace');
 
   return {
     create: {
@@ -357,37 +393,37 @@ const getRootViteConfig = (): UserConfig => {
           command: 'cz',
         },
         'dagger:check': {
+          ...commonTaskProps,
           command: 'cd dagger && vp check',
-          ...commonRunProps,
         },
         'dagger:format': {
+          ...commonTaskProps,
           command: 'cd dagger && vp format',
-          ...commonRunProps,
         },
         'dagger:lint': {
+          ...commonTaskProps,
           command: 'cd dagger && vp lint',
-          ...commonRunProps,
         },
         'dagger:test': {
+          ...commonTaskProps,
           command: 'cd dagger && vp test',
-          ...commonRunProps,
         },
         'dagger:type-check': {
+          ...commonTaskProps,
           command: 'cd dagger && tsc',
-          ...commonRunProps,
         },
         madge: {
+          ...commonTaskProps,
           command:
             "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
-          ...commonRunProps,
         },
         plop: {
           cache: false,
           command: 'plop',
         },
         root: {
+          ...commonTaskProps,
           command: 'vp check',
-          ...commonRunProps,
         },
       },
     },
@@ -398,12 +434,13 @@ const getRootViteConfig = (): UserConfig => {
 };
 
 export {
-  getCommonRunProps,
+  getCommonTaskProps,
   getCommonViteConfig,
   getDotenvKeys,
   getEnvArray,
   getPackageViteConfig,
   getRootViteConfig,
+  getTaskCache,
   ignorePatterns,
 };
 

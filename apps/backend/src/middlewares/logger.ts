@@ -8,6 +8,7 @@ import {
 import { recordGaugeWithExemplar } from '@lightproject/common/server';
 import { type Counter, context, getMeter, propagation, trace } from '@lightproject/common/utils';
 import { createMiddleware } from 'hono/factory';
+import { routePath } from 'hono/route';
 
 import type { AppEnv } from '../schema';
 
@@ -72,7 +73,7 @@ const requestLogger = () =>
         recordGaugeWithExemplar({
           attributes: {
             'http.method': method,
-            'http.route': c.req.routePath,
+            'http.route': routePath(c),
             'http.status_code': status,
           },
           description: 'Duration of the most recently completed HTTP request',

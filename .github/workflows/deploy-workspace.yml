@@ -28,7 +28,7 @@ jobs:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.ref }}
 
@@ -46,6 +46,7 @@ jobs:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
           VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
           WORKSPACE: ${{ inputs.workspace }}
           VERSION_REF: ${{ inputs.ref }}
         run: |
@@ -61,6 +62,10 @@ jobs:
               ;;
           esac
 
+          if [[ "${WORKSPACE}" == "frontend" && -n "${VITE_ADMIN_URL}" ]]; then
+            args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
+          fi
+
           mise run dagger publish \
             --workspace="@lightproject/${WORKSPACE}" \
             --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
@@ -74,6 +79,7 @@ jobs:
           WORKSPACE: ${{ inputs.workspace }}
           VITE_ENV: ${{ inputs.environment }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
@@ -88,6 +94,10 @@ jobs:
               )
               ;;
           esac
+
+          if [[ "${WORKSPACE}" == "frontend" && -n "${VITE_ADMIN_URL}" ]]; then
+            args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
+          fi
 
           mise run dagger wrangler \
             --workspace="@lightproject/${WORKSPACE}" \

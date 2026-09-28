@@ -16,7 +16,7 @@
 
 - **Tokens First**: Use semantic UnoCSS tokens (`adaptive`, `inverse`, `primary`) rather than hard-coded hex colors or standard Tailwind utilities.
 - **Shortcuts**: Rely on standardized shortcuts defined in the design system (e.g., `btn-primary`, `glass-nav`).
-- **Theme Awareness**: Use `bg-adaptive`, `text-adaptive`, and `border-adaptive` to ensure elements respond correctly to Light/Dark modes.
+- **Theme Awareness**: Use the suffixed `adaptive-*` / `inverse-*` tokens (e.g. `bg-adaptive-surface` + `text-inverse-surface`) so elements respond to Light/Dark modes. Bare `bg-adaptive` / `text-adaptive` / `bg-inverse` don't exist and generate no CSS. `surface` is the neutral (untinted) scale; `primary`/`accent`/etc. follow the active theme.
 - **Keyframes**: When defining raw keyframes in `uno.config.ts`, always terminate properties with a semicolon to avoid PostCSS syntax errors during production builds.
 
 ## Code Quality

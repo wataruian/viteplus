@@ -32,16 +32,16 @@ const flushRum = async () => {
   await Promise.allSettled([meterProviderInstance?.forceFlush(), flushExemplarMetrics()]);
 };
 
+const flushOnHide = () => {
+  if (globalThis.document.visibilityState === 'hidden') {
+    flushRum().catch(() => {});
+  }
+};
+
 const registerLifecycleFlush = () => {
   if (!isBrowser()) {
     return;
   }
-
-  const flushOnHide = () => {
-    if (globalThis.document.visibilityState === 'hidden') {
-      flushRum().catch(() => {});
-    }
-  };
 
   globalThis.document.addEventListener('visibilitychange', flushOnHide);
   globalThis.addEventListener('pagehide', flushOnHide);
@@ -125,5 +125,5 @@ const initializeRum = (options: RumOptions = {}) => {
 };
 
 export { faro } from '@grafana/faro-web-sdk';
-export { flushRum, initializeRum, registerLifecycleFlush };
+export { flushOnHide, flushRum, initializeRum, registerLifecycleFlush };
 export type { RumOptions };

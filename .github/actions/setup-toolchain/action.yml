@@ -17,7 +17,7 @@ inputs:
   vp-version:
     description: 'Vite+ version'
     required: false
-    default: '0.3.3'
+    default: '1.0.0'
   run-install:
     description: 'Run vp install after setup'
     required: false
@@ -28,13 +28,13 @@ runs:
   steps:
     - name: Set up Mise
       if: ${{ inputs.setup-mise == 'true' }}
-      uses: jdx/mise-action@v4.3.0
+      uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
       with:
         version: ${{ inputs.mise-version }}
 
     - name: Set up Vite+
       if: ${{ inputs.setup-vp == 'true' }}
-      uses: voidzero-dev/setup-vp@v1.20.0
+      uses: voidzero-dev/setup-vp@9fd26ff49f9b5e6276c2b493da4454ad4527f7f4 # v1.20.0
       with:
         version: ${{ inputs.vp-version }}
         run-install: ${{ inputs.run-install }}

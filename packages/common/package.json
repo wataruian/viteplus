@@ -64,6 +64,7 @@
     "@opentelemetry/sdk-trace-web": "catalog:",
     "@opentelemetry/semantic-conventions": "catalog:",
     "chalk": "catalog:",
+    "hono": "catalog:",
     "picocolors": "catalog:",
     "redact-object": "catalog:",
     "zod": "catalog:"

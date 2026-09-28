@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#MISE description="Print a SHA-pinned 'uses:' line for a GitHub Action tag (e.g. actions/checkout@v7.0.1)"
+
+set -o errexit  # Bail out on any error
+set -o nounset  # Fail on unset variables
+set -o pipefail # Fail if any command in a pipeline fails
+
+usage="Usage: mise run pin-action <owner>/<repo>[/<path>]@<tag> [...]"
+
+if [[ "${#}" -eq 0 ]]; then
+  echo "${usage}"
+  exit 1
+fi
+
+for ref in "${@}"; do
+  if [[ "${ref}" != */*@* ]]; then
+    echo "❌ ${ref}: expected <owner>/<repo>[/<path>]@<tag>"
+    echo "${usage}"
+    exit 1
+  fi
+
+  action="${ref%@*}"
+  tag="${ref##*@}"
+  repo="$(echo "${action}" | cut -d/ -f1-2)"
+
+  refs="$(git ls-remote "https://github.com/${repo}" "refs/tags/${tag}" "refs/tags/${tag}^{}")"
+
+  sha="$(echo "${refs}" | awk '$2 ~ /\^\{\}$/ { print $1 }')"
+  if [[ -z "${sha}" ]]; then
+    sha="$(echo "${refs}" | awk 'NR == 1 { print $1 }')"
+  fi
+
+  if [[ -z "${sha}" ]]; then
+    echo "❌ ${ref}: tag '${tag}' not found in https://github.com/${repo}"
+    exit 1
+  fi
+
+  echo "uses: ${action}@${sha} # ${tag}"
+done

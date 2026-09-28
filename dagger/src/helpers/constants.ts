@@ -1,4 +1,4 @@
-const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:0.3.3';
+const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.0.0';
 const VITE_PLUS_USER = 'vp';
 const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
 const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
@@ -122,6 +122,7 @@ const BUILD_ARTIFACT_KEEP: string[] = [
   'storybook-static',
   'package.json',
   'tsconfig.json',
+  'tsconfig.pack.json',
   'vite.config.ts',
 ];
 

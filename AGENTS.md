@@ -60,6 +60,7 @@ This document outlines the goals, guidelines, and best practices for AI agents w
     - `packages/common`: Shared internal library (logging, environment).
     - `packages/design-system`: Shared UI component library using UnoCSS.
     - `packages/library`: General purpose library templates.
+  - `bak/`: **Intentionally tracked** archive of earlier app/library setups (incl. build caches and a Prisma engine binary), kept for future reuse. It is not a workspace member and is excluded from lint/format (`ignorePatterns`), Sonar, and CodeQL. Do not flag it as cleanup/TODO or propose removing it from git; leave it untouched unless explicitly asked.
 - **Observability**: A Grafana LGTM stack (Loki, Grafana, Tempo, Mimir) + OpenTelemetry Collector is configured in `docker-compose.yml`. Backend services must emit metrics, logs, and traces to the OTEL collector.
 - **Imports**:
   - Always import from `vite-plus` or `vite-plus/test` instead of `vite` or `vitest`.
@@ -124,7 +125,7 @@ When first entering the repository or a new package:
 - **Troubleshooting**:
   - Use `vp cache clean` as a standard first step for resolving unexpected build or test issues.
   - **UnoCSS Keyframe Syntax**: When defining raw keyframe strings in `uno.config.ts`, ensure every property is followed by a semicolon (e.g., `{transform:translateX(0);opacity:1}`). Missing semicolons will cause `CssSyntaxError [postcss]` during production builds.
-  - **Theme Awareness**: If UI elements are invisible or low-contrast, check if the `bg-adaptive`, `text-adaptive`, or `border-adaptive` tokens are being used correctly. Favor high-contrast pairings like `bg-inverse` for grid backgrounds.
+  - **Theme Awareness**: If UI elements are invisible or low-contrast, check that the suffixed `adaptive-*` / `inverse-*` tokens are used (e.g. `bg-adaptive-surface` with `text-inverse-surface`, or `border-adaptive-primary`). There is no bare `bg-adaptive` / `text-adaptive` / `bg-inverse` — those generate no CSS, leaving the element transparent over the primary-tinted `:root` background. Use `surface` for neutral backgrounds; the other colors (`primary`, `accent`, …) tint with the theme.
   - **Stuck GitHub Actions runs**: A run can get stuck `queued` with zero jobs ever assigned (a GitHub-side scheduling issue, sometimes tied to the self-hosted `dagger` runner/engine not picking it up). In that state, `gh run cancel` fails with a 409 ("not queued yet") and `gh run delete` fails with a 403 — neither works via CLI/API. It has to time out on GitHub's side; check the runner/dagger-engine health to prevent new runs from getting stuck the same way.
 - **Staged Checks**: Use `vp staged` for pre-commit checks to ensure only valid code is committed.
 - **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.

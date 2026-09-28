@@ -3,15 +3,23 @@ import path from 'node:path';
 
 import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
-import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
+import { type UserConfig, defineConfig, loadEnv, mergeConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
+import { socialMeta } from './social-meta.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
-  const commonRunProps = getCommonRunProps(path.resolve(dir, '../..'), mode);
+  const rootDir = path.resolve(dir, '../..');
+  const commonTaskProps = getCommonTaskProps(rootDir, mode);
+  const { ADMIN_URL: adminUrlEnv = '', VITE_ADMIN_URL: viteAdminUrlEnv = '' } = loadEnv(
+    mode,
+    rootDir,
+    ['ADMIN_', 'VITE_ADMIN_'],
+  );
+  const adminUrl = adminUrlEnv.trim() === '' ? viteAdminUrlEnv : adminUrlEnv;
 
   return mergeConfig(
     getPackageViteConfig({
@@ -50,6 +58,7 @@ export default defineConfig(({ mode }): UserConfig => {
             .map((file) => path.resolve(dir, '../../packages/design-system/src', file)),
           configFile: path.resolve(dir, '../../packages/design-system/uno.config.ts'),
         }),
+        socialMeta(adminUrl),
       ],
       preview: {
         port,
@@ -63,17 +72,21 @@ export default defineConfig(({ mode }): UserConfig => {
       },
       run: {
         tasks: {
+          'test:e2e': {
+            cache: false,
+            command: 'playwright test',
+          },
           'wrangler:delete': {
+            ...commonTaskProps,
             command: `wrangler delete`,
-            ...commonRunProps,
           },
           'wrangler:deploy': {
+            ...commonTaskProps,
             command: `wrangler deploy`,
-            ...commonRunProps,
           },
           'wrangler:dev': {
+            ...commonTaskProps,
             command: `wrangler dev --port ${port} --inspector-port 9231 --show-interactive-dev-session=false`,
-            ...commonRunProps,
           },
         },
       },
@@ -83,11 +96,12 @@ export default defineConfig(({ mode }): UserConfig => {
       test: {
         coverage: {
           exclude: ['**/index.ts', '**/main.tsx'],
+          include: ['src/**/*.ts', 'src/**/*.tsx', 'social-meta.ts'],
         },
         environment: 'jsdom',
-        globalSetup: ['tests/helpers/global-setup.ts'],
+        globalSetup: ['tests/unit/helpers/global-setup.ts'],
         isolate: true,
-        setupFiles: ['tests/helpers/setup.ts'],
+        setupFiles: ['tests/unit/helpers/setup.ts'],
       },
     } satisfies UserConfig,
   );

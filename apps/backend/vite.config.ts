@@ -3,14 +3,14 @@ import path from 'node:path';
 
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getCommonRunProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');
-  const commonRunProps = getCommonRunProps(rootDir, mode);
+  const commonTaskProps = getCommonTaskProps(rootDir, mode);
   const packageEnvPath = path.resolve(dir, '.env');
   const rootEnvPath = path.resolve(rootDir, '.env');
 
@@ -34,16 +34,16 @@ export default defineConfig(({ mode }): UserConfig => {
       run: {
         tasks: {
           'wrangler:delete': {
+            ...commonTaskProps,
             command: `wrangler delete`,
-            ...commonRunProps,
           },
           'wrangler:deploy': {
+            ...commonTaskProps,
             command: `wrangler deploy`,
-            ...commonRunProps,
           },
           'wrangler:dev': {
+            ...commonTaskProps,
             command: `wrangler dev --port ${port} --inspector-port 9230 --show-interactive-dev-session=false`,
-            ...commonRunProps,
           },
         },
       },

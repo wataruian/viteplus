@@ -8,7 +8,9 @@ import { isLocal } from '@lightproject/common/environment';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { StatusCode } from 'hono/utils/http-status';
+import type { ClientErrorStatusCode, ServerErrorStatusCode } from 'hono/utils/http-status';
+
+type ErrorStatusCode = ClientErrorStatusCode | ServerErrorStatusCode;
 
 import type { AppEnv } from '../../schema';
 import { collectTrpcOpenApiRoutes, getOpenApiDocument, normalizeTrpcGetQuery, t } from '../utils';
@@ -19,7 +21,7 @@ interface TRPCErrorResponse {
   error: {
     message: string;
     data: {
-      httpStatus: StatusCode;
+      httpStatus: ErrorStatusCode;
       code: string;
       stack?: string;
       path?: string;
@@ -27,8 +29,8 @@ interface TRPCErrorResponse {
   };
 }
 
-const isStatusCode = (value: unknown): value is StatusCode =>
-  typeof value === 'number' && Number.isInteger(value) && value >= 100 && value <= 599;
+const isErrorStatusCode = (value: unknown): value is ErrorStatusCode =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 400 && value <= 599;
 
 const isTRPCErrorResponse = (value: unknown): value is TRPCErrorResponse => {
   if (typeof value !== 'object' || value === null) {
@@ -49,7 +51,7 @@ const isTRPCErrorResponse = (value: unknown): value is TRPCErrorResponse => {
 
   return (
     typeof result.error?.message === 'string' &&
-    isStatusCode(result.error.data?.httpStatus) &&
+    isErrorStatusCode(result.error.data?.httpStatus) &&
     typeof result.error.data.code === 'string' &&
     (result.error.data.stack === undefined || typeof result.error.data.stack === 'string') &&
     (result.error.data.path === undefined || typeof result.error.data.path === 'string')
@@ -113,5 +115,5 @@ trpcRouter.use('/*', async (c) => {
 
 type AppRouter = typeof appRouter;
 
-export { appRouter, isStatusCode, isTRPCErrorResponse, trpcOpenApiRouter, trpcRouter };
-export type { AppRouter, TRPCErrorResponse };
+export { appRouter, isErrorStatusCode, isTRPCErrorResponse, trpcOpenApiRouter, trpcRouter };
+export type { AppRouter, ErrorStatusCode, TRPCErrorResponse };

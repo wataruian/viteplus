@@ -17,6 +17,9 @@ The repository is structured as a **Vite+-powered Monorepo**.
   - **`common`**: The foundational library providing isomorphic environment management and structured logging.
   - **`design-system`**: Shared UI component library using UnoCSS and React.
   - **`library`**: General purpose shared library templates.
+- **`bak/`**: Intentionally tracked archive of earlier app/library setups, kept for future reuse.
+  Not a workspace member; excluded from lint/format, Sonar, and CodeQL. Not a cleanup/TODO item —
+  do not propose removing it from Git.
 
 ## Observability Stack
 

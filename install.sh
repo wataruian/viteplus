@@ -53,7 +53,7 @@ function installMise() {
 
 function installVp() {
   export VP_HOME="${tmpLocalBinDir}/vp"
-  export VP_VERSION="0.3.3"
+  export VP_VERSION="1.0.0"
 
   curl -fsSL "https://vite.plus" | bash
 

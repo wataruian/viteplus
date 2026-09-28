@@ -297,3 +297,141 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   practice — the layer cache + explicit `CacheVolume`s already capture the expensive part
   (install, lint/format/type-check tool warm-up), which is exactly what function-level caching
   would have shortcut anyway. No change needed; leave as-is.
+
+## 2026-09-24: Security Hardening Pass (IP allowlist, CI forks, deps, CSP)
+
+- **Client-IP spoofing fixed**: `apps/backend/src/middlewares/trust-proxy.ts` used to take the
+  first `X-Forwarded-For` / `X-Real-IP` value, so any client could send
+  `X-Forwarded-For: 127.0.0.1` and pass the IP allowlist in develop/staging/production. The
+  client IP now comes from the TCP peer on Node (`X-Forwarded-For` only honored when the peer is in
+  the new `TRUSTED_PROXIES` env var, taking the rightmost untrusted hop) and from
+  `CF-Connecting-IP` on Workers (overwritten by Cloudflare's edge). `X-Real-IP` is never trusted.
+  Note: local wrangler/miniflare keeps a client-sent `CF-Connecting-IP` and only fills it in when
+  absent — which is why the wrangler-runtime tests can simulate client IPs with that header.
+- **`AppEnv.Bindings`** (`apps/backend/src/schema.ts`) now models `c.env` (Node `HttpBindings`
+  subset), replacing the `isNodeEnv(env: unknown)` guard. `c.env` is still `undefined` when
+  `app.request()` is called without bindings, so it is read through a
+  `NodeBindings | undefined` parameter.
+- **Fork PRs are gated off the self-hosted runner** (`on-pull-request.yml` job-level `if:`), since
+  the runner has the host Docker socket and its GitHub PAT in-env.
+- **Actions pinned to commit SHAs** (`# vX.Y.Z` comments), with Renovate's
+  `helpers:pinGitHubActionDigests`.
+- **Deps**: hono 4.6.12 → 4.13.8 (41 advisories). `packages/common` now declares `hono` itself —
+  it uses `@hono/node-server`, whose `hono` peer otherwise got auto-installed at "latest", creating
+  a second unpinned copy (and a `minimumReleaseAgeExclude` entry). Added a `hono` Renovate group.
+  Hono 4.13 narrowed `c.json()`/`HTTPException` to `ContentfulStatusCode` and deprecated
+  `c.req.routePath` (→ `routePath(c)` from `hono/route`). Storybook 8.6 → 10.6
+  (`addon-essentials` → `addon-docs`, `@storybook/theming` → `storybook/theming`, types from
+  `@storybook/react-vite`, toolbar `showName` → `title`). Wrangler → 4.136.2 (patched `sharp`).
+  Transitive `fast-uri`/`js-yaml`/`nanoid` refreshed in the lockfile. `vp pm audit`: 52 → 1 (low).
+- **CSP split**: `'unsafe-inline'` + `cdn.jsdelivr.net` now only apply under `docsEndpoint`
+  (Swagger UI); all other responses get the strict policy.
+
+## 2026-09-24: Storybook Light/Dark Toggle Uses a Channel Event, Not a Global
+
+- **Problem**: toggling the `theme` global on a docs page remounted the whole page — addon-docs'
+  `DocsRenderer` wraps docs in `ErrorBoundary key={Math.random()}` and Storybook re-renders docs
+  on _every_ globals change, so there is no config to avoid it. Story pages only re-rendered.
+- **Decision**: the toggle is a local manager tool (`.storybook/manager.ts`) that persists the
+  mode to `localStorage` and emits `lightproject/mode-changed` on the channel; `preview.tsx`
+  subscribes with React state (`useStorybookMode`) in both the story decorator and the docs
+  container (`.storybook/mode-channel.ts` holds the shared event/key). Verified via the real
+  manager UI: docs and story views update in place, and the mode survives reload.
+- **Gotchas**: `manager.ts` must not use JSX — Storybook compiles the manager entry with the
+  classic runtime and crashes the manager with "React is not defined". The old
+  `?globals=theme:light` URL param no longer applies. Storybook 10's `themes.normal` follows the OS
+  color scheme, so the docs container uses `themes.light` explicitly. Bare `bg-adaptive` /
+  `text-adaptive` generate no CSS — use the suffixed tokens (`bg-adaptive-surface`, …).
+
+## 2026-09-24: Browser (e2e) Tests for the Light/Dark Toggle; Frontend Share Tags
+
+- **Tests**: jsdom unit tests (`packages/design-system/tests/unit/storybook-*.test.ts(x)`,
+  `apps/frontend/tests/unit/preview-page.test.tsx`) plus Playwright e2e (`tests/e2e/` +
+  `playwright.config.ts` in both workspaces, `vp run -r test:e2e`). Each was mutation-checked: re-introducing
+  `themes.normal`, JSX in `.storybook/manager.ts`, or a remount-on-toggle (`key={mode}`) makes them
+  fail. Probes must sit _inside_ the `ModeProvider` being toggled — `Preview` owns its own provider,
+  so the frontend Home link (outside it) could not detect a remount.
+- **Test-environment gotchas**: emulate a _dark_ OS (`colorScheme: 'dark'` / a `matchMedia` stub)
+  or `themes.normal` looks correct by accident; `:root` has a 0.5s background transition, so disable
+  transitions before comparing colors; the page background lives on `<html>`, not `<body>`.
+- **Not in `ready` yet**: Dagger's `ready` runs root `vp run ready` in the browser-less `vite-plus`
+  container, so e2e stays a separate task until CI installs Chromium (see `TODO.md`).
+- **Share tags**: `apps/frontend/social-meta.ts` injects absolute `og:url`/`og:image`/`twitter:image`
+  only when the frontend's public URL `ADMIN_URL`/`VITE_ADMIN_URL` is set (same precedence as
+  `adminUrl` in `packages/common`; wired in `deploy-workspace.yml` from `vars.VITE_ADMIN_URL`).
+  `og-image.png` / `apple-touch-icon.png` were rendered with headless Chrome from `favicon.svg`
+  (the tooling gap noted on 2026-08-31 no longer applies).
+
+## 2026-09-28: Test Layout — `tests/unit/` and `tests/e2e/` in Every Workspace
+
+- **Decision**: all workspaces (backend, common, design-system, frontend, library, dagger) keep unit
+  tests in `tests/unit/` and Playwright browser tests in `tests/e2e/`. The shared Vitest `include`
+  (root `vite.config.ts`) only matches `tests/unit/**`, so e2e specs (`*.spec.ts`) never run under
+  Vitest, and Playwright's `testDir` is `tests/e2e`. Setup/global-setup paths, the plop
+  component-test template, and its output path moved accordingly.
+- **Share-tag URL**: the frontend's og:url/og:image use the existing `ADMIN_URL` / `VITE_ADMIN_URL`
+  (the frontend's public URL; same precedence as `adminUrl` in `packages/common`) instead of a new
+  variable. Local builds with the default `.env` therefore emit `http://localhost:3001` share tags —
+  harmless locally; deploys pass `vars.VITE_ADMIN_URL`.
+
+## 2026-09-28: Vite Task Cache — Artifacts Busting the Cache, and Madge "Skipped" Warnings
+
+- **Madge**: Storybook 10 packages are exports-only, which madge's resolver can't follow, so they
+  showed as "Skipped". Fixed like the existing `vite-plus/test` entries: `@storybook/*` and
+  `storybook/*` map to `package.json` in `tsconfig.madge.json` (external deps don't matter for
+  circular-dependency detection).
+- **Cause of artifact cache misses** (verified with `vp run --last-details`): automatic tracking
+  fingerprints _directory listings_, and `input` `!` globs exclude paths but NOT entries inside a
+  tracked listing. So creating/deleting `coverage/`, `tsconfig.tsbuildinfo`, `.wrangler/`, … changed
+  the listing of the folder holding them. (`dist/` was already fine: Vite+ reports `build.outDir`.)
+- **Fix** (`getTaskCache` in root `vite.config.ts`, formerly `getCommonRunProps`, verified by a hit/miss battery):
+  - package tasks: `'!.'` drops the package root's listing; an explicit `'**'` minus artifact globs
+    keeps new/removed/edited package files (incl. new root-level files) invalidating the cache.
+  - workspace-root tasks (`root`, `madge`, `dagger:*`, scope `'workspace'`): `'**'` + `'!apps/*'`,
+    `'!packages/*'`, `'!dagger'`. Do NOT use `'!.'` there — it hid new repo-root files (stale hits).
+  - `.git/**` is excluded explicitly (`'**'` otherwise picks up `.git/index`, changed by any git op).
+  - Rejected: workspace-based negations (`{ base: 'workspace', pattern: '!…' }`) — they suppressed
+    new-file detection in the task's own package.
+- **`vite.config.d.ts(.map)`** was a by-product of `vp pack`'s tsgo dts step: tsgo runs with
+  `--rootDir <tsconfig dir>` and the package tsconfigs include `../../vite.config.ts`, so its
+  declaration landed in the repo root. Fixed at the source with per-package `tsconfig.pack.json`
+  (`include: src/**`) via `pack.dts.tsconfig`; published declarations verified byte-identical.
+  (The `tsc` generator also avoids it, but prints types differently; tsgo was kept by choice.)
+- **Result**: deleting every artifact (20 paths, incl. both `.wrangler/`) then `vp run ready` →
+  41/41 cache hits. The last gap (`apps/frontend#test` missing when `apps/backend/.wrangler`
+  changed — its tests start the backend worker, which lists `apps/backend`) is closed by `'!../*'`
+  in the package scope (drops same-group sibling folder listings). Verified: backend source edits
+  still invalidate the frontend tests; new frontend src/root files still invalidate its check.
+- **Testing gotcha**: `input` changes don't invalidate an existing fingerprint by themselves; a replayed
+  (hit) run doesn't re-record. Run `vp cache clean` before evaluating a new `input` config.
+
+## 2026-09-28: Vite+ 1.0.0 (Vitest 5) Upgrade
+
+- **Versions**: `vite-plus` / `@voidzero-dev/vite-plus-core` 1.0.0 (bundles vite 8.3.1, rolldown
+  1.2.11, tsdown 0.23.0; depends on vitest 5.0.1, oxlint 1.85.0, oxfmt 0.70.0),
+  `@vitest/coverage-v8` 5.0.1. Pins that must move together: catalog, `VITE_PLUS_IMAGE`
+  (dagger/src/helpers/constants.ts), `vp-version` default in `.github/actions/setup-toolchain`,
+  `VP_VERSION` in install.sh, mise.toml's `viteplus` comment (listed in renovate.json's toolchain
+  rule). `vp upgrade <version>` upgrades the repo-local CLI in `tmp/.local/bin/vp` (the only `vp`
+  on PATH here; keeps the previous versions for `vp upgrade --rollback`).
+- **Vitest pin**: as the 1.0 upgrade guide recommends, the catalog has `vitest` and
+  `pnpm-workspace.yaml` overrides `vite@*` / `vitest@*` → `catalog:` (the `@*` keys leave
+  `catalog:` specs alone), so the whole workspace shares the Vitest copy `vp test` runs.
+- **Breaking change — task cache config**: `env` / `untrackedEnv` / `input` / `output` moved under
+  `cache: { … }`. 1.0 hard-errors on the old shape ("Cache settings … must be set under `cache`"),
+  so the shared helper is now `getTaskCache()` (root `vite.config.ts`, exported to workspace
+  configs), typed as `TaskCacheConfig` derived from `UserConfig['run']` (Vite+ doesn't export it):
+  every cached task sets `cache: taskCache` or `cache: { ...taskCache, output }` explicitly. Cache battery re-verified on 1.0.
+- **`vp migrate` gotchas**: it walked into `bak/` and rewrote 7 archived files (restored from git),
+  rewrote catalog entries to bare versions (breaking the `npm:<pkg>@<ver>` convention), then
+  crashed in its Vitest 5 step ("Migration input changed: pnpm-lock.yaml"). Prefer applying its
+  intended changes by hand; if it is ever run, check `git status bak/` afterwards.
+- **oxlint 1.85** newly flagged `consistent-function-scoping` in `packages/common/src/utils/rum.ts`.
+- **Audit**: the remaining low `esbuild <0.28.1` advisory did NOT clear with 1.0 (an earlier TODO
+  assumed it would): `@voidzero-dev/vite-plus-core@1.0.0` still depends on `tsx`, which pins
+  `esbuild ~0.27`. Dev-server-on-Windows only; waits on an upstream tsx/vite-plus-core bump.
+- **CI**: `tsconfig.pack.json` is in Dagger's `BUILD_ARTIFACT_KEEP` (dagger/src/helpers/constants.ts), so
+  `dagger call build-artifact` keeps it next to `tsconfig.json`/`vite.config.ts` (the kept
+  `vite.config.ts`'s `pack.dts.tsconfig` points at it); `index.build.test.ts` asserts the keep list.
+  Source mounts and affected-workspace detection needed no change (whole workspace dirs /
+  `vp pm list --filter "...[sha]"`). Verified with real `build-artifact` calls (library, design-system).

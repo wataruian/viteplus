@@ -14,7 +14,7 @@ export default defineConfig(({ mode }): UserConfig => {
       },
     },
     test: {
-      setupFiles: ['tests/helpers/setup.ts'],
+      setupFiles: ['tests/unit/helpers/setup.ts'],
     },
   } satisfies UserConfig);
 });

@@ -1,7 +1,12 @@
 import type { z } from '@hono/zod-openapi';
 import type { Span } from '@lightproject/common/utils';
 
+interface NodeBindings {
+  incoming?: { socket?: { remoteAddress?: string } };
+}
+
 interface AppEnv {
+  Bindings: NodeBindings;
   Variables: { sessionId: string; span: Span };
 }
 
@@ -17,4 +22,4 @@ const attachSchema = <S extends z.ZodRawShape, O extends Record<string, unknown>
 ): ServiceFn<S, O> => Object.assign(fn, { schema });
 
 export { attachSchema };
-export type { AppEnv, ServiceFn };
+export type { AppEnv, NodeBindings, ServiceFn };

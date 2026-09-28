@@ -8,11 +8,12 @@
       "@lightproject/common/*": ["packages/common/src/*"],
       "@lightproject/design-system": ["packages/design-system/src/index.ts"],
       "@lightproject/design-system/*": ["packages/design-system/src/*"],
-      "@lightproject/frontend": ["apps/frontend/src/index.ts"],
       "@lightproject/frontend/*": ["apps/frontend/src/*"],
       "@lightproject/library": ["packages/library/src/index.ts"],
       "@lightproject/library/*": ["packages/library/src/*"],
+      "@storybook/*": ["package.json"],
       "@vitejs/plugin-react": ["package.json"],
+      "storybook/*": ["package.json"],
       "virtual:*": ["package.json"],
       "vite-plus/pack": ["package.json"],
       "vite-plus/test": ["package.json"]
