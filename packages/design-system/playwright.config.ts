@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const port = Math.trunc(Number(globalThis.process.env['STORYBOOK_E2E_PORT'] ?? '6116'));
+import { previewAppPort, previewAppUrl, storybookPort } from './tests/e2e/ports';
 
 export default defineConfig({
   forbidOnly: true,
@@ -16,16 +16,24 @@ export default defineConfig({
   testDir: 'tests/e2e',
   timeout: 60_000,
   use: {
-    baseURL: `http://localhost:${port}`,
+    baseURL: `http://localhost:${storybookPort}`,
     colorScheme: 'dark',
     trace: 'retain-on-failure',
     video: 'on',
   },
-  webServer: {
-    command: `storybook dev -p ${port} --ci --no-open`,
-    reuseExistingServer: false,
-    timeout: 180_000,
-    url: `http://localhost:${port}/index.json`,
-  },
+  webServer: [
+    {
+      command: `storybook dev -p ${storybookPort} --ci --no-open`,
+      reuseExistingServer: false,
+      timeout: 180_000,
+      url: `http://localhost:${storybookPort}/index.json`,
+    },
+    {
+      command: `vp dev --port ${previewAppPort} --strictPort`,
+      reuseExistingServer: false,
+      timeout: 180_000,
+      url: previewAppUrl,
+    },
+  ],
   workers: 1,
 });

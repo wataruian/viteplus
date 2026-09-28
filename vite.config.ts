@@ -165,6 +165,7 @@ const getCommonViteConfig = ({
       },
       environment: 'node',
       fileParallelism: true,
+      fsModuleCache: true,
       include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
       isolate: false,
       pool: 'forks',
