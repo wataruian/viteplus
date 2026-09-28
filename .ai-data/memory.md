@@ -469,3 +469,15 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   `withPlaywrightChromium` also writes `/etc/apt/apt.conf.d/99-no-proxy`
   (`Acquire::http(s)::Proxy "false"`); registry/npm traffic still uses the proxy. Verified real
   `test-end-to-end` runs: design-system 2 passed, frontend 1 passed, with videos exported.
+
+## 2026-09-29: Vitest `fsModuleCache`; More E2E Coverage
+
+- **`test.fsModuleCache: true`** (root `getCommonViteConfig`, stable in Vitest 5) persists module
+  transforms in `node_modules/.vitest-cache` — removes the "Transform … re-done on every run"
+  diagnostic; dagger's warm `vp test` 5.2s → 2.8s. Verified a source edit is re-transformed.
+- **New e2e**: `apps/frontend/tests/e2e/home-navigation.spec.ts` (home renders + counter; home ↔
+  `/preview` via links and browser back/forward) and
+  `packages/design-system/tests/e2e/preview-app-mode.spec.ts` (the design-system preview app — same
+  `<Preview>` as frontend `/preview` — toggling in place). The design-system Playwright config now
+  starts two `webServer`s (Storybook 6116 + `vp dev` preview app 6117; ports in `tests/e2e/ports.ts`).
+  Mutation-checked (broken Home link; remount on toggle). Passing locally 3/3 and in Dagger.

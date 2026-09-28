@@ -204,13 +204,14 @@ Coverage reports are generated in the `coverage/` directory of each individual p
 
 ### Browser (e2e) tests
 
-`packages/design-system` and `apps/frontend` also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce — e.g. the light/dark toggle updating in place on Storybook's docs and variant pages, and on the frontend's `/preview` page.
+`packages/design-system` and `apps/frontend` also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce — the light/dark toggle updating in place on Storybook's docs and variant pages, the design-system preview app, and the frontend's `/preview` page, plus the frontend home page and its navigation to and from `/preview`.
 
 ```bash
 # One-time: download the Chromium build Playwright expects
 vp exec --filter @lightproject/design-system playwright install chromium
 
-# Run them (each starts its own server on a dedicated port: Storybook 6116, frontend 3111)
+# Run them (each starts its own servers on dedicated ports: design-system Storybook 6116 +
+# preview app 6117, frontend 3111)
 vp run -r test:e2e
 ```
 
