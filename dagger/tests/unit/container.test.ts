@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
 import {
+  PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
   TASK_CACHE_PATH,
   VITE_PLUS_JS_RUNTIME_PATH,
@@ -13,6 +14,7 @@ import {
   shortWorkspaceName,
   withBuildEnv,
   withInstallCaches,
+  withPlaywrightChromium,
   withTaskCache,
   workspace,
   workspacePath,
@@ -138,5 +140,40 @@ describe('withBuildEnv', () => {
     expect(() =>
       withBuildEnv(new FakeContainer(world), '@lightproject/frontend', ['NOVALUE']),
     ).toThrow('Invalid build env entry (expected KEY=VALUE): NOVALUE');
+  });
+});
+
+describe('withPlaywrightChromium', () => {
+  test('installs system deps as root, then the browser as vp into a cached path', () => {
+    const container = asFakeContainer(
+      withPlaywrightChromium(new FakeContainer(world), '@lightproject/frontend'),
+    );
+
+    expect(container.capturedUsers).toStrictEqual(['root', 'vp']);
+    expect(container.capturedNewFiles.get('/etc/apt/apt.conf.d/99-no-proxy')).toBe(
+      'Acquire::http::Proxy "false";\nAcquire::https::Proxy "false";\n',
+    );
+    expect(container.capturedExecCalls).toStrictEqual([
+      [
+        'sed',
+        '-i',
+        's|http://deb.debian.org|https://deb.debian.org|g',
+        '/etc/apt/sources.list.d/debian.sources',
+      ],
+      [
+        'vp',
+        'exec',
+        '--filter',
+        '@lightproject/frontend',
+        'playwright',
+        'install-deps',
+        'chromium',
+      ],
+      ['vp', 'exec', '--filter', '@lightproject/frontend', 'playwright', 'install', 'chromium'],
+    ]);
+    expect(container.capturedCachePaths).toStrictEqual([PLAYWRIGHT_BROWSERS_PATH]);
+    expect(container.capturedEnvVariables.get('PLAYWRIGHT_BROWSERS_PATH')).toBe(
+      PLAYWRIGHT_BROWSERS_PATH,
+    );
   });
 });

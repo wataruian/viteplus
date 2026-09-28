@@ -17,10 +17,6 @@
 - **Set `VITE_ADMIN_URL` per GitHub Environment** (`dev`/`staging`/`production`) — the
   frontend's absolute `og:url`/`og:image` tags are only emitted when it is set (deploy wiring is in
   `deploy-workspace.yml`). Until then, deployed builds simply omit those tags.
-- **Run e2e tests in CI** — `vp run -r test:e2e` (Playwright) runs locally but not yet in the
-  Dagger pipeline: the `vite-plus` container has no browser. Needs a Dagger function that installs
-  Chromium + its system libraries, a `verify-workspace.yml` step for design-system/frontend, and a
-  real `dagger call` to verify (Docker required).
 - **Two design-system tests are timeout-prone under load** — `preview-registry-drift.test.tsx`
   (~3s locally) and the `ph` icon-loader test in `tokens.test.ts` hit the 30s timeout in a
   `dagger ready` that overlapped with a local `vp run ready` (2026-09-28); the same run passes when

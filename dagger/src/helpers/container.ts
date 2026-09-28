@@ -1,6 +1,7 @@
 import { CacheSharingMode, type Container, type Directory, dag } from '@dagger.io/dagger';
 
 import {
+  PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
   TASK_CACHE_PATH,
   VITE_PLUS_JS_RUNTIME_PATH,
@@ -85,6 +86,28 @@ const withBuildEnv = (
   return result;
 };
 
+const withPlaywrightChromium = (container: Container, workspaceName: string): Container =>
+  container
+    .withUser('root')
+    .withExec([
+      'sed',
+      '-i',
+      's|http://deb.debian.org|https://deb.debian.org|g',
+      '/etc/apt/sources.list.d/debian.sources',
+    ])
+    .withNewFile(
+      '/etc/apt/apt.conf.d/99-no-proxy',
+      'Acquire::http::Proxy "false";\nAcquire::https::Proxy "false";\n',
+    )
+    .withExec(['vp', 'exec', '--filter', workspaceName, 'playwright', 'install-deps', 'chromium'])
+    .withUser(VITE_PLUS_USER)
+    .withMountedCache(PLAYWRIGHT_BROWSERS_PATH, dag.cacheVolume('playwright-browsers'), {
+      owner: VITE_PLUS_USER,
+      sharing: CacheSharingMode.Locked,
+    })
+    .withEnvVariable('PLAYWRIGHT_BROWSERS_PATH', PLAYWRIGHT_BROWSERS_PATH)
+    .withExec(['vp', 'exec', '--filter', workspaceName, 'playwright', 'install', 'chromium']);
+
 export {
   installArgs,
   isFrontend,
@@ -92,6 +115,7 @@ export {
   shortWorkspaceName,
   withBuildEnv,
   withInstallCaches,
+  withPlaywrightChromium,
   withTaskCache,
   workspace,
   workspacePath,

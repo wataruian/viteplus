@@ -246,7 +246,7 @@ const getPackageViteConfig = ({
           ...commonTaskProps,
           command: 'vp lint',
         },
-        test: {
+        'test:unit': {
           cache: {
             ...commonTaskProps.cache,
             output: [
@@ -404,7 +404,7 @@ const getRootViteConfig = (): UserConfig => {
           ...commonTaskProps,
           command: 'cd dagger && vp lint',
         },
-        'dagger:test': {
+        'dagger:test:unit': {
           ...commonTaskProps,
           command: 'cd dagger && vp test',
         },

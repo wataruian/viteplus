@@ -131,6 +131,8 @@ class FakeContainer extends Container {
   public readonly capturedDirectoryPaths: string[] = [];
   public readonly capturedExecCalls: string[][] = [];
   public readonly capturedPublishedRefs: string[] = [];
+  public readonly capturedUsers: string[] = [];
+  public readonly capturedNewFiles = new Map<string, string>();
   public capturedWorkdir: string | undefined = undefined;
   public capturedDefaultArgs: string[] | undefined = undefined;
   public capturedImage: string | undefined = undefined;
@@ -171,10 +173,13 @@ class FakeContainer extends Container {
   ): this => this;
 
   public override withNewFile = (
-    _path: string,
-    _contents: string,
+    path: string,
+    contents: string,
     _opts?: DaggerModule.ContainerWithNewFileOpts,
-  ): this => this;
+  ): this => {
+    this.capturedNewFiles.set(path, contents);
+    return this;
+  };
 
   public override withMountedFile = (
     _path: string,
@@ -212,6 +217,11 @@ class FakeContainer extends Container {
     _port: number,
     _opts?: DaggerModule.ContainerWithExposedPortOpts,
   ): this => this;
+
+  public override withUser = (name: string): this => {
+    this.capturedUsers.push(name);
+    return this;
+  };
 
   public override withDefaultArgs = (args: string[]): this => {
     this.capturedDefaultArgs = args;

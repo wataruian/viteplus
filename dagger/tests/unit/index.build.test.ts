@@ -57,7 +57,7 @@ describe('buildArtifact', () => {
   });
 });
 
-describe('test', () => {
+describe('testUnit', () => {
   test('attaches the coverage report and row when coverage exists', async () => {
     seedMountFiles();
     world.execStdout = 'all tests passed';
@@ -75,14 +75,14 @@ describe('test', () => {
       }),
     );
 
-    const result = await createMonorepo().test('@lightproject/backend');
+    const result = await createMonorepo().testUnit('@lightproject/backend');
 
-    await expect(result.file('test.exit-code').contents()).resolves.toBe('0');
-    await expect(result.file('test.output').contents()).resolves.toBe('all tests passed');
+    await expect(result.file('test-unit.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('test-unit.output').contents()).resolves.toBe('all tests passed');
     await expect(result.directory('coverage').entries()).resolves.toStrictEqual([
       'coverage-summary.json',
     ]);
-    await expect(result.file('test.row.md').contents()).resolves.toBe(
+    await expect(result.file('test-unit.row.md').contents()).resolves.toBe(
       '| backend | 100% | 100% | 100% | 100% |\n',
     );
   });
@@ -92,15 +92,15 @@ describe('test', () => {
     world.execStdout = 'no coverage configured';
     world.execExitCode = 1;
 
-    const result = await createMonorepo().test('@lightproject/backend');
+    const result = await createMonorepo().testUnit('@lightproject/backend');
 
-    await expect(result.file('test.exit-code').contents()).resolves.toBe('1');
-    await expect(result.file('test.row.md').contents()).resolves.toBe(
+    await expect(result.file('test-unit.exit-code').contents()).resolves.toBe('1');
+    await expect(result.file('test-unit.row.md').contents()).resolves.toBe(
       '| backend | _no coverage (tests failed or skipped)_ | | | |\n',
     );
   });
 
-  test('runs vp run -r dagger:test and reads coverage from dagger for the dagger workspace', async () => {
+  test('runs vp run -r dagger:test:unit and reads coverage from dagger for the dagger workspace', async () => {
     world.execStdout = 'all dagger tests passed';
     world.execExitCode = 0;
     world.dirs.set('/app/dagger/coverage', ['coverage-summary.json']);
@@ -116,16 +116,86 @@ describe('test', () => {
       }),
     );
 
-    const result = await createMonorepo().test('dagger');
+    const result = await createMonorepo().testUnit('dagger');
 
-    expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'dagger:test']);
-    await expect(result.file('test.exit-code').contents()).resolves.toBe('0');
-    await expect(result.file('test.output').contents()).resolves.toBe('all dagger tests passed');
+    expect(getLastContainer().capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '-r',
+      'dagger:test:unit',
+    ]);
+    await expect(result.file('test-unit.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('test-unit.output').contents()).resolves.toBe(
+      'all dagger tests passed',
+    );
     await expect(result.directory('coverage').entries()).resolves.toStrictEqual([
       'coverage-summary.json',
     ]);
-    await expect(result.file('test.row.md').contents()).resolves.toBe(
+    await expect(result.file('test-unit.row.md').contents()).resolves.toBe(
       '| dagger | 100% | 100% | 100% | 100% |\n',
+    );
+  });
+});
+
+describe('testEndToEnd', () => {
+  const e2eDir = '/app/apps/frontend/tmp/e2e';
+
+  test('runs test:e2e with Chromium installed and attaches the Playwright output and row', async () => {
+    seedMountFiles();
+    world.dirs.set('apps/frontend', ['playwright.config.ts', 'package.json']);
+    world.execStdout = '1 passed';
+    world.execExitCode = 0;
+    world.dirs.set(e2eDir, ['results.json', 'report/', 'results/']);
+    world.files.set(
+      `${e2eDir}/results.json`,
+      JSON.stringify({
+        stats: { duration: 5390.66, expected: 1, flaky: 0, skipped: 0, unexpected: 0 },
+      }),
+    );
+
+    const result = await createMonorepo().testEndToEnd('@lightproject/frontend');
+
+    const container = getLastContainer();
+    expect(container.capturedUsers).toStrictEqual(['root', 'vp']);
+    expect(container.capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '--filter',
+      '@lightproject/frontend',
+      'test:e2e',
+    ]);
+    await expect(result.file('test-end-to-end.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('test-end-to-end.output').contents()).resolves.toBe('1 passed');
+    await expect(result.directory('e2e').entries()).resolves.toStrictEqual([
+      'results.json',
+      'report/',
+      'results/',
+    ]);
+    await expect(result.file('test-end-to-end.row.md').contents()).resolves.toBe(
+      '| frontend | ✅ Passed | 1 | 0 | 0 | 0 | 5.4s |\n',
+    );
+  });
+
+  test('renders the placeholder row when Playwright produced no output', async () => {
+    seedMountFiles();
+    world.dirs.set('apps/frontend', ['playwright.config.ts']);
+    world.execStdout = 'web server failed to start';
+    world.execExitCode = 1;
+
+    const result = await createMonorepo().testEndToEnd('@lightproject/frontend');
+
+    await expect(result.file('test-end-to-end.exit-code').contents()).resolves.toBe('1');
+    await expect(result.file('test-end-to-end.row.md').contents()).resolves.toBe(
+      '| frontend | _no report (tests failed to start or were skipped)_ | | | | | |\n',
+    );
+  });
+
+  test('rejects a workspace without Playwright e2e tests', async () => {
+    seedMountFiles();
+    world.dirs.set('packages/library', ['package.json', 'src/']);
+
+    await expect(createMonorepo().testEndToEnd('@lightproject/library')).rejects.toThrow(
+      'Workspace @lightproject/library has no Playwright e2e tests (playwright.config.ts)',
     );
   });
 });

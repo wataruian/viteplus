@@ -7,7 +7,11 @@ export default defineConfig({
   fullyParallel: false,
   outputDir: 'tmp/e2e/results',
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  reporter: [['list']],
+  reporter: [
+    ['list'],
+    ['json', { outputFile: 'tmp/e2e/results.json' }],
+    ['html', { open: 'never', outputFolder: 'tmp/e2e/report' }],
+  ],
   retries: 0,
   testDir: 'tests/e2e',
   timeout: 60_000,
@@ -15,6 +19,7 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
     colorScheme: 'dark',
     trace: 'retain-on-failure',
+    video: 'on',
   },
   webServer: {
     command: `storybook dev -p ${port} --ci --no-open`,

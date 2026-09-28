@@ -86,11 +86,11 @@ jobs:
             --no-output \
             "${args[@]}"
 
-      - name: Test
+      - name: Test (unit)
         shell: bash
         env:
           WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
-        run: mise run dagger test --workspace="${WORKSPACE_ID}" --export
+        run: mise run dagger test-unit --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload coverage
         if: '!cancelled()'
@@ -99,7 +99,25 @@ jobs:
           name: coverage-${{ inputs.workspace }}
           path: |
             tmp/artifacts/${{ inputs.workspace }}/coverage
-            tmp/artifacts/${{ inputs.workspace }}/test.row.md
+            tmp/artifacts/${{ inputs.workspace }}/test-unit.row.md
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Test (e2e)
+        if: hashFiles(format('*/{0}/playwright.config.ts', inputs.workspace)) != ''
+        shell: bash
+        env:
+          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
+        run: mise run dagger test-end-to-end --workspace="${WORKSPACE_ID}" --export
+
+      - name: Upload e2e report and videos
+        if: "!cancelled() && hashFiles(format('*/{0}/playwright.config.ts', inputs.workspace)) != ''"
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-${{ inputs.workspace }}
+          path: |
+            tmp/artifacts/${{ inputs.workspace }}/e2e
+            tmp/artifacts/${{ inputs.workspace }}/test-end-to-end.row.md
           retention-days: 14
           if-no-files-found: ignore
 

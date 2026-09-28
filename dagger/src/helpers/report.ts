@@ -33,6 +33,25 @@ const coverageRow = (shortName: string, summaryJson: string | undefined): string
   return `| ${shortName} | ${pct('lines')} | ${pct('statements')} | ${pct('functions')} | ${pct('branches')} |\n`;
 };
 
+const e2eRow = (shortName: string, resultsJson: string | undefined): string => {
+  if (resultsJson === undefined) {
+    return `| ${shortName} | _no report (tests failed to start or were skipped)_ | | | | | |\n`;
+  }
+
+  const stats = readRecord(readRecord(JSON.parse(resultsJson)).stats);
+  const count = (key: string): number => readNumber(stats[key]) ?? 0;
+  const [passed, failed, flaky, skipped] = [
+    count('expected'),
+    count('unexpected'),
+    count('flaky'),
+    count('skipped'),
+  ];
+  const status = failed > 0 ? '❌ Failed' : '✅ Passed';
+  const duration = `${((readNumber(stats.duration) ?? 0) / 1000).toFixed(1)}s`;
+
+  return `| ${shortName} | ${status} | ${passed} | ${failed} | ${flaky} | ${skipped} | ${duration} |\n`;
+};
+
 const semgrepRow = (shortName: string, sarifJson: string | undefined): string => {
   if (sarifJson === undefined) {
     return `| ${shortName} | _no report (scan failed or skipped)_ | |\n`;
@@ -125,6 +144,7 @@ const attachSonarRow = async (result: Directory, shortName: string): Promise<Dir
 export {
   attachSonarRow,
   coverageRow,
+  e2eRow,
   markdownCell,
   markdownList,
   semgrepRow,

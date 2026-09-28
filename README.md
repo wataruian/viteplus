@@ -84,7 +84,7 @@ When viewing logs in Grafana, you can use the following LogQL query to natively 
 6.  **Develop**: Run `mise run start dev` or `vp dev` to start the local development environment.
 
 > [!TIP]
-> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test` runs tests for all packages and apps.
+> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test:unit` runs unit tests for all packages and apps (`vp run test:e2e` runs the Playwright browser tests).
 
 ## 🛠 Development Workflow
 
@@ -213,6 +213,12 @@ vp exec --filter @lightproject/design-system playwright install chromium
 # Run them (each starts its own server on a dedicated port: Storybook 6116, frontend 3111)
 vp run -r test:e2e
 ```
+
+Unit tests are `vp run -r test:unit`. Both are cached like the other tasks; a cache hit also restores the e2e output.
+
+Each run writes to `tmp/e2e/` in the workspace: a video of every test (`results/**/video.webm`), a JSON report (`results.json`), and an HTML report (`report/index.html`, which embeds the videos).
+
+In CI, `dagger call test-end-to-end --workspace=<pkg>` runs them in the `vite-plus` container (installing Chromium and its system libraries), and `verify-workspace.yml` uploads everything as the `e2e-<workspace>` artifact. On pull requests, an **E2E report** comment summarizes the results per workspace and links to those artifacts.
 
 ### Share tags (`apps/frontend`)
 

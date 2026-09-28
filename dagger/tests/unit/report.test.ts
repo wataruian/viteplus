@@ -4,6 +4,7 @@ import {
   SONAR_COMPARATORS,
   attachSonarRow,
   coverageRow,
+  e2eRow,
   markdownCell,
   markdownList,
   semgrepRow,
@@ -245,6 +246,36 @@ describe('attachSonarRow', () => {
 
     await expect(result.file('sonar.row.md').contents()).resolves.toBe(
       '| backend | _no report (scan failed or skipped)_ | | | | |\n',
+    );
+  });
+});
+
+describe('e2eRow', () => {
+  test('reports a placeholder row when there is no Playwright report', () => {
+    expect(e2eRow('frontend', undefined)).toBe(
+      '| frontend | _no report (tests failed to start or were skipped)_ | | | | | |\n',
+    );
+  });
+
+  test('renders a passing run from the Playwright JSON stats', () => {
+    const results = JSON.stringify({
+      stats: { duration: 25_754.97, expected: 2, flaky: 0, skipped: 0, unexpected: 0 },
+    });
+    expect(e2eRow('design-system', results)).toBe(
+      '| design-system | ✅ Passed | 2 | 0 | 0 | 0 | 25.8s |\n',
+    );
+  });
+
+  test('marks the run failed when any test is unexpected, and shows flaky/skipped counts', () => {
+    const results = JSON.stringify({
+      stats: { duration: 4000, expected: 3, flaky: 1, skipped: 2, unexpected: 1 },
+    });
+    expect(e2eRow('frontend', results)).toBe('| frontend | ❌ Failed | 3 | 1 | 1 | 2 | 4.0s |\n');
+  });
+
+  test('treats missing stats fields as zero', () => {
+    expect(e2eRow('frontend', JSON.stringify({}))).toBe(
+      '| frontend | ✅ Passed | 0 | 0 | 0 | 0 | 0.0s |\n',
     );
   });
 });

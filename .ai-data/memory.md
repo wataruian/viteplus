@@ -441,3 +441,31 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   page) intermittently missed its 5s window. The spec now waits for a _settled_ preview (mode class
   present and no iframe navigation for 1s, up to 30s) and asserts no preview navigation happens while
   toggling. Verified 6/6 runs; `themes.normal` and remount mutations still fail it.
+
+## 2026-09-28: `test:unit` / `test:e2e` Split, E2E in CI, Videos
+
+- **Renames**: package task `test` → `test:unit`, root `dagger:test` → `dagger:test:unit`, Dagger
+  function `test` → `testUnit` (CLI `test-unit`; exports `test-unit.output|exit-code|row.md`). The
+  built-in `vp test` command is unchanged. `mise run dagger <fn> --export` names files after the CLI
+  function name, so file names must follow it.
+- **Dagger CLI naming gotcha**: `testE2e` becomes `test-e-2-e` (digits are split; a
+  `@func('test_e2e')` alias doesn't help), hence the function is `testEndToEnd` → `test-end-to-end`.
+- **E2E in CI**: `testEndToEnd` requires a `playwright.config.ts` in the workspace, installs
+  Chromium's apt deps as root and the browser as `vp` into the `playwright-browsers` cache volume,
+  runs `test:e2e`, and returns `e2e/` (videos, JSON, HTML report) + `test-end-to-end.row.md`.
+  `verify-workspace.yml` runs/uploads it (`e2e-<workspace>`) when `hashFiles('*/<ws>/playwright.config.ts')`
+  matches; `verify.yml`'s setup job outputs `e2e_workspace_list` and the artifacts job posts an
+  `e2e-report` PR comment.
+- **apt through the engine proxy**: the Dagger engine forwards `HTTP(S)_PROXY` (the
+  `registry-cache` proxy) into containers, and that proxy mangles plain-HTTP responses from
+  `deb.debian.org` ("Clearsigned file isn't valid, got 'NOSPLIT'"). `withPlaywrightChromium`
+  rewrites `/etc/apt/sources.list.d/debian.sources` to HTTPS first (HTTPS is a clean CONNECT tunnel).
+- **Videos/reports**: Playwright `video: 'on'` + `json`/`html` reporters, all under `tmp/e2e/`.
+- **`test:e2e` is cached** (`...commonTaskProps.cache` + output `tmp/e2e/**`): verified a hit
+  restores the report/videos, and edits to the workspace _and_ to design-system source (read by the
+  frontend's dev server child process) invalidate it.
+- **apt must bypass the engine proxy** (2026-09-29): even over HTTPS, `apt-get update` later hung
+  indefinitely on the `registry-cache` CONNECT tunnel (direct egress answered in 0.1s). So
+  `withPlaywrightChromium` also writes `/etc/apt/apt.conf.d/99-no-proxy`
+  (`Acquire::http(s)::Proxy "false"`); registry/npm traffic still uses the proxy. Verified real
+  `test-end-to-end` runs: design-system 2 passed, frontend 1 passed, with videos exported.

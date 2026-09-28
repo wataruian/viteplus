@@ -37,9 +37,10 @@ import {
   outputDirectory,
   shortWorkspaceName,
   withBuildEnv,
+  withPlaywrightChromium,
   workspacePath,
 } from './helpers/container';
-import { attachSonarRow, coverageRow, semgrepRow } from './helpers/report';
+import { attachSonarRow, coverageRow, e2eRow, semgrepRow } from './helpers/report';
 import {
   LOCAL_ORCHESTRATOR_HOME,
   POLL_CONTAINER_HOME,
@@ -187,7 +188,7 @@ export class Monorepo {
   }
 
   @func()
-  public async test(workspace: string, buildEnv?: string[]): Promise<Directory> {
+  public async testUnit(workspace: string, buildEnv?: string[]): Promise<Directory> {
     const isDagger = workspace === DAGGER_WORKSPACE;
 
     const container = isDagger
@@ -195,8 +196,8 @@ export class Monorepo {
       : await this.build(workspace, buildEnv);
 
     const testExecArgs = isDagger
-      ? ['vp', 'run', '-r', 'dagger:test']
-      : ['vp', 'run', '--filter', workspace, 'test'];
+      ? ['vp', 'run', '-r', 'dagger:test:unit']
+      : ['vp', 'run', '--filter', workspace, 'test:unit'];
     const testContainer = container.withExec(testExecArgs, { expect: ReturnType.Any });
 
     const [exitCode, stdout] = await Promise.all([
@@ -204,7 +205,10 @@ export class Monorepo {
       testContainer.stdout(),
     ]);
 
-    let result = outputDirectory('test', stdout).withNewFile('test.exit-code', `${exitCode}`);
+    let result = outputDirectory('test-unit', stdout).withNewFile(
+      'test-unit.exit-code',
+      `${exitCode}`,
+    );
 
     const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const coveragePath = `/app/${workspaceDir}/coverage`;
@@ -220,7 +224,43 @@ export class Monorepo {
       // No coverage report to attach.
     }
 
-    return result.withNewFile('test.row.md', coverageRow(shortName, summaryJson));
+    return result.withNewFile('test-unit.row.md', coverageRow(shortName, summaryJson));
+  }
+
+  @func()
+  public async testEndToEnd(workspace: string): Promise<Directory> {
+    const workspaceDir = workspacePath(workspace);
+    const workspaceEntries = await this.source.directory(workspaceDir).entries();
+    if (!workspaceEntries.includes('playwright.config.ts')) {
+      throw new Error(`Workspace ${workspace} has no Playwright e2e tests (playwright.config.ts)`);
+    }
+
+    const container = withPlaywrightChromium(await mountFiles(this.source, workspace), workspace);
+    const e2eContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test:e2e'], {
+      expect: ReturnType.Any,
+    });
+
+    const [exitCode, stdout] = await Promise.all([e2eContainer.exitCode(), e2eContainer.stdout()]);
+
+    let result = outputDirectory('test-end-to-end', stdout).withNewFile(
+      'test-end-to-end.exit-code',
+      `${exitCode}`,
+    );
+
+    const e2eDir = e2eContainer.directory(`/app/${workspaceDir}/tmp/e2e`);
+    let resultsJson: string | undefined = undefined;
+    try {
+      await e2eDir.entries();
+      result = result.withDirectory('e2e', e2eDir);
+      resultsJson = await e2eDir.file('results.json').contents();
+    } catch {
+      // No Playwright output to attach (e.g. the web server never started).
+    }
+
+    return result.withNewFile(
+      'test-end-to-end.row.md',
+      e2eRow(shortWorkspaceName(workspaceDir), resultsJson),
+    );
   }
 
   @func()
@@ -291,7 +331,7 @@ export class Monorepo {
       );
     }
 
-    const testResult = await this.test(workspace);
+    const testResult = await this.testUnit(workspace);
     const sourceRoot = isDagger ? this.rootSource : this.source;
 
     let scanRoot = this.source

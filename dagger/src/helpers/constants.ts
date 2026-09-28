@@ -2,6 +2,7 @@ const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.0.0';
 const VITE_PLUS_USER = 'vp';
 const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
 const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
+const PLAYWRIGHT_BROWSERS_PATH = '/home/vp/.cache/ms-playwright';
 const PNPM_STORE_PATH = '/home/vp/.local/share/pnpm/store';
 const TASK_CACHE_PATH = '/app/node_modules/.vite/task-cache';
 
@@ -133,6 +134,7 @@ export {
   DOCKER_CLI_VERSION,
   MANIFEST_FILES,
   NGINX_IMAGE,
+  PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
   ROOT_FILES,
   SEMGREP_EXCLUSIONS,

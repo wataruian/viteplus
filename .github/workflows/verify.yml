@@ -21,6 +21,7 @@ jobs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
       workspace_list: ${{ steps.workspaces.outputs.workspace_list }}
       run-dagger-verify: ${{ steps.workspaces.outputs.run-dagger-verify }}
+      e2e_workspace_list: ${{ steps.e2e.outputs.workspace_list }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,6 +39,20 @@ jobs:
         with:
           workspace-input: ${{ inputs.workspace }}
           all-workspaces: 'design-system frontend backend common library'
+
+      - name: Resolve workspaces with e2e tests
+        id: e2e
+        shell: bash
+        env:
+          WORKSPACES: ${{ steps.workspaces.outputs.workspace_list }}
+        run: |
+          list=()
+          for workspace in ${WORKSPACES}; do
+            if compgen -G "*/${workspace}/playwright.config.ts" > /dev/null; then
+              list+=("${workspace}")
+            fi
+          done
+          echo "workspace_list=${list[*]}" >> "${GITHUB_OUTPUT}"
 
   dagger:
     needs: setup
@@ -160,7 +175,7 @@ jobs:
         with:
           workspaces: ${{ needs.setup.outputs.workspace_list }}${{ needs.setup.outputs.run-dagger-verify == 'true' && ' dagger' || '' }}
           artifact-prefix: coverage
-          row-file: test.row.md
+          row-file: test-unit.row.md
           header: |
             <!-- coverage-report -->
             ### Coverage report
@@ -175,6 +190,31 @@ jobs:
         with:
           marker: coverage-report
           body-file: coverage-body.md
+
+      - name: Download e2e artifacts and build table
+        if: needs.setup.outputs.e2e_workspace_list != ''
+        uses: ./.github/actions/download-artifact-table
+        with:
+          workspaces: ${{ needs.setup.outputs.e2e_workspace_list }}
+          artifact-prefix: e2e
+          row-file: test-end-to-end.row.md
+          header: |
+            <!-- e2e-report -->
+            ### E2E report
+
+            Videos and HTML reports: [`e2e-<workspace>` artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+
+            | Workspace | Result | Passed | Failed | Flaky | Skipped | Duration |
+            |---|---|---|---|---|---|---|
+          fallback-suffix: '| _no report (tests failed to start or were skipped)_ | | | | | |'
+          body-file: e2e-body.md
+
+      - name: Post or update e2e PR comment
+        if: needs.setup.outputs.e2e_workspace_list != ''
+        uses: ./.github/actions/post-pr-comment
+        with:
+          marker: e2e-report
+          body-file: e2e-body.md
 
       - name: Download Semgrep artifacts and build table
         uses: ./.github/actions/download-artifact-table

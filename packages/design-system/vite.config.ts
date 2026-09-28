@@ -76,7 +76,10 @@ export default defineConfig(({ mode }): UserConfig => {
       run: {
         tasks: {
           'test:e2e': {
-            cache: false,
+            cache: {
+              ...commonTaskProps.cache,
+              output: [{ base: 'package', pattern: 'tmp/e2e/**/*' }],
+            },
             command: 'playwright test',
           },
           'wrangler:delete': {
