@@ -435,3 +435,9 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   `vite.config.ts`'s `pack.dts.tsconfig` points at it); `index.build.test.ts` asserts the keep list.
   Source mounts and affected-workspace detection needed no change (whole workspace dirs /
   `vp pm list --filter "...[sha]"`). Verified with real `build-artifact` calls (library, design-system).
+- **Storybook e2e flake (fixed 2026-09-28)**: on a freshly started `storybook dev` (Playwright's
+  `webServer` starts one per run), Vite reloads the preview iframe ~2s after first load while it
+  finishes pre-bundling deps; the mode class only appears after that reload, so the first test (docs
+  page) intermittently missed its 5s window. The spec now waits for a _settled_ preview (mode class
+  present and no iframe navigation for 1s, up to 30s) and asserts no preview navigation happens while
+  toggling. Verified 6/6 runs; `themes.normal` and remount mutations still fail it.
