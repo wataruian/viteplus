@@ -39,6 +39,7 @@
     "commitizen": "catalog:",
     "cz-conventional-changelog": "catalog:",
     "madge": "catalog:",
+    "markdown-it": "catalog:",
     "plop": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:",
@@ -46,7 +47,10 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vscode-json-languageservice": "catalog:",
+    "vscode-languageserver-textdocument": "catalog:",
+    "vscode-markdown-languageservice": "catalog:"
   },
   "config": {
     "commitizen": {

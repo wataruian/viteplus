@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#MISE description="Apply the editor's on-save code actions (fixAll.oxc, organize/sort imports, organize link definitions, sort JSON) to all files"
+
+set -o errexit # Bail out on any error
+
+# source.organizeImports, source.sortImports, source.sort.json, source.organizeLinkDefinitions
+node scripts/code-actions.ts
+
+# source.fixAll.oxc — keep going on unfixable issues so the formatting pass still runs
+lintSuccess="true"
+vp lint --fix || lintSuccess="false"
+
+# editor.formatOnSave (oxfmt, including its `sortImports`) — normalizes the output of the steps above
+vp fmt --write
+
+echo ""
+if [[ "${lintSuccess}" == "false" ]]; then
+  echo "❌ Code actions applied, but \`vp lint\` reported issues it could not fix"
+  exit 1
+fi
+
+echo "✅ Code actions applied to all files"

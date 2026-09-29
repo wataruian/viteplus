@@ -96,6 +96,7 @@ We use `mise` as the primary task runner for high-level repository automation. T
 | :----------------------------------------- | :---------------------------------------------------------- |
 | `mise run check`                           | Run type checking, formatting, linting, building, and tests |
 | `mise run clean`                           | Clean up build artifacts, tools, and AI caches              |
+| `mise run fix`                             | Apply the editor's on-save code actions to all files        |
 | `mise run create`                          | Create standard backend, frontend, and library templates    |
 | `mise run init`                            | Initialize the workspace                                    |
 | `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action         |

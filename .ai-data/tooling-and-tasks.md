@@ -8,6 +8,7 @@ Available automation commands:
 
 - `mise run check`: Runs type checking, formatting, linting, building, and tests across the workspace.
 - `mise run clean`: Cleans up build artifacts, tools, and temporary AI caches (like `.ai-data/artifacts`).
+- `mise run fix`: Applies the `.vscode/settings.json` `editor.codeActionsOnSave` actions to every file in the repo — organize/sort imports (TypeScript), sort JSON (`vscode-json-languageservice`), organize Markdown link definitions (`vscode-markdown-languageservice`) via `scripts/code-actions.ts`, then `vp lint --fix` (`source.fixAll.oxc`) and `vp fmt --write`.
 - `mise run create`: Scaffolds standard backend, frontend, and library templates.
 - `mise run init`: Initializes the workspace, installs dependencies, and runs all checks.
 - `mise run start`: Starts the dev or production servers.
