@@ -202,7 +202,7 @@ jobs:
             <!-- e2e-report -->
             ### E2E report
 
-            Videos and HTML reports: [`e2e-<workspace>` artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+            Videos and HTML reports: [e2e-&lt;workspace&gt; artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
 
             | Workspace | Result | Passed | Failed | Flaky | Skipped | Duration |
             |---|---|---|---|---|---|---|

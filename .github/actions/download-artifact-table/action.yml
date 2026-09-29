@@ -41,7 +41,17 @@ runs:
           printf '%s' "${HEADER}"
           for workspace in ${WORKSPACES}; do
             dest="${ARTIFACT_PREFIX}-artifacts/${workspace}"
-            gh run download "${RUN_ID}" --name "${ARTIFACT_PREFIX}-${workspace}" --dir "${dest}" || echo "no artifact for ${workspace}, skipping" >&2
+            name="${ARTIFACT_PREFIX}-${workspace}"
+            artifact_id="$(gh api --paginate "repos/${GH_REPO}/actions/runs/${RUN_ID}/artifacts?name=${name}&per_page=100" \
+              --jq '.artifacts[] | select(.expired | not) | "\(.created_at) \(.id)"' \
+              | sort | tail -n 1 | cut -d ' ' -f 2)" || artifact_id=""
+            if [[ -n "${artifact_id}" ]] \
+              && gh api "repos/${GH_REPO}/actions/artifacts/${artifact_id}/zip" > "${name}.zip" \
+              && mkdir -p "${dest}" && unzip -oq "${name}.zip" -d "${dest}"; then
+              rm -f "${name}.zip"
+            else
+              echo "no artifact for ${workspace}, skipping" >&2
+            fi
 
             row="${dest}/${ROW_FILE}"
             if [[ -f "${row}" ]]; then
