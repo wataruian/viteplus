@@ -1,6 +1,5 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion, trpcUrl } from '@lightproject/common/configs';
-import { getSessionId } from '@lightproject/common/logger';
 import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { appRouter } from '../../../src/routers/trpc';
@@ -101,12 +100,11 @@ test('a procedure built without route metadata throws instead of silently vanish
   expect(() => collectTrpcOpenApiRoutes(mixedRouter)).toThrow(/broken/u);
 });
 
-test('a query/mutation caller without a sessionId in context falls back to getSessionId()', async () => {
-  const createCaller = t.createCallerFactory(appRouter);
-  const caller = createCaller({});
+test('query and mutation envelopes echo the requestId from the tRPC context', async () => {
+  const caller = t.createCallerFactory(appRouter)({ requestId: 'ctx-request-id' });
 
   const queryResult = await caller.default.root();
-  expect(queryResult.sessionId).toBe(getSessionId());
+  expect(queryResult.requestId).toBe('ctx-request-id');
 
   const mutationResult = await caller.test.profile({
     age: 42,
@@ -114,7 +112,7 @@ test('a query/mutation caller without a sessionId in context falls back to getSe
     preferences: { notifications: false, theme: 'light' },
     tags: ['sample'],
   });
-  expect(mutationResult.sessionId).toBe(getSessionId());
+  expect(mutationResult.requestId).toBe('ctx-request-id');
 });
 
 describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {

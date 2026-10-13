@@ -1,11 +1,11 @@
 import { type Hook, OpenAPIHono, type RouteConfig, createRoute, z } from '@hono/zod-openapi';
 import { openApiVersion, requestTypes } from '@lightproject/common/configs';
-import { getSessionId } from '@lightproject/common/logger';
 import { type AnyTRPCProcedure, initTRPC } from '@trpc/server';
 import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 import packageJson from '../../package.json' with { type: 'json' };
+import { toClientErrorMessage, toClientErrorStack } from '../errors';
 import type { AppEnv, ServiceFn } from '../schema';
 
 type RouteMethod = 'get' | 'post' | 'put' | 'delete';
@@ -47,14 +47,30 @@ type OpenApiRegistryDefinition = OpenAPIHono['openAPIRegistry']['definitions'][n
 
 const trpcRouteMethods: ReadonlySet<string> = new Set(['get', 'post', 'put', 'delete']);
 
-const t = initTRPC.context<{ sessionId?: string }>().meta<TrpcRouteMeta>().create();
+const t = initTRPC
+  .context<{ requestId: string }>()
+  .meta<TrpcRouteMeta>()
+  .create({
+    errorFormatter: ({ shape }) => {
+      const { stack, ...dataWithoutStack } = shape.data;
+      const clientStack = toClientErrorStack(stack);
+      return {
+        ...shape,
+        data:
+          clientStack === undefined
+            ? dataWithoutStack
+            : { ...dataWithoutStack, stack: clientStack },
+        message: toClientErrorMessage(shape.data.httpStatus, shape.message),
+      };
+    },
+  });
 
 const createWrappedResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
   z.object({
     code: z.number(),
     data: dataSchema,
     message: z.string(),
-    sessionId: z.string(),
+    requestId: z.string(),
     success: z.boolean(),
   });
 
@@ -85,11 +101,11 @@ const defineHttpRoute = <S extends z.ZodRawShape, O extends Record<string, unkno
   };
 };
 
-const successEnvelope = <T>(data: T, sessionId: string) => ({
+const successEnvelope = <T>(data: T, requestId: string) => ({
   code: 200,
   data,
   message: 'Success',
-  sessionId,
+  requestId,
   success: true,
 });
 
@@ -153,7 +169,7 @@ const createQuery = <S extends z.ZodRawShape, O extends Record<string, unknown>>
   const { handlerFn } = definition;
   return createProcedure(definition).query(async ({ input, ctx }) => {
     const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input ?? {});
-    return successEnvelope(result, ctx.sessionId ?? getSessionId());
+    return successEnvelope(result, ctx.requestId);
   });
 };
 
@@ -163,7 +179,7 @@ const createMutation = <S extends z.ZodRawShape, O extends Record<string, unknow
   const { handlerFn } = definition;
   return createProcedure(definition).mutation(async ({ input, ctx }) => {
     const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input);
-    return successEnvelope(result, ctx.sessionId ?? getSessionId());
+    return successEnvelope(result, ctx.requestId);
   });
 };
 
@@ -238,7 +254,7 @@ const createHttpRouter = (routesList: HttpRoute[]) => {
 
     const handler = async (c: Context<AppEnv>) => {
       const result = await handle(method === 'get' ? c.req.query() : await c.req.json());
-      return c.json(successEnvelope(result, c.get('sessionId')), 200);
+      return c.json(successEnvelope(result, c.get('requestId')), 200);
     };
 
     router.openapi(route, handler);

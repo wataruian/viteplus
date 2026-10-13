@@ -10,7 +10,7 @@ interface LogEntry {
   message: string;
   timestamp: string;
   context?: Record<string, unknown> | object;
-  sessionId?: string;
+  requestId?: string;
   spanId?: string;
   traceId?: string;
 }
@@ -22,18 +22,24 @@ const formatColors = {
   warn: chalkInstance.yellow,
 };
 
+const getExplicitColorId = (entry: LogEntry): string | undefined => {
+  const requestId =
+    entry.context !== undefined && 'requestId' in entry.context
+      ? entry.context['requestId']
+      : undefined;
+  return typeof requestId === 'string' ? requestId : undefined;
+};
+
 const colorizeMessage = (entry: LogEntry, useColor: boolean): string => {
   if (!useColor) {
     return entry.message;
   }
 
-  const explicitSessionId =
-    entry.context && 'sessionId' in entry.context ? entry.context['sessionId'] : undefined;
+  const explicitColorId = getExplicitColorId(entry);
 
-  const sessionColor =
-    typeof explicitSessionId === 'string' ? getRandomColor(explicitSessionId) : getColor();
+  const requestColor = explicitColorId === undefined ? getColor() : getRandomColor(explicitColorId);
 
-  return sessionColor === defaultColor ? entry.message : sessionColor(entry.message);
+  return requestColor === defaultColor ? entry.message : requestColor(entry.message);
 };
 
 const formatTraceSuffix = (entry: LogEntry, useColor: boolean): string => {
@@ -72,5 +78,6 @@ export {
   formatJSON,
   formatPretty,
   formatTraceSuffix,
+  getExplicitColorId,
 };
 export type { LogEntry, LogLevel, LogMode };

@@ -1,4 +1,4 @@
-const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.0.0';
+const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.1.0';
 const VITE_PLUS_USER = 'vp';
 const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
 const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
@@ -7,7 +7,7 @@ const PNPM_STORE_PATH = '/home/vp/.local/share/pnpm/store';
 const TASK_CACHE_PATH = '/app/node_modules/.vite/task-cache';
 
 const NGINX_IMAGE = 'nginx:1.27.0-alpine';
-const DOCKER_CLI_VERSION = 'docker:27.5.1-cli';
+const DOCKER_CLI_IMAGE = 'docker:27.5.1-cli';
 const SEMGREP_IMAGE = 'semgrep/semgrep:1.177.0';
 const SONAR_SCANNER_IMAGE = 'sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1';
 const SONAR_SCANNER_USER = 'scanner-cli';
@@ -107,6 +107,8 @@ const MANIFEST_FILES: string[] = [
 
 const DAGGER_WORKSPACE = 'dagger';
 
+const DEPLOY_ENVIRONMENTS: ReadonlySet<string> = new Set(['develop', 'staging', 'production']);
+
 const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
   '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
@@ -131,7 +133,8 @@ export {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
   DAGGER_WORKSPACE,
-  DOCKER_CLI_VERSION,
+  DEPLOY_ENVIRONMENTS,
+  DOCKER_CLI_IMAGE,
   MANIFEST_FILES,
   NGINX_IMAGE,
   PLAYWRIGHT_BROWSERS_PATH,

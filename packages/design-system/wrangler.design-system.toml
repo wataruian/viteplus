@@ -13,3 +13,12 @@ persist = true
 [observability.traces]
 enabled = true
 persist = true
+
+[env.develop]
+name = "lightproject-design-system-dev"
+
+[env.staging]
+name = "lightproject-design-system-staging"
+
+[env.production]
+name = "lightproject-design-system-production"

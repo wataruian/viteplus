@@ -1,7 +1,7 @@
 import { Secret, Socket } from '@dagger.io/dagger';
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
-import { asFakeContainer, resetLastContainer } from './helpers/dagger-fakes';
+import { asFakeContainer, getLastContainer, resetLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 import { seedMountFiles } from './helpers/fixtures';
 import { createMonorepo } from './helpers/monorepo';
@@ -156,12 +156,38 @@ describe('publish', () => {
 });
 
 describe('wrangler', () => {
-  test('deploys the built workspace via wrangler', async () => {
+  test('deploys the built workspace to the target environment’s Worker via CLOUDFLARE_ENV', async () => {
     seedMountFiles();
     world.execStdout = 'Deployed to Cloudflare';
 
-    const stdout = await createMonorepo().wrangler('@lightproject/backend', fakeSecret, fakeSecret);
+    const stdout = await createMonorepo().wrangler(
+      '@lightproject/backend',
+      'staging',
+      fakeSecret,
+      fakeSecret,
+    );
 
     expect(stdout).toBe('Deployed to Cloudflare');
+    const container = getLastContainer();
+    expect(container.capturedEnvVariables.get('CLOUDFLARE_ENV')).toBe('staging');
+    expect(container.capturedEnvVariables.get('DEPLOY_REQUESTED_AT')).toMatch(
+      /^\d{4}-\d{2}-\d{2}T/u,
+    );
+    expect(container.capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '--filter',
+      '@lightproject/backend',
+      'wrangler:deploy',
+    ]);
   });
+
+  test.each(['', 'pr', 'dev', 'Production', 'develop;rm -rf /'])(
+    'rejects %j before building',
+    async (environment) => {
+      await expect(
+        createMonorepo().wrangler('@lightproject/backend', environment, fakeSecret, fakeSecret),
+      ).rejects.toThrow(`Invalid environment '${environment}'`);
+    },
+  );
 });

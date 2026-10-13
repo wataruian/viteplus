@@ -17,6 +17,7 @@ export default async function setup(): Promise<() => Promise<void>> {
     local: true,
     logLevel: 'none',
     persist: false,
+    vars: { SKIP_OPENTELEMETRY: 'true' },
   });
 
   globalThis.process.env['WRANGLER_TEST_BASE_URL'] = `http://${worker.address}:${worker.port}`;

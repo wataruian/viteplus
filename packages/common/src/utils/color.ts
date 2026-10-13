@@ -37,7 +37,7 @@ const defaultColor = chalkInstance.white;
 const resetColor = chalkInstance.reset;
 const resetColorAnsiEscapeCode = '\u001B[39m';
 
-const sessionColors = new Map<string, ColorFunction>();
+const requestColors = new Map<string, ColorFunction>();
 let globalColorIndex = 0;
 
 const getRandomColor = (id = '') => {
@@ -48,7 +48,7 @@ const getRandomColor = (id = '') => {
     return defaultColor;
   }
 
-  const cachedColor = sessionColors.get(colorId);
+  const cachedColor = requestColors.get(colorId);
   if (cachedColor !== undefined) {
     return cachedColor;
   }
@@ -56,11 +56,11 @@ const getRandomColor = (id = '') => {
   const color = colors[globalColorIndex];
   globalColorIndex = (globalColorIndex + 1) % colors.length;
 
-  sessionColors.set(colorId, color);
+  requestColors.set(colorId, color);
 
-  if (sessionColors.size > 1000) {
-    const [firstKey] = sessionColors.keys();
-    sessionColors.delete(firstKey);
+  if (requestColors.size > 1000) {
+    const [firstKey] = requestColors.keys();
+    requestColors.delete(firstKey);
   }
 
   return color;
@@ -113,8 +113,8 @@ export {
   getRandomColor,
   normalizedChalkLevel,
   parsedLevel,
+  requestColors,
   resetColor,
   resetColorAnsiEscapeCode,
-  sessionColors,
 };
 export type { ColorFunction };

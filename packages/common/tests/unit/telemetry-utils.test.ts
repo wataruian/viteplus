@@ -48,6 +48,17 @@ describe('tracer', () => {
   });
 });
 
+describe('getServiceInstanceId', () => {
+  test('generates a UUID on first use and returns the same one afterwards', async () => {
+    const { getServiceInstanceId } = await importFresh('instance-service');
+
+    const first = getServiceInstanceId();
+
+    expect(first).toMatch(/^[0-9a-f-]{36}$/u);
+    expect(getServiceInstanceId()).toBe(first);
+  });
+});
+
 describe('getMeter', () => {
   test('returns a meter using OTEL_SERVICE_NAME when set', async () => {
     const { getMeter } = await importFresh('my-meter-service');

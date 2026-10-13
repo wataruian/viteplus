@@ -127,7 +127,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
   };
 
   describe('safe environments allow requests without any IP allowlisting', () => {
-    test.each(['local', 'test', 'qa-random-unrecognized'])('ENV=%s is safe', async (env) => {
+    test.each(['local', 'test'])('ENV=%s is safe', async (env) => {
       const { httpRes, trpcRes } = await requestBoth(
         { ENV: env },
         { 'cf-connecting-ip': unknownIp },
@@ -146,8 +146,8 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     });
   });
 
-  describe('develop/staging/production are NOT auto-safe', () => {
-    test.each(['develop', 'staging', 'production'])(
+  describe('develop/staging/production and unrecognized ENVs are NOT auto-safe', () => {
+    test.each(['develop', 'staging', 'production', 'qa-random-unrecognized'])(
       'ENV=%s blocks an unallowlisted IP',
       async (env) => {
         const { httpRes, trpcRes } = await requestBoth(
@@ -164,6 +164,26 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
         expect(parsed.message).toBe('Access denied.');
       },
     );
+  });
+
+  test('the health check stays reachable from an unallowlisted IP in production', async () => {
+    const app = await importApp({ ENV: 'production' });
+    const headers = { 'cf-connecting-ip': unknownIp };
+
+    const healthRes = await app.request('/', { headers });
+    const apiRes = await app.request('/api', { headers });
+
+    expect(healthRes.status).toBe(successCode);
+    expect(await healthRes.json()).toStrictEqual({ status: 'OK' });
+    expect(apiRes.status).toBe(failureCode);
+  });
+
+  test('BLOCK_ALL_IPS also blocks the health check', async () => {
+    const app = await importApp({ BLOCK_ALL_IPS: 'true', ENV: 'production' });
+
+    const res = await app.request('/', { headers: { 'cf-connecting-ip': unknownIp } });
+
+    expect(res.status).toBe(failureCode);
   });
 
   test.each(['x-forwarded-for', 'x-real-ip'])(

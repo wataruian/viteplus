@@ -1,4 +1,4 @@
-import { isNonNullObject } from '../validators/validate';
+import { isRecord } from '../validators/validate';
 
 const assertType = <T>(value: unknown, predicate: (val: unknown) => val is T): T => {
   if (predicate(value)) {
@@ -12,7 +12,7 @@ const createTypeGuard =
     [K in keyof T]: (val: unknown) => val is T[K];
   }): ((val: unknown) => val is T) =>
   (val: unknown): val is T => {
-    if (!isNonNullObject(val)) {
+    if (!isRecord(val)) {
       return false;
     }
 
@@ -38,9 +38,7 @@ const deepMerge = (...objects: Record<string, unknown>[]): Record<string, unknow
       const resultValue = result[key];
 
       result[key] =
-        isNonNullObject(value) && isNonNullObject(resultValue)
-          ? deepMerge(resultValue, value)
-          : value;
+        isRecord(value) && isRecord(resultValue) ? deepMerge(resultValue, value) : value;
     }
   }
 

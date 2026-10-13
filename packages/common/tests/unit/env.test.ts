@@ -18,7 +18,6 @@ import {
   isNode,
   isNodeEnvTest,
   isNonProduction,
-  isOtherEnvironment,
   isProduction,
   isStaging,
   isTest,
@@ -261,24 +260,6 @@ describe('Environment Helpers', () => {
       }
       vi.stubEnv('ENV', 'production');
       expect(isNonProduction()).toBe(false);
-    });
-  });
-
-  describe('isOtherEnvironment', () => {
-    test('is true for an unrecognized ENV value', () => {
-      vi.stubEnv('ENV', 'qa-custom');
-      expect(isOtherEnvironment()).toBe(true);
-    });
-
-    test('is false for a recognized ENV value', () => {
-      vi.stubEnv('ENV', 'production');
-      expect(isOtherEnvironment()).toBe(false);
-    });
-
-    test('matches against a specific expected environment name when provided', () => {
-      vi.stubEnv('ENV', 'qa-custom');
-      expect(isOtherEnvironment('qa-custom')).toBe(true);
-      expect(isOtherEnvironment('qa-different')).toBe(false);
     });
   });
 });

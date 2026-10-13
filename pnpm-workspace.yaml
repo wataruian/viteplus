@@ -25,17 +25,17 @@ catalog:
   '@iconify-json/ph': npm:@iconify-json/ph@1.2.2
   '@iconify/types': npm:@iconify/types@2.0.0
   '@opentelemetry/api': npm:@opentelemetry/api@1.9.1
-  '@opentelemetry/api-logs': npm:@opentelemetry/api-logs@0.221.0
-  '@opentelemetry/exporter-logs-otlp-http': npm:@opentelemetry/exporter-logs-otlp-http@0.221.0
-  '@opentelemetry/exporter-metrics-otlp-http': npm:@opentelemetry/exporter-metrics-otlp-http@0.221.0
-  '@opentelemetry/exporter-prometheus': npm:@opentelemetry/exporter-prometheus@0.221.0
-  '@opentelemetry/exporter-trace-otlp-http': npm:@opentelemetry/exporter-trace-otlp-http@0.221.0
-  '@opentelemetry/instrumentation': npm:@opentelemetry/instrumentation@0.221.0
-  '@opentelemetry/instrumentation-fetch': npm:@opentelemetry/instrumentation-fetch@0.221.0
-  '@opentelemetry/resources': npm:@opentelemetry/resources@2.10.0
-  '@opentelemetry/sdk-logs': npm:@opentelemetry/sdk-logs@0.221.0
-  '@opentelemetry/sdk-metrics': npm:@opentelemetry/sdk-metrics@2.10.0
-  '@opentelemetry/sdk-trace-web': npm:@opentelemetry/sdk-trace-web@2.10.0
+  '@opentelemetry/api-logs': npm:@opentelemetry/api-logs@0.222.0
+  '@opentelemetry/exporter-logs-otlp-http': npm:@opentelemetry/exporter-logs-otlp-http@0.222.0
+  '@opentelemetry/exporter-metrics-otlp-http': npm:@opentelemetry/exporter-metrics-otlp-http@0.222.0
+  '@opentelemetry/exporter-prometheus': npm:@opentelemetry/exporter-prometheus@0.222.0
+  '@opentelemetry/exporter-trace-otlp-http': npm:@opentelemetry/exporter-trace-otlp-http@0.222.0
+  '@opentelemetry/instrumentation': npm:@opentelemetry/instrumentation@0.222.0
+  '@opentelemetry/instrumentation-fetch': npm:@opentelemetry/instrumentation-fetch@0.222.0
+  '@opentelemetry/resources': npm:@opentelemetry/resources@2.11.0
+  '@opentelemetry/sdk-logs': npm:@opentelemetry/sdk-logs@0.222.0
+  '@opentelemetry/sdk-metrics': npm:@opentelemetry/sdk-metrics@2.11.0
+  '@opentelemetry/sdk-trace-web': npm:@opentelemetry/sdk-trace-web@2.11.0
   '@opentelemetry/semantic-conventions': npm:@opentelemetry/semantic-conventions@1.43.0
   '@playwright/test': npm:@playwright/test@1.63.0
   '@storybook/addon-docs': npm:@storybook/addon-docs@10.6.0
@@ -52,7 +52,7 @@ catalog:
   '@unocss/transformer-directives': npm:@unocss/transformer-directives@66.6.7
   '@unocss/transformer-variant-group': npm:@unocss/transformer-variant-group@66.6.7
   '@vitejs/plugin-react': npm:@vitejs/plugin-react@6.0.1
-  '@vitest/coverage-v8': npm:@vitest/coverage-v8@5.0.1
+  '@vitest/coverage-v8': npm:@vitest/coverage-v8@5.0.3
   axios: npm:axios@1.16.0
   bumpp: npm:bumpp@11.0.1
   chalk: npm:chalk@5.6.2
@@ -82,9 +82,9 @@ catalog:
   turbo: npm:turbo@2.10.12
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
-  vite: npm:@voidzero-dev/vite-plus-core@1.0.0
-  vite-plus: npm:vite-plus@1.0.0
-  vitest: npm:vitest@5.0.1
+  vite: npm:@voidzero-dev/vite-plus-core@1.1.0
+  vite-plus: npm:vite-plus@1.1.0
+  vitest: npm:vitest@5.0.3
   vscode-json-languageservice: npm:vscode-json-languageservice@5.7.2
   vscode-languageserver-textdocument: npm:vscode-languageserver-textdocument@1.0.15
   vscode-markdown-languageservice: npm:vscode-markdown-languageservice@0.5.0
@@ -94,6 +94,9 @@ catalog:
 overrides:
   vite@*: 'catalog:'
   vitest@*: 'catalog:'
+  undici@>=7.28.0 <7.29.1: 7.29.1
+  sharp@<0.35.5: 0.35.5
+  source-map-js@>=1.0.0 <1.2.2: 1.2.2
 
 peerDependencyRules:
   allowAny:
@@ -102,15 +105,3 @@ peerDependencyRules:
   allowedVersions:
     vite: '*'
     vitest: '*'
-
-minimumReleaseAgeExclude:
-  - '@voidzero-dev/vite-plus-core@1.0.0'
-  - '@voidzero-dev/vite-plus-darwin-arm64@1.0.0'
-  - '@voidzero-dev/vite-plus-darwin-x64@1.0.0'
-  - '@voidzero-dev/vite-plus-linux-arm64-gnu@1.0.0'
-  - '@voidzero-dev/vite-plus-linux-arm64-musl@1.0.0'
-  - '@voidzero-dev/vite-plus-linux-x64-gnu@1.0.0'
-  - '@voidzero-dev/vite-plus-linux-x64-musl@1.0.0'
-  - '@voidzero-dev/vite-plus-win32-arm64-msvc@1.0.0'
-  - '@voidzero-dev/vite-plus-win32-x64-msvc@1.0.0'
-  - vite-plus@1.0.0

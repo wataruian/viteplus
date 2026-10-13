@@ -1,6 +1,6 @@
 import { logger } from '../logger';
-import { getSessionId, getTraceContext } from '../logger/context';
-import { getTelemetryConfig } from '../utils/telemetry';
+import { getRequestId, getTraceContext } from '../logger/context';
+import { getServiceInstanceId, getTelemetryConfig } from './telemetry';
 
 type AttributeValue = boolean | number | string;
 
@@ -131,6 +131,7 @@ const flushExemplarMetrics = async (): Promise<void> => {
         resource: {
           attributes: toOtlpAttributes({
             'deployment.environment': config.environment,
+            'service.instance.id': getServiceInstanceId(),
             'service.name': config.serviceName,
             'service.version': config.serviceVersion,
           }),
@@ -176,10 +177,10 @@ const recordGaugeWithExemplar = async (options: GaugeExemplarOptions): Promise<v
 
   const traceContext = getTraceContext();
   const timeUnixNano = `${BigInt(Date.now()) * 1_000_000n}`;
-  const sessionId = getSessionId();
+  const requestId = getRequestId();
 
   const exemplarAttributes = {
-    ...(sessionId === 'no-id' ? {} : { 'session.id': sessionId }),
+    ...(requestId === 'no-id' ? {} : { 'request.id': requestId }),
     ...options.exemplarAttributes,
   };
 

@@ -84,4 +84,17 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     expect(res.headers.get('access-control-allow-origin')).toBe(extraOrigin);
     expect(res.status).toBe(expectedCode);
   });
+
+  test('ADDITIONAL_CORS_ORIGINS entries are trimmed and empty entries ignored', async () => {
+    const secondOrigin = 'https://second.example.com';
+    const app = await importApp({
+      ADDITIONAL_CORS_ORIGINS: ` https://first.example.com , ${secondOrigin} ,`,
+      ENV: 'local',
+    });
+
+    const res = await app.request('/api/test/hello', { headers: { Origin: secondOrigin } });
+
+    expect(res.headers.get('access-control-allow-origin')).toBe(secondOrigin);
+    expect(res.headers.get('access-control-expose-headers')).toBe('X-Request-Id');
+  });
 });

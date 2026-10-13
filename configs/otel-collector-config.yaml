@@ -27,6 +27,52 @@ receivers:
         - '*'
 
 processors:
+  transform/redact-urls:
+    error_mode: propagate
+    trace_statements:
+      - context: resource
+        statements:
+          - replace_all_patterns(resource.attributes, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@")
+          - replace_all_patterns(resource.attributes, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED")
+          - replace_all_patterns(resource.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}")
+          - replace_all_patterns(resource.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22")
+      - context: span
+        statements:
+          - replace_all_patterns(span.attributes, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@")
+          - replace_all_patterns(span.attributes, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED")
+          - replace_all_patterns(span.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}")
+          - replace_all_patterns(span.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22")
+      - context: spanevent
+        statements:
+          - replace_all_patterns(spanevent.attributes, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@")
+          - replace_all_patterns(spanevent.attributes, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED")
+          - replace_all_patterns(spanevent.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}")
+          - replace_all_patterns(spanevent.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22")
+    log_statements:
+      - context: resource
+        statements:
+          - replace_all_patterns(resource.attributes, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@")
+          - replace_all_patterns(resource.attributes, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED")
+          - replace_all_patterns(resource.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}")
+          - replace_all_patterns(resource.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22")
+      - context: log
+        statements:
+          - replace_all_patterns(log.attributes, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@")
+          - replace_all_patterns(log.attributes, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED")
+          - replace_all_patterns(log.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}")
+          - replace_all_patterns(log.attributes, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22")
+          - replace_pattern(log.body, "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@") where IsString(log.body)
+          - replace_pattern(log.body, "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED") where IsString(log.body)
+          - replace_pattern(log.body, "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}") where IsString(log.body)
+          - replace_pattern(log.body, "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22") where IsString(log.body)
+          - replace_all_patterns(log.body, "value", "((?:^|[\\s:\"'(=])//)[^/?#,\\s\"'\\\\]*@", "$${1}REDACTED@") where IsMap(log.body)
+          - replace_all_patterns(log.body, "value", "(?i)([?&#][^=&#\\s\"'\\\\]*(?:password|secret|token|api[-_]?key|auth|cookie)[^=&#\\s\"'\\\\]*=)[^&#\\s\"'\\\\]*", "$${1}REDACTED") where IsMap(log.body)
+          - replace_all_patterns(log.body, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*%22)(?:%5[Cc]%[0-9A-Fa-f]{2}|[^%]|%[013-9A-Fa-f][0-9A-Fa-f]|%2[0-13-9A-Fa-f])*(%22)", "$${1}REDACTED$${2}") where IsMap(log.body)
+          - replace_all_patterns(log.body, "value", "(?i)(%22[^%]*(?:password|secret|token|api[-_]?key|auth|cookie)[^%]*%22(?:%3A|:)(?:%20|\\s)*)(?:-?[0-9][0-9.eE+-]*|true|false|null)", "$${1}%22REDACTED%22") where IsMap(log.body)
+
+  deltatocumulative:
+    max_stale: 5m
+
   resource/metrics:
     attributes:
       - key: service_name
@@ -72,6 +118,7 @@ service:
         - prometheusremotewrite
         - debug
       processors:
+        - deltatocumulative
         - resource/metrics
         - batch
       receivers:
@@ -82,6 +129,7 @@ service:
         - otlphttp/loki
         - debug
       processors:
+        - transform/redact-urls
         - batch
       receivers:
         - otlp
@@ -92,6 +140,7 @@ service:
         - otlp/tempo
         - debug
       processors:
+        - transform/redact-urls
         - batch
       receivers:
         - otlp

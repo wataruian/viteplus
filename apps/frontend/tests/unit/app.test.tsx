@@ -1,5 +1,6 @@
 import type { AppRouter } from '@lightproject/backend';
 import type * as CommonLoggerModule from '@lightproject/common/logger';
+import type * as UtilsModule from '@lightproject/common/utils';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { act } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
@@ -14,7 +15,7 @@ const parsedLogEntrySchema = z.object({
   context: z.record(z.string(), z.unknown()).optional(),
   level: z.string(),
   message: z.string(),
-  sessionId: z.string().optional(),
+  requestId: z.string().optional(),
   timestamp: z.string(),
 });
 
@@ -24,7 +25,7 @@ const trpcResultSchema = z.object({
   code: z.number(),
   data: z.object({ reply: z.string() }),
   message: z.string(),
-  sessionId: z.string(),
+  requestId: z.string(),
   success: z.boolean(),
 });
 
@@ -76,7 +77,7 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
 
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
 
-  const { ModeProvider, SessionProvider, ThemeProvider } =
+  const { ModeProvider, RequestIdProvider, ThemeProvider } =
     await import('@lightproject/design-system/context');
   const { default: App } = await import('../../src/app');
 
@@ -86,13 +87,13 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
 
   await act(async () => {
     root.render(
-      <SessionProvider>
+      <RequestIdProvider>
         <ThemeProvider>
           <ModeProvider>
             <App />
           </ModeProvider>
         </ThemeProvider>
-      </SessionProvider>,
+      </RequestIdProvider>,
     );
     await Promise.resolve();
   });
@@ -153,7 +154,7 @@ const assertRenderedHtml = (container: HTMLDivElement) => {
 
 const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   const startEntry = findEntry(entries, 'Frontend Start');
-  expect(startEntry.sessionId).toMatch(uuidPattern);
+  expect(startEntry.requestId).toMatch(uuidPattern);
   expect(startEntry.context?.['platform']).toEqual(expect.any(String));
   expect(startEntry.context?.['timestamp']).toMatch(isoTimestampPattern);
 
@@ -163,7 +164,7 @@ const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   expect(result.code).toBe(200);
   expect(result.message).toBe('Success');
   expect(result.data.reply).toBe('Hello Test!');
-  expect(result.sessionId).toEqual(expect.any(String));
+  expect(result.requestId).toEqual(expect.any(String));
 };
 
 describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
@@ -224,7 +225,7 @@ const successfulTrpcResult = {
   code: 200,
   data: { reply: 'Hello Test!' },
   message: 'Success',
-  sessionId: 'test-session',
+  requestId: 'test-request',
   success: true,
 };
 
@@ -261,7 +262,7 @@ const renderAppWithMocks = async (options: {
 
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
 
-  const { ModeProvider, SessionProvider, ThemeProvider } =
+  const { ModeProvider, RequestIdProvider, ThemeProvider } =
     await import('@lightproject/design-system/context');
   const { default: App } = await import('../../src/app');
 
@@ -271,13 +272,13 @@ const renderAppWithMocks = async (options: {
 
   await act(async () => {
     root.render(
-      <SessionProvider>
+      <RequestIdProvider>
         <ThemeProvider>
           <ModeProvider>
             <App />
           </ModeProvider>
         </ThemeProvider>
-      </SessionProvider>,
+      </RequestIdProvider>,
     );
     await Promise.resolve();
   });
@@ -372,7 +373,8 @@ describe('App error handling', () => {
   );
 
   test('still completes initialization when recording the tRPC exemplar metric fails', async () => {
-    vi.doMock('@lightproject/common/server', () => ({
+    vi.doMock('@lightproject/common/utils', async (importOriginal) => ({
+      ...(await importOriginal<typeof UtilsModule>()),
       recordGaugeWithExemplar: vi.fn().mockRejectedValue(new Error('otlp unreachable')),
     }));
 
@@ -400,7 +402,7 @@ describe('App error handling', () => {
     } finally {
       globalThis.process.off('unhandledRejection', handleUnhandledRejection);
       cleanup();
-      vi.doUnmock('@lightproject/common/server');
+      vi.doUnmock('@lightproject/common/utils');
     }
   });
 
@@ -420,7 +422,7 @@ describe('App error handling', () => {
       );
       return {
         ...actual,
-        startSpanWithSession: () => {
+        startSpanWithRequestId: () => {
           throw new Error('failed to start span');
         },
       };
@@ -448,7 +450,7 @@ describe('App error handling', () => {
     };
     globalThis.process.on('unhandledRejection', handleUnhandledRejection);
 
-    const { ModeProvider, SessionProvider, ThemeProvider } =
+    const { ModeProvider, RequestIdProvider, ThemeProvider } =
       await import('@lightproject/design-system/context');
     const { default: App } = await import('../../src/app');
 
@@ -458,13 +460,13 @@ describe('App error handling', () => {
 
     await act(async () => {
       root.render(
-        <SessionProvider>
+        <RequestIdProvider>
           <ThemeProvider>
             <ModeProvider>
               <App />
             </ModeProvider>
           </ThemeProvider>
-        </SessionProvider>,
+        </RequestIdProvider>,
       );
       await new Promise((resolve) => {
         globalThis.setTimeout(resolve, 0);

@@ -9,7 +9,7 @@ import {
 
 import {
   CURL_IMAGE,
-  DOCKER_CLI_VERSION,
+  DOCKER_CLI_IMAGE,
   SONAR_LOCAL_DOCKER_NETWORK,
   SONAR_SCANNER_IMAGE,
   SONAR_SCANNER_USER,
@@ -125,7 +125,7 @@ const localSonarRunner = (
 
   const container = dag
     .container()
-    .from(DOCKER_CLI_VERSION)
+    .from(DOCKER_CLI_IMAGE)
     .withUnixSocket('/var/run/docker.sock', dockerSocket)
     .withNewFile('/poll.sh', pollScript)
     .withWorkdir('/usr/src')

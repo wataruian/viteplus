@@ -1,4 +1,4 @@
-import { type Oklch, clampChroma, converter, parse } from 'culori';
+import { type Color, type Oklch, type Rgb, clampChroma, converter, parse } from 'culori';
 
 import { classPrefix } from './helpers';
 
@@ -72,8 +72,8 @@ const lightnessStops: Record<ColorScale, number> = {
 
 // ─── OKLCH converters ─────────────────────────────────────────────────────────
 
-const toOklch = converter('oklch');
-const toRgb = converter('rgb');
+const toOklch: (color: Color) => Oklch = converter('oklch');
+const toRgb: (color: Color) => Rgb = converter('rgb');
 
 const parseToOklch = (color: string): Oklch => {
   const parsed = parse(color);

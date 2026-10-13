@@ -21,7 +21,8 @@ used.
 ## `packages/common/src/server/telemetry.ts` is shared by both backend runtimes
 
 `src/app.ts` (the one Fetch-API app used by both `runtimes/node.ts` and `runtimes/edge.ts`) calls
-`initializeTelemetry`/`flushTelemetry` unconditionally, so this module must run on Cloudflare
+`initializeTelemetry` (or, with `SKIP_OPENTELEMETRY=true`, only `initializeContextPropagation`) and
+`flushTelemetry` (a no-op when uninitialized) on both runtimes, so this module must run on Cloudflare
 Workers with **no** `nodejs_compat` flag (`wrangler.toml` leaves it commented out on purpose — see
 "Review Checklist"/troubleshooting notes for why it should stay off unless something new needs
 it). It provisions the OTel SDK (trace/metric/log providers) using only fetch-based OTLP
@@ -41,7 +42,7 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
 
 - `globalThis.crypto.randomUUID()` is used instead of `node:crypto` in
   `packages/common/src/utils/text.ts` (`generateUuid`) and
-  `packages/design-system/src/context/session-provider.tsx`.
+  `packages/design-system/src/context/request-id-provider.tsx`.
 - No `axios`, `node-fetch`, or `XMLHttpRequest` usage anywhere in the codebase — `fetch` is used
   throughout.
 
@@ -66,7 +67,7 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
     process has normal filesystem permissions.
   - Caveat found only under Deno: Deno denies filesystem access by default (`--allow-read`/
     `--allow-write` opt in per path). `pathExists`'s `try { fs.existsSync(...) } catch { return
-false }` swallows _any_ thrown error, so under Deno's default sandbox a
+    false }` swallows _any_ thrown error, so under Deno's default sandbox a
     `Deno.errors.PermissionDenied` is indistinguishable from "path does not exist" — every
     function built on `pathExists` (including `getProjectRoot`, which walks up looking for
     `.git`) silently reports paths as missing instead of surfacing a permission error. Node and
@@ -74,7 +75,7 @@ false }` swallows _any_ thrown error, so under Deno's default sandbox a
     this repo today (Deno isn't a runtime target here; `vp` is Node-only tooling) — noted in case
     `./node` code is ever run under Deno.
   - Added 2026-09-06: a fail-fast guard at the top of the module — `if (typeof
-globalThis.process.versions.node !== 'string') throw new TypeError(...)`. This is not the
+    globalThis.process.versions.node !== 'string') throw new TypeError(...)`. This is not the
     isomorphic-surface dynamic-import guard described below (the static `node:fs`/`node:path`/
     `node:url` imports are untouched, and this file was already excluded from the isomorphic
     barrel, so a normal browser/Workers build never resolves it in the first place). It only
@@ -122,20 +123,23 @@ about running it outside Node.
   (including the browser bundle) to resolve it. (The file that used to demonstrate the dynamic
   import — `logger/rotation.ts`, log-file rotation — was removed on this branch along with the
   rotation feature; `utils/base.ts` is the current example of the guard style.)
-- `./node` and `./server` are **Node-only subpaths**, deliberately **not** re-exported from the
-  root barrel (`src/index.ts`) or from `./utils`. `apps/frontend` never imports them.
-- Corollary: `package.json`'s `"browser"` field only needs to stub Node builtins that some
-  _isomorphic-surface_ module (or its dependencies) still statically imports. If you move a
-  Node-only module out of the isomorphic surface, check whether its builtin(s) can be dropped
-  from that `"browser"` map too (verify with a real `vp run build` in `apps/frontend`, not just
-  by inspection — a transitive dependency of an isomorphic module can need the same stub).
-- History: `directory.ts` used to live in `./utils` (the isomorphic barrel) with static
-  `node:fs`/`node:path`/`node:url` imports, forcing `package.json`'s `"browser"` field to stub
-  all three — and it had zero consumers anywhere in the monorepo. Moved to `./node` on
-  2026-08-31; the now-unnecessary `node:fs`/`node:path`/`node:url` browser stubs were removed
-  (verified via a frontend build). `node:async_hooks`/`node:crypto`/`node:util` stubs were left
-  in place — no source file imports them directly, so they're presumably needed by a transitive
-  dependency; don't remove without verifying via a real frontend build.
+- `./browser` is **browser-only** (Grafana Faro RUM — `initializeRum`, the Faro log sink). Only
+  `apps/frontend` imports it; it is not re-exported from the root barrel, so server bundles never
+  pull in the Faro SDK.
+- `./server` is **backend-only but runtime-agnostic**: OpenTelemetry SDK setup, `/metrics`,
+  flush/shutdown. It runs on Node **and** in the Cloudflare Worker (`src/runtimes/edge.ts`, no
+  `nodejs_compat`), so it must not statically import `node:*` either. Not re-exported from the root
+  barrel; `apps/frontend` never imports it.
+- `./node` is the only **Node-only** subpath (real filesystem I/O in `directory.ts`, static
+  `node:fs`/`node:path`/`node:url`). Never imported by the Worker or the frontend.
+- There is **no** `package.json` `"browser"` stub map (in `packages/common` or `apps/frontend`) and
+  no Node-builtin `external` list in the frontend build: since `./server` and `./browser` were split
+  out, the frontend builds without either (verified with a real `vp build`). If a build ever needs
+  one again, the real fix is moving the offending module out of the isomorphic surface.
+- History: `directory.ts` used to live in `./utils` with static `node:fs`/`node:path`/`node:url`
+  imports (forcing browser stubs) and zero consumers; moved to `./node` on 2026-08-31. Exemplar
+  metrics later moved from `./server` to `./utils` (isomorphic) and RUM from `./utils` to
+  `./browser` (2026-09-29), which removed the remaining stubs/externals.
 
 ## `packages/design-system`'s isomorphic-vs-Node split
 

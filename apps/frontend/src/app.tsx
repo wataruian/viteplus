@@ -1,7 +1,6 @@
-import { logger, setSessionId, startSpanWithSession } from '@lightproject/common/logger';
-import { recordGaugeWithExemplar } from '@lightproject/common/server';
-import { runWithSpan } from '@lightproject/common/utils';
-import { useSession } from '@lightproject/design-system/context';
+import { logger, setRequestId, startSpanWithRequestId } from '@lightproject/common/logger';
+import { recordGaugeWithExemplar, runWithSpan } from '@lightproject/common/utils';
+import { useRequestId } from '@lightproject/design-system/context';
 import { type RefCallback, useEffect, useRef } from 'react';
 
 import heroImg from './assets/hero.png';
@@ -14,7 +13,7 @@ import { trpcClient } from './providers/trpc-provider';
 import './style.css';
 
 const App = () => {
-  const { sessionId } = useSession();
+  const { requestId } = useRequestId();
   const counterCleanupRef = useRef<(() => void) | undefined>(undefined);
 
   const counterRef: RefCallback<HTMLButtonElement> = (element) => {
@@ -27,15 +26,15 @@ const App = () => {
   };
 
   useEffect(() => {
-    setSessionId(sessionId);
+    setRequestId(requestId);
     return () => {
-      setSessionId(undefined);
+      setRequestId(undefined);
     };
-  }, [sessionId]);
+  }, [requestId]);
 
   useEffect(() => {
     const run = async () => {
-      const span = startSpanWithSession('app.initialize', { root: true });
+      const span = startSpanWithRequestId('app.initialize', { root: true });
 
       try {
         const trpcCallStart = globalThis.performance.now();
@@ -107,7 +106,7 @@ const App = () => {
     run().catch(() => {
       // Errors already logged and recorded in span
     });
-  }, [sessionId]);
+  }, [requestId]);
 
   return (
     <>

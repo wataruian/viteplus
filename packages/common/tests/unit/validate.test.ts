@@ -3,8 +3,8 @@ import { describe, expect, test } from 'vite-plus/test';
 import {
   checkDuplicateExports,
   isCallable,
+  isErrorLike,
   isModuleExports,
-  isNonNullObject,
   isPlainObject,
   isRecord,
   isRecordArray,
@@ -72,25 +72,6 @@ describe('isCallable', () => {
   });
 });
 
-describe('isNonNullObject', () => {
-  test('returns true for a plain object', () => {
-    expect(isNonNullObject({ a: 1 })).toBe(true);
-  });
-
-  test('returns false for null', () => {
-    expect(isNonNullObject(null)).toBe(false);
-  });
-
-  test('returns false for arrays', () => {
-    expect(isNonNullObject([1, 2])).toBe(false);
-  });
-
-  test('returns false for primitives', () => {
-    expect(isNonNullObject('str')).toBe(false);
-    expect(isNonNullObject(42)).toBe(false);
-  });
-});
-
 describe('isModuleExports', () => {
   test('returns true for a plain object', () => {
     expect(isModuleExports({ foo: 'bar' })).toBe(true);
@@ -137,5 +118,20 @@ describe('checkDuplicateExports', () => {
         'moduleA.nested': { shared: 'value-b' },
       });
     }).toThrow(/moduleA\.nested\.shared/u);
+  });
+});
+
+describe('isErrorLike', () => {
+  test('recognises native errors and errors branded as such from another realm', () => {
+    const foreignBase: object = {};
+    const foreign = Object.defineProperty(foreignBase, Symbol.toStringTag, { value: 'Error' });
+
+    expect(isErrorLike(new TypeError('x'))).toBe(true);
+    expect(isErrorLike(foreign)).toBe(true);
+  });
+
+  test('rejects other objects', () => {
+    expect(isErrorLike({ message: 'not an error' })).toBe(false);
+    expect(isErrorLike([])).toBe(false);
   });
 });

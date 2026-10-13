@@ -1,5 +1,6 @@
+import { faro, flushRum, initializeRum } from '@lightproject/common/browser';
 import { startFakeOtelCollector } from '@lightproject/common/testing';
-import { faro, flushRum, getMeter, initializeRum } from '@lightproject/common/utils';
+import { getMeter } from '@lightproject/common/utils';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
 

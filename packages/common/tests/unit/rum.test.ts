@@ -1,28 +1,44 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-import type * as RumModule from '../../src/utils/rum';
-import { flushRum, registerLifecycleFlush } from '../../src/utils/rum';
+import type * as RumModule from '../../src/browser/rum';
+import {
+  type FaroLogSinkApi,
+  createFaroLogSink,
+  flushRum,
+  registerLifecycleFlush,
+} from '../../src/browser/rum';
+import type { BrowserLogSink, LogEntry } from '../../src/logger';
 
 const {
   flushExemplarMetricsMock,
   forceFlushMock,
   initializeFaroMock,
+  registerBrowserLogSinkMock,
   resourceFromAttributesMock,
   setGlobalMeterProviderMock,
   setTelemetryConfigMock,
+  otlpMetricExporterMock,
 } = vi.hoisted(() => ({
   flushExemplarMetricsMock: vi.fn().mockResolvedValue(undefined),
   forceFlushMock: vi.fn().mockResolvedValue(undefined),
   initializeFaroMock: vi.fn(() => ({ initializedFaro: true })),
+  otlpMetricExporterMock:
+    vi.fn<(options: { temporalityPreference?: number; url: string }) => void>(),
+  registerBrowserLogSinkMock: vi.fn<(sink: BrowserLogSink | undefined) => void>(),
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   setGlobalMeterProviderMock: vi.fn(),
   setTelemetryConfigMock: vi.fn(),
 }));
 
 vi.mock('@grafana/faro-web-sdk', () => ({
+  LogLevel: { DEBUG: 'debug', ERROR: 'error', INFO: 'info', WARN: 'warn' },
   faro: { staticFaroExport: true },
   getWebInstrumentations: vi.fn(() => ['web-instrumentation']),
   initializeFaro: initializeFaroMock,
+}));
+
+vi.mock('../../src/logger', () => ({
+  registerBrowserLogSink: registerBrowserLogSinkMock,
 }));
 
 vi.mock('@grafana/faro-web-tracing', () => ({
@@ -34,7 +50,8 @@ vi.mock('@opentelemetry/api', () => ({
 }));
 
 vi.mock('@opentelemetry/exporter-metrics-otlp-http', () => ({
-  OTLPMetricExporter: vi.fn(),
+  AggregationTemporalityPreference: { CUMULATIVE: 0, DELTA: 1, LOWMEMORY: 2 },
+  OTLPMetricExporter: otlpMetricExporterMock,
 }));
 
 vi.mock('@opentelemetry/resources', () => ({
@@ -52,16 +69,17 @@ vi.mock('@opentelemetry/sdk-metrics', () => {
 });
 
 vi.mock('../../src/utils/telemetry', () => ({
+  getServiceInstanceId: () => 'test-instance-id',
   setTelemetryConfig: setTelemetryConfigMock,
 }));
 
-vi.mock('../../src/server/exemplar-metrics', () => ({
+vi.mock('../../src/utils/exemplar-metrics', () => ({
   flushExemplarMetrics: flushExemplarMetricsMock,
 }));
 
 const importFreshRumModule = async (): Promise<typeof RumModule> => {
   vi.resetModules();
-  return await import('../../src/utils/rum');
+  return await import('../../src/browser/rum');
 };
 
 afterEach(() => {
@@ -108,6 +126,7 @@ describe('initializeRum', () => {
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
       'deployment.environment': 'custom-env',
       'deployment.environment.name': 'custom-env',
+      'service.instance.id': 'test-instance-id',
       'service.name': 'my-service',
       'service.version': '9.9.9',
     });
@@ -118,6 +137,9 @@ describe('initializeRum', () => {
       }),
     );
     expect(setGlobalMeterProviderMock).toHaveBeenCalled();
+    expect(otlpMetricExporterMock.mock.calls.at(-1)?.[0]).toMatchObject({
+      temporalityPreference: 1,
+    });
     expect(setTelemetryConfigMock).toHaveBeenCalledWith({
       environment: 'custom-env',
       otlpEndpoint: 'https://otlp.example.com',
@@ -140,6 +162,7 @@ describe('initializeRum', () => {
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
       'deployment.environment': 'staging',
       'deployment.environment.name': 'staging',
+      'service.instance.id': 'test-instance-id',
       'service.name': 'env-service',
       'service.version': '2.0.0',
     });
@@ -171,6 +194,7 @@ describe('initializeRum', () => {
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
       'deployment.environment': 'vite-staging',
       'deployment.environment.name': 'vite-staging',
+      'service.instance.id': 'test-instance-id',
       'service.name': 'vite-service',
       'service.version': '3.0.0',
     });
@@ -201,6 +225,7 @@ describe('initializeRum', () => {
     expect(resourceFromAttributesMock).toHaveBeenCalledWith({
       'deployment.environment': 'local',
       'deployment.environment.name': 'local',
+      'service.instance.id': 'test-instance-id',
       'service.name': '@lightproject/app',
       'service.version': '1.0.0',
     });
@@ -294,5 +319,46 @@ describe('initializeRum', () => {
     expect(unhandledRejectionSpy).not.toHaveBeenCalled();
 
     globalThis.process.off('unhandledRejection', handleUnhandledRejection);
+  });
+});
+
+const createFakeFaro = () => {
+  const api = {
+    pushLog: vi.fn<FaroLogSinkApi['pushLog']>(),
+  } satisfies FaroLogSinkApi;
+  return { api, instance: { api } };
+};
+
+const logEntry: LogEntry = { level: 'warn', message: 'hello', timestamp: 't' };
+
+describe('Faro log sink', () => {
+  test('initializeRum registers a sink backed by the initialized Faro instance', async () => {
+    const rum = await importFreshRumModule();
+    registerBrowserLogSinkMock.mockClear();
+
+    rum.initializeRum();
+
+    expect(registerBrowserLogSinkMock).toHaveBeenCalledTimes(1);
+    const [registeredSink] = registerBrowserLogSinkMock.mock.calls[0] ?? [];
+    expect(typeof registeredSink?.pushLog).toBe('function');
+  });
+
+  test('pushLog forwards the serialized entry at the mapped Faro level, with an explicit span context', () => {
+    const { api, instance } = createFakeFaro();
+
+    createFaroLogSink(instance).pushLog({ ...logEntry, spanId: 'span-1', traceId: 'trace-1' });
+
+    expect(api.pushLog).toHaveBeenCalledWith(
+      [JSON.stringify({ ...logEntry, spanId: 'span-1', traceId: 'trace-1' })],
+      { level: 'warn', spanContext: { spanId: 'span-1', traceId: 'trace-1' } },
+    );
+  });
+
+  test('pushLog omits spanContext when the entry has no trace context', () => {
+    const { api, instance } = createFakeFaro();
+
+    createFaroLogSink(instance).pushLog(logEntry);
+
+    expect(api.pushLog).toHaveBeenCalledWith([JSON.stringify(logEntry)], { level: 'warn' });
   });
 });

@@ -12,11 +12,10 @@ const isRecordArray = (val: unknown): val is Record<string, unknown>[] =>
 const isCallable = (value: unknown): value is (...args: unknown[]) => unknown =>
   typeof value === 'function';
 
-const isNonNullObject = (v: unknown): v is Record<string, unknown> =>
-  v !== null && typeof v === 'object' && !Array.isArray(v);
+const isModuleExports: (value: unknown) => value is ModuleExports = isRecord;
 
-const isModuleExports = (value: unknown): value is ModuleExports =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+const isErrorLike = (value: object): boolean =>
+  value instanceof Error || Object.prototype.toString.call(value) === '[object Error]';
 
 const checkDuplicateExports = (
   modules: Record<string, ModuleExports>,
@@ -61,8 +60,8 @@ const checkDuplicateExports = (
 export {
   checkDuplicateExports,
   isCallable,
+  isErrorLike,
   isModuleExports,
-  isNonNullObject,
   isPlainObject,
   isRecord,
   isRecordArray,

@@ -1,6 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-import * as faroSdk from '@grafana/faro-web-sdk';
 import {
   type Context,
   type ContextManager,
@@ -20,16 +19,17 @@ import {
   vi,
 } from 'vite-plus/test';
 
+import { type BrowserLogSink, registerBrowserLogSink } from '../../src/logger/browser-sink';
 import {
   getColor,
   getRequestContext,
-  getSessionId,
+  getRequestId,
   getTraceContext,
   isRequestContext,
   requestContextStorage,
   runWithRequestContext,
-  setSessionId,
-  startSpanWithSession,
+  setRequestId,
+  startSpanWithRequestId,
 } from '../../src/logger/context';
 import {
   type LogEntry,
@@ -37,8 +37,14 @@ import {
   formatJSON,
   formatPretty,
 } from '../../src/logger/formatters';
-import { Logger, type LoggerOptions, isFaroLogLevel } from '../../src/logger/log';
-import { defaultRedactValue, getRedactFn, redact } from '../../src/logger/redactor';
+import { Logger, type LoggerOptions } from '../../src/logger/log';
+import {
+  defaultRedactValue,
+  getRedactFn,
+  redact,
+  redactUrl,
+  serializeForLog,
+} from '../../src/logger/redactor';
 import { chalkInstance, defaultColor, getRandomColor } from '../../src/utils/color';
 import { tracer } from '../../src/utils/telemetry';
 
@@ -55,6 +61,13 @@ const createAsyncHooksContextManager = (): ContextManager => {
   };
 
   return manager;
+};
+
+const createFakeSink = () => {
+  const sink = {
+    pushLog: vi.fn<BrowserLogSink['pushLog']>(),
+  } satisfies BrowserLogSink;
+  return sink;
 };
 
 const customRedactValue = '[SENSITIVE]';
@@ -86,6 +99,336 @@ const testLoggerCall = ({
   logger[level](message, metadata);
   return getLastConsoleLog();
 };
+
+describe('serializeForLog', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('turns Errors (and their causes) into plain objects that survive JSON', () => {
+    const cause = new Error('db down');
+    const error = Object.assign(new Error('query failed', { cause }), { code: 'E_QUERY' });
+
+    const json = JSON.stringify(serializeForLog({ err: error }));
+
+    expect(json).toContain('"message":"query failed"');
+    expect(json).toContain('"code":"E_QUERY"');
+    expect(json).toContain('"stack":"Error: query failed');
+    expect(json).toContain('"cause":{"message":"db down","name":"Error"');
+  });
+
+  test('recurses into arrays and plain objects; Dates use toJSON, Maps keep their entries', () => {
+    const serialized = serializeForLog({
+      list: [new TypeError('bad')],
+      nested: { at: new Date(0), map: new Map([['password', 'p']]) },
+    });
+
+    expect(serialized).toStrictEqual({
+      list: [expect.objectContaining({ message: 'bad', name: 'TypeError' })],
+      nested: { at: '1970-01-01T00:00:00.000Z', map: { password: 'p' } },
+    });
+  });
+
+  test('omits stack when an Error has none', () => {
+    const error = new Error('stackless');
+    Object.defineProperty(error, 'stack', { value: undefined });
+
+    expect(serializeForLog(error)).toStrictEqual({ message: 'stackless', name: 'Error' });
+  });
+
+  test('serializes an own enumerable `cause` (as tRPC sets it) once, in full', () => {
+    const cause = new Error('db down');
+    const error = new Error('wrapped');
+    Object.defineProperty(error, 'cause', { enumerable: true, value: cause });
+
+    expect(serializeForLog(error)).toMatchObject({
+      cause: { message: 'db down', name: 'Error' },
+      message: 'wrapped',
+    });
+  });
+
+  test('keeps shared (non-circular) references instead of marking them circular', () => {
+    const tags = ['a', 'b'];
+    const inner = new Error('inner');
+
+    const serialized = serializeForLog({
+      a: tags,
+      b: tags,
+      err: new Error('outer', { cause: inner }),
+      root: inner,
+    });
+
+    expect(serialized).toMatchObject({
+      a: ['a', 'b'],
+      b: ['a', 'b'],
+      err: { cause: { message: 'inner' } },
+      root: { message: 'inner' },
+    });
+  });
+
+  test('includes the nested errors of an AggregateError', () => {
+    const serialized = serializeForLog(
+      new AggregateError([new Error('e1'), new Error('e2')], 'many'),
+    );
+
+    expect(serialized).toMatchObject({
+      errors: [{ message: 'e1' }, { message: 'e2' }],
+      message: 'many',
+      name: 'AggregateError',
+    });
+  });
+
+  test('honours an Error subclass toJSON (e.g. to hide PII) instead of dumping its fields', () => {
+    class AppError extends Error {
+      public override readonly name = 'AppError';
+      public readonly user = { email: 'a@b.c', ssn: '123' };
+
+      public toJSON() {
+        return { code: 'E_APP', message: this.message };
+      }
+    }
+
+    expect(serializeForLog(new AppError('nope'))).toStrictEqual({ code: 'E_APP', message: 'nope' });
+  });
+
+  test('keeps an own enumerable `errors` field on non-Aggregate errors (validation details)', () => {
+    class ValidationError extends Error {
+      public override readonly name = 'ValidationError';
+      public readonly errors = [{ field: 'email', message: 'required' }];
+    }
+
+    expect(serializeForLog(new ValidationError('invalid'))).toMatchObject({
+      errors: [{ field: 'email', message: 'required' }],
+      message: 'invalid',
+    });
+  });
+
+  test('recognises errors from another realm (no instanceof Error)', () => {
+    const foreignBase: object = {};
+    Object.setPrototypeOf(foreignBase, null);
+    const foreign = Object.defineProperties(foreignBase, {
+      [Symbol.toStringTag]: { value: 'Error' },
+      message: { value: 'foreign boom' },
+      name: { value: 'Error' },
+      stack: { value: 'Error: foreign boom' },
+    });
+
+    expect(serializeForLog(foreign)).toStrictEqual({
+      message: 'foreign boom',
+      name: 'Error',
+      stack: 'Error: foreign boom',
+    });
+  });
+
+  test('defaults message/name for errors without string fields', () => {
+    const oddBase: object = {};
+    Object.setPrototypeOf(oddBase, null);
+    const odd = Object.defineProperties(oddBase, {
+      [Symbol.toStringTag]: { value: 'Error' },
+    });
+
+    expect(serializeForLog(odd)).toStrictEqual({ message: '', name: 'Error' });
+  });
+
+  test('omits a value whose toJSON returns undefined, as JSON does', () => {
+    expect(serializeForLog({ hidden: { toJSON: () => undefined }, shown: 1 })).toStrictEqual({
+      shown: 1,
+    });
+  });
+
+  test('keeps entries of Set, Headers and URLSearchParams', () => {
+    expect(
+      serializeForLog({
+        headers: new globalThis.Headers({ 'x-trace': 't' }),
+        query: new globalThis.URLSearchParams('page=2'),
+        set: new Set([1, 2]),
+      }),
+    ).toStrictEqual({ headers: { 'x-trace': 't' }, query: { page: '2' }, set: [1, 2] });
+  });
+
+  test('mirrors JSON for primitives: bigint → string, non-finite → null, undefined omitted', () => {
+    expect(
+      serializeForLog({
+        big: 10n,
+        gone: undefined,
+        inf: Number.POSITIVE_INFINITY,
+        nan: Number.NaN,
+      }),
+    ).toStrictEqual({ big: '10', inf: null, nan: null });
+    expect(serializeForLog([undefined, 1])).toStrictEqual([null, 1]);
+    expect(serializeForLog(Symbol('top'))).toBeUndefined();
+  });
+
+  test('redacts credentials and sensitive query values in URL objects', () => {
+    expect(
+      serializeForLog(new globalThis.URL('https://u:pw@x.test/cb?access_token=abc&page=2')),
+    ).toBe('https://REDACTED:REDACTED@x.test/cb?access_token=REDACTED&page=2');
+  });
+
+  test('serializes the fields of an object whose toJSON returns itself', () => {
+    const value = {
+      toJSON() {
+        return this;
+      },
+      v: 1,
+    };
+
+    expect(serializeForLog({ a: value })).toStrictEqual({ a: { v: 1 } });
+  });
+
+  test('keeps every Map entry: object keys by position (never their content), collisions suffixed', () => {
+    expect(
+      serializeForLog(
+        new Map<unknown, string>([
+          [{ a: 1 }, 'x'],
+          [{ b: 2 }, 'y'],
+          [1, 'number'],
+          ['1', 'string'],
+          [Symbol('s'), 'symbol'],
+        ]),
+      ),
+    ).toStrictEqual({
+      1: 'number',
+      '1 (2)': 'string',
+      'Symbol(s)': 'symbol',
+      '[key 1]': 'x',
+      '[key 2]': 'y',
+    });
+  });
+
+  test('a `__proto__` key cannot switch off redaction (top level, nested, or as a Map key)', () => {
+    const body: unknown = JSON.parse(
+      '{"__proto__":{"x":1},"password":"hunter2","nested":{"token":"t0k"}}',
+    );
+
+    const json = JSON.stringify(
+      redact({ body, map: new Map<string, unknown>([['__proto__', { password: 'p2' }]]) }),
+    );
+
+    expect(json).not.toContain('hunter2');
+    expect(json).not.toContain('t0k');
+    expect(json).not.toContain('p2');
+    expect(json).toContain('"[__proto__]":{"x":1}');
+  });
+
+  test('custom redact fields also apply inside URL values', () => {
+    expect(
+      redact({ link: new globalThis.URL('https://h/cb?sessionKey=abc&page=2') }, ['sessionKey']),
+    ).toStrictEqual({
+      link: 'https://h/cb?sessionKey=REDACTED&page=2',
+    });
+  });
+
+  test('never logs secrets held inside object Map keys', () => {
+    const json = JSON.stringify(redact({ m: new Map([[{ password: 'hunter2' }, 1]]) }));
+
+    expect(json).not.toContain('hunter2');
+    expect(json).toContain('[key 1]');
+  });
+
+  test('cuts off very deep nesting instead of overflowing the stack', () => {
+    let deep: Record<string, unknown> = { leaf: true };
+    for (let level = 0; level < 20_000; level += 1) {
+      deep = { next: deep };
+    }
+
+    expect(JSON.stringify(serializeForLog(deep))).toContain('"[Max Depth]"');
+  });
+
+  test('replaces circular references instead of recursing forever', () => {
+    const circular: Record<string, unknown> = { name: 'loop' };
+    circular['self'] = circular;
+    const error = new Error('cyclic');
+    Object.assign(error, { self: error });
+
+    expect(serializeForLog(circular)).toStrictEqual({ name: 'loop', self: '[Circular]' });
+    expect(serializeForLog(error)).toMatchObject({ message: 'cyclic', self: '[Circular]' });
+  });
+
+  test('logs an Error passed as metadata with its message and stack (not `{}`)', () => {
+    const output = testLoggerCall({
+      level: 'error',
+      message: 'failed',
+      metadata: { err: new Error('boom') },
+      options: { mode: 'json' },
+    });
+
+    expect(output).toContain('"err":{"message":"boom","name":"Error","stack":"Error: boom');
+  });
+});
+
+describe('redactUrl', () => {
+  test('masks sensitive query values (case-insensitively), leaving every other byte as-is', () => {
+    expect(redactUrl('https://x.test/cb?q=a%20b&flag&Access_Token=abc&page=2')).toBe(
+      'https://x.test/cb?q=a%20b&flag&Access_Token=REDACTED&page=2',
+    );
+  });
+
+  test('masks userinfo credentials (with or without a password, incl. protocol-relative URLs)', () => {
+    expect(redactUrl('https://user:pass@x.test/')).toBe('https://REDACTED:REDACTED@x.test/');
+    expect(redactUrl('//user:pass@x.test/a')).toBe('//REDACTED:REDACTED@x.test/a');
+    expect(redactUrl('https://user:p@ss@host/x')).toBe('https://REDACTED:REDACTED@host/x');
+    expect(redactUrl('https://x.test/users/me@example')).toBe('https://x.test/users/me@example');
+    expect(redactUrl('https://apikey@x.test/a')).toBe('https://REDACTED@x.test/a');
+  });
+
+  test('redacts relative URLs too', () => {
+    expect(redactUrl('/cb?token=abc&page=2')).toBe('/cb?token=REDACTED&page=2');
+  });
+
+  test('redacts sensitive params in the fragment (e.g. OAuth implicit flow)', () => {
+    expect(redactUrl('https://x.test/a?x=1#access_token=abc&state=s')).toBe(
+      'https://x.test/a?x=1#access_token=REDACTED&state=s',
+    );
+    expect(redactUrl('https://x.test/a#section-2')).toBe('https://x.test/a#section-2');
+  });
+
+  test("redacts sensitive keys inside a JSON-valued param (tRPC's `input`)", () => {
+    const input = encodeURIComponent(
+      JSON.stringify({ 0: { json: { password: 'hunter2', token: 'abc', user: 'al' } } }),
+    );
+
+    const redacted = redactUrl(`http://localhost:3000/trpc/auth.login?batch=1&input=${input}`);
+
+    expect(decodeURIComponent(redacted)).toBe(
+      'http://localhost:3000/trpc/auth.login?batch=1&input={"0":{"json":{"password":"REDACTED","token":"REDACTED","user":"al"}}}',
+    );
+  });
+
+  test.each([
+    { label: 'leading whitespace', raw: '%20%7B%22password%22%3A%22hunter2%22%7D' },
+    { label: 'a leading newline', raw: '%0A%7B%22password%22%3A%22hunter2%22%7D' },
+    { label: 'a stray %', raw: '%7B%22password%22%3A%22hunter2%22%2C%22p%22%3A%22100%%22%7D' },
+    { label: 'unencoded JSON', raw: '{"password":"hunter2"}' },
+    { label: '+ as space', raw: '%7B%22password%22%3A+%22hunter2%22%7D' },
+  ])('redacts JSON params the way the server decodes them ($label)', ({ raw }) => {
+    expect(redactUrl(`/trpc/x?input=${raw}`)).not.toContain('hunter2');
+  });
+
+  test('never throws on extremely deep JSON params (fails closed instead)', () => {
+    const deep = `${'['.repeat(20_000)}${']'.repeat(20_000)}`;
+
+    expect(() => redactUrl(`/trpc/x?input=${encodeURIComponent(deep)}`)).not.toThrow();
+  });
+
+  test('leaves non-sensitive JSON params, non-JSON values and bad encodings untouched', () => {
+    const input = encodeURIComponent(JSON.stringify({ 0: { json: { user: 'al' } } }));
+    const urls = [
+      `http://localhost/trpc/a?batch=1&input=${input}`,
+      'https://x.test/a?data=%7Bnot-json&page=2',
+      'https://x.test/a?q=%E0%A4%A&page=2',
+      'https://x.test/a?page=2',
+    ];
+
+    for (const url of urls) {
+      expect(redactUrl(url)).toBe(url);
+    }
+  });
+});
 
 describe('Logger Redaction', () => {
   test.each([
@@ -147,41 +490,121 @@ describe('Logger Redaction', () => {
     expect(redact(undefined)).toBeUndefined();
   });
 
-  test('should fall back to a shallow copy (and still redact) when structuredClone cannot clone the value', () => {
-    const marker = Symbol('unclonable');
-    const original = { marker, password: 'somepassword' };
-    const result = redact(original);
+  test('drops values JSON cannot represent (symbols) and still redacts', () => {
+    expect(redact({ marker: Symbol('unclonable'), password: 'somepassword' })).toStrictEqual({
+      password: defaultRedactValue,
+    });
+  });
 
-    if (
-      typeof result !== 'object' ||
-      result === null ||
-      !('password' in result) ||
-      !('marker' in result)
-    ) {
-      throw new Error('expected redact() to return an object with password and marker fields');
+  test('still redacts when the metadata holds non-plain values (Date, URL, functions are dropped)', () => {
+    const fn = Math.max;
+
+    expect(
+      redact({
+        at: new Date(0),
+        fn,
+        password: 'somepassword',
+        url: new globalThis.URL('https://example.test/a'),
+      }),
+    ).toStrictEqual({
+      at: '1970-01-01T00:00:00.000Z',
+      password: defaultRedactValue,
+      url: 'https://example.test/a',
+    });
+  });
+
+  test('redacts secrets held by class instances (logged via their own enumerable fields)', () => {
+    class Credentials {
+      public readonly password = 'somepassword';
+      public readonly user = 'alice';
     }
-    expect(result.password).toBe(defaultRedactValue);
-    expect(result.marker).toBe(marker);
+
+    expect(redact({ credentials: new Credentials() })).toStrictEqual({
+      credentials: { password: defaultRedactValue, user: 'alice' },
+    });
   });
 
-  test('should return the original data unchanged if the redact implementation cannot process it', () => {
-    const original = { fn: () => 'unclonable', password: 'somepassword' };
-    expect(redact(original)).toBe(original);
+  test('matches field names case-insensitively (e.g. an Authorization header)', () => {
+    expect(
+      redact({ headers: { Accept: 'json', Authorization: 'Bearer x', 'X-Api-Key': 'k' } }),
+    ).toStrictEqual({
+      headers: {
+        Accept: 'json',
+        Authorization: defaultRedactValue,
+        'X-Api-Key': defaultRedactValue,
+      },
+    });
   });
 
-  test('should fall back to a shallow copy for a non-record (array) value that cannot be structuredClone-d', () => {
-    const original = [Symbol('unclonable'), 'password'];
-    expect(() => redact(original)).not.toThrow();
+  test('serializes array entries JSON cannot represent as null, and still redacts', () => {
+    expect(redact([Symbol('unclonable'), { token: 't' }])).toStrictEqual([
+      null,
+      { token: defaultRedactValue },
+    ]);
   });
 
-  test('should return the data unchanged when no usable redact implementation is available', async () => {
+  test.each([
+    {
+      label: 'a throwing getter',
+      value: {
+        get lazy(): string {
+          throw new Error('lazy getter blew up');
+        },
+      },
+    },
+    {
+      label: 'a throwing toJSON',
+      value: {
+        toJSON() {
+          throw new Error('toJSON blew up');
+        },
+      },
+    },
+    {
+      label: 'a revoked proxy',
+      value: (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+      })(),
+    },
+  ])('fails closed (no throw, no raw data) on $label', ({ value }) => {
+    expect(redact({ password: 'somepassword', value })).toStrictEqual({
+      metadata: '[REDACTION FAILED]',
+    });
+  });
+
+  test('the logger never throws on unserializable metadata, and shows the failure', () => {
+    const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    const output = testLoggerCall({
+      level: 'error',
+      message: 'Internal Server Error',
+      metadata: {
+        err: {
+          get detail(): string {
+            throw new Error('lazy getter blew up');
+          },
+        },
+      },
+      options: { mode: 'json' },
+    });
+
+    expect(output).toContain('"metadata":"[REDACTION FAILED]"');
+    logSpy.mockRestore();
+  });
+
+  test('fails closed (no raw data) when no usable redact implementation is available', async () => {
     vi.resetModules();
     vi.doMock('redact-object', () => ({ default: 'not-a-function' }));
 
-    const { redact: redactWithoutImpl } = await import('../../src/logger/redactor');
-    const original = { password: 'somepassword' };
+    const { failedRedactionValue: failed, redact: redactWithoutImpl } =
+      await import('../../src/logger/redactor');
 
-    expect(redactWithoutImpl(original)).toBe(original);
+    expect(redactWithoutImpl({ password: 'somepassword' })).toBe(failed);
+    const { redactUrl: redactUrlWithoutImpl } = await import('../../src/logger/redactor');
+    expect(
+      decodeURIComponent(redactUrlWithoutImpl('/a?input=%7B%22password%22%3A%22p%22%7D')),
+    ).toBe('/a?input={"metadata":"[REDACTION FAILED]"}');
 
     vi.doUnmock('redact-object');
     vi.resetModules();
@@ -209,7 +632,7 @@ describe('Logger Redaction', () => {
     });
   });
 
-  test('should return the original data if the redact implementation itself throws', async () => {
+  test('fails closed (no raw data) if the redact implementation itself throws', async () => {
     vi.resetModules();
     vi.doMock('redact-object', () => ({
       default: () => {
@@ -217,10 +640,22 @@ describe('Logger Redaction', () => {
       },
     }));
 
-    const { redact: redactWithBrokenImpl } = await import('../../src/logger/redactor');
-    const original = { password: 'somepassword' };
+    const { failedRedactionValue: failed, redact: redactWithBrokenImpl } =
+      await import('../../src/logger/redactor');
 
-    expect(redactWithBrokenImpl(original)).toBe(original);
+    expect(redactWithBrokenImpl({ password: 'somepassword' })).toBe(failed);
+    const { redactUrl: redactUrlWithBrokenImpl } = await import('../../src/logger/redactor');
+    expect(
+      decodeURIComponent(redactUrlWithBrokenImpl('/a?input=%7B%22password%22%3A%22p%22%7D')),
+    ).toBe('/a?input={"metadata":"[REDACTION FAILED]"}');
+
+    const { Logger: FreshLogger } = await import('../../src/logger/log');
+    const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    new FreshLogger({ mode: 'json', silent: false }).info('login', { password: 'somepassword' });
+    const [[line]] = logSpy.mock.calls;
+    expect(line).toContain('"metadata":"[REDACTION FAILED]"');
+    expect(line).not.toContain('somepassword');
+    logSpy.mockRestore();
 
     vi.doUnmock('redact-object');
     vi.resetModules();
@@ -346,7 +781,7 @@ describe('Logger Integration - Redaction Output', () => {
   });
 });
 
-describe('Logger Integration - Session ID Color', () => {
+describe('Logger Integration - Request ID Color', () => {
   beforeAll(() => {
     context.disable();
     context.setGlobalContextManager(createAsyncHooksContextManager().enable());
@@ -366,26 +801,26 @@ describe('Logger Integration - Session ID Color', () => {
     vi.restoreAllMocks();
   });
 
-  test('should format message with color based on sessionId and metadata with gray', () => {
-    const sessionId = 'test-session-id';
-    const color = getRandomColor(sessionId);
+  test('should format message with color based on requestId and metadata with gray', () => {
+    const requestId = 'test-request-id';
+    const color = getRandomColor(requestId);
 
     let output = '';
-    requestContextStorage.run({ color, sessionId }, () => {
+    requestContextStorage.run({ color, requestId }, () => {
       output = testLoggerCall({
         level: 'info',
-        message: 'hello from session',
+        message: 'hello from request',
         metadata: { foo: 'bar' },
         options: { color: true, mode: 'pretty' },
       });
     });
 
-    const expectedColoredMessage = color('hello from session');
+    const expectedColoredMessage = color('hello from request');
     expect(output).toContain(expectedColoredMessage);
 
     const expectedMetadataStr = JSON.stringify(
       Object.fromEntries([
-        ['sessionId', sessionId],
+        ['requestId', requestId],
         ['foo', 'bar'],
       ]),
       undefined,
@@ -395,20 +830,20 @@ describe('Logger Integration - Session ID Color', () => {
     expect(output).toContain(expectedColoredMetadata);
   });
 
-  test('lets metadata explicitly override the auto-detected sessionId', () => {
+  test('lets metadata explicitly override the auto-detected requestId', () => {
     let output = '';
-    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
+    requestContextStorage.run({ requestId: 'auto-request-id' }, () => {
       output = testLoggerCall({
         level: 'info',
         message: 'override test',
-        metadata: { sessionId: 'explicit-session-id' },
+        metadata: { requestId: 'explicit-request-id' },
         options: { mode: 'json' },
       });
     });
 
     expect(JSON.parse(output)).toMatchObject({
-      context: { sessionId: 'explicit-session-id' },
-      sessionId: 'explicit-session-id',
+      context: { requestId: 'explicit-request-id' },
+      requestId: 'explicit-request-id',
     });
   });
 });
@@ -450,32 +885,58 @@ describe('Logger Integration - Trace Context', () => {
     });
   });
 
-  test('passes an explicit spanContext to Faro instead of relying on its own ambient lookup', () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    const pushLogSpy = vi.spyOn(faroSdk.faro.api, 'pushLog').mockImplementation(() => {});
+  test('hands every entry, with its trace context, to a registered browser log sink', () => {
+    const sink = createFakeSink();
+    registerBrowserLogSink(sink);
 
-    context.with(trace.setSpanContext(context.active(), validSpanContext), () => {
-      testLoggerCall({ level: 'info', message: 'browser traced log', options: { mode: 'json' } });
-    });
+    try {
+      context.with(trace.setSpanContext(context.active(), validSpanContext), () => {
+        testLoggerCall({ level: 'info', message: 'browser traced log', options: { mode: 'json' } });
+      });
+    } finally {
+      registerBrowserLogSink(undefined);
+    }
 
-    expect(pushLogSpy).toHaveBeenCalledWith(
-      expect.anything(),
+    expect(sink.pushLog).toHaveBeenCalledWith(
       expect.objectContaining({
-        spanContext: { spanId: validSpanContext.spanId, traceId: validSpanContext.traceId },
+        level: 'info',
+        message: 'browser traced log',
+        spanId: validSpanContext.spanId,
+        traceId: validSpanContext.traceId,
       }),
     );
   });
 
-  test('omits spanContext from the Faro call when there is no active span', () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    const pushLogSpy = vi.spyOn(faroSdk.faro.api, 'pushLog').mockImplementation(() => {});
+  test('keeps logging to the console when the browser log sink throws', () => {
+    const sink = createFakeSink();
+    sink.pushLog.mockImplementation(() => {
+      throw new Error('sink down');
+    });
+    registerBrowserLogSink(sink);
 
-    testLoggerCall({ level: 'info', message: 'no active span', options: { mode: 'json' } });
+    try {
+      const output = testLoggerCall({
+        level: 'info',
+        message: 'still logged',
+        options: { mode: 'json' },
+      });
+      expect(JSON.parse(output)).toMatchObject({ message: 'still logged' });
+    } finally {
+      registerBrowserLogSink(undefined);
+    }
+  });
 
-    const [, options] = pushLogSpy.mock.calls[0] ?? [];
-    expect(options).not.toHaveProperty('spanContext');
+  test('a silent logger does not reach the browser log sink', () => {
+    const sink = createFakeSink();
+    registerBrowserLogSink(sink);
+
+    try {
+      new Logger({ silent: true }).info('muted');
+    } finally {
+      registerBrowserLogSink(undefined);
+    }
+
+    expect(sink.pushLog).not.toHaveBeenCalled();
   });
 });
 
@@ -489,114 +950,74 @@ describe('runWithRequestContext', () => {
     context.disable();
   });
 
+  test('still applies the request-scoped store when no span is available', () => {
+    runWithRequestContext(undefined, { requestId: 'spanless-request-id' }, () => {
+      expect(getRequestId()).toBe('spanless-request-id');
+      expect(getTraceContext()).toBeUndefined();
+    });
+  });
+
   test('re-enters both the given span and the given request-scoped store in one call', () => {
     const span = trace.wrapSpanContext(validSpanContext);
 
-    runWithRequestContext(span, { sessionId: 'combined-session-id' }, () => {
+    runWithRequestContext(span, { requestId: 'combined-request-id' }, () => {
       expect(getTraceContext()).toStrictEqual({
         spanId: validSpanContext.spanId,
         traceId: validSpanContext.traceId,
       });
-      expect(getSessionId()).toBe('combined-session-id');
+      expect(getRequestId()).toBe('combined-request-id');
     });
   });
 });
 
-describe('getSessionId - Faro fallback in the browser', () => {
+describe('setRequestId', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
   afterEach(() => {
-    vi.doUnmock('@grafana/faro-web-sdk');
-    vi.unstubAllGlobals();
-    vi.resetModules();
-  });
-
-  test('falls back to the Faro session id when there is no active request context', async () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    vi.doMock('@grafana/faro-web-sdk', () => ({
-      faro: { api: { getSession: () => ({ id: 'faro-session-id' }) } },
-    }));
-
-    const { getSessionId: getSessionIdWithFaroMock } = await import('../../src/logger/context');
-
-    expect(getSessionIdWithFaroMock()).toBe('faro-session-id');
-  });
-
-  test('returns "no-id" when Faro has no active session', async () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    vi.doMock('@grafana/faro-web-sdk', () => ({
-      faro: { api: { getSession: () => undefined } },
-    }));
-
-    const { getSessionId: getSessionIdWithFaroMock } = await import('../../src/logger/context');
-
-    expect(getSessionIdWithFaroMock()).toBe('no-id');
-  });
-
-  test('does not consult Faro outside the browser', async () => {
-    vi.doMock('@grafana/faro-web-sdk', () => ({
-      faro: { api: { getSession: () => ({ id: 'should-not-be-used' }) } },
-    }));
-
-    const { getSessionId: getSessionIdWithFaroMock } = await import('../../src/logger/context');
-
-    expect(getSessionIdWithFaroMock()).toBe('no-id');
-  });
-});
-
-describe('setSessionId', () => {
-  afterEach(() => {
-    setSessionId(undefined);
-    vi.unstubAllGlobals();
+    setRequestId(undefined);
+    registerBrowserLogSink(undefined);
     vi.restoreAllMocks();
   });
 
-  test('overrides getSessionId even when Faro has a session of its own', () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    vi.spyOn(faroSdk.faro.api, 'getSession').mockReturnValue({ id: 'faro-session-id' });
-    vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
+  test('is the fallback outside a request; a request context’s own id wins inside one', () => {
+    setRequestId('app-request-id');
 
-    setSessionId('app-session-id');
-
-    expect(getSessionId()).toBe('app-session-id');
+    expect(getRequestId()).toBe('app-request-id');
+    requestContextStorage.run({ requestId: 'store-request-id' }, () => {
+      expect(getRequestId()).toBe('store-request-id');
+    });
   });
 
-  test('also drives Faro’s own session in the browser, since Faro tags its own signals from that, not from our override', () => {
-    vi.stubGlobal('window', {});
-    vi.stubGlobal('document', {});
-    const setSessionSpy = vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
-    const resetSessionSpy = vi.spyOn(faroSdk.faro.api, 'resetSession').mockImplementation(() => {});
+  test('log entries pushed to the browser log sink carry the request id', () => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    const sink = createFakeSink();
+    registerBrowserLogSink(sink);
 
-    setSessionId('app-session-id');
-    expect(setSessionSpy).toHaveBeenCalledWith({ id: 'app-session-id' });
-    expect(resetSessionSpy).not.toHaveBeenCalled();
+    setRequestId('app-request-id');
+    new Logger({ silent: false }).info('tagged');
 
-    setSessionId(undefined);
-    expect(resetSessionSpy).toHaveBeenCalledTimes(1);
+    expect(sink.pushLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'tagged', requestId: 'app-request-id' }),
+    );
   });
 
-  test('does not touch Faro outside the browser', () => {
-    const setSessionSpy = vi.spyOn(faroSdk.faro.api, 'setSession').mockImplementation(() => {});
-    const resetSessionSpy = vi.spyOn(faroSdk.faro.api, 'resetSession').mockImplementation(() => {});
+  test('falls back to "no-id" again once cleared, with no request context', () => {
+    setRequestId('app-request-id');
+    expect(getRequestId()).toBe('app-request-id');
 
-    setSessionId('app-session-id');
-    setSessionId(undefined);
-
-    expect(setSessionSpy).not.toHaveBeenCalled();
-    expect(resetSessionSpy).not.toHaveBeenCalled();
-  });
-
-  test('falls back through the normal resolution order again once cleared', () => {
-    setSessionId('app-session-id');
-    expect(getSessionId()).toBe('app-session-id');
-
-    setSessionId(undefined);
-    expect(getSessionId()).toBe('no-id');
+    setRequestId(undefined);
+    expect(getRequestId()).toBe('no-id');
   });
 });
 
-describe('startSpanWithSession', () => {
+describe('startSpanWithRequestId', () => {
   beforeAll(() => {
     context.disable();
     context.setGlobalContextManager(createAsyncHooksContextManager().enable());
@@ -610,24 +1031,24 @@ describe('startSpanWithSession', () => {
     vi.restoreAllMocks();
   });
 
-  test('auto-attaches session.id from the active request context', () => {
+  test('auto-attaches request.id from the active request context', () => {
     const startSpanSpy = vi.spyOn(tracer, 'startSpan');
 
-    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
-      startSpanWithSession('test-span', { attributes: { foo: 'bar' } });
+    requestContextStorage.run({ requestId: 'auto-request-id' }, () => {
+      startSpanWithRequestId('test-span', { attributes: { foo: 'bar' } });
     });
 
     expect(startSpanSpy).toHaveBeenCalledWith(
       'test-span',
-      { attributes: { foo: 'bar', 'session.id': 'auto-session-id' } },
+      { attributes: { foo: 'bar', 'request.id': 'auto-request-id' } },
       undefined,
     );
   });
 
-  test('omits session.id when there is no active request context', () => {
+  test('omits request.id when there is no active request context', () => {
     const startSpanSpy = vi.spyOn(tracer, 'startSpan');
 
-    startSpanWithSession('test-span', { attributes: { foo: 'bar' } });
+    startSpanWithRequestId('test-span', { attributes: { foo: 'bar' } });
 
     expect(startSpanSpy).toHaveBeenCalledWith(
       'test-span',
@@ -636,16 +1057,16 @@ describe('startSpanWithSession', () => {
     );
   });
 
-  test('lets an explicitly-specified session.id attribute win over the auto-set one', () => {
+  test('lets an explicitly-specified request.id attribute win over the auto-set one', () => {
     const startSpanSpy = vi.spyOn(tracer, 'startSpan');
 
-    requestContextStorage.run({ sessionId: 'auto-session-id' }, () => {
-      startSpanWithSession('test-span', { attributes: { 'session.id': 'explicit-session-id' } });
+    requestContextStorage.run({ requestId: 'auto-request-id' }, () => {
+      startSpanWithRequestId('test-span', { attributes: { 'request.id': 'explicit-request-id' } });
     });
 
     expect(startSpanSpy).toHaveBeenCalledWith(
       'test-span',
-      { attributes: { 'session.id': 'explicit-session-id' } },
+      { attributes: { 'request.id': 'explicit-request-id' } },
       undefined,
     );
   });
@@ -654,28 +1075,15 @@ describe('startSpanWithSession', () => {
     const startSpanSpy = vi.spyOn(tracer, 'startSpan');
     const parentContext = trace.setSpanContext(context.active(), validSpanContext);
 
-    startSpanWithSession('test-span', {}, parentContext);
+    startSpanWithRequestId('test-span', {}, parentContext);
 
     expect(startSpanSpy).toHaveBeenCalledWith('test-span', { attributes: {} }, parentContext);
   });
 });
 
-describe('isFaroLogLevel', () => {
-  test('returns true for any string value', () => {
-    expect(isFaroLogLevel('info')).toBe(true);
-    expect(isFaroLogLevel('anything')).toBe(true);
-  });
-
-  test('returns false for non-string values', () => {
-    expect(isFaroLogLevel(42)).toBe(false);
-    expect(isFaroLogLevel(undefined)).toBe(false);
-    expect(isFaroLogLevel(null)).toBe(false);
-  });
-});
-
 describe('Logger Context - no active request context', () => {
-  test('getSessionId returns "no-id"', () => {
-    expect(getSessionId()).toBe('no-id');
+  test('getRequestId returns "no-id"', () => {
+    expect(getRequestId()).toBe('no-id');
   });
 
   test('getTraceContext returns undefined', () => {
@@ -690,18 +1098,20 @@ describe('Logger Context - no active request context', () => {
     expect(getColor()).toBe(defaultColor);
   });
 
-  test.each([{ label: 'a valid request context', value: { sessionId: 'abc' } }])(
-    'isRequestContext recognizes $label',
-    ({ value }) => {
-      expect(isRequestContext(value)).toBe(true);
-    },
-  );
+  test.each([
+    { label: 'a valid request context', value: { requestId: 'abc' } },
+    { label: 'a context without a requestId (it is optional)', value: { other: 'field' } },
+  ])('isRequestContext recognizes $label', ({ value }) => {
+    expect(isRequestContext(value)).toBe(true);
+  });
 
   test.each([
     { label: 'null', value: null },
     { label: 'a string', value: 'not-an-object' },
     { label: 'a number', value: 42 },
-    { label: 'an object without sessionId', value: { other: 'field' } },
+    { label: 'an array', value: ['requestId'] },
+    { label: 'a non-string requestId', value: { requestId: 42 } },
+    { label: 'a non-function color', value: { color: 'red' } },
   ])('isRequestContext rejects $label', ({ value }) => {
     expect(isRequestContext(value)).toBe(false);
   });
@@ -717,22 +1127,22 @@ describe('Logger Context and Formatters - with an active request context', () =>
     context.disable();
   });
 
-  test('getSessionId and getRequestContext reflect the active store', () => {
-    requestContextStorage.run({ sessionId: 'store-session' }, () => {
-      expect(getSessionId()).toBe('store-session');
-      expect(getRequestContext()).toStrictEqual({ sessionId: 'store-session' });
+  test('getRequestId and getRequestContext reflect the active store', () => {
+    requestContextStorage.run({ requestId: 'store-request' }, () => {
+      expect(getRequestId()).toBe('store-request');
+      expect(getRequestContext()).toStrictEqual({ requestId: 'store-request' });
     });
   });
 
   test('getColor returns the store color when one is explicitly set', () => {
     const explicitColor = getRandomColor('explicit-color-id');
-    requestContextStorage.run({ color: explicitColor, sessionId: 'store-session' }, () => {
+    requestContextStorage.run({ color: explicitColor, requestId: 'store-request' }, () => {
       expect(getColor()).toBe(explicitColor);
     });
   });
 
-  test('getColor falls back to a random color derived from the store sessionId', () => {
-    requestContextStorage.run({ sessionId: 'derived-color-id' }, () => {
+  test('getColor falls back to a random color derived from the store requestId', () => {
+    requestContextStorage.run({ requestId: 'derived-color-id' }, () => {
       expect(getColor()).toBe(getRandomColor('derived-color-id'));
     });
   });
@@ -754,7 +1164,7 @@ describe('Logger Context and Formatters - with an active request context', () =>
   });
 
   test('formatPretty colorizes using the active store when the entry has no context', () => {
-    requestContextStorage.run({ sessionId: 'format-store-id' }, () => {
+    requestContextStorage.run({ requestId: 'format-store-id' }, () => {
       const entry: LogEntry = { level: 'info', message: 'hello', timestamp: '2024-01-01' };
       const output = formatPretty(entry, true);
       const expectedColor = getRandomColor('format-store-id');
@@ -797,15 +1207,15 @@ describe('Logger Formatters - direct unit tests', () => {
     expect(formatPretty(entry, false)).toBe('[2024-01-01] DEBUG: empty context');
   });
 
-  test('formatPretty with color uses an explicit context.sessionId regardless of any active store', () => {
+  test('formatPretty with color uses an explicit context.requestId regardless of any active store', () => {
     const entry: LogEntry = {
-      context: { sessionId: 'explicit-in-context' },
+      context: { requestId: 'explicit-in-context' },
       level: 'info',
-      message: 'explicit session',
+      message: 'explicit request',
       timestamp: '2024-01-01',
     };
     const output = formatPretty(entry, true);
-    expect(output).toContain(getRandomColor('explicit-in-context')('explicit session'));
+    expect(output).toContain(getRandomColor('explicit-in-context')('explicit request'));
   });
 
   test('formatPretty appends trace and span ids when both are present', () => {
@@ -847,7 +1257,7 @@ describe('Logger Formatters - direct unit tests', () => {
     );
   });
 
-  test('formatPretty with color leaves the message uncolored when there is no session and no active store', () => {
+  test('formatPretty with color leaves the message uncolored when there is no request id and no active store', () => {
     const entry: LogEntry = {
       context: { foo: 'bar' },
       level: 'info',
@@ -924,7 +1334,7 @@ describe('Logger - level handling and output branches', () => {
     expect(JSON.parse(output)).not.toHaveProperty('context');
   });
 
-  test('does not throw when writing to OTel/Faro outputs while isBrowser() is true', () => {
+  test('does not throw when writing to OTel/browser-sink outputs while isBrowser() is true', () => {
     vi.stubGlobal('window', {});
     vi.stubGlobal('document', {});
 
@@ -936,5 +1346,67 @@ describe('Logger - level handling and output branches', () => {
         options: { mode: 'json' },
       });
     }).not.toThrow();
+  });
+});
+
+describe('requestId in a server request context', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  beforeEach(() => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('getRequestId reads the request id, and is "no-id" outside a request', () => {
+    requestContextStorage.run({ requestId: 'req-1' }, () => {
+      expect(getRequestId()).toBe('req-1');
+      expect(isRequestContext(getRequestContext())).toBe(true);
+    });
+    expect(getRequestId()).toBe('no-id');
+  });
+
+  test('log entries carry the request id (top level and in context)', () => {
+    let output = '';
+    requestContextStorage.run({ requestId: 'req-2' }, () => {
+      output = testLoggerCall({ level: 'info', message: 'in request', options: { mode: 'json' } });
+    });
+
+    const parsed: unknown = JSON.parse(output);
+    expect(parsed).toMatchObject({ context: { requestId: 'req-2' }, requestId: 'req-2' });
+  });
+
+  test('spans started inside a request get request.id', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+
+    requestContextStorage.run({ requestId: 'req-3' }, () => {
+      startSpanWithRequestId('test-span');
+    });
+
+    expect(startSpanSpy).toHaveBeenCalledWith(
+      'test-span',
+      { attributes: { 'request.id': 'req-3' } },
+      undefined,
+    );
+  });
+
+  test('formatPretty colors by the entry’s context requestId', () => {
+    const entry: LogEntry = {
+      context: { requestId: 'req-color' },
+      level: 'info',
+      message: 'colored',
+      timestamp: '2024-01-01',
+    };
+
+    expect(formatPretty(entry, true)).toContain(getRandomColor('req-color')('colored'));
   });
 });

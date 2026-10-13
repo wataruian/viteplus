@@ -3,14 +3,14 @@ import path from 'node:path';
 
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getPackageViteConfig } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
+const inspectorPort = Math.trunc(Number(globalThis.process.env['API_INSPECTOR_PORT'] ?? '9230'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');
-  const commonTaskProps = getCommonTaskProps(rootDir, mode);
   const packageEnvPath = path.resolve(dir, '.env');
   const rootEnvPath = path.resolve(rootDir, '.env');
 
@@ -34,16 +34,16 @@ export default defineConfig(({ mode }): UserConfig => {
       run: {
         tasks: {
           'wrangler:delete': {
-            ...commonTaskProps,
+            cache: false,
             command: `wrangler delete`,
           },
           'wrangler:deploy': {
-            ...commonTaskProps,
+            cache: false,
             command: `wrangler deploy`,
           },
           'wrangler:dev': {
-            ...commonTaskProps,
-            command: `wrangler dev --port ${port} --inspector-port 9230 --show-interactive-dev-session=false`,
+            cache: false,
+            command: `wrangler dev --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
           },
         },
       },
@@ -51,6 +51,7 @@ export default defineConfig(({ mode }): UserConfig => {
         coverage: {
           exclude: ['**/index.ts', 'src/client.ts', 'src/runtimes/**'],
         },
+        env: { SKIP_OPENTELEMETRY: 'true' },
         isolate: true,
       },
     } satisfies UserConfig,

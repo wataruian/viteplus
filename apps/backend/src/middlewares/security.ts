@@ -1,27 +1,35 @@
 import { adminUrl, apiBaseUrl, docsEndpoint, siteUrl } from '@lightproject/common/configs';
+import { isLocalOrTest } from '@lightproject/common/environment';
 import { cors } from 'hono/cors';
 import { createMiddleware } from 'hono/factory';
 import { secureHeaders } from 'hono/secure-headers';
 
 import { config } from '../config';
 
-const allowedOrigins: string[] = [];
+const loopbackHosts: ReadonlySet<string> = new Set(['localhost', '127.0.0.1', '[::1]']);
 
-if (apiBaseUrl) {
-  allowedOrigins.push(apiBaseUrl);
-}
+const isLoopbackOrigin = (origin: string): boolean => {
+  try {
+    return loopbackHosts.has(new globalThis.URL(origin).hostname);
+  } catch {
+    return false;
+  }
+};
 
-if (adminUrl) {
-  allowedOrigins.push(adminUrl);
-}
+const allowLoopbackOrigins = isLocalOrTest();
 
-if (siteUrl) {
-  allowedOrigins.push(siteUrl);
-}
+const allowedOrigins: string[] = [apiBaseUrl, adminUrl, siteUrl].filter(
+  (origin) => origin !== '' && (allowLoopbackOrigins || !isLoopbackOrigin(origin)),
+);
 
 const additionalOrigins = config.additionalCorsOrigins;
 if (additionalOrigins !== undefined && additionalOrigins !== '') {
-  allowedOrigins.push(...additionalOrigins.split(','));
+  allowedOrigins.push(
+    ...additionalOrigins
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter((origin) => origin !== ''),
+  );
 }
 
 const uniqueOrigins = [...new Set(allowedOrigins)];
@@ -39,6 +47,7 @@ const corsMiddleware = () =>
     ],
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
+    exposeHeaders: ['X-Request-Id'],
     origin: uniqueOrigins,
   });
 
@@ -71,8 +80,11 @@ const cspMiddleware = () => {
 export {
   additionalOrigins,
   allowedOrigins,
+  allowLoopbackOrigins,
   corsMiddleware,
   cspMiddleware,
   isDocsPath,
+  isLoopbackOrigin,
+  loopbackHosts,
   uniqueOrigins,
 };

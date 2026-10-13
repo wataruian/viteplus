@@ -1,5 +1,9 @@
-import { initializeRum } from '@lightproject/common/utils';
-import { ModeProvider, SessionProvider, ThemeProvider } from '@lightproject/design-system/context';
+import { initializeRum } from '@lightproject/common/browser';
+import {
+  ModeProvider,
+  RequestIdProvider,
+  ThemeProvider,
+} from '@lightproject/design-system/context';
 import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -22,7 +26,7 @@ const container = globalThis.document.querySelector('#root');
 if (container) {
   createRoot(container).render(
     <StrictMode>
-      <SessionProvider>
+      <RequestIdProvider>
         <ThemeProvider>
           <ModeProvider>
             <Suspense fallback={null}>
@@ -30,7 +34,7 @@ if (container) {
             </Suspense>
           </ModeProvider>
         </ThemeProvider>
-      </SessionProvider>
+      </RequestIdProvider>
     </StrictMode>,
   );
 }

@@ -14,5 +14,26 @@ persist = true
 enabled = true
 persist = true
 
-[vars]
-ADDITIONAL_CORS_ORIGINS = "https://lightproject-backend.wataru.workers.dev,https://lightproject-frontend.wataru.workers.dev,https://lightproject-design-system.wataru.workers.dev,https://lightproject-storybook.wataru.workers.dev,https://lightproject-admin.wataru.workers.dev,https://lightproject-site.wataru.workers.dev"
+[env.develop]
+name = "lightproject-backend-dev"
+
+[env.develop.vars]
+ENV = "develop"
+ALLOW_ALL_IPS = "true"
+ADDITIONAL_CORS_ORIGINS = "https://lightproject-backend-dev.wataru.workers.dev,https://lightproject-frontend-dev.wataru.workers.dev,https://lightproject-design-system-dev.wataru.workers.dev,https://lightproject-storybook-dev.wataru.workers.dev,https://lightproject-admin-dev.wataru.workers.dev,https://lightproject-site-dev.wataru.workers.dev"
+
+[env.staging]
+name = "lightproject-backend-staging"
+
+[env.staging.vars]
+ENV = "staging"
+ALLOW_ALL_IPS = "true"
+ADDITIONAL_CORS_ORIGINS = "https://lightproject-backend-staging.wataru.workers.dev,https://lightproject-frontend-staging.wataru.workers.dev,https://lightproject-design-system-staging.wataru.workers.dev,https://lightproject-storybook-staging.wataru.workers.dev,https://lightproject-admin-staging.wataru.workers.dev,https://lightproject-site-staging.wataru.workers.dev"
+
+[env.production]
+name = "lightproject-backend-production"
+
+[env.production.vars]
+ENV = "production"
+ALLOW_ALL_IPS = "true"
+ADDITIONAL_CORS_ORIGINS = "https://lightproject-backend-production.wataru.workers.dev,https://lightproject-frontend-production.wataru.workers.dev,https://lightproject-design-system-production.wataru.workers.dev,https://lightproject-storybook-production.wataru.workers.dev,https://lightproject-admin-production.wataru.workers.dev,https://lightproject-site-production.wataru.workers.dev"

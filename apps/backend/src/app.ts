@@ -1,6 +1,7 @@
 import { logger, requestContextStorage } from '@lightproject/common/logger';
 import {
   flushTelemetry,
+  initializeContextPropagation,
   initializeTelemetry,
   prometheusExporter,
 } from '@lightproject/common/server';
@@ -27,19 +28,24 @@ const getApp = async () => {
     logger.info(`API_PORT is not set, using default port: ${config.apiPort}`);
   }
 
-  await initializeTelemetry({
-    serviceName: packageJson.name,
-    serviceVersion: packageJson.version,
-  });
+  if (config.skipOpenTelemetry) {
+    initializeContextPropagation();
+  } else {
+    await initializeTelemetry({
+      serviceName: packageJson.name,
+      serviceVersion: packageJson.version,
+    });
+  }
 
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
-    const sessionId = generateUuid();
-    c.set('sessionId', sessionId);
-    await requestContextStorage.run({ sessionId }, async () => {
+    const requestId = generateUuid();
+    c.set('requestId', requestId);
+    await requestContextStorage.run({ requestId }, async () => {
       await next();
     });
+    c.res.headers.set('X-Request-Id', requestId);
   });
 
   app.use('*', async (c, next) => {
@@ -53,8 +59,6 @@ const getApp = async () => {
 
     if (typeof executionCtx?.waitUntil === 'function') {
       executionCtx.waitUntil(flushTelemetry());
-    } else {
-      flushTelemetry().catch(() => {});
     }
   });
 

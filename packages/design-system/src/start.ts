@@ -8,7 +8,14 @@ const isProd = globalThis.process.argv[2] === 'true';
 const isWrangler = globalThis.process.argv[3] === 'true';
 
 const storybookPort = Math.trunc(Number(globalThis.process.env['STORYBOOK_PORT'] ?? '6006'));
+const storybookInspectorPort = Math.trunc(
+  Number(globalThis.process.env['STORYBOOK_INSPECTOR_PORT'] ?? '9232'),
+);
+
 const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
+const designSystemInspectorPort = Math.trunc(
+  Number(globalThis.process.env['DESIGN_SYSTEM_INSPECTOR_PORT'] ?? '9233'),
+);
 
 const viteCommand = isProd ? 'preview' : 'dev';
 
@@ -30,7 +37,7 @@ const designSystemCommand = isWrangler
       '--port',
       String(designSystemPort),
       '--inspector-port',
-      '9232',
+      String(designSystemInspectorPort),
       '--persist-to',
       '.wrangler/state/design-system',
       '--show-interactive-dev-session=false',
@@ -53,7 +60,7 @@ const resolveStorybookCommand = (): string[] => {
       '--port',
       String(storybookPort),
       '--inspector-port',
-      '9233',
+      String(storybookInspectorPort),
       '--persist-to',
       '.wrangler/state/storybook',
       '--show-interactive-dev-session=false',

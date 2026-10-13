@@ -21,7 +21,8 @@ import {
 import {
   BUILD_ARTIFACT_KEEP,
   DAGGER_WORKSPACE,
-  DOCKER_CLI_VERSION,
+  DEPLOY_ENVIRONMENTS,
+  DOCKER_CLI_IMAGE,
   NGINX_IMAGE,
   ROOT_FILES,
   SEMGREP_EXCLUSIONS,
@@ -518,7 +519,7 @@ export class Monorepo {
 
     return dag
       .container()
-      .from(DOCKER_CLI_VERSION)
+      .from(DOCKER_CLI_IMAGE)
       .withUnixSocket('/var/run/docker.sock', dockerSocket)
       .withMountedFile(imageTarPath, container.asTarball())
       .withExec(['sh', '-c', script])
@@ -549,10 +550,17 @@ export class Monorepo {
   @func()
   public async wrangler(
     workspace: string,
+    environment: string,
     cloudflareApiToken: Secret,
     cloudflareAccountId: Secret,
     buildEnv?: string[],
   ): Promise<string> {
+    if (!DEPLOY_ENVIRONMENTS.has(environment)) {
+      throw new Error(
+        `Invalid environment '${environment}' (expected one of: ${[...DEPLOY_ENVIRONMENTS].join(', ')})`,
+      );
+    }
+
     const container = await this.build(workspace, buildEnv);
 
     const workspaceDir = workspacePath(workspace);
@@ -560,7 +568,9 @@ export class Monorepo {
     const deployContainer = container
       .withWorkdir(`/app/${workspaceDir}`)
       .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken)
-      .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId);
+      .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId)
+      .withEnvVariable('CLOUDFLARE_ENV', environment)
+      .withEnvVariable('DEPLOY_REQUESTED_AT', new Date().toISOString());
 
     return withBuildEnv(deployContainer, workspace, buildEnv)
       .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy'])

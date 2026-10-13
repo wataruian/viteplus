@@ -26,11 +26,37 @@ jobs:
       contents: read
     env:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+      WORKERS_SUBDOMAIN: wataru.workers.dev
+      WORKER_SUFFIX: ${{ inputs.environment == 'develop' && 'dev' || inputs.environment }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.ref }}
+
+      - name: Check the ref supports per-environment Workers
+        shell: bash
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          WORKSPACE: ${{ inputs.workspace }}
+        run: |
+          case "${WORKSPACE}" in
+            backend | frontend) configs=("apps/${WORKSPACE}/wrangler.toml") ;;
+            design-system)
+              configs=(
+                "packages/design-system/wrangler.design-system.toml"
+                "packages/design-system/wrangler.storybook.toml"
+              )
+              ;;
+            *) configs=() ;;
+          esac
+
+          for config in "${configs[@]}"; do
+            if ! grep -q "^\[env\.${ENVIRONMENT}\]" "${config}"; then
+              echo "::error::${config} has no [env.${ENVIRONMENT}] block at this ref; it predates per-environment Workers and cannot be deployed by this pipeline."
+              exit 1
+            fi
+          done
 
       - name: Set up toolchain
         uses: ./.github/actions/setup-toolchain
@@ -45,12 +71,13 @@ jobs:
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
           VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
           WORKSPACE: ${{ inputs.workspace }}
           VERSION_REF: ${{ inputs.ref }}
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
+
+          VITE_API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
@@ -78,12 +105,13 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           WORKSPACE: ${{ inputs.workspace }}
           VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
+
+          VITE_API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
@@ -101,6 +129,7 @@ jobs:
 
           mise run dagger wrangler \
             --workspace="@lightproject/${WORKSPACE}" \
+            --environment="${ENVIRONMENT}" \
             --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN \
             --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID \
             "${args[@]}"
@@ -111,16 +140,13 @@ jobs:
           WORKSPACE: ${{ inputs.workspace }}
         run: |
           case "${WORKSPACE}" in
-            backend)
-              urls=("https://lightproject-backend.wataru.workers.dev")
-              ;;
-            frontend)
-              urls=("https://lightproject-frontend.wataru.workers.dev")
+            backend | frontend)
+              urls=("https://lightproject-${WORKSPACE}-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}")
               ;;
             design-system)
               urls=(
-                "https://lightproject-design-system.wataru.workers.dev"
-                "https://lightproject-storybook.wataru.workers.dev"
+                "https://lightproject-design-system-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+                "https://lightproject-storybook-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
               )
               ;;
             *)

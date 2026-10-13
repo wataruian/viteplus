@@ -55,7 +55,7 @@ afterEach(() => {
   resetTelemetryForTests();
 });
 
-describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+describe.each(runtimes)('on $name', ({ cleanup, flush, importApp }) => {
   afterAll(cleanup);
 
   test('a request pushes a log, a trace span, and a metric to the OTEL collector', async () => {
@@ -66,9 +66,11 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
       const app = await importApp({
         LOG_LEVEL: 'info',
         OTEL_EXPORTER_OTLP_ENDPOINT: collector.url,
+        SKIP_OPENTELEMETRY: 'false',
       });
       const res = await app.request('/');
       expect(res.status).toBe(200);
+      await flush();
 
       const hasMetricNamed = (request: { body: unknown }, name: string) => {
         const parsed = metricBodySchema.safeParse(request.body);

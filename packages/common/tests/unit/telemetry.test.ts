@@ -1,16 +1,24 @@
-import { diag, metrics as otelMetricsApi, trace as otelTraceApi } from '@opentelemetry/api';
+import {
+  context,
+  createContextKey,
+  diag,
+  metrics as otelMetricsApi,
+  trace as otelTraceApi,
+} from '@opentelemetry/api';
 import { logs as otelLogsApi } from '@opentelemetry/api-logs';
+import type * as SdkTraceWebModule from '@opentelemetry/sdk-trace-web';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
   PullMetricReader,
   flushTelemetry,
+  initializeContextPropagation,
   initializeTelemetry,
   prometheusExporter,
   resetTelemetryForTests,
   shutdownTelemetry,
 } from '../../src/server/telemetry';
-import { getTelemetryConfig } from '../../src/utils';
+import { getTelemetryConfig, recordGaugeWithExemplar } from '../../src/utils';
 
 const {
   forceFlushLoggerMock,
@@ -25,6 +33,7 @@ const {
   shutdownLoggerMock,
   shutdownMeterMock,
   shutdownTraceMock,
+  otlpMetricExporterMock,
 } = vi.hoisted(() => ({
   forceFlushLoggerMock: vi.fn().mockResolvedValue(undefined),
   forceFlushMeterMock: vi.fn().mockResolvedValue(undefined),
@@ -33,6 +42,8 @@ const {
   loggerDebugMock: vi.fn(),
   loggerErrorMock: vi.fn(),
   loggerInfoMock: vi.fn(),
+  otlpMetricExporterMock:
+    vi.fn<(options: { temporalityPreference?: number; url: string }) => void>(),
   registerMock: vi.fn(),
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   shutdownLoggerMock: vi.fn().mockResolvedValue(undefined),
@@ -45,7 +56,8 @@ interface ReaderLike {
   shutdown: () => Promise<void>;
 }
 
-vi.mock('@opentelemetry/sdk-trace-web', () => {
+vi.mock('@opentelemetry/sdk-trace-web', async (importOriginal) => {
+  const actual = await importOriginal<typeof SdkTraceWebModule>();
   class MockWebTracerProvider {
     public forceFlush = forceFlushTraceMock;
     public shutdown = shutdownTraceMock;
@@ -59,6 +71,7 @@ vi.mock('@opentelemetry/sdk-trace-web', () => {
   return {
     BatchSpanProcessor: vi.fn(),
     SimpleSpanProcessor: vi.fn(),
+    StackContextManager: actual.StackContextManager,
     WebTracerProvider: MockWebTracerProvider,
   };
 });
@@ -77,7 +90,8 @@ vi.mock('@opentelemetry/sdk-logs', () => {
 });
 
 vi.mock('@opentelemetry/exporter-metrics-otlp-http', () => ({
-  OTLPMetricExporter: vi.fn(),
+  AggregationTemporalityPreference: { CUMULATIVE: 0, DELTA: 1, LOWMEMORY: 2 },
+  OTLPMetricExporter: otlpMetricExporterMock,
 }));
 
 vi.mock('@opentelemetry/exporter-trace-otlp-http', () => ({
@@ -221,6 +235,11 @@ describe('initializeTelemetry', () => {
       }),
     );
     expect(registerMock).toHaveBeenCalled();
+    expect(otlpMetricExporterMock.mock.calls.at(-1)?.[0]).toMatchObject({
+      temporalityPreference: 1,
+    });
+    const [resourceAttributes] = resourceFromAttributesMock.mock.calls.at(-1) ?? [];
+    expect(resourceAttributes?.['service.instance.id']).toMatch(/^[0-9a-f-]{36}$/u);
     expect(loggerInfoMock).toHaveBeenCalledWith(
       'OpenTelemetry initialized',
       expect.objectContaining({ serviceName: '@acme/api' }),
@@ -332,6 +351,23 @@ describe('shutdownTelemetry', () => {
     expect(shutdownLoggerMock).toHaveBeenCalled();
   });
 
+  test('sends buffered exemplar metrics before shutting down', async () => {
+    resetTelemetryForTests();
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new globalThis.Response(null, { status: 200 }));
+    await initializeTelemetry({
+      otlpEndpoint: 'http://collector.test',
+      serviceName: 'shutdown-flush-test',
+    });
+    await recordGaugeWithExemplar({ name: 'buffered_metric', value: 1 });
+
+    await shutdownTelemetry();
+
+    expect(fetchSpy).toHaveBeenCalledWith('http://collector.test/v1/metrics', expect.any(Object));
+    fetchSpy.mockRestore();
+  });
+
   test('logs an error instead of throwing when shutdown fails', async () => {
     await initializeTelemetry({ serviceName: 'shutdown-error-test' });
     shutdownTraceMock.mockRejectedValueOnce(new Error('shutdown failed'));
@@ -409,5 +445,27 @@ describe('resetTelemetryForTests', () => {
     traceDisableSpy.mockRestore();
     metricsDisableSpy.mockRestore();
     logsDisableSpy.mockRestore();
+  });
+});
+
+const scopedKey = createContextKey('ctx-only-test');
+const readScopedValue = () =>
+  context.with(context.active().setValue(scopedKey, 'ctx-only-request'), () =>
+    context.active().getValue(scopedKey),
+  );
+
+describe('initializeContextPropagation', () => {
+  afterEach(() => {
+    resetTelemetryForTests();
+  });
+
+  test('makes request-scoped context work without initializing any exporter', () => {
+    expect(readScopedValue()).toBeUndefined();
+
+    initializeContextPropagation();
+
+    expect(readScopedValue()).toBe('ctx-only-request');
+    expect(registerMock).not.toHaveBeenCalled();
+    expect(getTelemetryConfig()).toBeUndefined();
   });
 });

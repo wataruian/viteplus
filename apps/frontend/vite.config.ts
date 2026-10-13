@@ -9,6 +9,7 @@ import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 import { socialMeta } from './social-meta.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
+const inspectorPort = Math.trunc(Number(globalThis.process.env['ADMIN_INSPECTOR_PORT'] ?? '9231'));
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
@@ -32,20 +33,6 @@ export default defineConfig(({ mode }): UserConfig => {
       startCommand: 'vp preview',
     }),
     {
-      build: {
-        rolldownOptions: {
-          external: [
-            'child_process',
-            'fs',
-            'fs/promises',
-            'path',
-            'stream',
-            'timers',
-            'util',
-            'zlib',
-          ],
-        },
-      },
       plugins: [
         react(),
         unoCss({
@@ -80,16 +67,16 @@ export default defineConfig(({ mode }): UserConfig => {
             command: 'playwright test',
           },
           'wrangler:delete': {
-            ...commonTaskProps,
+            cache: false,
             command: `wrangler delete`,
           },
           'wrangler:deploy': {
-            ...commonTaskProps,
+            cache: false,
             command: `wrangler deploy`,
           },
           'wrangler:dev': {
-            ...commonTaskProps,
-            command: `wrangler dev --port ${port} --inspector-port 9231 --show-interactive-dev-session=false`,
+            cache: false,
+            command: `wrangler dev --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
           },
         },
       },
@@ -101,6 +88,7 @@ export default defineConfig(({ mode }): UserConfig => {
           exclude: ['**/index.ts', '**/main.tsx'],
           include: ['src/**/*.ts', 'src/**/*.tsx', 'social-meta.ts'],
         },
+        env: { SKIP_OPENTELEMETRY: 'true' },
         environment: 'jsdom',
         globalSetup: ['tests/unit/helpers/global-setup.ts'],
         isolate: true,

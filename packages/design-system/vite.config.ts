@@ -83,16 +83,17 @@ export default defineConfig(({ mode }): UserConfig => {
             command: 'playwright test',
           },
           'wrangler:delete': {
-            ...commonTaskProps,
+            cache: false,
             command:
               'wrangler delete --config wrangler.design-system.toml && wrangler delete --config wrangler.storybook.toml',
           },
           'wrangler:deploy': {
-            ...commonTaskProps,
+            cache: false,
             command:
               'wrangler deploy --config wrangler.design-system.toml && wrangler deploy --config wrangler.storybook.toml',
           },
           'wrangler:dev': {
+            cache: false,
             command: 'tsx watch --conditions=typescript ./src/start.ts false true',
           },
         },

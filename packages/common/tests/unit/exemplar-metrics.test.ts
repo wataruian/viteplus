@@ -34,20 +34,21 @@ const getSingleDataPoint = (parsedBody: unknown) => {
   return dataPoint;
 };
 
-const { getSessionIdMock, getTelemetryConfigMock, getTraceContextMock, loggerErrorMock } =
+const { getRequestIdMock, getTelemetryConfigMock, getTraceContextMock, loggerErrorMock } =
   vi.hoisted(() => ({
-    getSessionIdMock: vi.fn(),
+    getRequestIdMock: vi.fn(),
     getTelemetryConfigMock: vi.fn(),
     getTraceContextMock: vi.fn(),
     loggerErrorMock: vi.fn(),
   }));
 
 vi.mock('../../src/utils/telemetry', () => ({
+  getServiceInstanceId: () => 'test-instance-id',
   getTelemetryConfig: getTelemetryConfigMock,
 }));
 
 vi.mock('../../src/logger/context', () => ({
-  getSessionId: getSessionIdMock,
+  getRequestId: getRequestIdMock,
   getTraceContext: getTraceContextMock,
 }));
 
@@ -56,7 +57,7 @@ vi.mock('../../src/logger', () => ({
 }));
 
 const { flushExemplarMetrics, recordGaugeWithExemplar } =
-  await import('../../src/server/exemplar-metrics');
+  await import('../../src/utils/exemplar-metrics');
 
 const parseLastRequestBody = (fetchMock: ReturnType<typeof vi.fn<typeof globalThis.fetch>>) => {
   const lastCall = fetchMock.mock.calls.at(-1);
@@ -95,7 +96,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
   getTraceContextMock.mockReturnValue(undefined);
-  getSessionIdMock.mockReturnValue('no-id');
+  getRequestIdMock.mockReturnValue('no-id');
 });
 
 afterEach(async () => {
@@ -269,6 +270,7 @@ describe('recordGaugeWithExemplar', () => {
           resource: {
             attributes: [
               { key: 'deployment.environment', value: { stringValue: 'test' } },
+              { key: 'service.instance.id', value: { stringValue: 'test-instance-id' } },
               { key: 'service.name', value: { stringValue: '@acme/api' } },
               { key: 'service.version', value: { stringValue: '1.0.0' } },
             ],
@@ -330,6 +332,7 @@ describe('recordGaugeWithExemplar', () => {
           resource: {
             attributes: [
               { key: 'deployment.environment', value: { stringValue: 'test' } },
+              { key: 'service.instance.id', value: { stringValue: 'test-instance-id' } },
               { key: 'service.name', value: { stringValue: '@acme/api' } },
               { key: 'service.version', value: { stringValue: '1.0.0' } },
             ],
@@ -361,9 +364,9 @@ describe('recordGaugeWithExemplar', () => {
     });
   });
 
-  test('auto-attaches session.id to the exemplar filteredAttributes when a session is active', async () => {
+  test('auto-attaches request.id to the exemplar filteredAttributes inside a server request', async () => {
     getTraceContextMock.mockReturnValue({ spanId: 'abc123', traceId: 'def456' });
-    getSessionIdMock.mockReturnValue('auto-session-id');
+    getRequestIdMock.mockReturnValue('auto-request-id');
     const fetchMock = setUp();
 
     await recordGaugeWithExemplar({ name: 'http_server_duration_seconds', value: 0.1 });
@@ -375,19 +378,19 @@ describe('recordGaugeWithExemplar', () => {
     expect(dataPoint).toMatchObject({
       exemplars: [
         {
-          filteredAttributes: [{ key: 'session.id', value: { stringValue: 'auto-session-id' } }],
+          filteredAttributes: [{ key: 'request.id', value: { stringValue: 'auto-request-id' } }],
         },
       ],
     });
   });
 
-  test('lets an explicit exemplarAttributes session.id win over the auto-attached one', async () => {
+  test('lets an explicit exemplarAttributes request.id win over the auto-attached one', async () => {
     getTraceContextMock.mockReturnValue({ spanId: 'abc123', traceId: 'def456' });
-    getSessionIdMock.mockReturnValue('auto-session-id');
+    getRequestIdMock.mockReturnValue('auto-request-id');
     const fetchMock = setUp();
 
     await recordGaugeWithExemplar({
-      exemplarAttributes: { 'session.id': 'explicit-session-id' },
+      exemplarAttributes: { 'request.id': 'explicit-request-id' },
       name: 'http_server_duration_seconds',
       value: 0.1,
     });
@@ -400,14 +403,14 @@ describe('recordGaugeWithExemplar', () => {
       exemplars: [
         {
           filteredAttributes: [
-            { key: 'session.id', value: { stringValue: 'explicit-session-id' } },
+            { key: 'request.id', value: { stringValue: 'explicit-request-id' } },
           ],
         },
       ],
     });
   });
 
-  test('omits filteredAttributes entirely when there is no session and no exemplarAttributes', async () => {
+  test('omits filteredAttributes entirely when there is no request id and no exemplarAttributes', async () => {
     getTraceContextMock.mockReturnValue({ spanId: 'abc123', traceId: 'def456' });
     const fetchMock = setUp();
 

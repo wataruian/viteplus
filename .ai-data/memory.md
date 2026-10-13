@@ -1,6 +1,9 @@
 # Persistent Memory & Decision Log
 
 This file acts as a chronological ledger for major architectural shifts, context updates, and monorepo conventions.
+Entries describe the repo **as of their date** — older ones may name files or commands that have
+since been renamed or removed (e.g. `ci.yml`, `mise run ci`); the topic docs in `.ai-data/` and
+AGENTS.md reflect the current state.
 
 ## 2026-08-12: Migration to Mise Tasks
 
@@ -149,7 +152,7 @@ This file acts as a chronological ledger for major architectural shifts, context
   `SessionProvider` — `ModeProvider`/`ThemeProvider` are **not mounted anywhere** in
   `apps/frontend`. The page's actual colors come entirely from `apps/frontend/src/style.css`'s
   own, separate `:root { --bg: #fff; ... }` / `@media (prefers-color-scheme: dark) { --bg:
-#16171d; }` — OS-preference-driven CSS, unrelated to the design system's class-toggle theming.
+  #16171d; }` — OS-preference-driven CSS, unrelated to the design system's class-toggle theming.
   (`style.css` and `app.tsx` are, in fact, still the stock Vite React starter demo page —
   `.hero`, `#next-steps`, `#docs`, `#social`, `.ticks`, the counter button — not yet replaced
   with real app content.)
@@ -174,8 +177,8 @@ This file acts as a chronological ledger for major architectural shifts, context
      (`typescriptLogo`, `viteLogo`) already carry real alt text; `heroImg` is the decorative
      background graphic they're overlaid on.
   2. `counter.ts`'s `setCounter` used `element.innerHTML = \`Count is ${counter}\``to write
-plain text — the wrong DOM API for non-markup content (unnecessarily invokes the HTML
-parser; no XSS risk here since`counter` is an internal integer, but still incorrect API
+     plain text — the wrong DOM API for non-markup content (unnecessarily invokes the HTML
+     parser; no XSS risk here since`counter` is an internal integer, but still incorrect API
      choice).
 - **Decision**: Added `alt=''` to `heroImg` (decorative, consistent with how the icon images
   elsewhere in the same file already use empty alt for decoration next to text). Changed
@@ -481,3 +484,331 @@ parser; no XSS risk here since`counter` is an internal integer, but still incorr
   `<Preview>` as frontend `/preview` — toggling in place). The design-system Playwright config now
   starts two `webServer`s (Storybook 6116 + `vp dev` preview app 6117; ports in `tests/e2e/ports.ts`).
   Mutation-checked (broken Home link; remount on toggle). Passing locally 3/3 and in Dagger.
+
+## 2026-09-29: Repo-Wide Review Fixes — Fail-Closed Deploy ENV, Error Masking, `common` Split
+
+- **Found (verified live)**: the deployed backend Worker ran as `ENV=local` — nothing set `ENV`,
+  and `getEnvName()` defaults to `local`. On `lightproject-backend.wataru.workers.dev`, `/docs`,
+  `/docs/openapi-http.json` and `/metrics` returned 200, error bodies carried stack traces, and the
+  IP allowlist was bypassed (local/other envs counted as "safe").
+- **Decision**: fail closed at the deploy layer, not by changing `getEnvName()`'s default (that
+  would break local dev/tests with no `.env`). `apps/backend/wrangler.toml` sets
+  `ENV = "production"`; `deploy-workspace.yml` passes `--environment=<env>` to the Dagger
+  `wrangler` function, which appends `--var ENV:<env>` (validated kebab-case). Unrecognized ENV
+  values are no longer "safe" in `trust-proxy.ts`, and `dev` is accepted as an alias of `develop`
+  (corrected below: the GitHub Environment is actually `develop`). The wrangler test runtime passes the host's `getEnvName()` so
+  the toml default doesn't leak into tests.
+- **Other fixes**: 500 messages masked unless stack traces are allowed; `X-Request-Id` header
+  (exposed via CORS); CORS origins trimmed; telemetry force-flushed per request only on edge
+  (`waitUntil`) — Node relies on batch processors (tests call `flush` from `runtimes`); added an
+  `http.server.request.duration` SDK histogram next to the exemplar gauge; public
+  `PrometheusSerializer` import; `exemplar-metrics` moved `server/` → `utils/` and `rum`
+  `utils/` → new `browser/` entry, which let the frontend drop its Node-builtin `external` list;
+  `tsconfig.base.json` `customConditions` is now just `["typescript"]` (forcing `require` resolved
+  culori's CJS types for ESM imports); compose ports bound to `127.0.0.1`; undici audit overrides;
+  `ready` no longer re-runs `format`/`lint` (covered by `vp check`), and `mise run check` = fixes +
+  `vp run ready`.
+- **Not a bug**: the AI instruction files (`.github/copilot-instructions.md`, `.cursor/…`,
+  `.aiassistant/…`) were already symlinks to AGENTS.md (git mode 120000).
+
+## 2026-09-29: Per-Environment Workers, `requestId`, Logger Decoupled From Faro
+
+- **Per-environment Workers**: every wrangler config has `[env.develop|staging|production]` blocks
+  naming `lightproject-<app>-<dev|staging|production>` (user's choice: suffix all three; the old
+  unsuffixed Workers are orphaned — see TODO). The Dagger `wrangler` function now takes a required
+  `environment` (runtime-checked against `DEPLOY_ENVIRONMENTS`) and sets `CLOUDFLARE_ENV` instead of
+  appending `--env`/`--var`, because design-system's `wrangler:deploy` task runs two
+  `wrangler deploy` commands and trailing args only reach the last. Verified with
+  `CLOUDFLARE_ENV=<env> wrangler deploy --dry-run` (per-env vars bind; assets/observability inherit).
+  **Correction**: the GitHub Environment is `develop` (on-push-main/release/trigger), not `dev` —
+  `dev` is only the Worker suffix; `deploy-workspace.yml` maps it via `WORKER_SUFFIX`.
+- **`ALLOW_ALL_IPS = "true"`** is hardcoded in each backend env block (user's choice), so the
+  deployed API is public; the top-level config keeps fail-closed `ENV = "production"` without it.
+- **`sessionId` → `requestId`** in the backend: context var, tRPC ctx, both envelopes (breaking
+  API field rename), `X-Request-Id`. `common`'s `RequestContext` now has optional `sessionId`
+  (client/RUM session) and `requestId` (server request); logs, spans (`request.id`) and exemplars
+  carry `requestId`. `requestLogger` reads `c.get('requestId')` rather than the ambient context —
+  OTel `context.with` only propagates once a context manager is registered.
+- **Logger no longer imports Faro**: `logger/browser-sink.ts` holds a `BrowserLogSink` that
+  `browser/rum.ts`'s `initializeRum()` registers (`createFaroLogSink`). A sink registered after
+  `setSessionId()` is synced immediately. The backend Worker bundle now has zero Faro references.
+- **Gotcha**: wrangler (esbuild) resolves `@lightproject/common` via its `dist/` (no `typescript`
+  condition), so wrangler-runtime tests and dry-run bundles use a stale `common` until
+  `vp run --filter @lightproject/common build` — `vp run ready` builds before testing.
+
+## 2026-10-09: One `requestId` Everywhere; Faro Keeps Its Own Session
+
+- **Decision (user)**: rename the remaining `sessionId` too, frontend included — the app has a
+  single id concept, `requestId`. `common/logger`: `setRequestId`/`getRequestId` (explicit id →
+  request-context store → `'no-id'`), `startSpanWithRequestId`, `RequestContext.requestId` only,
+  log entries/spans/exemplars carry `requestId`/`request.id` (no more `session.id`).
+  design-system: `RequestIdProvider`/`useRequestId` (`request-id-context.tsx`,
+  `request-id-provider.tsx`). Backend `resolveRequestId` = `ctx.requestId ?? getRequestId()`.
+- **Faro**: we no longer override Faro's session (`setSession({ id })`/`resetSession()` are gone);
+  Faro auto-generates and rotates its own session id. Our id is added as the session attribute
+  `requestId` (`createFaroLogSink().setRequestId`, keeping Faro's session id), so it rides on every
+  Faro signal and is carried into rotated sessions (faro-web-sdk's
+  `addSessionMetadataToNextSession` merges current session attributes). Verified in
+  faro-web-sdk 2.9.0: an attribute-only change keeps the session id. The sink is now
+  `{ pushLog, setRequestId }`; `getRequestId()` no longer falls back to the Faro session id.
+- `LogEntry`/`LogLevel`/`LogMode` live in dependency-free `logger/types.ts` again (re-exported from
+  `formatters.ts`): `browser-sink.ts` importing them from `formatters.ts` is a madge cycle
+  (`browser-sink → formatters → context → browser-sink`).
+- **Follow-up (same day)**: dropped passing `requestId` to Faro at all — our log entries already
+  carry it in their body, spans/exemplars carry `request.id`, and Faro's own signals share Faro's
+  auto session id with our logs (the frontend id never reached the backend anyway; the trace link
+  is `traceparent`). The browser sink is just `{ pushLog }`; `rum.ts` no longer touches Faro's
+  session API. `registerBrowserLogSink` now lives in `browser-sink.ts` (not `context.ts`), which
+  breaks the `browser-sink → formatters → context → browser-sink` cycle without `logger/types.ts`
+  (removed; `LogEntry` stays in `formatters.ts`).
+
+## 2026-10-09: Review Fixes — Wrangler Tasks Uncached, nginx `^~`, Prometheus Deep Import
+
+- **Verified bug**: `wrangler:deploy` (and `:delete`/`:dev`) were cached Vite Tasks. Cached tasks
+  run in a filtered env (only `cache.env`/`untrackedEnv` + a small default set), so
+  `CLOUDFLARE_ENV` never reached wrangler — `CLOUDFLARE_ENV=staging vp run --filter
+  @lightproject/backend wrangler:deploy --dry-run` resolved the top-level `ENV=production`, i.e.
+  the old unsuffixed Worker — and a second run replayed from cache without deploying. All
+  `wrangler:*` tasks are now `cache: false` (full env, always runs); re-verified the dry-run shows
+  `ENV=staging` on every run. Backend `wrangler:dev` passes `--var ENV:local`.
+- nginx `location /assets/` → `location ^~ /assets/`: regex locations are checked before plain
+  prefix ones, so hashed JS/CSS got the 7d rule. Verified with a real nginx container
+  (`/assets/*.js` → 1y `immutable`).
+- `PrometheusSerializer` stays on the package-root import (user's call — no deep
+  `build/src/...` path). The root also bundles `PrometheusExporter` (Node `http`/`url`
+  references) into the Worker, but verified harmless: with the root import, the wrangler-runtime
+  `/metrics` test (real workerd, no `nodejs_compat`) passes. Cost is only ~10 KB of unused code.
+- `isRequestContext` accepts any non-array object (`requestId` is optional).
+
+## 2026-10-09: Third Review Round
+
+- `getRequestId()`: the request-scoped store now wins over the process-wide `setRequestId()` value
+  (a server request's own id must not be shadowed by a page-level id in the same process).
+- Dagger `wrangler` sets `DEPLOY_REQUESTED_AT` (timestamp) before `wrangler:deploy`, so Dagger's
+  op cache can't replay a re-deploy/rollback of identical source without calling Cloudflare
+  (`disableDefaultFunctionCaching` only covers function-call caching, not exec ops).
+- `deploy-workspace.yml`: `VITE_API_URL` is always derived (`lightproject-backend-<suffix>`), no
+  `vars.VITE_API_URL` override; `WORKERS_SUBDOMAIN` is a fixed `wataru.workers.dev` that must match
+  `apps/backend/wrangler.toml`'s CORS origins. `develop` → `dev` Worker suffix via
+  `inputs.environment == 'develop' && 'dev' || inputs.environment` (no ternary in GH expressions).
+- Both duration metrics use stable HTTP semconv attributes (`http.request.method`,
+  `http.response.status_code`, `http.route`). `isOtherEnvironment` removed (no callers).
+- User will delete the old unsuffixed Cloudflare Workers manually.
+- **Removed the top-level `[vars] ENV = "production"`** from `apps/backend/wrangler.toml` (user's
+  call) and the now-redundant `--var ENV:local` on `wrangler:dev`. A wrangler run with no
+  environment (local `wrangler dev`, tests) is `local` again via `getEnvName()`'s default.
+  Deploys are unaffected: the Dagger `wrangler` function requires `--environment`, and each
+  `[env.*]` block sets its own `ENV`. Remaining risk: a manual `wrangler deploy` with no env would
+  deploy an unhardened `lightproject-backend` Worker.
+
+## 2026-10-09: Final Review Fixes
+
+- `http.server.request.duration` uses seconds-based `advice.explicitBucketBoundaries` (HTTP semconv);
+  the sdk-metrics default `[0, 5, 10, …, 10000]` is milliseconds-based and put every request in one
+  bucket. Verified via `/metrics`: buckets start at `le="0.005"`.
+- OTel stable packages bumped to 2.11.0 (resources, sdk-metrics, sdk-trace-web) to match the
+  0.222.0 experimental ones, then `vp dedupe` — no more 2.10/2.11 split. Faro's own pinned 0.219.x
+  packages still bring a 2.8.0 set (pre-existing, not fixable from our catalog).
+- `shutdownTelemetry()` flushes buffered exemplar metrics (Node no longer flushes per request).
+- OTel log record attribute is `request.id` (same key as spans/exemplars).
+- `deploy-workspace.yml` builds `VITE_API_URL` in-step from `WORKER_SUFFIX`/`WORKERS_SUBDOMAIN`.
+- New audit advisories since 2026-09-29 (handlebars critical via plop; brace-expansion, braces,
+  source-map-js, wrangler's sharp) — all dev-only, same versions as HEAD, not caused by this change.
+- **Advisory follow-up**: overrides pin `brace-expansion` (1.1.21 / 5.0.12), `handlebars` 4.7.10,
+  `sharp` 0.35.5 (miniflare pins 0.35.4 exactly) and `source-map-js` 1.2.2 — all patch releases
+  > 24h old. `vp pm audit` is down to `esbuild` (low, via tsx) and `braces` (no fixed version
+  > published). Verified with `vp run ready` and plop/commitizen smoke checks.
+
+## 2026-10-09: Vite+ 1.1.0; Fourth Review Fixes
+
+- **Vite+ 1.0.0 → 1.1.0** (released 2026-10-07): catalog `vite-plus`/`vite` (vite-plus-core) 1.1.0,
+  `vitest` and `@vitest/coverage-v8` 5.0.3 (vite-plus 1.1.0 pins vitest 5.0.3), Dagger
+  `VITE_PLUS_IMAGE` `ghcr.io/voidzero-dev/vite-plus:1.1.0` (verified with a real
+  `dagger call check --workspace=@lightproject/library`), setup-toolchain `vp-version` default,
+  `install.sh` `VP_VERSION`, mise.toml's commented entry. Global CLI upgraded by the user.
+  `vp toolchain`: one vitest (5.0.3) and one vite-plus-core (1.1.0).
+- **Gotcha**: Workers forbid random values (and timers/I/O) in global scope — a module-level
+  `crypto.randomUUID()` made workerd fail to start (all wrangler-runtime tests). `service.instance.id`
+  is now generated lazily by `getServiceInstanceId()` (utils/telemetry), on both OTel resources and
+  the exemplar export, so concurrent isolates/pages don't share cumulative series.
+- Overrides trimmed to exact-pin parents only: `undici` 7.x + `sharp` (miniflare), `source-map-js`
+  (magicast pins 1.2.1 exactly — the lockfile keeping 1.2.2 without an override is stale). Overrides
+  for in-range parents (`undici` 8, `brace-expansion`, `handlebars`) dropped; the lockfile keeps the
+  patched versions.
+- nginx: only static media keeps the 7d cache; unhashed JS/CSS (e.g. Storybook `sb-manager/`) falls
+  through to `no-cache`. `X-Request-Id` is set on the final response after `next()` (tested on
+  `/metrics` and tRPC). TODO no longer says to delete `vars.VITE_API_URL` (PR verify builds use it).
+
+## 2026-10-09: Fifth Review — Delta Temporality Instead of Instance IDs
+
+- **Metrics design (supersedes the per-instance `service.instance.id`)**: many concurrent/short-lived
+  exporters (browser tabs, Workers isolates) share one resource identity. A random instance id
+  per page/isolate fixed the cumulative-series collisions but exploded Mimir series cardinality
+  (it becomes the `instance` label). Now both OTLP metric exporters (`server/telemetry.ts`,
+  `browser/rum.ts`) use `temporalityPreference: DELTA`, and the collector's `deltatocumulative`
+  processor (first in the metrics pipeline) sums the deltas into cumulative series for
+  `prometheusremotewrite`. Verified: `otelcol-contrib validate` on the config, and an end-to-end
+  run (two deltas 2 then 3 under one identity → cumulative 2 then 5). The backend's Prometheus
+  pull `/metrics` stays cumulative (temporality is per reader). `getServiceInstanceId` removed.
+  The hand-rolled exemplar gauge is last-value (cumulative non-monotonic) and passes through.
+- 5xx messages are masked unless stack traces are allowed, for every error type — tRPC failures
+  arrive as `HTTPException(500, <original message>)` and were leaking. 4xx messages pass through.
+- **Metric samples are intentional (user)**: this starter's telemetry examples are backend =
+  request duration (`http_server_duration_seconds` exemplar gauge) + `request_hits` Counter, and
+  frontend = tRPC call duration (`http_client_duration_seconds`) + button clicks (`counter.ts`) —
+  there to illustrate Grafana for starters, not redundant. `request_hits` was briefly removed as a
+  "duplicate" and restored; the `http.server.request.duration` histogram added in round 1 was
+  removed to keep the backend to those two samples.
+- Renovate's vite-plus group includes `vitest` (vite-plus and coverage-v8 both pin it exactly) and
+  lists mise.toml's commented `viteplus` entry.
+
+## 2026-10-09: Sixth Review — Single-Writer Metrics, tRPC Error Formatter
+
+- **Correction to the delta-only design above**: `deltatocumulative` assumes one writer per stream
+  and silently drops overlapping deltas from concurrent writers sharing an identity (verified on
+  otelcol-contrib 0.131.0: writers A=2,1 and B=3 → 3 instead of 6; the `interval` processor does
+  not help). Best practice = OTel single-writer principle: every SDK instance sets a unique
+  `service.instance.id` (lazy `getServiceInstanceId()` via `generateUuid`, on both OTel resources
+  and the exemplar export), exporters send deltas, the collector's `deltatocumulative`
+  (`max_stale: 5m`) builds a cumulative stream per instance, and Grafana sums across instances
+  (`sum without (instance, service_instance_id) (...)`). Verified end to end: A → 3, B → 3,
+  sum 6. Series churn per instance is the accepted cost (like short-lived pods in Prometheus).
+- tRPC `errorFormatter` (in `routers/utils.ts` `t`): strips `stack` and masks 5xx messages unless
+  `config.enableErrorStack` — covers batched responses (the frontend's default), which bypass Hono's
+  global error handler because the body is an array.
+- Flaky `shutdownTelemetry` exemplar-flush test: test files share module state (`isolate: false`),
+  so it now calls `resetTelemetryForTests()` first.
+
+## 2026-10-09: Eighth Review — Error Policy Module, Observability Fixes, Loopback CORS
+
+- `apps/backend/src/errors.ts` is the single client-exposure policy (`toClientErrorMessage`,
+  `toClientErrorStack`), used by Hono's error handler and the tRPC `errorFormatter`
+  (routers no longer import middleware for it).
+- tRPC handling is `handleTrpcRequest(c, router)` (route via `trpcRouter.all('/*')` — a typed route
+  context, unlike `.use`'s `any` input, so Hono's context can be passed straight to
+  `logTrpcServerError`); tests drive it with a throwing router to check masking + onError logging.
+  tRPC context `requestId` is required (no ambient fallback).
+- Logger: `serializeErrors` (redactor) turns Errors (incl. `cause`) into plain objects before
+  redaction — Error fields are non-enumerable, so every `{ err }` log was `{}` before.
+- Observability: 5xx request spans get `SpanStatusCode.ERROR`; `respondWithError` records 5xx
+  exceptions on the span and logs 4xx at `warn`; `requestType` comes from the path (the full URL
+  only matched on localhost).
+- CORS/CSP: API/admin/site URLs default to localhost when unset; loopback origins are only trusted
+  when `isLocal() || isTest()`. Verified with `wrangler dev --env production`.
+- `wrangler dev` loads the package `.env` (symlink to root) **by design** — that is how the local
+  dev server gets its environment variables, and those values override the `[env.*]` vars. Only
+  when deliberately emulating a deployed environment's behaviour locally (e.g. checking production
+  CORS/CSP), run with `CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV=false`.
+- AGENTS.md: Dagger test functions are `test-unit` / `test-end-to-end` (no `test`).
+
+## 2026-10-10: Ninth Review — Fail-Closed Redaction, JSON-Shaped Serialization
+
+- **Redaction (security, pre-existing)**: redact-object 4.0.4 throws on any non-plain value unless
+  `ignoreUnknown: true`, and the old fallback logged the raw data — so e.g. a `password` next to a
+  `Date` was logged in clear text. It also matched keys case-sensitively (`strict: true` default), so
+  `Authorization` headers weren't masked. Now: `serializeErrors` first converts metadata to exactly
+  what `JSON.stringify` emits (Errors → name/message/stack/cause/AggregateError.errors; `toJSON()` for
+  Date/URL; own enumerable fields for class instances and plain objects), then redact-object runs
+  with `{ ignoreUnknown: true, strict: false }`, and any failure fails closed to
+  `{ metadata: '[REDACTION FAILED]' }` (visible in the log line, never the raw data).
+- `serializeErrors` tracks only the ancestor path (shared refs are not `[Circular]`) and skips
+  own enumerable `cause`/`errors` in the generic copy (tRPC defines `cause` enumerable — it was being
+  overwritten with `[Circular]`). Verified with the real redact-object and `TRPCError`.
+- AppEnv `span` is `Span | undefined` (errors can be handled before requestLogger sets it);
+  `runWithRequestContext` accepts an undefined span. Request span attributes use stable semconv
+  (`http.request.method`, `url.full`, `url.path`, `http.response.status_code`), matching metrics.
+- Process note: each fix is now checked against the real libraries and adversarially self-reviewed
+  before reporting (this round that caught class-instance leakage and a silent fail-closed value).
+
+## 2026-10-10: Tenth Review — Log Serialization Mirrors JSON, URL Redaction
+
+- `serializeErrors` → `serializeForLog` (redactor.ts), typed `(value: unknown) => JsonValue |
+  undefined`, split into helpers (primitive/collection/error). It mirrors `JSON.stringify`:
+  `toJSON()` honoured **before** the Error branch (custom errors that hide PII via toJSON stay
+  hidden), functions/symbols/undefined omitted (`null` in arrays), non-finite → null, bigint →
+  string (no more `formatJSON` BigInt throw). Richer than JSON where JSON loses data: Errors keep
+  name/message/stack/cause plus AggregateError `errors` (an own enumerable `errors` on other errors
+  is kept as-is); Map/Set/Headers/URLSearchParams keep entries (so they get redacted, not `{}`);
+  errors are detected by brand (`[object Error]`) so cross-realm errors work.
+- `redactUrl(url)` (common/logger): masks userinfo and sensitive query values (same field list,
+  case-insensitive substring). Used for every logged/traced request URL in the backend
+  (`url.full`, request/response/error/not-found/tRPC logs) and for URL objects in log metadata.
+- `RedactFn` uses redact-object's own `ConfigOptions`; `getRedactFn` narrows via `assumeShape`.
+- requestLogger: `finish(status)` ends the span / records duration even if the downstream chain
+  (incl. the error handler) throws — counted as 500, then rethrown.
+- **Decision (user)**: per-request context relies on the explicit `runWithRequestContext(span,
+  { requestId }, …)` workaround (the WebTracerProvider's StackContextManager doesn't propagate
+  across `await`). Do NOT enable `nodejs_compat` or add non-web-standard deps (e.g.
+  `@opentelemetry/context-async-hooks`) to fix it.
+- Note: a standalone `vp test` in apps/backend can resolve `@lightproject/common` from a stale
+  `dist/` — rebuild common (`vp run --filter @lightproject/common build`) or use `vp run ready`.
+
+## 2026-10-10: Eleventh Review — Redaction Hardening, Collector-Level URL Redaction
+
+- `redactWith(data, fields, redactValue)` (redactor.ts) is the core: serialization **and**
+  redaction run inside one fail-closed `try`, so throwing getters/`toJSON`, revoked proxies, etc.
+  yield `{ metadata: '[REDACTION FAILED]' }` and the logger never throws. `serializeForLog` cuts
+  nesting at depth 32 (`[Max Depth]`), serializes `toJSON() { return this }` as the object's
+  fields, and labels Map keys (objects as JSON, collisions suffixed ` (n)`).
+- `redactUrl` edits the URL **text** (no `new URL()` round-trip): untouched params keep their exact
+  encoding; works for relative URLs; redacts sensitive query **and fragment** params, userinfo, and
+  sensitive keys inside JSON-valued params (tRPC GET `?input={...}`).
+- `isErrorLike` lives in `common/validators` (shared guard, brand check).
+- requestLogger: when the downstream chain (error handler) throws, the exception is recorded on the
+  span and logged ("Unhandled error") before `finish(500)`.
+- **Collector**: `transform/redact-urls` (first in the traces and logs pipelines) runs OTTL
+  `replace_all_patterns` over every span/log attribute value and `replace_pattern` on string log
+  bodies: userinfo, sensitive `?&#` params, and sensitive keys inside URL-encoded JSON (handles
+  `%3A%20` spacing and `%5C%22` escaped quotes). Covers Faro/browser fetch spans (`http.url`).
+  `$${1}` escapes `$` from collector config expansion. Verified on otelcol-contrib 0.131.0 with the
+  repo config. `error_mode: ignore` (fails open on a runtime statement error; `propagate` would
+  drop instead). Restart the `otel-collector` container to apply.
+
+## 2026-10-10: Self-Review Loop Until Clean (Twelfth Review)
+
+- **Process**: fixes are now looped through the same code-review agent _before_ reporting, repeating
+  until a pass returns no verified defects (this round: 5 passes → empty).
+- Collector `transform/redact-urls`: `error_mode: propagate` (fail closed); contexts resource/span/
+  spanevent (traces) and resource/log (logs; string **and** map bodies); explicit OTTL context
+  prefixes; patterns cover userinfo (protocol-relative, greedy to the last `@`), sensitive `?&#`
+  params, and sensitive keys in URL JSON (`%3A` or literal `:`, string or scalar values). Every
+  URL-part class stops at whitespace/quotes/backslash (userinfo also at `,`) — otherwise matches ran
+  past the URL and corrupted compact-JSON log bodies (verified: backend-shaped JSON stays valid).
+- App side: `__proto__` keys renamed `[__proto__]` (else redact-object treats the object as
+  non-plain and skips redaction); custom redact fields reach `redactUrl`; JSON-param detection
+  decodes like URLSearchParams + `trimStart()`; extremely deep JSON params fail closed (no throw).
+- Backend: `getLogUrl(c)` (`src/log-url.ts`) redacts the URL once per request; `ReportedHttpException`
+  (errors.ts) marks tRPC 5xx already reported by `onError`, so the global handler doesn't log/record
+  them again; deploy-workspace.yml fails fast for refs without `[env.<environment>]`.
+- `packages/common` tests run with `isolate: true`: the intermittent shutdown-flush failure was
+  rum.test's `vi.mock('utils/exemplar-metrics')` leaking into telemetry.test in the same worker.
+- Open decision (user): browser metrics get a per-page-load `service.instance.id` → one Mimir series
+  per page view.
+
+## 2026-10-11: Tests No Longer Export Telemetry; SKIP_OPENTELEMETRY Works
+
+- Found by review: backend/frontend unit tests sent ~411 real OTLP requests to `localhost:4318` per
+  run (polluting a running local LGTM stack), and `SKIP_OPENTELEMETRY` was parsed but never read.
+- `getApp()` now skips `initializeTelemetry` when `config.skipOpenTelemetry`; uninitialized
+  telemetry makes flush/exemplar/OTel-log export no-ops. Backend + frontend vitest `test.env` set
+  `SKIP_OPENTELEMETRY: 'true'`; the backend wrangler test helper forwards it as a var; the frontend
+  `globalSetup` (main process, no test.env) passes it to `unstable_dev` explicitly. Telemetry tests
+  opt back in (`SKIP_OPENTELEMETRY: 'false'`) against `startFakeOtelCollector`.
+- Verified with a listener on 4318/12347 (IPv4+IPv6) during `vp run --no-cache -r test:unit`:
+  0 requests (was 411).
+- `.ai-data/web-standards.md` common-subpath section corrected: `./server` is backend-only but
+  runs on Workers too (no `node:*`), `./browser` is frontend-only, `./node` is the only Node-only
+  subpath, and there is no `"browser"` stub map anymore.
+- Follow-up found by self-review: skipping `initializeTelemetry` also skipped context-manager
+  registration (done by `WebTracerProvider.register()`), so with `SKIP_OPENTELEMETRY=true` logs
+  lost their `requestId` (`no-id`). Fix: `initializeContextPropagation()` in
+  `@lightproject/common/server` registers the same `StackContextManager` without any exporter;
+  `getApp()` calls it on the skip path, and `resetTelemetryForTests` now `context.disable()`s.
+  Covered by a common test and a backend test (log `requestId` === `X-Request-Id`), confirmed to
+  fail with the call removed.
+- Final-review fixes: `AGENTS.md` named a nonexistent `validate.yml` (it's `scan.yml`);
+  `web-standards.md` still said telemetry init was unconditional. `release.yml` passed the
+  free-text `custom_version` straight into `run:` (shell injection by anyone with write access):
+  it now goes through `env:` and must match a whole-string bash `[[ =~ ]]` semver check.
+  `grep -x` was tried first and rejected, because it matches per line, so `1.2.3\nx=y` passed and
+  could forge `$GITHUB_OUTPUT` lines. The release summary now says `develop`, not "dev".

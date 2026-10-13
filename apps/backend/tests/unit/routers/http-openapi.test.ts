@@ -80,7 +80,7 @@ test('createHttpRouter builds a requestless route when a route has no request sc
   const router = createHttpRouter([route]);
   const app = new Hono<AppEnv>();
   app.use('*', async (c, next) => {
-    c.set('sessionId', 'unit-test-session');
+    c.set('requestId', 'unit-test-request');
     await next();
   });
   app.route('/', router);

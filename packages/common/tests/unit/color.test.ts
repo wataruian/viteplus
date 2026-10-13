@@ -57,8 +57,8 @@ describe('getRandomColor', () => {
 
   test('caches the color per id and returns the same color on repeat calls', async () => {
     const { getRandomColor } = await importFreshColorModule();
-    const first = getRandomColor('session-a');
-    const second = getRandomColor('session-a');
+    const first = getRandomColor('request-a');
+    const second = getRandomColor('request-a');
     expect(second).toBe(first);
   });
 
@@ -70,14 +70,14 @@ describe('getRandomColor', () => {
     expect(assigned[colors.length]).toBe(assigned[0]);
   });
 
-  test('evicts the oldest entry once the session cache exceeds 1000 ids', async () => {
-    const { getRandomColor, sessionColors } = await importFreshColorModule();
+  test('evicts the oldest entry once the request-id cache exceeds 1000 ids', async () => {
+    const { getRandomColor, requestColors } = await importFreshColorModule();
     for (let i = 0; i < 1001; i += 1) {
       getRandomColor(`evict-${i}`);
     }
-    expect(sessionColors.size).toBe(1000);
-    expect(sessionColors.has('evict-0')).toBe(false);
-    expect(sessionColors.has('evict-1000')).toBe(true);
+    expect(requestColors.size).toBe(1000);
+    expect(requestColors.has('evict-0')).toBe(false);
+    expect(requestColors.has('evict-1000')).toBe(true);
   });
 });
 

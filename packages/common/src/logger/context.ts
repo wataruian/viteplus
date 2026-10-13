@@ -1,4 +1,3 @@
-import * as faroSdk from '@grafana/faro-web-sdk';
 import {
   type Context,
   type Span,
@@ -8,9 +7,9 @@ import {
   trace,
 } from '@opentelemetry/api';
 
-import { isBrowser } from '../environment';
 import { getRandomColor } from '../utils/color';
 import { runWithSpan, tracer } from '../utils/telemetry';
+import { isRecord } from '../validators/validate';
 
 interface TraceContext {
   spanId: string;
@@ -19,7 +18,7 @@ interface TraceContext {
 
 interface RequestContext {
   [key: string]: unknown;
-  sessionId: string;
+  requestId?: string;
   color?: (text: string) => string;
   metadata?: Record<string, unknown> | object;
 }
@@ -27,7 +26,9 @@ interface RequestContext {
 const REQUEST_CONTEXT_KEY = createContextKey('request_context');
 
 const isRequestContext = (value: unknown): value is RequestContext =>
-  typeof value === 'object' && value !== null && 'sessionId' in value;
+  isRecord(value) &&
+  (value['requestId'] === undefined || typeof value['requestId'] === 'string') &&
+  (value['color'] === undefined || typeof value['color'] === 'function');
 
 const requestContextStorage = {
   getStore: (): RequestContext | undefined => {
@@ -38,38 +39,14 @@ const requestContextStorage = {
     context.with(context.active().setValue(REQUEST_CONTEXT_KEY, store), callback),
 };
 
-let explicitSessionId: string | undefined = undefined;
+let explicitRequestId: string | undefined = undefined;
 
-const setSessionId = (sessionId: string | undefined): void => {
-  explicitSessionId = sessionId;
-
-  if (!isBrowser()) {
-    return;
-  }
-
-  if (sessionId === undefined) {
-    faroSdk.faro.api.resetSession();
-  } else {
-    faroSdk.faro.api.setSession({ id: sessionId });
-  }
+const setRequestId = (requestId: string | undefined): void => {
+  explicitRequestId = requestId;
 };
 
-const getSessionId = (): string => {
-  if (explicitSessionId !== undefined) {
-    return explicitSessionId;
-  }
-  const store = requestContextStorage.getStore();
-  if (store?.sessionId !== undefined) {
-    return store.sessionId;
-  }
-  if (isBrowser()) {
-    const faroSessionId = faroSdk.faro.api.getSession()?.id;
-    if (faroSessionId !== undefined) {
-      return faroSessionId;
-    }
-  }
-  return 'no-id';
-};
+const getRequestId = (): string =>
+  requestContextStorage.getStore()?.requestId ?? explicitRequestId ?? 'no-id';
 
 const getColor = () => {
   const store = requestContextStorage.getStore();
@@ -77,7 +54,7 @@ const getColor = () => {
   if (color) {
     return color;
   }
-  return getRandomColor(getSessionId());
+  return getRandomColor(getRequestId());
 };
 
 const getRequestContext = (): RequestContext | undefined => requestContextStorage.getStore();
@@ -90,18 +67,20 @@ const getTraceContext = (): TraceContext | undefined => {
   return { spanId: spanContext.spanId, traceId: spanContext.traceId };
 };
 
-const runWithRequestContext = <R>(span: Span, store: RequestContext, fn: () => R): R =>
-  runWithSpan(span, () => requestContextStorage.run(store, fn));
+const runWithRequestContext = <R>(span: Span | undefined, store: RequestContext, fn: () => R): R =>
+  span === undefined
+    ? requestContextStorage.run(store, fn)
+    : runWithSpan(span, () => requestContextStorage.run(store, fn));
 
-const startSpanWithSession = (name: string, options: SpanOptions = {}, ctx?: Context): Span => {
-  const sessionId = getSessionId();
+const startSpanWithRequestId = (name: string, options: SpanOptions = {}, ctx?: Context): Span => {
+  const requestId = getRequestId();
 
   return tracer.startSpan(
     name,
     {
       ...options,
       attributes: {
-        ...(sessionId === 'no-id' ? {} : { 'session.id': sessionId }),
+        ...(requestId === 'no-id' ? {} : { 'request.id': requestId }),
         ...options.attributes,
       },
     },
@@ -113,12 +92,12 @@ export {
   REQUEST_CONTEXT_KEY,
   getColor,
   getRequestContext,
-  getSessionId,
+  getRequestId,
   getTraceContext,
   isRequestContext,
   requestContextStorage,
   runWithRequestContext,
-  setSessionId,
-  startSpanWithSession,
+  setRequestId,
+  startSpanWithRequestId,
 };
 export type { RequestContext, TraceContext };

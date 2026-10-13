@@ -33,16 +33,18 @@ const getImportMetaEnv = (key: string): string | undefined => {
 const getEnv = (key: string, defaultValue?: string): string | undefined =>
   getProcessEnv(key) ?? getImportMetaEnv(key) ?? defaultValue;
 
-const isBrowser = () =>
-  (globalThis as { window?: unknown }).window !== undefined &&
-  (globalThis as { document?: unknown }).document !== undefined;
-
 const isTrue = (value = '') => {
   if (value) {
     return value.toLowerCase() === 'true' || value === '1';
   }
   return false;
 };
+
+const isFalse = (value = '') => !value || value.toLowerCase() === 'false' || value === '0';
+
+const isBrowser = () =>
+  (globalThis as { window?: unknown }).window !== undefined &&
+  (globalThis as { document?: unknown }).document !== undefined;
 
 const isEdge = () => {
   if ('EdgeRuntime' in globalThis) {
@@ -67,8 +69,6 @@ const isNode = () =>
   (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
     undefined;
 
-const isFalse = (value = '') => !value || value.toLowerCase() === 'false' || value === '0';
-
 const getEnvName = () =>
   getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'local';
 const getNodeEnv = () => getEnv('NODE_ENV');
@@ -89,18 +89,6 @@ const getLogLevel = () => getEnv('LOG_LEVEL');
 const isNonProduction = () =>
   (isCi() || isTest() || isLocal() || isDevelop() || isStaging()) && !isProduction();
 
-const isOtherEnvironment = (environment = '') => {
-  let isOtherEnv =
-    !(isCi() || isTest() || isLocal() || isDevelop() || isStaging() || isProduction()) &&
-    getEnvName() !== '';
-
-  if (isOtherEnv && environment.trim().length > 0) {
-    isOtherEnv = getEnvName() === environment;
-  }
-
-  return isOtherEnv;
-};
-
 export {
   getEnv,
   getEnvName,
@@ -120,7 +108,6 @@ export {
   isNode,
   isNodeEnvTest,
   isNonProduction,
-  isOtherEnvironment,
   isProduction,
   isStaging,
   isTest,

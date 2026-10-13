@@ -1,6 +1,7 @@
 import {
   DiagConsoleLogger,
   DiagLogLevel,
+  context,
   diag,
   metrics,
   propagation,
@@ -8,8 +9,11 @@ import {
 } from '@opentelemetry/api';
 import { logs } from '@opentelemetry/api-logs';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { PrometheusSerializer } from '@opentelemetry/exporter-prometheus/build/src/PrometheusSerializer.js';
+import {
+  AggregationTemporalityPreference,
+  OTLPMetricExporter,
+} from '@opentelemetry/exporter-metrics-otlp-http';
+import { PrometheusSerializer } from '@opentelemetry/exporter-prometheus';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
@@ -20,7 +24,11 @@ import {
   MetricReader,
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
-import { BatchSpanProcessor, WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+import {
+  BatchSpanProcessor,
+  StackContextManager,
+  WebTracerProvider,
+} from '@opentelemetry/sdk-trace-web';
 import {
   ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
   ATTR_SERVICE_NAME,
@@ -29,8 +37,8 @@ import {
 
 import { getEnv } from '../environment';
 import { logger } from '../logger';
-import { setTelemetryConfig, tracer } from '../utils/telemetry';
-import { flushExemplarMetrics } from './exemplar-metrics';
+import { flushExemplarMetrics } from '../utils/exemplar-metrics';
+import { getServiceInstanceId, setTelemetryConfig, tracer } from '../utils/telemetry';
 
 interface TelemetryOptions {
   serviceName?: string;
@@ -128,6 +136,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     [ATTR_SERVICE_VERSION]: serviceVersion,
     [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: environment,
     'deployment.environment': environment,
+    'service.instance.id': getServiceInstanceId(),
   });
 
   tracerProviderInstance = new WebTracerProvider({
@@ -148,6 +157,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
     readers: [
       new PeriodicExportingMetricReader({
         exporter: new OTLPMetricExporter({
+          temporalityPreference: AggregationTemporalityPreference.DELTA,
           url: `${otlpEndpoint}/v1/metrics`,
         }),
       }),
@@ -175,6 +185,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
 
   shutdownFn = async () => {
     await Promise.all([
+      flushExemplarMetrics(),
       tracerProviderInstance?.shutdown(),
       meterProviderInstance?.shutdown(),
       loggerProviderInstance?.shutdown(),
@@ -214,7 +225,12 @@ const shutdownTelemetry = async () => {
   }
 };
 
+const initializeContextPropagation = () => {
+  context.setGlobalContextManager(new StackContextManager().enable());
+};
+
 const resetTelemetryForTests = () => {
+  context.disable();
   trace.disable();
   metrics.disable();
   logs.disable();
@@ -226,6 +242,7 @@ const resetTelemetryForTests = () => {
 export {
   PullMetricReader,
   flushTelemetry,
+  initializeContextPropagation,
   initializeTelemetry,
   prometheusExporter,
   prometheusSerializer,

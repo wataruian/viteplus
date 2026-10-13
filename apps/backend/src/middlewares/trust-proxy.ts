@@ -1,4 +1,5 @@
-import { isCi, isLocal, isOtherEnvironment, isTest } from '@lightproject/common/environment';
+import { healthCheckEndpoint } from '@lightproject/common/configs';
+import { isCi, isLocal, isTest } from '@lightproject/common/environment';
 import { logger } from '@lightproject/common/logger';
 import type { Context } from 'hono';
 import { createMiddleware } from 'hono/factory';
@@ -49,11 +50,16 @@ const getAllowedIps = (additionalIps?: string): Set<string> =>
 
 const trustProxy = () =>
   createMiddleware<AppEnv>(async (c, next) => {
+    if (c.req.path === healthCheckEndpoint && !config.blockAllIps) {
+      await next();
+      return;
+    }
+
     const allowedIps = getAllowedIps(config.allowedIps);
     const requestIp = getRequestIp(c);
 
     const isIpAllowed = requestIp !== '' && allowedIps.has(requestIp);
-    const inSafeEnv = isLocal() || isTest() || isCi() || isOtherEnvironment();
+    const inSafeEnv = isLocal() || isTest() || isCi();
     const allowAll = config.allowAllIps;
     const blockAll = config.blockAllIps;
 
@@ -69,4 +75,12 @@ const trustProxy = () =>
     await next();
   });
 
-export { getAllowedIps, getRequestIp, getSocketAddress, normalizeIp, parseIpList, trustProxy };
+export {
+  getAllowedIps,
+  getRequestIp,
+  getSocketAddress,
+  ipv4MappedPrefix,
+  normalizeIp,
+  parseIpList,
+  trustProxy,
+};

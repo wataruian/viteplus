@@ -48,6 +48,8 @@ We use a complete open-source telemetry stack configured via `docker-compose.yml
 
 Backend services are expected to emit telemetry to the OpenTelemetry Collector.
 
+Set `SKIP_OPENTELEMETRY=true` to run the backend without exporting telemetry (no collector needed); request context, such as the `requestId` in logs, keeps working. Unit tests default to it and never send telemetry to a real endpoint. The telemetry tests opt back in against a fake collector.
+
 ### Querying Logs in Grafana (Loki)
 
 When viewing logs in Grafana, you can use the following LogQL query to natively format and filter the JSON log payloads:
@@ -59,6 +61,19 @@ When viewing logs in Grafana, you can use the following LogQL query to natively 
 ```logql
 {service_name="@lightproject/frontend"} |~ "kind=(log|exception)" | logfmt | line_format "{{ if .message }}{{.message}}{{ else }}{{.type}}: {{.value}}{{ end }}"
 ```
+
+### Querying Metrics in Grafana (Mimir)
+
+The metric samples are counters and duration gauges emitted from both apps: backend `request_hits` and `http_server_duration_seconds`, frontend `button_clicks` and `http_client_duration_seconds`.
+
+Every SDK instance (each backend Worker isolate or Node process, and **each browser tab**) reports under its own `service.instance.id`. OpenTelemetry requires one writer per metric stream, so the collector's `deltatocumulative` processor can keep a correct running total per instance. Idle instances are dropped after `max_stale` (5m). Each instance is therefore its own series (`instance` / `service_instance_id` labels). **Always aggregate across instances in queries:**
+
+```promql
+sum without (instance, service_instance_id) (rate(request_hits_total[5m]))
+sum without (instance, service_instance_id) (rate(button_clicks_total[5m]))
+```
+
+A per-instance series only receives data while its tab or isolate is alive, then goes stale. The cost therefore scales with recently active instances (roughly concurrent visitors), not with total page views. At high browser traffic, switch the frontend to collector-derived metrics: browsers send spans or events, and the collector's `spanmetrics` / `count` connector aggregates them as the single writer.
 
 ## 🚀 Getting Started
 
@@ -224,4 +239,4 @@ In CI, `dagger call test-end-to-end --workspace=<pkg>` runs them in the `vite-pl
 
 ### Share tags (`apps/frontend`)
 
-`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys pass it from the GitHub Environment variable `vars.VITE_ADMIN_URL`, so set it per environment (`dev`/`staging`/`production`). The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.
+`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys pass it from the GitHub Environment variable `vars.VITE_ADMIN_URL`, so set it per environment (`develop`/`staging`/`production`). The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.

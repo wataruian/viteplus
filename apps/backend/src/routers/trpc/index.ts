@@ -5,17 +5,22 @@ import {
   trpcEndpoint,
 } from '@lightproject/common/configs';
 import { isLocal } from '@lightproject/common/environment';
+import { logger, runWithRequestContext } from '@lightproject/common/logger';
+import type { AnyTRPCRouter, TRPCError } from '@trpc/server';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { Hono } from 'hono';
+import { getHTTPStatusCodeFromError } from '@trpc/server/http';
+import { type Context, Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { ClientErrorStatusCode, ServerErrorStatusCode } from 'hono/utils/http-status';
 
-type ErrorStatusCode = ClientErrorStatusCode | ServerErrorStatusCode;
-
+import { ReportedHttpException } from '../../errors';
+import { getLogUrl } from '../../log-url';
 import type { AppEnv } from '../../schema';
 import { collectTrpcOpenApiRoutes, getOpenApiDocument, normalizeTrpcGetQuery, t } from '../utils';
 import { defaultRouter } from './default';
 import { testRouter } from './test';
+
+type ErrorStatusCode = ClientErrorStatusCode | ServerErrorStatusCode;
 
 interface TRPCErrorResponse {
   error: {
@@ -75,17 +80,35 @@ if (isLocal()) {
   trpcOpenApiRouter.get(docsTrpcEndpoint, swaggerUI({ url: openApiTrpcJsonEndpoint }));
 }
 
-trpcRouter.use('/*', async (c) => {
+const logTrpcServerError = (c: Context<AppEnv>, error: TRPCError, path: string | undefined) => {
+  if (getHTTPStatusCodeFromError(error) < 500) {
+    return;
+  }
+  const cause = error.cause ?? error;
+  const span = c.get('span');
+  span?.recordException(cause);
+  runWithRequestContext(span, { requestId: c.get('requestId') }, () => {
+    logger.error(`tRPC Internal Server Error: ${error.message} [${c.req.method}] ${getLogUrl(c)}`, {
+      err: cause,
+      path,
+    });
+  });
+};
+
+const handleTrpcRequest = async (c: Context<AppEnv>, router: AnyTRPCRouter): Promise<Response> => {
   const reqToPass =
     c.req.method === 'GET' ? normalizeTrpcGetQuery(c.req.raw, c.req.query()) : c.req.raw;
 
   const response = await fetchRequestHandler({
     createContext: () => ({
-      sessionId: c.get('sessionId'),
+      requestId: c.get('requestId'),
     }),
     endpoint: trpcEndpoint,
+    onError: ({ error, path }) => {
+      logTrpcServerError(c, error, path);
+    },
     req: reqToPass,
-    router: appRouter,
+    router,
   });
 
   if (!response.ok) {
@@ -95,13 +118,15 @@ trpcRouter.use('/*', async (c) => {
       return response;
     }
 
-    const error = new HTTPException(result.error.data.httpStatus, {
-      cause: {
-        code: result.error.data.code,
-        path: result.error.data.path,
-      },
+    const status = result.error.data.httpStatus;
+    const options = {
+      cause: { code: result.error.data.code, path: result.error.data.path },
       message: result.error.message,
-    });
+    };
+    const error =
+      status >= 500
+        ? new ReportedHttpException(status, options)
+        : new HTTPException(status, options);
 
     if (result.error.data.stack !== undefined) {
       error.stack = result.error.data.stack;
@@ -111,9 +136,19 @@ trpcRouter.use('/*', async (c) => {
   }
 
   return response;
-});
+};
+
+trpcRouter.all('/*', async (c) => await handleTrpcRequest(c, appRouter));
 
 type AppRouter = typeof appRouter;
 
-export { appRouter, isErrorStatusCode, isTRPCErrorResponse, trpcOpenApiRouter, trpcRouter };
+export {
+  appRouter,
+  handleTrpcRequest,
+  isErrorStatusCode,
+  isTRPCErrorResponse,
+  logTrpcServerError,
+  trpcOpenApiRouter,
+  trpcRouter,
+};
 export type { AppRouter, ErrorStatusCode, TRPCErrorResponse };

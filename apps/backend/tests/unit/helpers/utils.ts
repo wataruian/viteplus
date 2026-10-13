@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import { z } from '@hono/zod-openapi';
+import { getEnv, getEnvName } from '@lightproject/common/environment';
 import { expect, vi } from 'vite-plus/test';
 import { type Unstable_DevWorker, unstable_dev } from 'wrangler';
 
@@ -23,7 +24,7 @@ const errorEnvelope = z.object({
     statusCode: z.number(),
   }),
   message: z.string(),
-  sessionId: z.string(),
+  requestId: z.string(),
   success: z.literal(false),
 });
 
@@ -35,7 +36,7 @@ const trpcEnvelope = <T extends z.ZodType>(dataSchema: T) =>
 const stripVolatile = (parsed: ParsedErrorEnvelope) => ({
   ...parsed,
   error: { ...parsed.error, stack: undefined },
-  sessionId: 'x',
+  requestId: 'x',
 });
 
 const parseErrorEnvelope = async (res: FetchResponseLike) => errorEnvelope.parse(await res.json());
@@ -48,7 +49,7 @@ const expectErrorEnvelope = (
   expect(parsed.error.code).toBe(expected.code);
   expect(parsed.error.statusCode).toBe(expected.statusCode);
   expect(parsed.message).toBe(parsed.error.message);
-  expect(parsed.sessionId).toBeDefined();
+  expect(parsed.requestId).toBeDefined();
   expect(parsed.success).toBe(false);
 
   if (expected.message !== undefined) {
@@ -102,7 +103,12 @@ const stopWranglerWorker = async (workerPromise: Promise<Unstable_DevWorker>) =>
 const importFreshWranglerApp = async (
   env: Record<string, string | undefined> = {},
 ): Promise<{ request: Unstable_DevWorker['fetch'] }> => {
-  const definedEnv = definedEntries(env);
+  const skipTelemetry = getEnv('SKIP_OPENTELEMETRY');
+  const definedEnv = {
+    ENV: getEnvName(),
+    ...(skipTelemetry === undefined ? {} : { SKIP_OPENTELEMETRY: skipTelemetry }),
+    ...definedEntries(env),
+  };
   const key = wranglerEnvKey(definedEnv);
   const cached = wranglerWorkers.get(key);
   if (cached) {
@@ -149,15 +155,26 @@ const stopAllWranglerWorkers = async () => {
 
 const noopCleanup = async () => {};
 
+const flushFreshTelemetry = async () => {
+  const server = await import('@lightproject/common/server');
+  await server.flushTelemetry();
+};
+
 const runtimes = [
-  { cleanup: noopCleanup, importApp: importFreshApp, name: 'node' },
-  { cleanup: stopAllWranglerWorkers, importApp: importFreshWranglerApp, name: 'wrangler' },
+  { cleanup: noopCleanup, flush: flushFreshTelemetry, importApp: importFreshApp, name: 'node' },
+  {
+    cleanup: stopAllWranglerWorkers,
+    flush: noopCleanup,
+    importApp: importFreshWranglerApp,
+    name: 'wrangler',
+  },
 ] as const;
 
 export {
   definedEntries,
   errorEnvelope,
   expectErrorEnvelope,
+  flushFreshTelemetry,
   httpEnvelope,
   importFreshApp,
   importFreshWranglerApp,

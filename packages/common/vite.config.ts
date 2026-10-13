@@ -28,6 +28,7 @@ export default defineConfig(({ mode }): UserConfig => {
       coverage: {
         exclude: ['**/index.ts'],
       },
+      isolate: true,
       setupFiles: ['./tests/unit/helpers/setup.ts'],
     },
   } satisfies UserConfig);

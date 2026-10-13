@@ -316,9 +316,12 @@ export {
   asFakeContainer,
   asFakeDirectory,
   createFakeDag,
+  FakeClient,
   FakeContainer,
   FakeDirectory,
   FakeFile,
   getLastContainer,
   resetLastContainer,
+  tick,
+  worldFile,
 };

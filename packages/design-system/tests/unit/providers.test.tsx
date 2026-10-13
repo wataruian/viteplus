@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vite-plus/test';
 
 import { useMode } from '../../src/context/mode-context';
 import { ModeProvider } from '../../src/context/mode-provider';
-import { useSession } from '../../src/context/session-context';
-import { SessionProvider } from '../../src/context/session-provider';
+import { useRequestId } from '../../src/context/request-id-context';
+import { RequestIdProvider } from '../../src/context/request-id-provider';
 import { useTheme } from '../../src/context/theme-context';
 import { ThemeProvider } from '../../src/context/theme-provider';
 import { themes } from '../../src/utils/theme-generator';
@@ -48,14 +48,14 @@ const BareThemeConsumer = () => {
   return null;
 };
 
-const SessionConsumer = () => {
-  const { resetSessionId, sessionId } = useSession();
+const RequestIdConsumer = () => {
+  const { resetRequestId, requestId } = useRequestId();
   return (
     <div>
-      <span>{sessionId}</span>
+      <span>{requestId}</span>
       <button
         onClick={() => {
-          resetSessionId();
+          resetRequestId();
         }}
         type='button'
       >
@@ -65,8 +65,8 @@ const SessionConsumer = () => {
   );
 };
 
-const BareSessionConsumer = () => {
-  useSession();
+const BareRequestIdConsumer = () => {
+  useRequestId();
   return null;
 };
 
@@ -160,23 +160,23 @@ describe('ThemeProvider / useTheme', () => {
   });
 });
 
-describe('SessionProvider / useSession', () => {
-  test('provides a valid UUID sessionId', () => {
+describe('RequestIdProvider / useRequestId', () => {
+  test('provides a valid UUID requestId', () => {
     const { container, unmount } = render(
-      <SessionProvider>
-        <SessionConsumer />
-      </SessionProvider>,
+      <RequestIdProvider>
+        <RequestIdConsumer />
+      </RequestIdProvider>,
     );
 
     expect(container.querySelector('span')?.textContent).toMatch(uuidPattern);
     unmount();
   });
 
-  test('resetSessionId generates and stores a new UUID', () => {
+  test('resetRequestId generates and stores a new UUID', () => {
     const { container, unmount } = render(
-      <SessionProvider>
-        <SessionConsumer />
-      </SessionProvider>,
+      <RequestIdProvider>
+        <RequestIdConsumer />
+      </RequestIdProvider>,
     );
 
     const originalId = container.querySelector('span')?.textContent;
@@ -189,9 +189,9 @@ describe('SessionProvider / useSession', () => {
     unmount();
   });
 
-  test('useSession throws when used outside a SessionProvider', () => {
+  test('useRequestId throws when used outside a RequestIdProvider', () => {
     expect(() => {
-      render(<BareSessionConsumer />);
-    }).toThrow(/useSession must be used within SessionProvider/u);
+      render(<BareRequestIdConsumer />);
+    }).toThrow(/useRequestId must be used within RequestIdProvider/u);
   });
 });

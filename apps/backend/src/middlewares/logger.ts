@@ -1,15 +1,18 @@
 import { getRequestType } from '@lightproject/common/configs';
+import { logger, runWithRequestContext, startSpanWithRequestId } from '@lightproject/common/logger';
 import {
-  getSessionId,
-  logger,
-  runWithRequestContext,
-  startSpanWithSession,
-} from '@lightproject/common/logger';
-import { recordGaugeWithExemplar } from '@lightproject/common/server';
-import { type Counter, context, getMeter, propagation, trace } from '@lightproject/common/utils';
+  type Counter,
+  SpanStatusCode,
+  context,
+  getMeter,
+  propagation,
+  recordGaugeWithExemplar,
+  trace,
+} from '@lightproject/common/utils';
 import { createMiddleware } from 'hono/factory';
 import { routePath } from 'hono/route';
 
+import { getLogUrl } from '../log-url';
 import type { AppEnv } from '../schema';
 
 let requestHitsCounter: Counter | undefined = undefined;
@@ -18,30 +21,72 @@ const requestLogger = () =>
   createMiddleware<AppEnv>(async (c, next) => {
     const start = Date.now();
 
-    const { method, url, path } = c.req;
+    const { method, path } = c.req;
+    const url = getLogUrl(c);
 
-    const requestType = getRequestType(url);
+    const requestType = getRequestType(path);
 
-    const sessionId = getSessionId();
+    const requestId = c.get('requestId');
 
     const parentContext = propagation.extract(
       context.active(),
       Object.fromEntries(c.req.raw.headers.entries()),
     );
 
-    const span = startSpanWithSession(
+    const span = startSpanWithRequestId(
       `http.request:${method}`,
       {
         attributes: {
-          'http.method': method,
-          'http.path': path,
-          'http.url': url,
+          'http.request.method': method,
+          'url.full': url,
+          'url.path': path,
         },
       },
       parentContext,
     );
 
     c.set('span', span);
+
+    const finish = (status: number) => {
+      const duration = Date.now() - start;
+
+      span.setAttribute('http.response.status_code', status);
+      if (status >= 500) {
+        span.setStatus({ code: SpanStatusCode.ERROR });
+      }
+      span.end();
+
+      const metricAttributes = {
+        'http.request.method': method,
+        'http.response.status_code': status,
+        'http.route': routePath(c),
+      };
+
+      runWithRequestContext(span, { requestId }, () => {
+        recordGaugeWithExemplar({
+          attributes: metricAttributes,
+          description: 'Duration of the most recently completed HTTP request',
+          name: 'http_server_duration_seconds',
+          unit: 's',
+          value: duration / 1000,
+        }).catch(() => {
+          // Skip exemplar metric if it fails
+        });
+      });
+
+      if (status < 400) {
+        runWithRequestContext(span, { requestId }, () => {
+          logger.info(`Outgoing Response: [${method}] ${url} [${status}]`, {
+            duration,
+            method,
+            path,
+            requestType,
+            status,
+            url,
+          });
+        });
+      }
+    };
 
     await context.with(trace.setSpan(parentContext, span), async () => {
       logger.info(`Incoming Request: [${method}] ${url}`, {
@@ -61,42 +106,17 @@ const requestLogger = () =>
         // Skip metric counter if it fails
       }
 
-      await next();
-
-      const duration = Date.now() - start;
-      const { status } = c.res;
-
-      span.setAttribute('http.status_code', status);
-      span.end();
-
-      runWithRequestContext(span, { sessionId }, () => {
-        recordGaugeWithExemplar({
-          attributes: {
-            'http.method': method,
-            'http.route': routePath(c),
-            'http.status_code': status,
-          },
-          description: 'Duration of the most recently completed HTTP request',
-          name: 'http_server_duration_seconds',
-          unit: 's',
-          value: duration / 1000,
-        }).catch(() => {
-          // Skip exemplar metric if it fails
+      try {
+        await next();
+      } catch (error) {
+        span.recordException(error instanceof Error ? error : String(error));
+        runWithRequestContext(span, { requestId }, () => {
+          logger.error(`Unhandled error: [${method}] ${url}`, { err: error, method, path, url });
         });
-      });
-
-      if (status < 400) {
-        runWithRequestContext(span, { sessionId }, () => {
-          logger.info(`Outgoing Response: [${method}] ${url} [${status}]`, {
-            duration,
-            method,
-            path,
-            requestType,
-            status,
-            url,
-          });
-        });
+        finish(500);
+        throw error;
       }
+      finish(c.res.status);
     });
   });
 
