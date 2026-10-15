@@ -71,7 +71,7 @@ jobs:
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
           VITE_ENV: ${{ inputs.environment }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
           WORKSPACE: ${{ inputs.workspace }}
           VERSION_REF: ${{ inputs.ref }}
@@ -95,8 +95,8 @@ jobs:
             args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
           fi
 
-          if [[ "${WORKSPACE}" == "frontend" && -n "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]]; then
-            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}")
+          if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then
+            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
           if [[ "${WORKSPACE}" == "frontend" && -n "${FARO_ENDPOINT}" ]]; then
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
@@ -114,7 +114,7 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           WORKSPACE: ${{ inputs.workspace }}
           VITE_ENV: ${{ inputs.environment }}
-          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -138,16 +138,16 @@ jobs:
             args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
           fi
 
-          if [[ "${WORKSPACE}" == "frontend" && -n "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]]; then
-            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}")
+          if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then
+            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${FARO_ENDPOINT}" ]]; then
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
           fi
 
-          if [[ "${WORKSPACE}" == "backend" && -n "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]]; then
-            args+=("--worker-vars=OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}")
+          if [[ "${WORKSPACE}" == "backend" && -n "${OTLP_ENDPOINT}" ]]; then
+            args+=("--worker-vars=OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
           mise run dagger wrangler \

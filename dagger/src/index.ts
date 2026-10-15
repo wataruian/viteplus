@@ -570,6 +570,10 @@ export class Monorepo {
     const workspaceDir = workspacePath(workspace);
 
     const deployContainer = container
+      .withEnvVariable('HTTP_PROXY', '')
+      .withEnvVariable('HTTPS_PROXY', '')
+      .withEnvVariable('http_proxy', '')
+      .withEnvVariable('https_proxy', '')
       .withWorkdir(`/app/${workspaceDir}`)
       .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken)
       .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId)
