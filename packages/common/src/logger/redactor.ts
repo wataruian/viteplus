@@ -184,8 +184,10 @@ const mapEntriesWithLabels = (map: Map<unknown, unknown>) => {
         ? `[key ${index + 1}]`
         : String(key);
     let label = base;
-    for (let suffix = 2; used.has(label); suffix += 1) {
+    let suffix = 2;
+    while (used.has(label)) {
       label = `${base} (${suffix})`;
+      suffix += 1;
     }
     used.add(label);
     return [label, entry];
