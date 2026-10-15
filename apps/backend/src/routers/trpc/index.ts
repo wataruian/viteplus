@@ -15,6 +15,7 @@ import type { ClientErrorStatusCode, ServerErrorStatusCode } from 'hono/utils/ht
 
 import { ReportedHttpException } from '../../errors';
 import { getLogUrl } from '../../log-url';
+import { getRequestStore } from '../../request-context';
 import type { AppEnv } from '../../schema';
 import { collectTrpcOpenApiRoutes, getOpenApiDocument, normalizeTrpcGetQuery, t } from '../utils';
 import { defaultRouter } from './default';
@@ -87,7 +88,7 @@ const logTrpcServerError = (c: Context<AppEnv>, error: TRPCError, path: string |
   const cause = error.cause ?? error;
   const span = c.get('span');
   span?.recordException(cause);
-  runWithRequestContext(span, { requestId: c.get('requestId') }, () => {
+  runWithRequestContext(span, getRequestStore(c), () => {
     logger.error(`tRPC Internal Server Error: ${error.message} [${c.req.method}] ${getLogUrl(c)}`, {
       err: cause,
       path,

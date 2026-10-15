@@ -7,7 +7,12 @@ interface NodeBindings {
 
 interface AppEnv {
   Bindings: NodeBindings;
-  Variables: { logUrl: string | undefined; requestId: string; span: Span | undefined };
+  Variables: {
+    clientId: string | undefined;
+    logUrl: string | undefined;
+    requestId: string;
+    span: Span | undefined;
+  };
 }
 
 type ServiceFn<S extends z.ZodRawShape, O extends Record<string, unknown>> = ((

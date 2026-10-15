@@ -56,11 +56,13 @@ const unoCssBaseConfig: UserConfig = {
       exclude: [
         /[\\/]node_modules[\\/]/u,
         /[\\/]\.git[\\/]/u,
+        /[\\/]coverage[\\/]/u,
         /[\\/]dist[\\/]/u,
         /[\\/]out[\\/]/u,
         /[\\/]storybook-static[\\/]/u,
         /[\\/]\.wrangler[\\/]/u,
         /[\\/]\.pruned[\\/]/u,
+        /[\\/]e2e-test-results[\\/]/u,
       ],
       include: [/\.(?:vue|svelte|[jt]sx|mdx?|html)(?:$|\?)/u, '**/*.{js,ts,jsx,tsx}'],
     },

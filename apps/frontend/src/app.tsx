@@ -1,6 +1,6 @@
-import { logger, setRequestId, startSpanWithRequestId } from '@lightproject/common/logger';
-import { recordGaugeWithExemplar, runWithSpan } from '@lightproject/common/utils';
-import { useRequestId } from '@lightproject/design-system/context';
+import { logger, setClientId, startRequestScope } from '@lightproject/common/logger';
+import { recordGaugeWithExemplar } from '@lightproject/common/utils';
+import { useClientId } from '@lightproject/design-system/context';
 import { type RefCallback, useEffect, useRef } from 'react';
 
 import heroImg from './assets/hero.png';
@@ -13,7 +13,7 @@ import { trpcClient } from './providers/trpc-provider';
 import './style.css';
 
 const App = () => {
-  const { requestId } = useRequestId();
+  const { clientId } = useClientId();
   const counterCleanupRef = useRef<(() => void) | undefined>(undefined);
 
   const counterRef: RefCallback<HTMLButtonElement> = (element) => {
@@ -26,15 +26,16 @@ const App = () => {
   };
 
   useEffect(() => {
-    setRequestId(requestId);
+    setClientId(clientId);
     return () => {
-      setRequestId(undefined);
+      setClientId(undefined);
     };
-  }, [requestId]);
+  }, [clientId]);
 
   useEffect(() => {
     const run = async () => {
-      const span = startSpanWithRequestId('app.initialize', { root: true });
+      const scope = startRequestScope('app.initialize', { root: true });
+      const { span } = scope;
 
       try {
         const trpcCallStart = globalThis.performance.now();
@@ -43,11 +44,13 @@ const App = () => {
         try {
           span.addEvent('Executing tRPC test mutation');
 
-          const result = await trpcClient.test.hello.query({ name: 'Test' });
+          const result = await scope.run(
+            async () => await trpcClient.test.hello.query({ name: 'Test' }),
+          );
 
           span.setAttribute('trpc.test.success', true);
 
-          runWithSpan(span, () => {
+          scope.run(() => {
             logger.info('tRPC Sample Result', {
               result,
             });
@@ -57,14 +60,14 @@ const App = () => {
           span.recordException(error instanceof Error ? error : String(error));
           span.setAttribute('trpc.test.success', false);
 
-          runWithSpan(span, () => {
+          scope.run(() => {
             logger.error('Failed to call tRPC server', {
               error,
             });
           });
         }
 
-        runWithSpan(span, () => {
+        scope.run(() => {
           recordGaugeWithExemplar({
             attributes: { 'rpc.method': 'test.hello', 'rpc.success': trpcCallSucceeded },
             description: 'Duration of the most recently completed tRPC client call',
@@ -76,7 +79,7 @@ const App = () => {
           });
         });
 
-        runWithSpan(span, () => {
+        scope.run(() => {
           const url = get('API_URL') ?? get('VITE_API_URL');
           if (url !== undefined && url !== '') {
             logger.info(`VITE_API_URL is set: ${url}`);
@@ -95,7 +98,7 @@ const App = () => {
         span.recordException(error instanceof Error ? error : String(error));
         span.setAttribute('app.initialized', false);
 
-        runWithSpan(span, () => {
+        scope.run(() => {
           logger.error('Failed to initialize frontend', { error });
         });
       } finally {
@@ -106,7 +109,7 @@ const App = () => {
     run().catch(() => {
       // Errors already logged and recorded in span
     });
-  }, [requestId]);
+  }, []);
 
   return (
     <>

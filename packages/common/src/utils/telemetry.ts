@@ -1,7 +1,7 @@
 import { type Span, context, metrics, trace } from '@opentelemetry/api';
 
 import { getEnv } from '../environment';
-import { generateUuid } from './text';
+import { generateShortUuid } from './text';
 
 interface ResolvedTelemetryConfig {
   environment: string;
@@ -21,7 +21,7 @@ const setTelemetryConfig = (config: ResolvedTelemetryConfig | undefined): void =
 let serviceInstanceId: string | undefined = undefined;
 
 const getServiceInstanceId = (): string => {
-  serviceInstanceId ??= generateUuid();
+  serviceInstanceId ??= generateShortUuid();
   return serviceInstanceId;
 };
 

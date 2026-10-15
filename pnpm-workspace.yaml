@@ -52,7 +52,7 @@ catalog:
   '@unocss/transformer-directives': npm:@unocss/transformer-directives@66.6.7
   '@unocss/transformer-variant-group': npm:@unocss/transformer-variant-group@66.6.7
   '@vitejs/plugin-react': npm:@vitejs/plugin-react@6.0.1
-  '@vitest/coverage-v8': npm:@vitest/coverage-v8@5.0.3
+  '@vitest/coverage-v8': npm:@vitest/coverage-v8@5.0.4
   axios: npm:axios@1.16.0
   bumpp: npm:bumpp@11.0.1
   chalk: npm:chalk@5.6.2
@@ -82,9 +82,9 @@ catalog:
   turbo: npm:turbo@2.10.12
   typescript: npm:typescript@6.0.2
   unocss: npm:unocss@66.6.7
-  vite: npm:@voidzero-dev/vite-plus-core@1.1.0
-  vite-plus: npm:vite-plus@1.1.0
-  vitest: npm:vitest@5.0.3
+  vite: npm:@voidzero-dev/vite-plus-core@1.2.0
+  vite-plus: npm:vite-plus@1.2.0
+  vitest: npm:vitest@5.0.4
   vscode-json-languageservice: npm:vscode-json-languageservice@5.7.2
   vscode-languageserver-textdocument: npm:vscode-languageserver-textdocument@1.0.15
   vscode-markdown-languageservice: npm:vscode-markdown-languageservice@0.5.0
@@ -105,3 +105,15 @@ peerDependencyRules:
   allowedVersions:
     vite: '*'
     vitest: '*'
+
+minimumReleaseAgeExclude:
+  - '@voidzero-dev/vite-plus-core@1.2.0'
+  - '@voidzero-dev/vite-plus-darwin-arm64@1.2.0'
+  - '@voidzero-dev/vite-plus-darwin-x64@1.2.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-gnu@1.2.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-musl@1.2.0'
+  - '@voidzero-dev/vite-plus-linux-x64-gnu@1.2.0'
+  - '@voidzero-dev/vite-plus-linux-x64-musl@1.2.0'
+  - '@voidzero-dev/vite-plus-win32-arm64-msvc@1.2.0'
+  - '@voidzero-dev/vite-plus-win32-x64-msvc@1.2.0'
+  - vite-plus@1.2.0

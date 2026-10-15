@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vite-plus/test';
+import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
+  decodeShortUuid,
   escapeRegExp,
   generateShortUuid,
   generateUuid,
@@ -77,15 +78,79 @@ describe('generateUuid', () => {
 });
 
 describe('generateShortUuid', () => {
-  test('defaults to a 7-character hex string', () => {
-    const id = generateShortUuid();
-    expect(id).toHaveLength(7);
-    expect(id).toMatch(/^[\da-f]+$/u);
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  test('respects a custom length', () => {
-    expect(generateShortUuid(4)).toHaveLength(4);
-    expect(generateShortUuid(12)).toHaveLength(12);
+  test('is 22 letters and digits (base62), with no - or _', () => {
+    expect(generateShortUuid()).toMatch(/^[\dA-Za-z]{22}$/u);
+  });
+
+  test('losslessly encodes a v4 UUID from generateUuid, which decodeShortUuid recovers', () => {
+    const uuid = 'f81d4fae-7dec-41d0-a765-00a0c91e6bf6';
+    vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValueOnce(uuid);
+
+    const shortUuid = generateShortUuid();
+
+    expect(shortUuid).toBe('7YBUWgZR2uaVcbPD3vYJS2');
+    expect(decodeShortUuid(shortUuid)).toBe(uuid);
+  });
+
+  test('round-trips every generated id back to a v4 UUID', () => {
+    for (let index = 0; index < 1000; index += 1) {
+      expect(decodeShortUuid(generateShortUuid())).toMatch(
+        /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/u,
+      );
+    }
+  });
+
+  test('keeps leading zeros, so every id is exactly 22 characters', () => {
+    vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValueOnce(
+      '00000000-0000-4000-8000-000000000001',
+    );
+
+    const shortUuid = generateShortUuid();
+
+    expect(shortUuid).toBe('000000001VgEh72lXvTXkH');
+    expect(decodeShortUuid(shortUuid)).toBe('00000000-0000-4000-8000-000000000001');
+  });
+
+  test('rejects anything that is not base62', () => {
+    expect(() => decodeShortUuid('not-a-short-uuid')).toThrow(TypeError);
+  });
+
+  test('takes its randomness from crypto.randomUUID (a CSPRNG), one UUID per id', () => {
+    const randomUuid = vi.spyOn(globalThis.crypto, 'randomUUID');
+
+    generateShortUuid();
+    generateShortUuid();
+
+    expect(randomUuid).toHaveBeenCalledTimes(2);
+  });
+
+  test.each<[string, ReturnType<typeof globalThis.crypto.randomUUID>, string]>([
+    ['the smallest UUID', '00000000-0000-0000-0000-000000000000', '0000000000000000000000'],
+    ['the largest UUID', 'ffffffff-ffff-ffff-ffff-ffffffffffff', '7n42DGM5Tflk9n8mt7Fhc7'],
+  ])('encodes %s within 22 characters and decodes it back', (_label, uuid, shortUuid) => {
+    vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValueOnce(uuid);
+
+    expect(generateShortUuid()).toBe(shortUuid);
+    expect(decodeShortUuid(shortUuid)).toBe(uuid);
+  });
+
+  test('is one-to-one: distinct UUIDs always give distinct ids (decoding recovers each UUID)', () => {
+    for (let index = 0; index < 10_000; index += 1) {
+      const uuid = generateUuid();
+      vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValueOnce(uuid);
+
+      expect(decodeShortUuid(generateShortUuid())).toBe(uuid);
+    }
+  });
+
+  test('does not repeat across 1M ids (122 random bits, nothing truncated)', () => {
+    const ids = new Set(Array.from({ length: 1_000_000 }, () => generateShortUuid()));
+
+    expect(ids.size).toBe(1_000_000);
   });
 });
 

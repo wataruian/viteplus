@@ -1,5 +1,5 @@
 import { logger } from '../logger';
-import { getRequestId, getTraceContext } from '../logger/context';
+import { getClientId, getRequestId, getTraceContext } from '../logger/context';
 import { getServiceInstanceId, getTelemetryConfig } from './telemetry';
 
 type AttributeValue = boolean | number | string;
@@ -169,6 +169,25 @@ const scheduleExemplarFlush = (): void => {
   }, FLUSH_INTERVAL_MS);
 };
 
+const MAX_EXEMPLAR_LABEL_CHARS = 128;
+const TRACE_LABEL_CHARS = 'trace_id'.length + 32 + 'span_id'.length + 16;
+
+const fitExemplarLabels = (
+  attributes: Record<string, AttributeValue>,
+): Record<string, AttributeValue> => {
+  let used = TRACE_LABEL_CHARS;
+  return Object.fromEntries(
+    Object.entries(attributes).filter(([key, value]) => {
+      const size = key.length + String(value).length;
+      if (used + size > MAX_EXEMPLAR_LABEL_CHARS) {
+        return false;
+      }
+      used += size;
+      return true;
+    }),
+  );
+};
+
 const recordGaugeWithExemplar = async (options: GaugeExemplarOptions): Promise<void> => {
   const config = getTelemetryConfig();
   if (config === undefined) {
@@ -178,11 +197,13 @@ const recordGaugeWithExemplar = async (options: GaugeExemplarOptions): Promise<v
   const traceContext = getTraceContext();
   const timeUnixNano = `${BigInt(Date.now()) * 1_000_000n}`;
   const requestId = getRequestId();
+  const clientId = getClientId();
 
-  const exemplarAttributes = {
+  const exemplarAttributes = fitExemplarLabels({
     ...(requestId === 'no-id' ? {} : { 'request.id': requestId }),
+    ...(clientId === undefined ? {} : { 'client.id': clientId }),
     ...options.exemplarAttributes,
-  };
+  });
 
   const dataPoint: OtlpNumberDataPoint = {
     asDouble: options.value,
@@ -222,6 +243,7 @@ const recordGaugeWithExemplar = async (options: GaugeExemplarOptions): Promise<v
 
 export {
   countBufferedDataPoints,
+  fitExemplarLabels,
   flushExemplarMetrics,
   recordGaugeWithExemplar,
   scheduleExemplarFlush,

@@ -1,17 +1,18 @@
-import type { AppRouter } from '@lightproject/backend';
 import type * as CommonLoggerModule from '@lightproject/common/logger';
 import type * as UtilsModule from '@lightproject/common/utils';
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import { generateShortUuid } from '@lightproject/common/utils';
 import { act } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
 
+import type * as TrpcProviderModule from '../../src/providers/trpc-provider';
 import { type RunningBackend, backendRuntimes } from './helpers/backend';
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const parsedLogEntrySchema = z.object({
+  clientId: z.string().optional(),
   context: z.record(z.string(), z.unknown()).optional(),
   level: z.string(),
   message: z.string(),
@@ -31,7 +32,7 @@ const trpcResultSchema = z.object({
 
 const testApiUrl = 'http://backend.test';
 const defaultApiUrl = 'http://localhost:3000';
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+const shortUuidPattern = /^[\dA-Za-z]{22}$/u;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u;
 
 const parseLogEntries = (calls: readonly unknown[][]): ParsedLogEntry[] =>
@@ -53,6 +54,7 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
 
   vi.doMock('@lightproject/common/configs', () => ({
     apiBaseUrl: apiUrl ?? defaultApiUrl,
+    trpcUrl: `${apiUrl ?? defaultApiUrl}/trpc`,
   }));
 
   vi.doMock('../../src/config', () => ({
@@ -60,24 +62,24 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
     get: (key: string) => (key === 'VITE_API_URL' ? apiUrl : undefined),
   }));
 
-  vi.doMock('../../src/providers/trpc-provider', () => ({
-    trpcClient: createTRPCClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          fetch: async (input, init) => {
-            const requestInit: RequestInit | undefined =
-              init === undefined ? undefined : { ...init, signal: init.signal ?? null };
-            return await backend.fetch(input, requestInit);
-          },
-          url: `${backend.url}/trpc`,
-        }),
-      ],
-    }),
-  }));
+  vi.doMock('../../src/providers/trpc-provider', async (importOriginal) => {
+    const actual = await importOriginal<typeof TrpcProviderModule>();
+    return {
+      ...actual,
+      trpcClient: actual.createAppTrpcClient({
+        fetch: async (input, init) => {
+          const requestInit: RequestInit | undefined =
+            init === undefined ? undefined : { ...init, signal: init.signal ?? null };
+          return await backend.fetch(input, requestInit);
+        },
+        url: `${backend.url}/trpc`,
+      }),
+    };
+  });
 
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
 
-  const { ModeProvider, RequestIdProvider, ThemeProvider } =
+  const { ClientIdProvider, ModeProvider, ThemeProvider } =
     await import('@lightproject/design-system/context');
   const { default: App } = await import('../../src/app');
 
@@ -87,13 +89,13 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
 
   await act(async () => {
     root.render(
-      <RequestIdProvider>
+      <ClientIdProvider createId={generateShortUuid}>
         <ThemeProvider>
           <ModeProvider>
             <App />
           </ModeProvider>
         </ThemeProvider>
-      </RequestIdProvider>,
+      </ClientIdProvider>,
     );
     await Promise.resolve();
   });
@@ -154,7 +156,9 @@ const assertRenderedHtml = (container: HTMLDivElement) => {
 
 const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   const startEntry = findEntry(entries, 'Frontend Start');
-  expect(startEntry.requestId).toMatch(uuidPattern);
+  expect(startEntry.requestId).toMatch(shortUuidPattern);
+  expect(startEntry.clientId).toMatch(shortUuidPattern);
+  expect(startEntry.clientId).not.toBe(startEntry.requestId);
   expect(startEntry.context?.['platform']).toEqual(expect.any(String));
   expect(startEntry.context?.['timestamp']).toMatch(isoTimestampPattern);
 
@@ -164,7 +168,9 @@ const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   expect(result.code).toBe(200);
   expect(result.message).toBe('Success');
   expect(result.data.reply).toBe('Hello Test!');
-  expect(result.requestId).toEqual(expect.any(String));
+  // The backend adopted the X-Request-Id the frontend sent for this operation.
+  expect(result.requestId).toBe(startEntry.requestId);
+  expect(trpcEntry.requestId).toBe(startEntry.requestId);
 };
 
 describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
@@ -262,7 +268,7 @@ const renderAppWithMocks = async (options: {
 
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
 
-  const { ModeProvider, RequestIdProvider, ThemeProvider } =
+  const { ClientIdProvider, ModeProvider, ThemeProvider } =
     await import('@lightproject/design-system/context');
   const { default: App } = await import('../../src/app');
 
@@ -272,13 +278,13 @@ const renderAppWithMocks = async (options: {
 
   await act(async () => {
     root.render(
-      <RequestIdProvider>
+      <ClientIdProvider createId={generateShortUuid}>
         <ThemeProvider>
           <ModeProvider>
             <App />
           </ModeProvider>
         </ThemeProvider>
-      </RequestIdProvider>,
+      </ClientIdProvider>,
     );
     await Promise.resolve();
   });
@@ -422,7 +428,7 @@ describe('App error handling', () => {
       );
       return {
         ...actual,
-        startSpanWithRequestId: () => {
+        startRequestScope: () => {
           throw new Error('failed to start span');
         },
       };
@@ -450,7 +456,7 @@ describe('App error handling', () => {
     };
     globalThis.process.on('unhandledRejection', handleUnhandledRejection);
 
-    const { ModeProvider, RequestIdProvider, ThemeProvider } =
+    const { ClientIdProvider, ModeProvider, ThemeProvider } =
       await import('@lightproject/design-system/context');
     const { default: App } = await import('../../src/app');
 
@@ -460,13 +466,13 @@ describe('App error handling', () => {
 
     await act(async () => {
       root.render(
-        <RequestIdProvider>
+        <ClientIdProvider createId={generateShortUuid}>
           <ThemeProvider>
             <ModeProvider>
               <App />
             </ModeProvider>
           </ThemeProvider>
-        </RequestIdProvider>,
+        </ClientIdProvider>,
       );
       await new Promise((resolve) => {
         globalThis.setTimeout(resolve, 0);

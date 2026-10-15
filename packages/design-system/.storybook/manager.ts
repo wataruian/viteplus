@@ -1,5 +1,5 @@
 import { createElement, useState } from 'react';
-import { IconButton } from 'storybook/internal/components';
+import { Button } from 'storybook/internal/components';
 import { addons, types, useStorybookApi } from 'storybook/manager-api';
 
 import type { Mode } from '../src/context/mode-context';
@@ -17,8 +17,12 @@ const ModeTool = () => {
   };
 
   return createElement(
-    IconButton,
-    { onClick: toggleMode, title: `Switch to ${mode === 'dark' ? 'light' : 'dark'} mode` },
+    Button,
+    {
+      ariaLabel: false,
+      onClick: toggleMode,
+      title: `Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`,
+    },
     mode === 'dark' ? '☾ Dark' : '☀ Light',
   );
 };

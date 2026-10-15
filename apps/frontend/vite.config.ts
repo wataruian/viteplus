@@ -62,7 +62,7 @@ export default defineConfig(({ mode }): UserConfig => {
           'test:e2e': {
             cache: {
               ...commonTaskProps.cache,
-              output: [{ base: 'package', pattern: 'tmp/e2e/**/*' }],
+              output: [{ base: 'package', pattern: 'e2e-test-results/**/*' }],
             },
             command: 'playwright test',
           },

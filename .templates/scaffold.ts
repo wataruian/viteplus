@@ -46,6 +46,7 @@ const scaffold = (type: string) => {
     '.pruned',
     'coverage',
     'tmp',
+    'e2e-test-results',
     'tsconfig.tsbuildinfo',
     '.env',
     '.git',
@@ -82,7 +83,7 @@ const scaffold = (type: string) => {
     }
   }
 
-  process.stdout.write('Done! 🚀\n');
+  process.stdout.write('🚀 Done!\n');
 };
 
 export { scaffold };

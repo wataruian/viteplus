@@ -21,6 +21,7 @@ lerna-debug.log*
 
 # Test
 coverage
+e2e-test-results
 
 # Build
 node_modules

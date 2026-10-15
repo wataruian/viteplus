@@ -9,6 +9,7 @@ import {
 
 import { getRandomColor } from '../utils/color';
 import { runWithSpan, tracer } from '../utils/telemetry';
+import { generateShortUuid } from '../utils/text';
 import { isRecord } from '../validators/validate';
 
 interface TraceContext {
@@ -19,8 +20,15 @@ interface TraceContext {
 interface RequestContext {
   [key: string]: unknown;
   requestId?: string;
+  clientId?: string;
   color?: (text: string) => string;
   metadata?: Record<string, unknown> | object;
+}
+
+interface RequestScope {
+  requestId: string;
+  span: Span;
+  run: <R>(fn: () => R) => R;
 }
 
 const REQUEST_CONTEXT_KEY = createContextKey('request_context');
@@ -28,6 +36,7 @@ const REQUEST_CONTEXT_KEY = createContextKey('request_context');
 const isRequestContext = (value: unknown): value is RequestContext =>
   isRecord(value) &&
   (value['requestId'] === undefined || typeof value['requestId'] === 'string') &&
+  (value['clientId'] === undefined || typeof value['clientId'] === 'string') &&
   (value['color'] === undefined || typeof value['color'] === 'function');
 
 const requestContextStorage = {
@@ -45,8 +54,26 @@ const setRequestId = (requestId: string | undefined): void => {
   explicitRequestId = requestId;
 };
 
-const getRequestId = (): string =>
-  requestContextStorage.getStore()?.requestId ?? explicitRequestId ?? 'no-id';
+let explicitClientId: string | undefined = undefined;
+
+const setClientId = (clientId: string | undefined): void => {
+  explicitClientId = clientId;
+};
+
+const getRequestIdsFor = (ctx: Context): { clientId?: string; requestId?: string } => {
+  const value = ctx.getValue(REQUEST_CONTEXT_KEY);
+  const store = isRequestContext(value) ? value : undefined;
+  const requestId = store?.requestId ?? explicitRequestId;
+  const clientId = store?.clientId ?? explicitClientId;
+  return {
+    ...(requestId === undefined ? {} : { requestId }),
+    ...(clientId === undefined ? {} : { clientId }),
+  };
+};
+
+const getRequestId = (): string => getRequestIdsFor(context.active()).requestId ?? 'no-id';
+
+const getClientId = (): string | undefined => getRequestIdsFor(context.active()).clientId;
 
 const getColor = () => {
   const store = requestContextStorage.getStore();
@@ -74,6 +101,7 @@ const runWithRequestContext = <R>(span: Span | undefined, store: RequestContext,
 
 const startSpanWithRequestId = (name: string, options: SpanOptions = {}, ctx?: Context): Span => {
   const requestId = getRequestId();
+  const clientId = getClientId();
 
   return tracer.startSpan(
     name,
@@ -81,6 +109,7 @@ const startSpanWithRequestId = (name: string, options: SpanOptions = {}, ctx?: C
       ...options,
       attributes: {
         ...(requestId === 'no-id' ? {} : { 'request.id': requestId }),
+        ...(clientId === undefined ? {} : { 'client.id': clientId }),
         ...options.attributes,
       },
     },
@@ -88,16 +117,38 @@ const startSpanWithRequestId = (name: string, options: SpanOptions = {}, ctx?: C
   );
 };
 
+const startRequestScope = (
+  name: string,
+  options: SpanOptions = {},
+  ctx?: Context,
+): RequestScope => {
+  const requestId = generateShortUuid();
+  const span = startSpanWithRequestId(
+    name,
+    { ...options, attributes: { 'request.id': requestId, ...options.attributes } },
+    ctx,
+  );
+  return {
+    requestId,
+    run: (fn) => runWithRequestContext(span, { requestId }, fn),
+    span,
+  };
+};
+
 export {
   REQUEST_CONTEXT_KEY,
+  getClientId,
   getColor,
   getRequestContext,
   getRequestId,
+  getRequestIdsFor,
   getTraceContext,
   isRequestContext,
   requestContextStorage,
   runWithRequestContext,
+  setClientId,
   setRequestId,
+  startRequestScope,
   startSpanWithRequestId,
 };
-export type { RequestContext, TraceContext };
+export type { RequestContext, RequestScope, TraceContext };

@@ -44,6 +44,8 @@ const corsMiddleware = () =>
       'Content-Type',
       'traceparent',
       'tracestate',
+      'X-Request-Id',
+      'X-Client-Id',
     ],
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,

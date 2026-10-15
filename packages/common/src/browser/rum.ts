@@ -6,7 +6,7 @@ import {
   initializeFaro,
 } from '@grafana/faro-web-sdk';
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
-import { metrics } from '@opentelemetry/api';
+import { type Span, metrics } from '@opentelemetry/api';
 import {
   AggregationTemporalityPreference,
   OTLPMetricExporter,
@@ -21,7 +21,13 @@ import {
 
 import { apiBaseUrl } from '../configs';
 import { getEnv, isBrowser } from '../environment';
-import { type BrowserLogSink, type LogLevel, registerBrowserLogSink } from '../logger';
+import {
+  type BrowserLogSink,
+  type LogEntry,
+  type LogLevel,
+  getClientId,
+  registerBrowserLogSink,
+} from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
 import { getServiceInstanceId, setTelemetryConfig } from '../utils/telemetry';
 import { escapeRegExp } from '../utils/text';
@@ -44,9 +50,16 @@ const faroLogLevel: Record<LogLevel, FaroLogLevel> = {
 
 type FaroLogSinkApi = Pick<Faro['api'], 'pushLog'>;
 
+const toFaroLogContext = (entry: LogEntry): Record<string, string> => ({
+  ...(entry.requestId === undefined ? {} : { requestId: entry.requestId }),
+  ...(entry.clientId === undefined ? {} : { clientId: entry.clientId }),
+});
+
 const createFaroLogSink = (instance: { api: FaroLogSinkApi }): BrowserLogSink => ({
   pushLog: (entry) => {
+    const context = toFaroLogContext(entry);
     instance.api.pushLog([JSON.stringify(entry)], {
+      ...(Object.keys(context).length > 0 ? { context } : {}),
       level: faroLogLevel[entry.level],
       ...(entry.traceId === undefined || entry.spanId === undefined
         ? {}
@@ -54,6 +67,20 @@ const createFaroLogSink = (instance: { api: FaroLogSinkApi }): BrowserLogSink =>
     });
   },
 });
+
+const tagSpanWithIds = (span: Span, requestId: string | undefined): void => {
+  const clientId = getClientId();
+  if (requestId !== undefined) {
+    span.setAttribute('request.id', requestId);
+  }
+  if (clientId !== undefined) {
+    span.setAttribute('client.id', clientId);
+  }
+};
+
+const tagXhrSpan = (span: Span): void => {
+  tagSpanWithIds(span, undefined);
+};
 
 let isInitialized = false;
 let meterProviderInstance: MeterProvider | undefined = undefined;
@@ -142,13 +169,21 @@ const initializeRum = (options: RumOptions = {}) => {
       name: serviceName,
       version: serviceVersion,
     },
+    ignoreUrls: [new RegExp(`^${escapeRegExp(otlpEndpoint)}`, 'u')],
     instrumentations: [
       ...getWebInstrumentations({
         captureConsole: true,
       }),
       new TracingInstrumentation({
         instrumentationOptions: {
+          fetchInstrumentationOptions: {
+            applyCustomAttributesOnSpan: (span, request) => {
+              const requestId = new globalThis.Headers(request.headers).get('X-Request-Id');
+              tagSpanWithIds(span, requestId ?? undefined);
+            },
+          },
           propagateTraceHeaderCorsUrls: [new RegExp(`^${escapeRegExp(apiUrl)}`, 'u')],
+          xhrInstrumentationOptions: { applyCustomAttributesOnSpan: tagXhrSpan },
         },
       }),
     ],
@@ -168,5 +203,8 @@ export {
   flushRum,
   initializeRum,
   registerLifecycleFlush,
+  tagSpanWithIds,
+  tagXhrSpan,
+  toFaroLogContext,
 };
 export type { FaroLogSinkApi, RumOptions };

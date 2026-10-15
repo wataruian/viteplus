@@ -29,6 +29,7 @@
     "**/bak": true,
     "**/coverage": true,
     "**/dist": true,
+    "**/e2e-test-results": true,
     "**/node_modules": true,
     "**/out": true,
     "**/storybook-static": true,
@@ -42,11 +43,15 @@
   "unocss.disable": false,
   "unocss.exclude": [
     "**/node_modules/**",
+    "**/tmp/**",
+    "**/bak/**",
+    "**/coverage/**",
     "**/dist/**",
     "**/out/**",
     "**/storybook-static/**",
     "**/.wrangler/**",
     "**/.pruned/**",
+    "**/e2e-test-results/**",
     "dagger/sdk/**"
   ],
   "unocss.include": ["**/*.{ts,tsx,js,jsx,astro,svelte,vue,html,css,scss,sass}/**"],

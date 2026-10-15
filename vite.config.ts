@@ -11,6 +11,7 @@ const ignorePatterns = [
   'out',
   'coverage',
   'tmp',
+  'e2e-test-results',
   'vite.config.d.ts',
   'vite.config.d.ts.map',
   'tsconfig.tsbuildinfo',
@@ -18,6 +19,16 @@ const ignorePatterns = [
   '.wrangler',
   'dagger/sdk',
   '.pruned',
+];
+
+const devServerWatchIgnored = [
+  '**/coverage/**',
+  '**/e2e-test-results/**',
+  '**/storybook-static/**',
+  '**/dist/**',
+  '**/out/**',
+  '**/tmp/**',
+  '**/.wrangler/**',
 ];
 
 const getDotenvKeys = (rootDir: string): string[] => {
@@ -142,6 +153,11 @@ const getCommonViteConfig = ({
     },
     resolve: {
       conditions: ['typescript'],
+    },
+    server: {
+      watch: {
+        ignored: devServerWatchIgnored,
+      },
     },
     test: {
       bail: 1,
@@ -362,6 +378,27 @@ const getRootViteConfig = (): UserConfig => {
         'no-eq-null': 'off',
         'no-inline-comments': 'off',
         'no-magic-numbers': 'off',
+        'no-restricted-globals': [
+          'error',
+          { message: 'Use fetch instead of XMLHttpRequest.', name: 'XMLHttpRequest' },
+        ],
+        'no-restricted-imports': [
+          'error',
+          { paths: [{ message: 'axios uses XMLHttpRequest; use fetch.', name: 'axios' }] },
+        ],
+        'no-restricted-properties': [
+          'error',
+          {
+            message: 'Use fetch instead of XMLHttpRequest.',
+            object: 'globalThis',
+            property: 'XMLHttpRequest',
+          },
+          {
+            message: 'Use fetch instead of XMLHttpRequest.',
+            object: 'window',
+            property: 'XMLHttpRequest',
+          },
+        ],
         'no-ternary': 'off',
         'no-undefined': 'off',
         'no-underscore-dangle': ['error', { allow: ['_def'] }],
@@ -416,7 +453,7 @@ const getRootViteConfig = (): UserConfig => {
         madge: {
           ...commonTaskProps,
           command:
-            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp|e2e-test-results)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
         },
         plop: {
           cache: false,
@@ -435,6 +472,7 @@ const getRootViteConfig = (): UserConfig => {
 };
 
 export {
+  devServerWatchIgnored,
   getCommonTaskProps,
   getCommonViteConfig,
   getDotenvKeys,

@@ -3,7 +3,7 @@ import { SeverityNumber, logs } from '@opentelemetry/api-logs';
 import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
 import { isRecord } from '../validators/validate';
 import { getBrowserLogSink } from './browser-sink';
-import { getRequestId, getTraceContext } from './context';
+import { getClientId, getRequestId, getTraceContext } from './context';
 import { type LogEntry, type LogLevel, type LogMode, formatJSON, formatPretty } from './formatters';
 import { redact } from './redactor';
 
@@ -93,22 +93,24 @@ class Logger {
     const redactedMetadata =
       metadata === undefined ? undefined : redact(metadata, this.options.redact);
 
-    const requestId = getRequestId();
+    const ambientRequestId = getRequestId();
     const traceContext = getTraceContext();
 
-    const resolvedMetadata = {
-      ...(requestId === 'no-id' ? {} : { requestId }),
-      ...(isRecord(redactedMetadata) ? redactedMetadata : {}),
-    };
-
-    const resolvedRequestId =
-      typeof resolvedMetadata.requestId === 'string' ? resolvedMetadata.requestId : undefined;
+    const {
+      clientId: metadataClientId,
+      requestId: metadataRequestId,
+      ...context
+    } = isRecord(redactedMetadata) ? redactedMetadata : {};
+    const fallbackRequestId = ambientRequestId === 'no-id' ? undefined : ambientRequestId;
+    const requestId = typeof metadataRequestId === 'string' ? metadataRequestId : fallbackRequestId;
+    const clientId = typeof metadataClientId === 'string' ? metadataClientId : getClientId();
 
     const entry: LogEntry = {
       level,
       message,
-      ...(Object.keys(resolvedMetadata).length > 0 ? { context: resolvedMetadata } : {}),
-      ...(resolvedRequestId === undefined ? {} : { requestId: resolvedRequestId }),
+      ...(Object.keys(context).length > 0 ? { context } : {}),
+      ...(requestId === undefined ? {} : { requestId }),
+      ...(clientId === undefined ? {} : { clientId }),
       ...(traceContext ? { spanId: traceContext.spanId, traceId: traceContext.traceId } : {}),
       timestamp: this.options.timestamp ? new Date().toISOString() : '',
     };
@@ -126,6 +128,7 @@ class Logger {
 
     this.otelLogger.emit({
       attributes: {
+        'client.id': entry.clientId,
         context: Object.keys(context).length > 0 ? JSON.stringify(context) : undefined,
         logger: 'application',
         'request.id': entry.requestId,

@@ -3,7 +3,7 @@
     "types": ["vite/client"]
   },
   "display": "Frontend",
-  "exclude": ["node_modules", "dist", "coverage"],
+  "exclude": ["node_modules", "dist", "coverage", "e2e-test-results"],
   "extends": "../../tsconfig.json",
   "include": ["./**/*.ts", "./**/*.tsx", "../../vite.config.ts"]
 }

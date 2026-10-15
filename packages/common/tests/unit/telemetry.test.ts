@@ -239,7 +239,7 @@ describe('initializeTelemetry', () => {
       temporalityPreference: 1,
     });
     const [resourceAttributes] = resourceFromAttributesMock.mock.calls.at(-1) ?? [];
-    expect(resourceAttributes?.['service.instance.id']).toMatch(/^[0-9a-f-]{36}$/u);
+    expect(resourceAttributes?.['service.instance.id']).toMatch(/^[\dA-Za-z]{22}$/u);
     expect(loggerInfoMock).toHaveBeenCalledWith(
       'OpenTelemetry initialized',
       expect.objectContaining({ serviceName: '@acme/api' }),

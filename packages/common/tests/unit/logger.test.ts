@@ -21,6 +21,7 @@ import {
 
 import { type BrowserLogSink, registerBrowserLogSink } from '../../src/logger/browser-sink';
 import {
+  getClientId,
   getColor,
   getRequestContext,
   getRequestId,
@@ -28,7 +29,9 @@ import {
   isRequestContext,
   requestContextStorage,
   runWithRequestContext,
+  setClientId,
   setRequestId,
+  startRequestScope,
   startSpanWithRequestId,
 } from '../../src/logger/context';
 import {
@@ -817,17 +820,10 @@ describe('Logger Integration - Request ID Color', () => {
 
     const expectedColoredMessage = color('hello from request');
     expect(output).toContain(expectedColoredMessage);
+    expect(output).toContain(chalkInstance.gray(`request=${requestId}`));
 
-    const expectedMetadataStr = JSON.stringify(
-      Object.fromEntries([
-        ['requestId', requestId],
-        ['foo', 'bar'],
-      ]),
-      undefined,
-      5,
-    );
-    const expectedColoredMetadata = chalkInstance.gray(expectedMetadataStr);
-    expect(output).toContain(expectedColoredMetadata);
+    const expectedMetadataStr = JSON.stringify({ foo: 'bar' }, undefined, 5);
+    expect(output).toContain(chalkInstance.gray(expectedMetadataStr));
   });
 
   test('lets metadata explicitly override the auto-detected requestId', () => {
@@ -841,10 +837,10 @@ describe('Logger Integration - Request ID Color', () => {
       });
     });
 
-    expect(JSON.parse(output)).toMatchObject({
-      context: { requestId: 'explicit-request-id' },
-      requestId: 'explicit-request-id',
-    });
+    expect(JSON.parse(output)).toStrictEqual(
+      expect.objectContaining({ requestId: 'explicit-request-id' }),
+    );
+    expect(JSON.parse(output)).not.toHaveProperty('context');
   });
 });
 
@@ -1014,6 +1010,146 @@ describe('setRequestId', () => {
 
     setRequestId(undefined);
     expect(getRequestId()).toBe('no-id');
+  });
+});
+
+describe('setClientId', () => {
+  beforeAll(() => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+  });
+
+  afterAll(() => {
+    context.disable();
+  });
+
+  afterEach(() => {
+    setClientId(undefined);
+    registerBrowserLogSink(undefined);
+    vi.restoreAllMocks();
+  });
+
+  test('is undefined until set; a request context’s own clientId wins over the pinned one', () => {
+    expect(getClientId()).toBeUndefined();
+
+    setClientId('page-client-id');
+    expect(getClientId()).toBe('page-client-id');
+    requestContextStorage.run({ clientId: 'store-client-id' }, () => {
+      expect(getClientId()).toBe('store-client-id');
+    });
+  });
+
+  test('log entries carry the client id and request id once, at the top level only', () => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    setClientId('page-client-id');
+    let output = '';
+    requestContextStorage.run({ requestId: 'req-1' }, () => {
+      output = testLoggerCall({ level: 'info', message: 'tagged', options: { mode: 'json' } });
+    });
+
+    const parsed: unknown = JSON.parse(output);
+    expect(parsed).toMatchObject({ clientId: 'page-client-id', requestId: 'req-1' });
+    expect(parsed).not.toHaveProperty('context');
+  });
+
+  test('metadata may override the clientId, which is then not repeated in the context', () => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    setClientId('page-client-id');
+
+    const output = testLoggerCall({
+      level: 'info',
+      message: 'override',
+      metadata: { clientId: 'explicit-client-id', foo: 'bar' },
+      options: { mode: 'json' },
+    });
+
+    expect(JSON.parse(output)).toMatchObject({
+      clientId: 'explicit-client-id',
+      context: { foo: 'bar' },
+    });
+    expect(JSON.parse(output)).not.toHaveProperty('context.clientId');
+  });
+
+  test('log entries pushed to the browser log sink carry the client id', () => {
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    const sink = createFakeSink();
+    registerBrowserLogSink(sink);
+
+    setClientId('page-client-id');
+    new Logger({ silent: false }).info('tagged');
+
+    expect(sink.pushLog).toHaveBeenCalledWith(
+      expect.objectContaining({ clientId: 'page-client-id', message: 'tagged' }),
+    );
+  });
+
+  test('spans get client.id next to request.id', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+    setClientId('page-client-id');
+
+    requestContextStorage.run({ requestId: 'req-1' }, () => {
+      startSpanWithRequestId('test-span');
+    });
+
+    expect(startSpanSpy).toHaveBeenCalledWith(
+      'test-span',
+      { attributes: { 'client.id': 'page-client-id', 'request.id': 'req-1' } },
+      undefined,
+    );
+  });
+});
+
+describe('startRequestScope', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('starts every scope with a fresh requestId and tags its span with it', () => {
+    const startSpanSpy = vi.spyOn(tracer, 'startSpan');
+
+    const first = startRequestScope('op', { root: true });
+    const second = startRequestScope('op');
+
+    expect(first.requestId).toMatch(/^[\dA-Za-z]{22}$/u);
+    expect(second.requestId).not.toBe(first.requestId);
+    expect(startSpanSpy).toHaveBeenNthCalledWith(
+      1,
+      'op',
+      { attributes: { 'request.id': first.requestId }, root: true },
+      undefined,
+    );
+    first.span.end();
+    second.span.end();
+  });
+
+  test('never repeats a requestId across 10k scopes', () => {
+    const requestIds = new Set(
+      Array.from({ length: 10_000 }, () => {
+        const scope = startRequestScope('op');
+        scope.span.end();
+        return scope.requestId;
+      }),
+    );
+
+    expect(requestIds.size).toBe(10_000);
+  });
+
+  test('run() re-enters the scope’s requestId and span, which do not leak outside it', () => {
+    context.disable();
+    context.setGlobalContextManager(createAsyncHooksContextManager().enable());
+    try {
+      const scope = startRequestScope('op');
+      const spanContext = scope.span.spanContext();
+
+      const seen = scope.run(() => ({ requestId: getRequestId(), span: trace.getActiveSpan() }));
+
+      expect(seen.requestId).toBe(scope.requestId);
+      expect(seen.span?.spanContext()).toStrictEqual(spanContext);
+      expect(getRequestId()).toBe('no-id');
+      scope.span.end();
+    } finally {
+      context.disable();
+    }
   });
 });
 
@@ -1207,15 +1343,30 @@ describe('Logger Formatters - direct unit tests', () => {
     expect(formatPretty(entry, false)).toBe('[2024-01-01] DEBUG: empty context');
   });
 
-  test('formatPretty with color uses an explicit context.requestId regardless of any active store', () => {
+  test('formatPretty with color uses the entry’s requestId regardless of any active store', () => {
     const entry: LogEntry = {
-      context: { requestId: 'explicit-in-context' },
       level: 'info',
       message: 'explicit request',
+      requestId: 'explicit-in-entry',
       timestamp: '2024-01-01',
     };
     const output = formatPretty(entry, true);
-    expect(output).toContain(getRandomColor('explicit-in-context')('explicit request'));
+    expect(output).toContain(getRandomColor('explicit-in-entry')('explicit request'));
+  });
+
+  test('formatPretty prints the request and client ids before the trace ids', () => {
+    const entry: LogEntry = {
+      clientId: 'client-1',
+      level: 'info',
+      message: 'ids',
+      requestId: 'req-1',
+      spanId: 'span-1',
+      timestamp: '2024-01-01',
+      traceId: 'trace-1',
+    };
+    expect(formatPretty(entry, false)).toBe(
+      '[2024-01-01] INFO : ids request=req-1 client=client-1 trace=trace-1 span=span-1',
+    );
   });
 
   test('formatPretty appends trace and span ids when both are present', () => {
@@ -1375,14 +1526,15 @@ describe('requestId in a server request context', () => {
     expect(getRequestId()).toBe('no-id');
   });
 
-  test('log entries carry the request id (top level and in context)', () => {
+  test('log entries carry the request id once, at the top level', () => {
     let output = '';
     requestContextStorage.run({ requestId: 'req-2' }, () => {
       output = testLoggerCall({ level: 'info', message: 'in request', options: { mode: 'json' } });
     });
 
     const parsed: unknown = JSON.parse(output);
-    expect(parsed).toMatchObject({ context: { requestId: 'req-2' }, requestId: 'req-2' });
+    expect(parsed).toMatchObject({ requestId: 'req-2' });
+    expect(parsed).not.toHaveProperty('context');
   });
 
   test('spans started inside a request get request.id', () => {
@@ -1399,11 +1551,11 @@ describe('requestId in a server request context', () => {
     );
   });
 
-  test('formatPretty colors by the entry’s context requestId', () => {
+  test('formatPretty colors by the entry’s requestId', () => {
     const entry: LogEntry = {
-      context: { requestId: 'req-color' },
       level: 'info',
       message: 'colored',
+      requestId: 'req-color',
       timestamp: '2024-01-01',
     };
 

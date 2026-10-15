@@ -39,6 +39,8 @@ import { getEnv } from '../environment';
 import { logger } from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
 import { getServiceInstanceId, setTelemetryConfig, tracer } from '../utils/telemetry';
+import { escapeRegExp } from '../utils/text';
+import { requestContextSpanProcessor } from './request-context-span-processor';
 
 interface TelemetryOptions {
   serviceName?: string;
@@ -142,6 +144,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   tracerProviderInstance = new WebTracerProvider({
     resource,
     spanProcessors: [
+      requestContextSpanProcessor,
       new BatchSpanProcessor(
         new OTLPTraceExporter({
           url: `${otlpEndpoint}/v1/traces`,
@@ -180,7 +183,9 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   logs.setGlobalLoggerProvider(loggerProviderInstance);
 
   registerInstrumentations({
-    instrumentations: [new FetchInstrumentation()],
+    instrumentations: [
+      new FetchInstrumentation({ ignoreUrls: [new RegExp(`^${escapeRegExp(otlpEndpoint)}`, 'u')] }),
+    ],
   });
 
   shutdownFn = async () => {

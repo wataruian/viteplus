@@ -1,3 +1,5 @@
+import type { TracingInstrumentationOptions } from '@grafana/faro-web-tracing';
+import type * as OtelApi from '@opentelemetry/api';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import type * as RumModule from '../../src/browser/rum';
@@ -12,6 +14,8 @@ import type { BrowserLogSink, LogEntry } from '../../src/logger';
 const {
   flushExemplarMetricsMock,
   forceFlushMock,
+  getClientIdMock,
+  tracingInstrumentationMock,
   initializeFaroMock,
   registerBrowserLogSinkMock,
   resourceFromAttributesMock,
@@ -21,6 +25,7 @@ const {
 } = vi.hoisted(() => ({
   flushExemplarMetricsMock: vi.fn().mockResolvedValue(undefined),
   forceFlushMock: vi.fn().mockResolvedValue(undefined),
+  getClientIdMock: vi.fn<() => string | undefined>(),
   initializeFaroMock: vi.fn(() => ({ initializedFaro: true })),
   otlpMetricExporterMock:
     vi.fn<(options: { temporalityPreference?: number; url: string }) => void>(),
@@ -28,6 +33,7 @@ const {
   resourceFromAttributesMock: vi.fn((attributes: Record<string, string>) => attributes),
   setGlobalMeterProviderMock: vi.fn(),
   setTelemetryConfigMock: vi.fn(),
+  tracingInstrumentationMock: vi.fn<(options: TracingInstrumentationOptions) => void>(),
 }));
 
 vi.mock('@grafana/faro-web-sdk', () => ({
@@ -38,11 +44,12 @@ vi.mock('@grafana/faro-web-sdk', () => ({
 }));
 
 vi.mock('../../src/logger', () => ({
+  getClientId: getClientIdMock,
   registerBrowserLogSink: registerBrowserLogSinkMock,
 }));
 
 vi.mock('@grafana/faro-web-tracing', () => ({
-  TracingInstrumentation: vi.fn(),
+  TracingInstrumentation: tracingInstrumentationMock,
 }));
 
 vi.mock('@opentelemetry/api', () => ({
@@ -360,5 +367,100 @@ describe('Faro log sink', () => {
     createFaroLogSink(instance).pushLog(logEntry);
 
     expect(api.pushLog).toHaveBeenCalledWith([JSON.stringify(logEntry)], { level: 'warn' });
+  });
+
+  test('pushLog forwards requestId and clientId as Faro log context so the collector can promote them', () => {
+    const { api, instance } = createFakeFaro();
+    const entry = { ...logEntry, clientId: 'client-1', requestId: 'req-1' };
+
+    createFaroLogSink(instance).pushLog(entry);
+
+    expect(api.pushLog).toHaveBeenCalledWith([JSON.stringify(entry)], {
+      context: { clientId: 'client-1', requestId: 'req-1' },
+      level: 'warn',
+    });
+  });
+});
+
+const createSpanSpy = async () => {
+  const { trace } = await vi.importActual<typeof OtelApi>('@opentelemetry/api');
+  const span = trace.wrapSpanContext({
+    spanId: 'b7ad6b7169203331',
+    traceFlags: 1,
+    traceId: '0af7651916cd43dd8448eb211c80319c',
+  });
+  return { setAttribute: vi.spyOn(span, 'setAttribute'), span };
+};
+
+const getInstrumentationOptions = async () => {
+  const rum = await importFreshRumModule();
+  rum.initializeRum({ otlpEndpoint: 'https://otlp.example.com' });
+  return tracingInstrumentationMock.mock.calls.at(-1)?.[0].instrumentationOptions;
+};
+
+describe('browser span ids', () => {
+  test('fetch spans get the request.id the call sent as X-Request-Id, plus the page client.id', async () => {
+    getClientIdMock.mockReturnValue('page-client-id');
+    const options = await getInstrumentationOptions();
+    const { setAttribute, span } = await createSpanSpy();
+
+    options?.fetchInstrumentationOptions?.applyCustomAttributesOnSpan?.(
+      span,
+      { headers: { 'X-Request-Id': 'req-1' } },
+      new globalThis.Response(),
+    );
+
+    expect(setAttribute.mock.calls).toStrictEqual([
+      ['request.id', 'req-1'],
+      ['client.id', 'page-client-id'],
+    ]);
+  });
+
+  test('fetch spans without X-Request-Id only get client.id', async () => {
+    getClientIdMock.mockReturnValue('page-client-id');
+    const options = await getInstrumentationOptions();
+    const { setAttribute, span } = await createSpanSpy();
+
+    options?.fetchInstrumentationOptions?.applyCustomAttributesOnSpan?.(
+      span,
+      {},
+      new globalThis.Response(),
+    );
+    expect(setAttribute.mock.calls).toStrictEqual([['client.id', 'page-client-id']]);
+  });
+
+  test('XHR spans get the page client.id', async () => {
+    getClientIdMock.mockReturnValue('page-client-id');
+    const rum = await importFreshRumModule();
+    rum.initializeRum();
+    const options = tracingInstrumentationMock.mock.calls.at(-1)?.[0].instrumentationOptions;
+    const { setAttribute, span } = await createSpanSpy();
+
+    expect(options?.xhrInstrumentationOptions?.applyCustomAttributesOnSpan).toBe(rum.tagXhrSpan);
+    rum.tagXhrSpan(span);
+
+    expect(setAttribute.mock.calls).toStrictEqual([['client.id', 'page-client-id']]);
+  });
+
+  test('spans get no ids when there is no request or client id', async () => {
+    getClientIdMock.mockReturnValue(undefined);
+    const options = await getInstrumentationOptions();
+    const { setAttribute, span } = await createSpanSpy();
+
+    options?.fetchInstrumentationOptions?.applyCustomAttributesOnSpan?.(
+      span,
+      {},
+      new globalThis.Response(),
+    );
+
+    expect(setAttribute).not.toHaveBeenCalled();
+  });
+
+  test('does not trace our own OTLP exports', async () => {
+    await getInstrumentationOptions();
+
+    expect(initializeFaroMock).toHaveBeenCalledWith(
+      expect.objectContaining({ ignoreUrls: [/^https:\/\/otlp\.example\.com/u] }),
+    );
   });
 });

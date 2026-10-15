@@ -1,5 +1,5 @@
-import { logger, startSpanWithRequestId } from '@lightproject/common/logger';
-import { type Counter, getMeter, runWithSpan } from '@lightproject/common/utils';
+import { logger, startRequestScope } from '@lightproject/common/logger';
+import { type Counter, getMeter } from '@lightproject/common/utils';
 
 const INITIAL_COUNT = 0;
 const INCREMENT_STEP = 1;
@@ -14,9 +14,9 @@ const setupCounter = (element: HTMLButtonElement): (() => void) => {
   };
 
   const onHandleClick = (): void => {
-    const span = startSpanWithRequestId('counter.increment');
+    const { run, span } = startRequestScope('counter.increment');
 
-    runWithSpan(span, () => {
+    run(() => {
       const nextCount = counter + INCREMENT_STEP;
       logger.info('Counter incremented', {
         nextCount,

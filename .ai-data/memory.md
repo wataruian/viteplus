@@ -812,3 +812,77 @@ AGENTS.md reflect the current state.
   it now goes through `env:` and must match a whole-string bash `[[ =~ ]]` semver check.
   `grep -x` was tried first and rejected, because it matches per line, so `1.2.3\nx=y` passed and
   could forge `$GITHUB_OUTPUT` lines. The release summary now says `develop`, not "dev".
+
+## 2026-10-15: Per-Operation `requestId`, Page-Level `clientId`, Faro Log Fields
+
+- **Decision (user)**: the frontend `requestId` changes per operation (app init, each counter
+  click) and is sent to the backend; the old page-load-stable id is now `clientId`.
+  `common/logger`: `startRequestScope(name)` → `{ requestId, span, run }` (fresh UUID; span gets
+  `request.id`; `run(fn)` re-enters span + requestId — re-enter after every `await`, the browser's
+  context manager is Faro's synchronous `StackContextManager`). `setClientId`/`getClientId`
+  (store → explicit → undefined); logs carry `clientId`, spans/exemplars/OTel log attrs `client.id`.
+  design-system: `RequestIdProvider`/`useRequestId` → `ClientIdProvider`/`useClientId`.
+- **Backend adopts `X-Request-Id`** when it matches `^[\w.:-]{1,128}$` (log-safe), else generates
+  its own (user's twist). CORS `allowHeaders` includes `X-Request-Id`.
+- **Frontend tRPC is unbatched** (`httpLink`): a batch is one backend request, so it can carry only
+  one requestId (StrictMode's double init would otherwise batch two ids). `requestIdLink` reads
+  `getRequestId()` synchronously inside `.query()` (links run sync; `headers` runs after an await).
+- **Faro logs → Loki fields**: the faro receiver flattens logs into a logfmt body and only sets
+  `kind`; the sink sends `{ requestId, clientId }` as Faro log context and the collector's
+  `transform/faro-logs` promotes `context_requestId`/`context_clientId` to `request.id`/`client.id`
+  (Loki structured metadata `request_id`/`client_id`). Verified live: Loki fields, Tempo span
+  attributes, backend logs share the frontend operation's id.
+- **Intentional (user)**: `app.initialize` is an illustrative root span (like the backend's
+  telemetry init), so the browser's tRPC fetch span starting its own trace is expected — do not
+  "fix" it. The shared `request.id` links the two traces when needed.
+
+## 2026-10-15: Playwright Output Moved to `e2e-test-results/`
+
+- **Decision (user)**: each workspace's Playwright output (videos under `results/`,
+  `results.json`, HTML `report/`) now lives in `<workspace>/e2e-test-results/` instead of
+  `<workspace>/tmp/e2e/` (supersedes the `tmp/e2e/` paths in the 2026-10-0x entries above).
+  Updated: both `playwright.config.ts`, the `test:e2e` cache output pattern in both
+  `vite.config.ts`, Dagger `testEndToEnd` (`/app/<ws>/e2e-test-results`) and its test. Excluded
+  everywhere `tmp` is: `.gitignore`, root `ignorePatterns` + madge regex, Dagger `SOURCE_IGNORE`,
+  Sonar, CodeQL, `.templates/scaffold.ts`, `.vscode` search/UnoCSS excludes, UnoCSS pipeline
+  exclude, `clean:build`. CI's exported copy (Dagger result dir + `verify-workspace.yml` upload path) is
+  `tmp/artifacts/<ws>/e2e-test-results` too.
+  Verified: a real `test:e2e` writes there, and a cache hit replays the folder.
+
+## 2026-10-15: IDs Once Per Log, Backend `clientId`, Consistent Span IDs, Exemplar Limit
+
+- **Logs**: `requestId`/`clientId` appear once, at the top level of the entry — never inside
+  `context` (metadata may still override them; they are lifted out). Pretty mode prints
+  `request=… client=… trace=… span=…` after the message and colors by `entry.requestId`.
+- **Backend `clientId`**: the frontend tRPC link sends `X-Client-Id`; the backend adopts it with
+  the same log-safe pattern as `X-Request-Id` (`apps/backend/src/request-context.ts`:
+  `parseIncomingId`, `getRequestStore(c)` used by every `runWithRequestContext` call). Not sent or
+  invalid (direct browser, curl, Postman, CORS preflights) → `clientId` is omitted, never invented.
+- **Exemplars carry both ids via short ids**: Prometheus caps exemplar labels at 128 chars total
+  (trace_id + span_id = 63) and the collector's remote write silently drops all filtered
+  attributes over it (verified: UUID request.id + client.id = 154 → Mimir had neither). Fix:
+  `requestId`/`clientId` are `generateShortUuid()` — a UUID v4 from `generateUuid()` losslessly
+  encoded as 22 base62 chars (letters/digits only — base64url's `-`/`_` looked messy and broke
+  double-click selection; 62^22 > 2^128 so nothing is truncated; `decodeShortUuid` recovers the
+  UUID) — so both fit at 126/128. `fitExemplarLabels` leaves off any attribute that would
+  overflow (e.g. a long caller-supplied X-Request-Id) so the others survive. Don't add more
+  exemplar attributes: there are 2 chars left.
+- **`ClientIdProvider` takes `createId`** (required) — the frontend passes `generateShortUuid`.
+  design-system deliberately does NOT depend on `@lightproject/common` (user's call).
+- **Span attributes**: backend registers `requestContextSpanProcessor` (common/server) so every
+  span in a request (incl. auto-instrumented fetches) gets `request.id`/`client.id`. Browser:
+  Faro owns the span pipeline (a custom `spanProcessor` replaces its exporter), so fetch spans are
+  tagged via `fetchInstrumentationOptions.applyCustomAttributesOnSpan` (X-Request-Id header +
+  page clientId). Both sides exclude the OTLP endpoint from fetch tracing (self-export noise).
+  `opentelemetry.initialize` has no ids by design (no request).
+- **Never `XMLHttpRequest` (user)**: fetch only; XHR and `axios` are lint-banned in the root
+  `vite.config.ts`. Faro still instruments XHR, so `tagXhrSpan` stays as a safety net for
+  third-party code.
+- **Id uniqueness is probabilistic, and tested as such**: ids are 122 random CSPRNG bits
+  (`crypto.randomUUID`), losslessly encoded, so a repeat is ~1e-13 likely even after 1e12 ids;
+  absolute uniqueness would need central coordination. Tests cover the CSPRNG source,
+  one-to-one encoding (min/max UUID, 10k round trips), 1M generator ids, 10k request scopes,
+  500 concurrent backend requests and one clientId per `ClientIdProvider` mount; the uniqueness
+  tests were checked to fail against a deliberately weakened generator.
+- **Storybook drops `server.watch`**: builder-vite replaces the loaded config's `server` block, so
+  `.storybook/main.ts` re-applies `devServerWatchIgnored` (exported from the root config).

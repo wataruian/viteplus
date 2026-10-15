@@ -41,10 +41,12 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
 ## Web APIs preferred over Node equivalents
 
 - `globalThis.crypto.randomUUID()` is used instead of `node:crypto` in
-  `packages/common/src/utils/text.ts` (`generateUuid`) and
-  `packages/design-system/src/context/request-id-provider.tsx`.
+  `packages/common/src/utils/text.ts` (`generateUuid`); `generateShortUuid` re-encodes it as
+  22 base62 characters (BigInt), and `ClientIdProvider` receives it as `createId`.
 - No `axios`, `node-fetch`, or `XMLHttpRequest` usage anywhere in the codebase — `fetch` is used
-  throughout.
+  throughout. **Never use `XMLHttpRequest`** (or XHR-based clients like `axios`): browser tracing
+  and `X-Request-Id`/`X-Client-Id` propagation are fetch-based. Enforced by lint
+  (`no-restricted-globals`/`no-restricted-properties`/`no-restricted-imports`, root `vite.config.ts`).
 
 ## Where Node APIs are legitimately used (do not "fix" these)
 

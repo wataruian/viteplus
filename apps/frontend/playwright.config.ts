@@ -5,12 +5,12 @@ const port = Math.trunc(Number(globalThis.process.env['ADMIN_E2E_PORT'] ?? '3111
 export default defineConfig({
   forbidOnly: true,
   fullyParallel: false,
-  outputDir: 'tmp/e2e/results',
+  outputDir: 'e2e-test-results/results',
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   reporter: [
     ['list'],
-    ['json', { outputFile: 'tmp/e2e/results.json' }],
-    ['html', { open: 'never', outputFolder: 'tmp/e2e/report' }],
+    ['json', { outputFile: 'e2e-test-results/results.json' }],
+    ['html', { open: 'never', outputFolder: 'e2e-test-results/report' }],
   ],
   retries: 0,
   testDir: 'tests/e2e',

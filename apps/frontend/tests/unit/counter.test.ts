@@ -1,4 +1,6 @@
-import { describe, expect, test } from 'vite-plus/test';
+import type { LogEntry } from '@lightproject/common/logger';
+import { initializeContextPropagation, resetTelemetryForTests } from '@lightproject/common/server';
+import { describe, expect, test, vi } from 'vite-plus/test';
 
 import { setupCounter } from '../../src/counter';
 
@@ -51,5 +53,35 @@ describe('setupCounter', () => {
 
     cleanupA();
     cleanupB();
+  });
+
+  test('every click is its own operation with a fresh requestId', async () => {
+    vi.resetModules();
+    vi.stubEnv('LOG_LEVEL', 'info');
+    vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
+    initializeContextPropagation();
+    const { registerBrowserLogSink } = await import('@lightproject/common/logger');
+    const { setupCounter: setupFreshCounter } = await import('../../src/counter');
+    const pushLog = vi.fn<(entry: LogEntry) => void>();
+    registerBrowserLogSink({ pushLog });
+    const button = globalThis.document.createElement('button');
+    const cleanup = setupFreshCounter(button);
+    try {
+      button.click();
+      button.click();
+
+      const requestIds = pushLog.mock.calls
+        .filter(([entry]) => entry.message === 'Counter incremented')
+        .map(([entry]) => entry.requestId);
+      expect(requestIds).toHaveLength(2);
+      expect(requestIds[0]).toEqual(expect.any(String));
+      expect(requestIds[1]).not.toBe(requestIds[0]);
+    } finally {
+      cleanup();
+      registerBrowserLogSink(undefined);
+      vi.restoreAllMocks();
+      vi.unstubAllEnvs();
+      resetTelemetryForTests();
+    }
   });
 });

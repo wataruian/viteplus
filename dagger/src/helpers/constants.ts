@@ -1,4 +1,4 @@
-const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.1.0';
+const VITE_PLUS_IMAGE = 'ghcr.io/voidzero-dev/vite-plus:1.2.0';
 const VITE_PLUS_USER = 'vp';
 const VITE_PLUS_PACKAGE_MANAGER_PATH = '/home/vp/.vite-plus/package_manager';
 const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
@@ -57,6 +57,7 @@ const SOURCE_IGNORE: string[] = [
   '**/bak',
   'configs',
   '**/tmp',
+  '**/e2e-test-results',
   '.editorconfig',
   '**/.env',
   '.env.example',

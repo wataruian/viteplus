@@ -2,6 +2,8 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import unocss from 'unocss/vite';
 import { mergeConfig } from 'vite';
 
+import { devServerWatchIgnored } from '../../../vite.config.ts';
+
 const config: StorybookConfig = {
   addons: ['@storybook/addon-docs'],
   core: {
@@ -26,6 +28,7 @@ const config: StorybookConfig = {
         },
       },
       plugins: [unocss()],
+      server: { watch: { ignored: devServerWatchIgnored } },
     }),
 };
 

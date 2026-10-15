@@ -34,13 +34,19 @@ const getSingleDataPoint = (parsedBody: unknown) => {
   return dataPoint;
 };
 
-const { getRequestIdMock, getTelemetryConfigMock, getTraceContextMock, loggerErrorMock } =
-  vi.hoisted(() => ({
-    getRequestIdMock: vi.fn(),
-    getTelemetryConfigMock: vi.fn(),
-    getTraceContextMock: vi.fn(),
-    loggerErrorMock: vi.fn(),
-  }));
+const {
+  getClientIdMock,
+  getRequestIdMock,
+  getTelemetryConfigMock,
+  getTraceContextMock,
+  loggerErrorMock,
+} = vi.hoisted(() => ({
+  getClientIdMock: vi.fn<() => string | undefined>(),
+  getRequestIdMock: vi.fn(),
+  getTelemetryConfigMock: vi.fn(),
+  getTraceContextMock: vi.fn(),
+  loggerErrorMock: vi.fn(),
+}));
 
 vi.mock('../../src/utils/telemetry', () => ({
   getServiceInstanceId: () => 'test-instance-id',
@@ -48,6 +54,7 @@ vi.mock('../../src/utils/telemetry', () => ({
 }));
 
 vi.mock('../../src/logger/context', () => ({
+  getClientId: getClientIdMock,
   getRequestId: getRequestIdMock,
   getTraceContext: getTraceContextMock,
 }));
@@ -56,7 +63,7 @@ vi.mock('../../src/logger', () => ({
   logger: { error: loggerErrorMock },
 }));
 
-const { flushExemplarMetrics, recordGaugeWithExemplar } =
+const { fitExemplarLabels, flushExemplarMetrics, recordGaugeWithExemplar } =
   await import('../../src/utils/exemplar-metrics');
 
 const parseLastRequestBody = (fetchMock: ReturnType<typeof vi.fn<typeof globalThis.fetch>>) => {
@@ -97,6 +104,7 @@ beforeEach(() => {
   vi.setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
   getTraceContextMock.mockReturnValue(undefined);
   getRequestIdMock.mockReturnValue('no-id');
+  getClientIdMock.mockReturnValue(undefined);
 });
 
 afterEach(async () => {
@@ -382,6 +390,41 @@ describe('recordGaugeWithExemplar', () => {
         },
       ],
     });
+  });
+
+  test('attaches both request.id and client.id when they are short ids (126/128 chars)', async () => {
+    getTraceContextMock.mockReturnValue({
+      spanId: 'b7ad6b7169203331',
+      traceId: '0af7651916cd43dd8448eb211c80319c',
+    });
+    getRequestIdMock.mockReturnValue('7YBUWgZR2uaVcbPD3vYJS2');
+    getClientIdMock.mockReturnValue('2sHw9QdK4mXbT1cYpLw8Zq');
+    const fetchMock = setUp();
+
+    await recordGaugeWithExemplar({ name: 'http_client_duration_seconds', value: 0.1 });
+    await flushExemplarMetrics();
+
+    const { parsedBody } = parseLastRequestBody(fetchMock);
+    expect(getSingleDataPoint(parsedBody)).toMatchObject({
+      exemplars: [
+        {
+          filteredAttributes: [
+            { key: 'request.id', value: { stringValue: '7YBUWgZR2uaVcbPD3vYJS2' } },
+            { key: 'client.id', value: { stringValue: '2sHw9QdK4mXbT1cYpLw8Zq' } },
+          ],
+        },
+      ],
+    });
+  });
+
+  test('leaves off an id that would overflow the 128-char limit, keeping the ones that fit', () => {
+    expect(
+      fitExemplarLabels({
+        'client.id': '2sHw9QdK4mXbT1cYpLw8Zq',
+        'request.id': 'f81d4fae-7dec-41d0-a765-00a0c91e6bf6-caller-supplied',
+        'rpc.ok': true,
+      }),
+    ).toStrictEqual({ 'client.id': '2sHw9QdK4mXbT1cYpLw8Zq', 'rpc.ok': true });
   });
 
   test('lets an explicit exemplarAttributes request.id win over the auto-attached one', async () => {

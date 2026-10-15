@@ -5,7 +5,7 @@ import {
   initializeTelemetry,
   prometheusExporter,
 } from '@lightproject/common/server';
-import { generateUuid } from '@lightproject/common/utils';
+import { generateShortUuid } from '@lightproject/common/utils';
 import { Hono } from 'hono';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 
@@ -15,6 +15,7 @@ import { globalErrorHandler, notFoundHandler } from './middlewares/error-handler
 import { requestLogger } from './middlewares/logger';
 import { corsMiddleware, cspMiddleware } from './middlewares/security';
 import { trustProxy } from './middlewares/trust-proxy';
+import { getRequestStore, parseIncomingId } from './request-context';
 import { docsRouter } from './routers/docs';
 import { httpRouter } from './routers/http';
 import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
@@ -40,9 +41,10 @@ const getApp = async () => {
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
-    const requestId = generateUuid();
+    const requestId = parseIncomingId(c.req.header('X-Request-Id')) ?? generateShortUuid();
     c.set('requestId', requestId);
-    await requestContextStorage.run({ requestId }, async () => {
+    c.set('clientId', parseIncomingId(c.req.header('X-Client-Id')));
+    await requestContextStorage.run(getRequestStore(c), async () => {
       await next();
     });
     c.res.headers.set('X-Request-Id', requestId);
@@ -94,5 +96,3 @@ const server = {
 };
 
 export { getApp, server };
-
-// some change

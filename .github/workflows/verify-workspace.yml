@@ -116,7 +116,7 @@ jobs:
         with:
           name: e2e-${{ inputs.workspace }}
           path: |
-            tmp/artifacts/${{ inputs.workspace }}/e2e
+            tmp/artifacts/${{ inputs.workspace }}/e2e-test-results
             tmp/artifacts/${{ inputs.workspace }}/test-end-to-end.row.md
           retention-days: 14
           if-no-files-found: ignore

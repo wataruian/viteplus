@@ -3,7 +3,7 @@
     "types": ["vite/client"]
   },
   "display": "Design System",
-  "exclude": ["node_modules", "dist", "out", "storybook-static", "coverage"],
+  "exclude": ["node_modules", "dist", "out", "storybook-static", "coverage", "e2e-test-results"],
   "extends": "../../tsconfig.json",
   "include": [
     "./**/*.ts",

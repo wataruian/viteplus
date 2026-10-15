@@ -1,9 +1,9 @@
-import { describe, expect, test } from 'vite-plus/test';
+import { describe, expect, test, vi } from 'vite-plus/test';
 
+import { useClientId } from '../../src/context/client-id-context';
+import { ClientIdProvider } from '../../src/context/client-id-provider';
 import { useMode } from '../../src/context/mode-context';
 import { ModeProvider } from '../../src/context/mode-provider';
-import { useRequestId } from '../../src/context/request-id-context';
-import { RequestIdProvider } from '../../src/context/request-id-provider';
 import { useTheme } from '../../src/context/theme-context';
 import { ThemeProvider } from '../../src/context/theme-provider';
 import { themes } from '../../src/utils/theme-generator';
@@ -48,14 +48,14 @@ const BareThemeConsumer = () => {
   return null;
 };
 
-const RequestIdConsumer = () => {
-  const { resetRequestId, requestId } = useRequestId();
+const ClientIdConsumer = () => {
+  const { resetClientId, clientId } = useClientId();
   return (
     <div>
-      <span>{requestId}</span>
+      <span>{clientId}</span>
       <button
         onClick={() => {
-          resetRequestId();
+          resetClientId();
         }}
         type='button'
       >
@@ -65,12 +65,10 @@ const RequestIdConsumer = () => {
   );
 };
 
-const BareRequestIdConsumer = () => {
-  useRequestId();
+const BareClientIdConsumer = () => {
+  useClientId();
   return null;
 };
-
-const uuidPattern = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu;
 
 describe('ModeProvider / useMode', () => {
   test('defaults to dark mode and applies the class to documentElement', () => {
@@ -160,38 +158,59 @@ describe('ThemeProvider / useTheme', () => {
   });
 });
 
-describe('RequestIdProvider / useRequestId', () => {
-  test('provides a valid UUID requestId', () => {
+const createSequentialIds = () => {
+  let count = 0;
+  return () => {
+    count += 1;
+    return `client-${count}`;
+  };
+};
+
+describe('ClientIdProvider / useClientId', () => {
+  test('provides the clientId made by createId', () => {
     const { container, unmount } = render(
-      <RequestIdProvider>
-        <RequestIdConsumer />
-      </RequestIdProvider>,
+      <ClientIdProvider createId={createSequentialIds()}>
+        <ClientIdConsumer />
+      </ClientIdProvider>,
     );
 
-    expect(container.querySelector('span')?.textContent).toMatch(uuidPattern);
+    expect(container.querySelector('span')?.textContent).toBe('client-1');
     unmount();
   });
 
-  test('resetRequestId generates and stores a new UUID', () => {
+  test('creates the clientId once per mount and keeps it across re-renders', () => {
+    const createId = vi.fn(createSequentialIds());
+    const tree = (
+      <ClientIdProvider createId={createId}>
+        <ClientIdConsumer />
+      </ClientIdProvider>
+    );
+    const { container, rerender, unmount } = render(tree);
+
+    rerender(tree);
+    rerender(tree);
+
+    expect(container.querySelector('span')?.textContent).toBe('client-1');
+    expect(createId).toHaveBeenCalledOnce();
+    unmount();
+  });
+
+  test('resetClientId stores a fresh id from createId', () => {
     const { container, unmount } = render(
-      <RequestIdProvider>
-        <RequestIdConsumer />
-      </RequestIdProvider>,
+      <ClientIdProvider createId={createSequentialIds()}>
+        <ClientIdConsumer />
+      </ClientIdProvider>,
     );
 
-    const originalId = container.querySelector('span')?.textContent;
     click(requireElement(container, 'button'));
 
-    const newId = container.querySelector('span')?.textContent;
-    expect(newId).toMatch(uuidPattern);
-    expect(newId).not.toBe(originalId);
-
+    expect(container.querySelector('span')?.textContent).toBe('client-2');
     unmount();
   });
 
-  test('useRequestId throws when used outside a RequestIdProvider', () => {
+  test('useClientId throws when used outside a ClientIdProvider', () => {
     expect(() => {
-      render(<BareRequestIdConsumer />);
-    }).toThrow(/useRequestId must be used within RequestIdProvider/u);
+      render(<BareClientIdConsumer />);
+    }).toThrow(/useClientId must be used within ClientIdProvider/u);
   });
 });

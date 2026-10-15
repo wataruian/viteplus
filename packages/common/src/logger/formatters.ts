@@ -11,6 +11,7 @@ interface LogEntry {
   timestamp: string;
   context?: Record<string, unknown> | object;
   requestId?: string;
+  clientId?: string;
   spanId?: string;
   traceId?: string;
 }
@@ -22,33 +23,28 @@ const formatColors = {
   warn: chalkInstance.yellow,
 };
 
-const getExplicitColorId = (entry: LogEntry): string | undefined => {
-  const requestId =
-    entry.context !== undefined && 'requestId' in entry.context
-      ? entry.context['requestId']
-      : undefined;
-  return typeof requestId === 'string' ? requestId : undefined;
-};
-
 const colorizeMessage = (entry: LogEntry, useColor: boolean): string => {
   if (!useColor) {
     return entry.message;
   }
 
-  const explicitColorId = getExplicitColorId(entry);
-
-  const requestColor = explicitColorId === undefined ? getColor() : getRandomColor(explicitColorId);
+  const requestColor = entry.requestId === undefined ? getColor() : getRandomColor(entry.requestId);
 
   return requestColor === defaultColor ? entry.message : requestColor(entry.message);
 };
 
-const formatTraceSuffix = (entry: LogEntry, useColor: boolean): string => {
-  if (entry.traceId === undefined) {
+const formatIdSuffix = (entry: LogEntry, useColor: boolean): string => {
+  const parts = [
+    ...(entry.requestId === undefined ? [] : [`request=${entry.requestId}`]),
+    ...(entry.clientId === undefined ? [] : [`client=${entry.clientId}`]),
+    ...(entry.traceId === undefined ? [] : [`trace=${entry.traceId} span=${entry.spanId ?? ''}`]),
+  ];
+  if (parts.length === 0) {
     return '';
   }
 
-  const traceStr = `trace=${entry.traceId} span=${entry.spanId ?? ''}`;
-  return ` ${useColor ? chalkInstance.gray(traceStr) : traceStr}`;
+  const idStr = parts.join(' ');
+  return ` ${useColor ? chalkInstance.gray(idStr) : idStr}`;
 };
 
 const formatContextSuffix = (entry: LogEntry, useColor: boolean): string => {
@@ -66,7 +62,7 @@ const formatPretty = (entry: LogEntry, useColor = true): string => {
   const coloredLevel = useColor ? formatColors[entry.level](levelStr) : levelStr;
   const messageText = colorizeMessage(entry, useColor);
 
-  return `[${timestamp}] ${coloredLevel}: ${messageText}${formatTraceSuffix(entry, useColor)}${formatContextSuffix(entry, useColor)}`;
+  return `[${timestamp}] ${coloredLevel}: ${messageText}${formatIdSuffix(entry, useColor)}${formatContextSuffix(entry, useColor)}`;
 };
 
 const formatJSON = (entry: LogEntry): string => JSON.stringify(entry);
@@ -75,9 +71,8 @@ export {
   colorizeMessage,
   formatColors,
   formatContextSuffix,
+  formatIdSuffix,
   formatJSON,
   formatPretty,
-  formatTraceSuffix,
-  getExplicitColorId,
 };
 export type { LogEntry, LogLevel, LogMode };

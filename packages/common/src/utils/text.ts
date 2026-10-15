@@ -38,13 +38,30 @@ const safeToString = (value: unknown): string => {
 
 const generateUuid = () => globalThis.crypto.randomUUID();
 
-const generateShortUuid = (length = 7) => {
-  const bytes = new Uint8Array(Math.ceil(length / 2));
-  globalThis.crypto.getRandomValues(bytes);
-  return [...bytes]
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-    .slice(0, Math.max(0, length));
+const BASE62_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const SHORT_UUID_LENGTH = 22;
+
+const generateShortUuid = (): string => {
+  let value = BigInt(`0x${generateUuid().replaceAll('-', '')}`);
+  let encoded = '';
+  for (let index = 0; index < SHORT_UUID_LENGTH; index += 1) {
+    encoded = BASE62_ALPHABET.charAt(Number(value % 62n)) + encoded;
+    value /= 62n;
+  }
+  return encoded;
+};
+
+const decodeShortUuid = (shortUuid: string): string => {
+  let value = 0n;
+  for (const char of shortUuid) {
+    const digit = BASE62_ALPHABET.indexOf(char);
+    if (digit === -1) {
+      throw new TypeError(`Not a short UUID: ${shortUuid}`);
+    }
+    value = value * 62n + BigInt(digit);
+  }
+  const hex = value.toString(16).padStart(32, '0');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 };
 
 const padEmoji = (
@@ -83,6 +100,7 @@ const toPascalCase = (str: string): string =>
     .join('');
 
 export {
+  decodeShortUuid,
   escapeRegExp,
   generateShortUuid,
   generateUuid,

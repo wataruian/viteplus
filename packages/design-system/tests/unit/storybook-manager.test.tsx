@@ -13,6 +13,7 @@ interface RegisteredAddon {
 
 const manager = vi.hoisted(() => ({
   added: new Map<string, RegisteredAddon>(),
+  ariaLabels: [] as (string | false)[],
   emit: vi.fn<(event: string, payload: string) => void>(),
   registered: [] as string[],
 }));
@@ -32,24 +33,30 @@ vi.mock('storybook/manager-api', () => ({
 }));
 
 vi.mock('storybook/internal/components', () => ({
-  IconButton: ({
+  Button: ({
+    ariaLabel,
     children,
     onClick,
     title,
   }: {
+    ariaLabel: string | false;
     children: ReactNode;
     onClick: () => void;
     title: string;
-  }) => (
-    <button onClick={onClick} title={title} type='button'>
-      {children}
-    </button>
-  ),
+  }) => {
+    manager.ariaLabels.push(ariaLabel);
+    return (
+      <button onClick={onClick} title={title} type='button'>
+        {children}
+      </button>
+    );
+  },
 }));
 
 const { ModeTool } = await import('../../.storybook/manager');
 
 afterEach(() => {
+  manager.ariaLabels.length = 0;
   manager.emit.mockClear();
   globalThis.localStorage.clear();
 });
@@ -70,6 +77,7 @@ describe('manager mode tool', () => {
     const button = requireElement(container, 'button');
     expect(button.textContent).toBe('☾ Dark');
     expect(button.getAttribute('title')).toBe('Switch to light mode');
+    expect(manager.ariaLabels).toStrictEqual([false]);
 
     click(button);
     expect(button.textContent).toBe('☀ Light');

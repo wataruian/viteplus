@@ -248,11 +248,11 @@ export class Monorepo {
       `${exitCode}`,
     );
 
-    const e2eDir = e2eContainer.directory(`/app/${workspaceDir}/tmp/e2e`);
+    const e2eDir = e2eContainer.directory(`/app/${workspaceDir}/e2e-test-results`);
     let resultsJson: string | undefined = undefined;
     try {
       await e2eDir.entries();
-      result = result.withDirectory('e2e', e2eDir);
+      result = result.withDirectory('e2e-test-results', e2eDir);
       resultsJson = await e2eDir.file('results.json').contents();
     } catch {
       // No Playwright output to attach (e.g. the web server never started).

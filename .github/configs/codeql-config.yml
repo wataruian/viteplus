@@ -13,3 +13,4 @@ paths-ignore:
   - '**/storybook-static/**'
   - '**/.wrangler/**'
   - '**/tmp/**'
+  - '**/e2e-test-results/**'

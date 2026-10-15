@@ -5,6 +5,7 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 import { ReportedHttpException, toClientErrorMessage, toClientErrorStack } from '../errors';
 import { getLogUrl } from '../log-url';
+import { getRequestStore } from '../request-context';
 import type { AppEnv } from '../schema';
 
 type AppContext = Context<AppEnv>;
@@ -34,7 +35,7 @@ const notFoundHandler: NotFoundHandler<AppEnv> = (c) => {
   const requestId = getRequestIdFromCtx(c);
   const status = 404;
 
-  runWithRequestContext(c.get('span'), { requestId }, () => {
+  runWithRequestContext(c.get('span'), getRequestStore(c), () => {
     const url = getLogUrl(c);
     logger.warn(`Not Found: [${c.req.method}] ${url}`, {
       method: c.req.method,
@@ -61,7 +62,7 @@ const respondWithError = (
     if (isServerError) {
       span?.recordException(err);
     }
-    runWithRequestContext(span, { requestId }, () => {
+    runWithRequestContext(span, getRequestStore(c), () => {
       const log = isServerError ? logger.error.bind(logger) : logger.warn.bind(logger);
       const url = getLogUrl(c);
       log(`${logLabel}: ${err.message} [${c.req.method}] ${url}`, {

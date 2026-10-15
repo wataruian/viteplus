@@ -138,7 +138,7 @@ describe('testUnit', () => {
 });
 
 describe('testEndToEnd', () => {
-  const e2eDir = '/app/apps/frontend/tmp/e2e';
+  const e2eDir = '/app/apps/frontend/e2e-test-results';
 
   test('runs test:e2e with Chromium installed and attaches the Playwright output and row', async () => {
     seedMountFiles();
@@ -166,7 +166,7 @@ describe('testEndToEnd', () => {
     ]);
     await expect(result.file('test-end-to-end.exit-code').contents()).resolves.toBe('0');
     await expect(result.file('test-end-to-end.output').contents()).resolves.toBe('1 passed');
-    await expect(result.directory('e2e').entries()).resolves.toStrictEqual([
+    await expect(result.directory('e2e-test-results').entries()).resolves.toStrictEqual([
       'results.json',
       'report/',
       'results/',

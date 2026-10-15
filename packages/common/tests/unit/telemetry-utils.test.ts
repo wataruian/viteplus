@@ -49,12 +49,12 @@ describe('tracer', () => {
 });
 
 describe('getServiceInstanceId', () => {
-  test('generates a UUID on first use and returns the same one afterwards', async () => {
+  test('generates a short id on first use and returns the same one afterwards', async () => {
     const { getServiceInstanceId } = await importFresh('instance-service');
 
     const first = getServiceInstanceId();
 
-    expect(first).toMatch(/^[0-9a-f-]{36}$/u);
+    expect(first).toMatch(/^[\dA-Za-z]{22}$/u);
     expect(getServiceInstanceId()).toBe(first);
   });
 });

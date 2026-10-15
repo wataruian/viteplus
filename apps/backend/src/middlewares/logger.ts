@@ -13,6 +13,7 @@ import { createMiddleware } from 'hono/factory';
 import { routePath } from 'hono/route';
 
 import { getLogUrl } from '../log-url';
+import { getRequestStore } from '../request-context';
 import type { AppEnv } from '../schema';
 
 let requestHitsCounter: Counter | undefined = undefined;
@@ -26,7 +27,7 @@ const requestLogger = () =>
 
     const requestType = getRequestType(path);
 
-    const requestId = c.get('requestId');
+    const requestStore = getRequestStore(c);
 
     const parentContext = propagation.extract(
       context.active(),
@@ -62,7 +63,7 @@ const requestLogger = () =>
         'http.route': routePath(c),
       };
 
-      runWithRequestContext(span, { requestId }, () => {
+      runWithRequestContext(span, requestStore, () => {
         recordGaugeWithExemplar({
           attributes: metricAttributes,
           description: 'Duration of the most recently completed HTTP request',
@@ -75,7 +76,7 @@ const requestLogger = () =>
       });
 
       if (status < 400) {
-        runWithRequestContext(span, { requestId }, () => {
+        runWithRequestContext(span, requestStore, () => {
           logger.info(`Outgoing Response: [${method}] ${url} [${status}]`, {
             duration,
             method,
@@ -110,7 +111,7 @@ const requestLogger = () =>
         await next();
       } catch (error) {
         span.recordException(error instanceof Error ? error : String(error));
-        runWithRequestContext(span, { requestId }, () => {
+        runWithRequestContext(span, requestStore, () => {
           logger.error(`Unhandled error: [${method}] ${url}`, { err: error, method, path, url });
         });
         finish(500);

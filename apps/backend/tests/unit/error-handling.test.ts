@@ -110,8 +110,6 @@ const batchErrorSchema = z.array(
   }),
 );
 
-// Sends a batched call (the frontend's default) through the real tRPC handler to a procedure that
-// throws `error`, returning the client-visible error and the server-side logger.error calls.
 const callBatchedBoom = async (error: Error) => {
   const loggerErrorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
   const router = t.router({
