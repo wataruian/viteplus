@@ -1,5 +1,6 @@
 import { logger, startRequestScope } from '@lightproject/common/logger';
 import { type Counter, getMeter } from '@lightproject/common/utils';
+import type { RefCallback } from 'react';
 
 const INITIAL_COUNT = 0;
 const INCREMENT_STEP = 1;
@@ -46,4 +47,7 @@ const setupCounter = (element: HTMLButtonElement): (() => void) => {
   };
 };
 
-export { setupCounter };
+const counterRef: RefCallback<HTMLButtonElement> = (element) =>
+  element ? setupCounter(element) : undefined;
+
+export { counterRef, setupCounter };

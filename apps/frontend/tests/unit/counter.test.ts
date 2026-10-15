@@ -2,7 +2,26 @@ import type { LogEntry } from '@lightproject/common/logger';
 import { initializeContextPropagation, resetTelemetryForTests } from '@lightproject/common/server';
 import { describe, expect, test, vi } from 'vite-plus/test';
 
-import { setupCounter } from '../../src/counter';
+import { counterRef, setupCounter } from '../../src/counter';
+
+describe('counterRef', () => {
+  test('sets up the counter on attach and returns a cleanup that detaches its click listener', () => {
+    const button = globalThis.document.createElement('button');
+    const cleanup = counterRef(button);
+    expect(button.textContent).toBe('Count is 0');
+
+    button.click();
+    expect(button.textContent).toBe('Count is 1');
+
+    cleanup?.();
+    button.click();
+    expect(button.textContent).toBe('Count is 1');
+  });
+
+  test('does nothing when called with null', () => {
+    expect(counterRef(null)).toBeUndefined();
+  });
+});
 
 describe('setupCounter', () => {
   test('sets the initial text content to "Count is 0"', () => {

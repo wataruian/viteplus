@@ -73,6 +73,21 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     expect(disallowedPreflight.headers.get('access-control-allow-origin')).toBeNull();
   });
 
+  test('a preflight lets the browser cache it for 10 minutes instead of re-sending it every call', async () => {
+    const app = await importApp();
+
+    const preflight = await app.request('/trpc/test.hello', {
+      headers: {
+        'Access-Control-Request-Headers': 'traceparent, x-request-id, x-client-id',
+        'Access-Control-Request-Method': 'GET',
+        Origin: allowedOrigin,
+      },
+      method: 'OPTIONS',
+    });
+
+    expect(preflight.headers.get('access-control-max-age')).toBe('600');
+  });
+
   test('ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded', async () => {
     const extraOrigin = 'https://extra.example.com';
     const app = await importApp({ ADDITIONAL_CORS_ORIGINS: extraOrigin, ENV: 'local' });

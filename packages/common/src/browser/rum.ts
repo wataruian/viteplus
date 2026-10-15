@@ -5,7 +5,11 @@ import {
   getWebInstrumentations,
   initializeFaro,
 } from '@grafana/faro-web-sdk';
-import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+import {
+  FaroMetaAttributesSpanProcessor,
+  FaroTraceExporter,
+  TracingInstrumentation,
+} from '@grafana/faro-web-tracing';
 import { type Span, metrics } from '@opentelemetry/api';
 import {
   AggregationTemporalityPreference,
@@ -13,6 +17,7 @@ import {
 } from '@opentelemetry/exporter-metrics-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { BatchSpanProcessor, type SpanProcessor } from '@opentelemetry/sdk-trace-web';
 import {
   ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
   ATTR_SERVICE_NAME,
@@ -29,7 +34,11 @@ import {
   registerBrowserLogSink,
 } from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
-import { getServiceInstanceId, setTelemetryConfig } from '../utils/telemetry';
+import {
+  METRIC_EXPORT_INTERVAL_MS,
+  getServiceInstanceId,
+  setTelemetryConfig,
+} from '../utils/telemetry';
 import { escapeRegExp } from '../utils/text';
 
 interface RumOptions {
@@ -85,8 +94,40 @@ const tagXhrSpan = (span: Span): void => {
 let isInitialized = false;
 let meterProviderInstance: MeterProvider | undefined = undefined;
 
+let faroSpanProcessor: SpanProcessor | undefined = undefined;
+
+const getFaroSpanProcessor = (): SpanProcessor => {
+  faroSpanProcessor ??= new FaroMetaAttributesSpanProcessor(
+    new BatchSpanProcessor(new FaroTraceExporter({ api: faro.api }), {
+      maxExportBatchSize: 30,
+      scheduledDelayMillis: TracingInstrumentation.SCHEDULED_BATCH_DELAY_MS,
+    }),
+    faro.metas,
+  );
+  return faroSpanProcessor;
+};
+
+const flushableSpanProcessor: SpanProcessor = {
+  forceFlush: async () => {
+    await faroSpanProcessor?.forceFlush();
+  },
+  onEnd: (span) => {
+    getFaroSpanProcessor().onEnd(span);
+  },
+  onStart: (span, parentContext) => {
+    getFaroSpanProcessor().onStart(span, parentContext);
+  },
+  shutdown: async () => {
+    await faroSpanProcessor?.shutdown();
+  },
+};
+
 const flushRum = async () => {
-  await Promise.allSettled([meterProviderInstance?.forceFlush(), flushExemplarMetrics()]);
+  await Promise.allSettled([
+    flushableSpanProcessor.forceFlush(),
+    meterProviderInstance?.forceFlush(),
+    flushExemplarMetrics(),
+  ]);
 };
 
 const flushOnHide = () => {
@@ -144,6 +185,8 @@ const initializeRum = (options: RumOptions = {}) => {
   meterProviderInstance = new MeterProvider({
     readers: [
       new PeriodicExportingMetricReader({
+        exportIntervalMillis: METRIC_EXPORT_INTERVAL_MS,
+        exportTimeoutMillis: METRIC_EXPORT_INTERVAL_MS,
         exporter: new OTLPMetricExporter({
           temporalityPreference: AggregationTemporalityPreference.DELTA,
           url: `${otlpEndpoint}/v1/metrics`,
@@ -185,6 +228,7 @@ const initializeRum = (options: RumOptions = {}) => {
           propagateTraceHeaderCorsUrls: [new RegExp(`^${escapeRegExp(apiUrl)}`, 'u')],
           xhrInstrumentationOptions: { applyCustomAttributesOnSpan: tagXhrSpan },
         },
+        spanProcessor: flushableSpanProcessor,
       }),
     ],
     url: `${faroEndpoint}/collect`,
@@ -201,6 +245,8 @@ export {
   faroLogLevel,
   flushOnHide,
   flushRum,
+  flushableSpanProcessor,
+  getFaroSpanProcessor,
   initializeRum,
   registerLifecycleFlush,
   tagSpanWithIds,

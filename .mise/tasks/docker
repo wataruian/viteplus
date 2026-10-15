@@ -55,6 +55,7 @@ for project in "${projects[@]}"; do
   containerPort="80"
   storybookContainerPort="81"
   buildEnvArgs=()
+  runArgs=()
 
   if [[ "${name}" == "design-system" || "${name}" == "frontend" ]]; then
     buildEnvArgs+=(
@@ -67,6 +68,14 @@ for project in "${projects[@]}"; do
     "backend")
       port="${API_PORT:-"3000"}"
       containerPort="3000"
+      if docker network inspect viteplus-net >/dev/null 2>&1; then
+        runArgs+=(
+          --network viteplus-net
+          -e "OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318"
+        )
+      else
+        echo "⚠️  viteplus-net not found (run docker compose up -d): backend telemetry will not be exported"
+      fi
       ;;
     "design-system")
       port="${DESIGN_SYSTEM_PORT:-"6007"}"
@@ -98,6 +107,7 @@ for project in "${projects[@]}"; do
   else
     docker run --rm -d \
       -p "${port}:${containerPort}" \
+      "${runArgs[@]}" \
       --name "${name}" "${name}"
   fi
 

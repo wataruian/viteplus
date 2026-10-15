@@ -9,9 +9,6 @@
   is installed on the repo and check the Dependency Dashboard issue.
 - **GitHub setting (not in code)** — Settings → Actions → "Require approval for all outside
   collaborators", as defense in depth for the fork guard in `on-pull-request.yml`.
-- **Set `VITE_ADMIN_URL` per GitHub Environment** (`develop`/`staging`/`production`) — the
-  frontend's absolute `og:url`/`og:image` tags are only emitted when it is set (deploy wiring is in
-  `deploy-workspace.yml`). Until then, deployed builds simply omit those tags.
 - **Two design-system tests are timeout-prone under load** — `preview-registry-drift.test.tsx`
   (~3s locally) and the `ph` icon-loader test in `tokens.test.ts` hit the 30s timeout in a
   `dagger ready` that overlapped with a local `vp run ready` (2026-09-28); the same run passes when

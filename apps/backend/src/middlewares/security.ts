@@ -50,6 +50,7 @@ const corsMiddleware = () =>
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
     exposeHeaders: ['X-Request-Id'],
+    maxAge: 600,
     origin: uniqueOrigins,
   });
 

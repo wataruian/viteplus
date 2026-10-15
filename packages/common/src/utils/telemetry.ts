@@ -18,6 +18,8 @@ const setTelemetryConfig = (config: ResolvedTelemetryConfig | undefined): void =
   resolvedTelemetryConfig = config;
 };
 
+const METRIC_EXPORT_INTERVAL_MS = 5000;
+
 let serviceInstanceId: string | undefined = undefined;
 
 const getServiceInstanceId = (): string => {
@@ -42,6 +44,7 @@ export {
   type SpanStatus,
 } from '@opentelemetry/api';
 export {
+  METRIC_EXPORT_INTERVAL_MS,
   getMeter,
   getServiceInstanceId,
   getTelemetryConfig,

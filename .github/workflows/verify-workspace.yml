@@ -12,10 +12,6 @@ on:
         required: false
         type: string
         default: ''
-      environment:
-        description: 'Environment'
-        required: false
-        type: string
 
 jobs:
   verify:
@@ -67,24 +63,11 @@ jobs:
         env:
           WORKSPACE: ${{ inputs.workspace }}
           WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
-          VITE_ENV: ${{ inputs.environment }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
-          args=()
-          case "${WORKSPACE}" in
-            design-system|frontend)
-              args+=(
-                "--build-env=VITE_ENV=${VITE_ENV}"
-                "--build-env=VITE_API_URL=${VITE_API_URL}"
-              )
-              ;;
-          esac
-
           mise run dagger build-artifact \
             --workspace="${WORKSPACE_ID}" \
             --export="./tmp/artifacts/${WORKSPACE}/build" \
-            --no-output \
-            "${args[@]}"
+            --no-output
 
       - name: Test (unit)
         shell: bash

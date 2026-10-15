@@ -67,7 +67,6 @@ jobs:
     with:
       workspace: dagger
       workspace-id: dagger
-      environment: ${{ inputs.environment }}
 
   library:
     needs: [setup, dagger]
@@ -83,7 +82,6 @@ jobs:
     secrets: inherit
     with:
       workspace: library
-      environment: ${{ inputs.environment }}
 
   common:
     needs: [setup, dagger]
@@ -99,7 +97,6 @@ jobs:
     secrets: inherit
     with:
       workspace: common
-      environment: ${{ inputs.environment }}
 
   design-system:
     needs: [setup, dagger]
@@ -115,7 +112,6 @@ jobs:
     secrets: inherit
     with:
       workspace: design-system
-      environment: ${{ inputs.environment }}
 
   backend:
     needs: [setup, dagger, common]
@@ -133,7 +129,6 @@ jobs:
     secrets: inherit
     with:
       workspace: backend
-      environment: ${{ inputs.environment }}
 
   frontend:
     needs: [setup, dagger, common, design-system, backend]
@@ -155,7 +150,6 @@ jobs:
     secrets: inherit
     with:
       workspace: frontend
-      environment: ${{ inputs.environment }}
 
   artifacts:
     name: Publish artifacts

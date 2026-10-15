@@ -38,7 +38,12 @@ import {
 import { getEnv } from '../environment';
 import { logger } from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
-import { getServiceInstanceId, setTelemetryConfig, tracer } from '../utils/telemetry';
+import {
+  METRIC_EXPORT_INTERVAL_MS,
+  getServiceInstanceId,
+  setTelemetryConfig,
+  tracer,
+} from '../utils/telemetry';
 import { escapeRegExp } from '../utils/text';
 import { requestContextSpanProcessor } from './request-context-span-processor';
 
@@ -159,6 +164,8 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   meterProviderInstance = new MeterProvider({
     readers: [
       new PeriodicExportingMetricReader({
+        exportIntervalMillis: METRIC_EXPORT_INTERVAL_MS,
+        exportTimeoutMillis: METRIC_EXPORT_INTERVAL_MS,
         exporter: new OTLPMetricExporter({
           temporalityPreference: AggregationTemporalityPreference.DELTA,
           url: `${otlpEndpoint}/v1/metrics`,

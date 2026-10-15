@@ -182,6 +182,46 @@ describe('wrangler', () => {
     ]);
   });
 
+  test('appends each worker var to wrangler deploy as --var KEY:VALUE', async () => {
+    seedMountFiles();
+    world.execStdout = 'Deployed to Cloudflare';
+
+    await createMonorepo().wrangler(
+      '@lightproject/backend',
+      'develop',
+      fakeSecret,
+      fakeSecret,
+      undefined,
+      ['OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com'],
+    );
+
+    expect(getLastContainer().capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '--filter',
+      '@lightproject/backend',
+      'wrangler:deploy',
+      '--var',
+      'OTEL_EXPORTER_OTLP_ENDPOINT:https://otel.example.com',
+    ]);
+  });
+
+  test('rejects worker vars for a frontend workspace before building', async () => {
+    await expect(
+      createMonorepo().wrangler(
+        '@lightproject/frontend',
+        'develop',
+        fakeSecret,
+        fakeSecret,
+        undefined,
+        ['OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com'],
+      ),
+    ).rejects.toThrow(
+      "workerVars is only supported for backend workspaces, got '@lightproject/frontend'",
+    );
+    expect(() => getLastContainer()).toThrow('no fake container has been created yet');
+  });
+
   test.each(['', 'pr', 'dev', 'Production', 'develop;rm -rf /'])(
     'rejects %j before building',
     async (environment) => {

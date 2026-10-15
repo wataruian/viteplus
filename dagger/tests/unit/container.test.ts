@@ -16,6 +16,7 @@ import {
   withInstallCaches,
   withPlaywrightChromium,
   withTaskCache,
+  workerVarArgs,
   workspace,
   workspacePath,
 } from '../../src/helpers/container';
@@ -140,6 +141,62 @@ describe('withBuildEnv', () => {
     expect(() =>
       withBuildEnv(new FakeContainer(world), '@lightproject/frontend', ['NOVALUE']),
     ).toThrow('Invalid build env entry (expected KEY=VALUE): NOVALUE');
+  });
+});
+
+describe('workerVarArgs', () => {
+  test.each([undefined, []])('is empty when there are no worker vars (%j)', (workerVars) => {
+    expect(workerVarArgs('@lightproject/backend', workerVars)).toStrictEqual([]);
+  });
+
+  test('turns each KEY=VALUE entry into a wrangler --var KEY:VALUE pair', () => {
+    expect(
+      workerVarArgs('@lightproject/backend', [
+        'OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com',
+        'LOG_LEVEL=debug',
+      ]),
+    ).toStrictEqual([
+      '--var',
+      'OTEL_EXPORTER_OTLP_ENDPOINT:https://otel.example.com',
+      '--var',
+      'LOG_LEVEL:debug',
+    ]);
+  });
+
+  test('splits only on the first "=" so values may contain it', () => {
+    expect(workerVarArgs('@lightproject/backend', ['URL=https://x.example.com?a=1'])).toStrictEqual(
+      ['--var', 'URL:https://x.example.com?a=1'],
+    );
+  });
+
+  test.each(['@lightproject/frontend', '@lightproject/design-system'])(
+    'throws for the frontend workspace %s',
+    (workspaceName) => {
+      expect(() => workerVarArgs(workspaceName, ['LOG_LEVEL=debug'])).toThrow(
+        `workerVars is only supported for backend workspaces, got '${workspaceName}'`,
+      );
+    },
+  );
+
+  test('throws for an entry missing "="', () => {
+    expect(() => workerVarArgs('@lightproject/backend', ['LOG_LEVEL'])).toThrow(
+      'Invalid worker var entry (expected KEY=VALUE): LOG_LEVEL',
+    );
+  });
+
+  test.each(['', 'log_level', '1LEVEL', 'LOG-LEVEL', 'LOG LEVEL', '--dry-run'])(
+    'rejects the name %j',
+    (key) => {
+      expect(() => workerVarArgs('@lightproject/backend', [`${key}=x`])).toThrow(
+        `Invalid worker var name '${key}'`,
+      );
+    },
+  );
+
+  test.each(['', 'two words', 'line\nbreak', ' leading'])('rejects the value %j', (value) => {
+    expect(() => workerVarArgs('@lightproject/backend', [`LOG_LEVEL=${value}`])).toThrow(
+      "Invalid worker var value for 'LOG_LEVEL'",
+    );
   });
 });
 

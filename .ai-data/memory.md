@@ -886,3 +886,44 @@ AGENTS.md reflect the current state.
   tests were checked to fail against a deliberately weakened generator.
 - **Storybook drops `server.watch`**: builder-vite replaces the loaded config's `server` block, so
   `.storybook/main.ts` re-applies `devServerWatchIgnored` (exported from the root config).
+
+## 2026-10-15: Telemetry Dashboard, Span Flush on Hide, Faster Metrics, Tempo 2.10
+
+- **Provisioned dashboard**: `configs/grafana/provisioning/dashboards/telemetry-correlation.json`
+  (provider `dashboards.yaml`, folder "Lightproject"): signal health, request/client id
+  correlation (Loki matrix tables), trace tables, log panels, metrics with exemplars. Mimir
+  `exemplarTraceIdDestinations` also maps `traceID` (Tempo span-metrics exemplar label).
+- **Browser spans flushed on hide/reload**: `rum.ts` passes Faro its default span pipeline
+  (`FaroMetaAttributesSpanProcessor` → `BatchSpanProcessor` → `FaroTraceExporter`), built lazily on
+  the first span (faro.api/metas exist only after `initializeFaro`), so `flushRum` can
+  `forceFlush` it before Faro's own visibilitychange send. Verified A/B with quick reloads: 10
+  orphaned traces without, 0 with. Residual: instrumentation-fetch ends fetch spans ~300ms after
+  the response, so an unload inside that window still loses the span.
+- **Metrics export every 5s** (`METRIC_EXPORT_INTERVAL_MS`, browser + server; OTel default was
+  60s), collector batch timeout 1s, dashboard refresh 10s.
+- **CORS `maxAge: 600`**: preflights (standalone backend `http.request:OPTIONS` traces) are
+  cached 10 minutes instead of ~5s.
+- **Tempo 2.8.1 → 2.10.8**: 2.8's `tracesToCut` used `time.Now().Add(cutoff)` (no negation), so
+  every live trace was cut on each 10s flush check; frontend/backend spans straddling a check
+  were stored as separate pieces and backend-only searches showed `<root span not yet received>`.
+  Reproduced with synthetic span pairs (gap ≥4s split on 2.8.1, none on 2.10.8). Stay on Tempo
+  ≥2.9; 3.x is a separate architecture decision.
+
+## 2026-10-15: Deployed Telemetry → Local Stack via CI (`mise tunnel`)
+
+- **GitHub Environment variables** `OTEL_EXPORTER_OTLP_ENDPOINT` / `FARO_ENDPOINT` (optional, per
+  environment) are read by `deploy-workspace.yml`. Frontend: baked in as
+  `VITE_OTEL_EXPORTER_OTLP_ENDPOINT` / `VITE_FARO_ENDPOINT` build env (both the publish and the
+  wrangler step, so image and Worker match). Backend: runtime Worker var via the new Dagger
+  `wrangler --worker-vars KEY=VALUE` → `wrangler deploy --var KEY:VALUE` (forwarded by
+  `vp run … wrangler:deploy <args>`; verified with `--dry-run` that it binds next to
+  `[env.<env>.vars]`). Unset = unchanged deploy.
+- **`workerVars` is backend-only** (runtime-validated: UPPER_SNAKE_CASE key, non-empty value with no
+  whitespace, rejected before building): frontend Workers are static assets, and design-system's
+  `wrangler:deploy` runs two `wrangler deploy` commands, so trailing args would only reach the last.
+- `mise tunnel` now prints these variable names; quick-tunnel URLs change per run.
+- **`VITE_ADMIN_URL` derived in deploys** (supersedes `vars.VITE_ADMIN_URL`, closes the TODO):
+  `deploy-workspace.yml` sets it to `https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}`
+  next to `VITE_API_URL` and always passes it to frontend builds, so `og:url`/`og:image` are emitted
+  in every deployed environment. Verify no longer passes `VITE_ENV`/`VITE_API_URL` (the verify build
+  is never deployed; both fall back to defaults) or an `environment` input to `verify-workspace.yml`.

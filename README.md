@@ -75,6 +75,26 @@ sum without (instance, service_instance_id) (rate(button_clicks_total[5m]))
 
 A per-instance series only receives data while its tab or isolate is alive, then goes stale. The cost therefore scales with recently active instances (roughly concurrent visitors), not with total page views. At high browser traffic, switch the frontend to collector-derived metrics: browsers send spans or events, and the collector's `spanmetrics` / `count` connector aggregates them as the single writer.
 
+### Querying Traces in Grafana (Tempo)
+
+A request made from the browser is a single trace: its root is the frontend's `HTTP GET` span, with the backend span as its child. A filter such as `{resource.service.name="@lightproject/backend"}` therefore also lists frontend-rooted traces, because the search table shows each trace's root span, not the span that matched. To list only traces that start in the backend, without CORS preflights:
+
+```traceql
+{ trace:rootService = "@lightproject/backend" && trace:rootName != "http.request:OPTIONS" }
+```
+
+`http.request:OPTIONS` traces are CORS preflights. The browser sends them itself and does not trace them, so each one is a standalone backend trace. The backend lets browsers cache a preflight for 10 minutes (`maxAge: 600`).
+
+Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10s flush check, not after `trace_idle_period`. When a trace's frontend and backend spans arrived on either side of a check, Tempo stored them as separate pieces, and searches that matched only the backend piece showed `<root span not yet received>`.
+
+### Sending a Deployed Environment's Telemetry to the Local Stack
+
+`mise tunnel` exposes the local collector (OTLP, port 4318) and Faro receiver (port 12347) through free Cloudflare quick tunnels and prints their URLs. To point a deployed environment at them:
+
+1. Set the GitHub Environment variables `OTEL_EXPORTER_OTLP_ENDPOINT` and `FARO_ENDPOINT` on that environment (Settings → Environments → `develop`/`staging`/`production` → Variables).
+2. Redeploy the frontend and backend. The deploy workflow bakes both into the frontend build as `VITE_OTEL_EXPORTER_OTLP_ENDPOINT`/`VITE_FARO_ENDPOINT` (browsers send directly), and passes `OTEL_EXPORTER_OTLP_ENDPOINT` to the backend Worker as a runtime variable (Dagger `wrangler --worker-vars`).
+3. Keep `mise tunnel` running while testing. Its URLs change on every run, and anyone with them can send telemetry to your machine. Delete the variables and redeploy to restore the defaults.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -239,4 +259,4 @@ In CI, `dagger call test-end-to-end --workspace=<pkg>` runs them in the `vite-pl
 
 ### Share tags (`apps/frontend`)
 
-`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys pass it from the GitHub Environment variable `vars.VITE_ADMIN_URL`, so set it per environment (`develop`/`staging`/`production`). The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.
+`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys derive it from the target environment's frontend Worker (`https://lightproject-frontend-<dev|staging|production>.wataru.workers.dev`), the same way they derive `VITE_API_URL`. The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.

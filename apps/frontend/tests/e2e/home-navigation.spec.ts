@@ -32,6 +32,41 @@ test('the home page renders and its counter increments', async ({ page }) => {
   expect(pageErrors).toStrictEqual([]);
 });
 
+test('the tRPC sample button re-runs the call and becomes clickable again', async ({ page }) => {
+  const pageErrors = collectPageErrors(page);
+
+  await page.goto('/');
+
+  const trpcSample = page.getByRole('button', { name: 'Call tRPC sample' });
+  await expect(trpcSample).toBeEnabled();
+  await trpcSample.click();
+  await expect(trpcSample).toBeEnabled();
+  await expect(trpcSample).toHaveText('Call tRPC sample');
+
+  expect(pageErrors).toStrictEqual([]);
+});
+
+test('the counter keeps its value when the tRPC sample button is clicked', async ({ page }) => {
+  const pageErrors = collectPageErrors(page);
+
+  await page.goto('/');
+
+  const counter = page.locator('#counter');
+  await counter.click();
+  await counter.click();
+  await expect(counter).toHaveText('Count is 2');
+
+  const trpcSample = page.getByRole('button', { name: 'Call tRPC sample' });
+  await trpcSample.click();
+  await expect(trpcSample).toBeEnabled();
+  await expect(counter).toHaveText('Count is 2');
+
+  await counter.click();
+  await expect(counter).toHaveText('Count is 3');
+
+  expect(pageErrors).toStrictEqual([]);
+});
+
 test('navigates from home to /preview and back, including browser history', async ({ page }) => {
   const pageErrors = collectPageErrors(page);
 

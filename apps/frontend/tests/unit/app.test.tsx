@@ -121,13 +121,40 @@ const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) =>
     },
     container,
     entries: parseLogEntries(logSpy.mock.calls),
+    logSpy,
   };
 };
+
+const trpcSampleButton = (container: HTMLDivElement): HTMLButtonElement => {
+  const button = container.querySelector('button#trpc-sample');
+  if (!(button instanceof globalThis.HTMLButtonElement)) {
+    throw new TypeError('expected the tRPC sample button to render');
+  }
+  return button;
+};
+
+const settleInsideAct = async (isSettled: () => boolean): Promise<void> => {
+  await act(async () => {
+    await vi.waitFor(() => {
+      expect(isSettled()).toBe(true);
+    });
+    await new Promise((resolve) => {
+      globalThis.setTimeout(resolve, 0);
+    });
+  });
+};
+
+const sampleResultEntries = (logSpy: { mock: { calls: unknown[][] } }): ParsedLogEntry[] =>
+  parseLogEntries(logSpy.mock.calls).filter((entry) =>
+    entry.message.includes('tRPC Sample Result'),
+  );
 
 const assertRenderedHtml = (container: HTMLDivElement) => {
   expect(container.querySelector('#center')).not.toBeNull();
   expect(container.querySelector('h1')?.textContent).toBe('Get started');
   expect(container.querySelector('button#counter')?.tagName).toBe('BUTTON');
+  expect(trpcSampleButton(container).textContent).toBe('Call tRPC sample');
+  expect(trpcSampleButton(container).disabled).toBe(false);
 
   const heroImages = container.querySelectorAll('.hero img');
   expect(heroImages).toHaveLength(3);
@@ -168,7 +195,6 @@ const assertTrpcAndStartupLogs = (entries: ParsedLogEntry[]) => {
   expect(result.code).toBe(200);
   expect(result.message).toBe('Success');
   expect(result.data.reply).toBe('Hello Test!');
-  // The backend adopted the X-Request-Id the frontend sent for this operation.
   expect(result.requestId).toBe(startEntry.requestId);
   expect(trpcEntry.requestId).toBe(startEntry.requestId);
 };
@@ -221,6 +247,64 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
       );
 
       assertTrpcAndStartupLogs(entries);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('re-runs the sample tRPC call on button click under a fresh request id the backend adopts', async () => {
+    const { cleanup, container, entries, logSpy } = await renderApp(getBackend(), testApiUrl);
+    try {
+      const startEntry = findEntry(entries, 'Frontend Start');
+      const button = trpcSampleButton(container);
+
+      act(() => {
+        button.click();
+      });
+      expect(button.disabled).toBe(true);
+      expect(button.textContent).toBe('Calling tRPC…');
+
+      await settleInsideAct(() => sampleResultEntries(logSpy).length === 2);
+      expect(button.disabled).toBe(false);
+      expect(button.textContent).toBe('Call tRPC sample');
+
+      const [, clickEntry] = sampleResultEntries(logSpy);
+      const result = trpcResultSchema.parse(clickEntry.context?.['result']);
+      expect(result.success).toBe(true);
+      expect(result.data.reply).toBe('Hello Test!');
+      expect(clickEntry.requestId).toMatch(shortUuidPattern);
+      expect(clickEntry.requestId).not.toBe(startEntry.requestId);
+      expect(result.requestId).toBe(clickEntry.requestId);
+      expect(clickEntry.clientId).toBe(startEntry.clientId);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('keeps the counter value when the tRPC sample button re-renders the app', async () => {
+    const { cleanup, container, logSpy } = await renderApp(getBackend(), testApiUrl);
+    try {
+      const counter = container.querySelector('button#counter');
+      if (!(counter instanceof globalThis.HTMLButtonElement)) {
+        throw new TypeError('expected the counter button to render');
+      }
+
+      act(() => {
+        counter.click();
+        counter.click();
+      });
+      expect(counter.textContent).toBe('Count is 2');
+
+      act(() => {
+        trpcSampleButton(container).click();
+      });
+      await settleInsideAct(() => sampleResultEntries(logSpy).length === 2);
+      expect(counter.textContent).toBe('Count is 2');
+
+      act(() => {
+        counter.click();
+      });
+      expect(counter.textContent).toBe('Count is 3');
     } finally {
       cleanup();
     }
@@ -300,6 +384,7 @@ const renderAppWithMocks = async (options: {
       vi.doUnmock('../../src/config');
       vi.doUnmock('@lightproject/common/configs');
     },
+    container,
     logSpy,
   };
 };
@@ -378,6 +463,43 @@ describe('App error handling', () => {
     },
   );
 
+  test('logs an error and re-enables the button when a clicked tRPC sample call rejects', async () => {
+    let shouldReject = false;
+    const { cleanup, container, logSpy } = await renderAppWithMocks({
+      configModule: { config: { viteApiUrl: undefined } },
+      trpcQuery: () => {
+        if (shouldReject) {
+          throw new Error('tRPC boom');
+        }
+        return successfulTrpcResult;
+      },
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(sampleResultEntries(logSpy)).toHaveLength(1);
+      });
+
+      shouldReject = true;
+      const button = trpcSampleButton(container);
+      act(() => {
+        button.click();
+      });
+
+      await settleInsideAct(() =>
+        parseLogEntries(logSpy.mock.calls).some((entry) =>
+          entry.message.includes('Failed to call tRPC server'),
+        ),
+      );
+      expect(button.disabled).toBe(false);
+      expect(
+        findEntry(parseLogEntries(logSpy.mock.calls), 'Failed to call tRPC server').level,
+      ).toBe('error');
+    } finally {
+      cleanup();
+    }
+  });
+
   test('still completes initialization when recording the tRPC exemplar metric fails', async () => {
     vi.doMock('@lightproject/common/utils', async (importOriginal) => ({
       ...(await importOriginal<typeof UtilsModule>()),
@@ -412,7 +534,7 @@ describe('App error handling', () => {
     }
   });
 
-  test('swallows a rejection from the initialize effect when starting the span itself throws', async () => {
+  test('swallows rejections from the initialize effect and the tRPC sample button when starting the span itself throws', async () => {
     vi.resetModules();
     vi.unstubAllEnvs();
     vi.stubEnv('LOG_FORMAT', 'json');
@@ -478,6 +600,15 @@ describe('App error handling', () => {
         globalThis.setTimeout(resolve, 0);
       });
     });
+
+    const button = trpcSampleButton(container);
+    await act(async () => {
+      button.click();
+      await new Promise((resolve) => {
+        globalThis.setTimeout(resolve, 0);
+      });
+    });
+    expect(button.disabled).toBe(false);
 
     expect(queryMock).not.toHaveBeenCalled();
     expect(unhandledRejectionSpy).not.toHaveBeenCalled();

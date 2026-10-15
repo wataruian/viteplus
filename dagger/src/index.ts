@@ -39,6 +39,7 @@ import {
   shortWorkspaceName,
   withBuildEnv,
   withPlaywrightChromium,
+  workerVarArgs,
   workspacePath,
 } from './helpers/container';
 import { attachSonarRow, coverageRow, e2eRow, semgrepRow } from './helpers/report';
@@ -554,12 +555,15 @@ export class Monorepo {
     cloudflareApiToken: Secret,
     cloudflareAccountId: Secret,
     buildEnv?: string[],
+    workerVars?: string[],
   ): Promise<string> {
     if (!DEPLOY_ENVIRONMENTS.has(environment)) {
       throw new Error(
         `Invalid environment '${environment}' (expected one of: ${[...DEPLOY_ENVIRONMENTS].join(', ')})`,
       );
     }
+
+    const varArgs = workerVarArgs(workspace, workerVars);
 
     const container = await this.build(workspace, buildEnv);
 
@@ -573,7 +577,7 @@ export class Monorepo {
       .withEnvVariable('DEPLOY_REQUESTED_AT', new Date().toISOString());
 
     return withBuildEnv(deployContainer, workspace, buildEnv)
-      .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy'])
+      .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy', ...varArgs])
       .stdout();
   }
 }

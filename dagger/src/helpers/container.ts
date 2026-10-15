@@ -86,6 +86,36 @@ const withBuildEnv = (
   return result;
 };
 
+const WORKER_VAR_KEY = /^[A-Z][A-Z0-9_]*$/u;
+
+const workerVarArgs = (workspaceName: string, workerVars?: string[]): string[] => {
+  if (!workerVars || workerVars.length === 0) {
+    return [];
+  }
+
+  if (isFrontend(workspaceName)) {
+    throw new Error(`workerVars is only supported for backend workspaces, got '${workspaceName}'`);
+  }
+
+  return workerVars.flatMap((entry) => {
+    const separatorIndex = entry.indexOf('=');
+    if (separatorIndex === -1) {
+      throw new Error(`Invalid worker var entry (expected KEY=VALUE): ${entry}`);
+    }
+
+    const key = entry.slice(0, separatorIndex);
+    const value = entry.slice(separatorIndex + 1);
+    if (!WORKER_VAR_KEY.test(key)) {
+      throw new Error(`Invalid worker var name '${key}' (expected UPPER_SNAKE_CASE)`);
+    }
+    if (value === '' || /\s/u.test(value)) {
+      throw new Error(`Invalid worker var value for '${key}' (must be non-empty, no whitespace)`);
+    }
+
+    return ['--var', `${key}:${value}`];
+  });
+};
+
 const withPlaywrightChromium = (container: Container, workspaceName: string): Container =>
   container
     .withUser('root')
@@ -109,6 +139,7 @@ const withPlaywrightChromium = (container: Container, workspaceName: string): Co
     .withExec(['vp', 'exec', '--filter', workspaceName, 'playwright', 'install', 'chromium']);
 
 export {
+  WORKER_VAR_KEY,
   installArgs,
   isFrontend,
   outputDirectory,
@@ -117,6 +148,7 @@ export {
   withInstallCaches,
   withPlaywrightChromium,
   withTaskCache,
+  workerVarArgs,
   workspace,
   workspacePath,
 };

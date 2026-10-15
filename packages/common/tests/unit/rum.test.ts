@@ -1,5 +1,7 @@
 import type { TracingInstrumentationOptions } from '@grafana/faro-web-tracing';
 import type * as OtelApi from '@opentelemetry/api';
+import type * as SdkTraceWeb from '@opentelemetry/sdk-trace-web';
+import type { ReadableSpan, SpanExporter, SpanProcessor } from '@opentelemetry/sdk-trace-web';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import type * as RumModule from '../../src/browser/rum';
@@ -11,7 +13,15 @@ import {
 } from '../../src/browser/rum';
 import type { BrowserLogSink, LogEntry } from '../../src/logger';
 
+interface FaroTraceExporterConfig {
+  api: { fakeFaroApi: boolean };
+}
+
 const {
+  faroMetasStub,
+  faroTraceExporterExportMock,
+  faroTraceExporterMock,
+  faroTraceExporterShutdownMock,
   flushExemplarMetricsMock,
   forceFlushMock,
   getClientIdMock,
@@ -23,6 +33,11 @@ const {
   setTelemetryConfigMock,
   otlpMetricExporterMock,
 } = vi.hoisted(() => ({
+  faroMetasStub: { value: {} },
+  faroTraceExporterExportMock:
+    vi.fn<(spans: ReadableSpan[], config: FaroTraceExporterConfig) => void>(),
+  faroTraceExporterMock: vi.fn<(config: FaroTraceExporterConfig) => void>(),
+  faroTraceExporterShutdownMock: vi.fn<(config: FaroTraceExporterConfig) => void>(),
   flushExemplarMetricsMock: vi.fn().mockResolvedValue(undefined),
   forceFlushMock: vi.fn().mockResolvedValue(undefined),
   getClientIdMock: vi.fn<() => string | undefined>(),
@@ -38,7 +53,7 @@ const {
 
 vi.mock('@grafana/faro-web-sdk', () => ({
   LogLevel: { DEBUG: 'debug', ERROR: 'error', INFO: 'info', WARN: 'warn' },
-  faro: { staticFaroExport: true },
+  faro: { api: { fakeFaroApi: true }, metas: faroMetasStub, staticFaroExport: true },
   getWebInstrumentations: vi.fn(() => ['web-instrumentation']),
   initializeFaro: initializeFaroMock,
 }));
@@ -48,9 +63,57 @@ vi.mock('../../src/logger', () => ({
   registerBrowserLogSink: registerBrowserLogSinkMock,
 }));
 
-vi.mock('@grafana/faro-web-tracing', () => ({
-  TracingInstrumentation: tracingInstrumentationMock,
-}));
+vi.mock('@grafana/faro-web-tracing', () => {
+  class MockFaroMetaAttributesSpanProcessor implements SpanProcessor {
+    private readonly processor: SpanProcessor;
+
+    public constructor(processor: SpanProcessor, metas: typeof faroMetasStub) {
+      expect(metas).toBe(faroMetasStub);
+      this.processor = processor;
+    }
+
+    public async forceFlush(): Promise<void> {
+      await this.processor.forceFlush();
+    }
+
+    public onStart(...args: Parameters<SpanProcessor['onStart']>): void {
+      this.processor.onStart(...args);
+    }
+
+    public onEnd(span: ReadableSpan): void {
+      this.processor.onEnd(span);
+    }
+
+    public async shutdown(): Promise<void> {
+      await this.processor.shutdown();
+    }
+  }
+  class MockFaroTraceExporter implements SpanExporter {
+    private readonly config: FaroTraceExporterConfig;
+
+    public constructor(config: FaroTraceExporterConfig) {
+      faroTraceExporterMock(config);
+      this.config = config;
+    }
+
+    public export(...[spans, resultCallback]: Parameters<SpanExporter['export']>): void {
+      faroTraceExporterExportMock(spans, this.config);
+      resultCallback({ code: 0 });
+    }
+
+    public async shutdown(): Promise<void> {
+      faroTraceExporterShutdownMock(this.config);
+      await Promise.resolve();
+    }
+  }
+  return {
+    FaroMetaAttributesSpanProcessor: MockFaroMetaAttributesSpanProcessor,
+    FaroTraceExporter: MockFaroTraceExporter,
+    TracingInstrumentation: Object.assign(tracingInstrumentationMock, {
+      SCHEDULED_BATCH_DELAY_MS: 1000,
+    }),
+  };
+});
 
 vi.mock('@opentelemetry/api', () => ({
   metrics: { setGlobalMeterProvider: setGlobalMeterProviderMock },
@@ -76,6 +139,7 @@ vi.mock('@opentelemetry/sdk-metrics', () => {
 });
 
 vi.mock('../../src/utils/telemetry', () => ({
+  METRIC_EXPORT_INTERVAL_MS: 5000,
   getServiceInstanceId: () => 'test-instance-id',
   setTelemetryConfig: setTelemetryConfigMock,
 }));
@@ -104,6 +168,74 @@ describe('flushRum', () => {
     await flushRum();
 
     expect(flushExemplarMetricsMock).toHaveBeenCalled();
+  });
+});
+
+const startTracing = async () => {
+  const rum = await importFreshRumModule();
+  rum.initializeRum({ serviceName: 'span-pipeline' });
+  const spanProcessor = tracingInstrumentationMock.mock.calls.at(-1)?.[0].spanProcessor;
+  if (spanProcessor === undefined) {
+    throw new Error('expected initializeRum to hand Faro a span processor');
+  }
+  const { WebTracerProvider } = await vi.importActual<typeof SdkTraceWeb>(
+    '@opentelemetry/sdk-trace-web',
+  );
+  const tracer = new WebTracerProvider({ spanProcessors: [spanProcessor] }).getTracer('test');
+  return { rum, spanProcessor, tracer };
+};
+
+describe('Faro span pipeline', () => {
+  test('exports metrics every 5s instead of the 60s default', async () => {
+    const { PeriodicExportingMetricReader } = await import('@opentelemetry/sdk-metrics');
+    await startTracing();
+
+    expect(PeriodicExportingMetricReader).toHaveBeenCalledWith(
+      expect.objectContaining({ exportIntervalMillis: 5000, exportTimeoutMillis: 5000 }),
+    );
+  });
+
+  test('flushing before any span has started is a no-op', async () => {
+    const { rum, spanProcessor } = await startTracing();
+
+    await rum.flushRum();
+    await spanProcessor.shutdown();
+
+    expect(faroTraceExporterMock).not.toHaveBeenCalled();
+  });
+
+  test("builds Faro's default pipeline on the first span, against the initialized faro api and metas", async () => {
+    const { tracer } = await startTracing();
+
+    tracer.startSpan('first').end();
+    tracer.startSpan('second').end();
+
+    expect(faroTraceExporterMock).toHaveBeenCalledTimes(1);
+    expect(faroTraceExporterMock).toHaveBeenCalledWith({ api: { fakeFaroApi: true } });
+  });
+
+  test('flushRum hands buffered spans to the Faro transport synchronously, before any await', async () => {
+    const { rum, tracer } = await startTracing();
+
+    tracer.startSpan('fetch').end();
+    expect(faroTraceExporterExportMock).not.toHaveBeenCalled();
+
+    const flushed = rum.flushRum();
+    expect(faroTraceExporterExportMock).toHaveBeenCalledTimes(1);
+    expect(faroTraceExporterExportMock.mock.calls[0]?.[0].map((span) => span.name)).toEqual([
+      'fetch',
+    ]);
+    await flushed;
+  });
+
+  test('shutdown is forwarded to the built pipeline', async () => {
+    const { spanProcessor, tracer } = await startTracing();
+
+    tracer.startSpan('before-shutdown').end();
+    await spanProcessor.shutdown();
+
+    expect(faroTraceExporterExportMock).toHaveBeenCalledTimes(1);
+    expect(faroTraceExporterShutdownMock).toHaveBeenCalledWith({ api: { fakeFaroApi: true } });
   });
 });
 
@@ -251,7 +383,11 @@ describe('initializeRum', () => {
     const second = rum.initializeRum({ serviceName: 'twice' });
 
     expect(first).not.toBe(second);
-    expect(second).toStrictEqual({ staticFaroExport: true });
+    expect(second).toStrictEqual({
+      api: { fakeFaroApi: true },
+      metas: faroMetasStub,
+      staticFaroExport: true,
+    });
     expect(initializeFaroMock).toHaveBeenCalledTimes(1);
     expect(resourceFromAttributesMock).toHaveBeenCalledTimes(1);
   });

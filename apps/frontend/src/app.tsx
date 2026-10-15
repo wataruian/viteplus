@@ -1,28 +1,84 @@
 import { logger, setClientId, startRequestScope } from '@lightproject/common/logger';
 import { recordGaugeWithExemplar } from '@lightproject/common/utils';
 import { useClientId } from '@lightproject/design-system/context';
-import { type RefCallback, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import heroImg from './assets/hero.png';
 import typescriptLogo from './assets/typescript.svg';
 import viteLogo from './assets/vite.svg';
 import { config, get } from './config';
-import { setupCounter } from './counter';
+import { counterRef } from './counter';
 import { trpcClient } from './providers/trpc-provider';
 
 import './style.css';
 
+type RequestScope = ReturnType<typeof startRequestScope>;
+
+const callTrpcSample = async (scope: RequestScope): Promise<void> => {
+  const { span } = scope;
+  const trpcCallStart = globalThis.performance.now();
+  let trpcCallSucceeded = true;
+
+  try {
+    span.addEvent('Executing tRPC test mutation');
+
+    const result = await scope.run(async () => await trpcClient.test.hello.query({ name: 'Test' }));
+
+    span.setAttribute('trpc.test.success', true);
+
+    scope.run(() => {
+      logger.info('tRPC Sample Result', {
+        result,
+      });
+    });
+  } catch (error: unknown) {
+    trpcCallSucceeded = false;
+    span.recordException(error instanceof Error ? error : String(error));
+    span.setAttribute('trpc.test.success', false);
+
+    scope.run(() => {
+      logger.error('Failed to call tRPC server', {
+        error,
+      });
+    });
+  }
+
+  scope.run(() => {
+    recordGaugeWithExemplar({
+      attributes: { 'rpc.method': 'test.hello', 'rpc.success': trpcCallSucceeded },
+      description: 'Duration of the most recently completed tRPC client call',
+      name: 'http_client_duration_seconds',
+      unit: 's',
+      value: (globalThis.performance.now() - trpcCallStart) / 1000,
+    }).catch(() => {
+      // Skip exemplar metric if it fails
+    });
+  });
+};
+
+const runTrpcSample = async (): Promise<void> => {
+  const scope = startRequestScope('trpc.sample', { root: true });
+  try {
+    await callTrpcSample(scope);
+  } finally {
+    scope.span.end();
+  }
+};
+
 const App = () => {
   const { clientId } = useClientId();
-  const counterCleanupRef = useRef<(() => void) | undefined>(undefined);
+  const [isTrpcSamplePending, setIsTrpcSamplePending] = useState(false);
 
-  const counterRef: RefCallback<HTMLButtonElement> = (element) => {
-    if (element) {
-      counterCleanupRef.current = setupCounter(element);
-    } else {
-      counterCleanupRef.current?.();
-      counterCleanupRef.current = undefined;
-    }
+  const handleTrpcSampleClick = (): void => {
+    setIsTrpcSamplePending(true);
+
+    runTrpcSample()
+      .catch(() => {
+        // Errors already logged and recorded in span
+      })
+      .finally(() => {
+        setIsTrpcSamplePending(false);
+      });
   };
 
   useEffect(() => {
@@ -38,46 +94,7 @@ const App = () => {
       const { span } = scope;
 
       try {
-        const trpcCallStart = globalThis.performance.now();
-        let trpcCallSucceeded = true;
-
-        try {
-          span.addEvent('Executing tRPC test mutation');
-
-          const result = await scope.run(
-            async () => await trpcClient.test.hello.query({ name: 'Test' }),
-          );
-
-          span.setAttribute('trpc.test.success', true);
-
-          scope.run(() => {
-            logger.info('tRPC Sample Result', {
-              result,
-            });
-          });
-        } catch (error: unknown) {
-          trpcCallSucceeded = false;
-          span.recordException(error instanceof Error ? error : String(error));
-          span.setAttribute('trpc.test.success', false);
-
-          scope.run(() => {
-            logger.error('Failed to call tRPC server', {
-              error,
-            });
-          });
-        }
-
-        scope.run(() => {
-          recordGaugeWithExemplar({
-            attributes: { 'rpc.method': 'test.hello', 'rpc.success': trpcCallSucceeded },
-            description: 'Duration of the most recently completed tRPC client call',
-            name: 'http_client_duration_seconds',
-            unit: 's',
-            value: (globalThis.performance.now() - trpcCallStart) / 1000,
-          }).catch(() => {
-            // Skip exemplar metric if it fails
-          });
-        });
+        await callTrpcSample(scope);
 
         scope.run(() => {
           const url = get('API_URL') ?? get('VITE_API_URL');
@@ -126,6 +143,15 @@ const App = () => {
           </p>
         </div>
         <button ref={counterRef} id='counter' type='button' className='counter'></button>
+        <button
+          id='trpc-sample'
+          type='button'
+          className='counter'
+          disabled={isTrpcSamplePending}
+          onClick={handleTrpcSampleClick}
+        >
+          {isTrpcSamplePending ? 'Calling tRPC…' : 'Call tRPC sample'}
+        </button>
         <a href='/preview' className='preview-link'>
           Preview Design System
         </a>
