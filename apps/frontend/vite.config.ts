@@ -86,7 +86,7 @@ export default defineConfig(({ mode }): UserConfig => {
       test: {
         coverage: {
           exclude: ['**/index.ts', '**/main.tsx'],
-          include: ['src/**/*.ts', 'src/**/*.tsx', 'social-meta.ts'],
+          include: ['social-meta.ts'],
         },
         env: { SKIP_OPENTELEMETRY: 'true' },
         environment: 'jsdom',
