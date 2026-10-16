@@ -15,7 +15,7 @@ on:
 jobs:
   setup:
     name: Setup
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 5
     outputs:
       workspaces: ${{ steps.workspaces.outputs.workspaces }}
@@ -158,7 +158,7 @@ jobs:
       !cancelled() &&
       inputs.environment == 'pr' &&
       github.event_name == 'pull_request'
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 10
     permissions:
       actions: read

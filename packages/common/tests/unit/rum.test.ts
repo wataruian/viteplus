@@ -294,7 +294,7 @@ describe('initializeRum', () => {
     vi.stubEnv('SERVICE_VERSION', '2.0.0');
     vi.stubEnv('ENV', 'staging');
     vi.stubEnv('FARO_ENDPOINT', 'https://faro.env.example.com');
-    vi.stubEnv('OTEL_EXPORTER_OTLP_ENDPOINT', 'https://otlp.env.example.com');
+    vi.stubEnv('OTLP_ENDPOINT', 'https://otlp.env.example.com');
 
     rum.initializeRum();
 
@@ -320,13 +320,13 @@ describe('initializeRum', () => {
     vi.stubEnv('SERVICE_VERSION', undefined);
     vi.stubEnv('ENV', undefined);
     vi.stubEnv('FARO_ENDPOINT', undefined);
-    vi.stubEnv('OTEL_EXPORTER_OTLP_ENDPOINT', undefined);
+    vi.stubEnv('OTLP_ENDPOINT', undefined);
 
     vi.stubEnv('VITE_SERVICE_NAME', 'vite-service');
     vi.stubEnv('VITE_SERVICE_VERSION', '3.0.0');
     vi.stubEnv('VITE_ENV', 'vite-staging');
     vi.stubEnv('VITE_FARO_ENDPOINT', 'https://faro.vite.example.com');
-    vi.stubEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT', 'https://otlp.vite.example.com');
+    vi.stubEnv('VITE_OTLP_ENDPOINT', 'https://otlp.vite.example.com');
 
     rum.initializeRum();
 
@@ -352,12 +352,12 @@ describe('initializeRum', () => {
     vi.stubEnv('SERVICE_VERSION', undefined);
     vi.stubEnv('ENV', undefined);
     vi.stubEnv('FARO_ENDPOINT', undefined);
-    vi.stubEnv('OTEL_EXPORTER_OTLP_ENDPOINT', undefined);
+    vi.stubEnv('OTLP_ENDPOINT', undefined);
     vi.stubEnv('VITE_SERVICE_NAME', undefined);
     vi.stubEnv('VITE_SERVICE_VERSION', undefined);
     vi.stubEnv('VITE_ENV', undefined);
     vi.stubEnv('VITE_FARO_ENDPOINT', undefined);
-    vi.stubEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT', undefined);
+    vi.stubEnv('VITE_OTLP_ENDPOINT', undefined);
 
     rum.initializeRum();
 

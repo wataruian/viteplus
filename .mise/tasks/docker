@@ -71,7 +71,7 @@ for project in "${projects[@]}"; do
       if docker network inspect viteplus-net >/dev/null 2>&1; then
         runArgs+=(
           --network viteplus-net
-          -e "OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318"
+          -e "OTLP_ENDPOINT=http://otel-collector:4318"
         )
       else
         echo "⚠️  viteplus-net not found (run docker compose up -d): backend telemetry will not be exported"

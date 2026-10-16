@@ -125,8 +125,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   }
   initialized = true;
 
-  const otlpEndpoint =
-    options.otlpEndpoint ?? getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ?? 'http://localhost:4318';
+  const otlpEndpoint = options.otlpEndpoint ?? getEnv('OTLP_ENDPOINT') ?? 'http://localhost:4318';
 
   if (getEnv('TELEMETRY_DEBUG') === 'true') {
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);

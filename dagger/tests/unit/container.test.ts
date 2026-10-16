@@ -152,12 +152,12 @@ describe('workerVarArgs', () => {
   test('turns each KEY=VALUE entry into a wrangler --var KEY:VALUE pair', () => {
     expect(
       workerVarArgs('@lightproject/backend', [
-        'OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com',
+        'OTLP_ENDPOINT=https://otel.example.com',
         'LOG_LEVEL=debug',
       ]),
     ).toStrictEqual([
       '--var',
-      'OTEL_EXPORTER_OTLP_ENDPOINT:https://otel.example.com',
+      'OTLP_ENDPOINT:https://otel.example.com',
       '--var',
       'LOG_LEVEL:debug',
     ]);

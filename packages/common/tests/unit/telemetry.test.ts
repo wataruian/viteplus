@@ -260,7 +260,7 @@ describe('initializeTelemetry', () => {
   test('falls back to env vars for service name, version, and OTLP endpoint', async () => {
     envOverrides['SERVICE_NAME'] = 'env-service';
     envOverrides['SERVICE_VERSION'] = '2.0.0';
-    envOverrides['OTEL_EXPORTER_OTLP_ENDPOINT'] = 'http://env-otlp.example.com';
+    envOverrides['OTLP_ENDPOINT'] = 'http://env-otlp.example.com';
 
     await initializeTelemetry();
 

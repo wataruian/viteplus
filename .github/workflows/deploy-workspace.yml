@@ -19,7 +19,7 @@ on:
 jobs:
   deploy:
     name: Deploy ${{ inputs.workspace }}
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 20
     environment: ${{ inputs.environment }}
     permissions:
@@ -28,6 +28,10 @@ jobs:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
       WORKERS_SUBDOMAIN: wataru.workers.dev
       WORKER_SUFFIX: ${{ inputs.environment == 'develop' && 'dev' || inputs.environment }}
+      ENVIRONMENT: ${{ inputs.environment }}
+      WORKSPACE: ${{ inputs.workspace }}
+      OTLP_ENDPOINT: ${{ vars.OTLP_ENDPOINT }}
+      FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,9 +40,6 @@ jobs:
 
       - name: Check the ref supports per-environment Workers
         shell: bash
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
-          WORKSPACE: ${{ inputs.workspace }}
         run: |
           case "${WORKSPACE}" in
             backend | frontend) configs=("apps/${WORKSPACE}/wrangler.toml") ;;
@@ -70,33 +71,29 @@ jobs:
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
-          VITE_ENV: ${{ inputs.environment }}
-          OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
-          WORKSPACE: ${{ inputs.workspace }}
           VERSION_REF: ${{ inputs.ref }}
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
-          VITE_API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
-          VITE_ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
             design-system|frontend)
               args+=(
-                "--build-env=VITE_ENV=${VITE_ENV}"
-                "--build-env=VITE_API_URL=${VITE_API_URL}"
+                "--build-env=VITE_ENV=${ENVIRONMENT}"
+                "--build-env=VITE_API_URL=${API_URL}"
               )
               ;;
           esac
 
           if [[ "${WORKSPACE}" == "frontend" ]]; then
-            args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
+            args+=("--build-env=VITE_ADMIN_URL=${ADMIN_URL}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then
-            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
+            args+=("--build-env=VITE_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
           if [[ "${WORKSPACE}" == "frontend" && -n "${FARO_ENDPOINT}" ]]; then
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
@@ -111,35 +108,30 @@ jobs:
       - name: Deploy
         shell: bash
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
-          WORKSPACE: ${{ inputs.workspace }}
-          VITE_ENV: ${{ inputs.environment }}
-          OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
-          VITE_API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
-          VITE_ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
             design-system|frontend)
               args+=(
-                "--build-env=VITE_ENV=${VITE_ENV}"
-                "--build-env=VITE_API_URL=${VITE_API_URL}"
+                "--build-env=VITE_ENV=${ENVIRONMENT}"
+                "--build-env=VITE_API_URL=${API_URL}"
               )
               ;;
           esac
 
           if [[ "${WORKSPACE}" == "frontend" ]]; then
-            args+=("--build-env=VITE_ADMIN_URL=${VITE_ADMIN_URL}")
+            args+=("--build-env=VITE_ADMIN_URL=${ADMIN_URL}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then
-            args+=("--build-env=VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
+            args+=("--build-env=VITE_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${FARO_ENDPOINT}" ]]; then
@@ -147,7 +139,7 @@ jobs:
           fi
 
           if [[ "${WORKSPACE}" == "backend" && -n "${OTLP_ENDPOINT}" ]]; then
-            args+=("--worker-vars=OTEL_EXPORTER_OTLP_ENDPOINT=${OTLP_ENDPOINT}")
+            args+=("--worker-vars=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
           mise run dagger wrangler \
@@ -159,8 +151,6 @@ jobs:
 
       - name: Smoke test
         shell: bash
-        env:
-          WORKSPACE: ${{ inputs.workspace }}
         run: |
           case "${WORKSPACE}" in
             backend | frontend)

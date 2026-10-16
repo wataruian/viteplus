@@ -29,7 +29,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     const collector = await startFakeOtelCollector();
     try {
       const app = await importApp({
-        OTEL_EXPORTER_OTLP_ENDPOINT: collector.url,
+        OTLP_ENDPOINT: collector.url,
         SKIP_OPENTELEMETRY: 'false',
       });
 

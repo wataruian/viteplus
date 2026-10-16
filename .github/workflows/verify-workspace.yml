@@ -16,12 +16,14 @@ on:
 jobs:
   verify:
     name: Verify ${{ inputs.workspace }}
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 30
     permissions:
       contents: read
     env:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+      WORKSPACE: ${{ inputs.workspace }}
+      WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -35,34 +37,23 @@ jobs:
 
       - name: Check
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger check --workspace="${WORKSPACE_ID}" --export
 
       - name: Format
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger format --workspace="${WORKSPACE_ID}" --export
 
       - name: Lint
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger lint --workspace="${WORKSPACE_ID}" --export
 
       - name: Type Check
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger type-check --workspace="${WORKSPACE_ID}" --export
 
       - name: Build
         if: inputs.workspace != 'dagger'
         shell: bash
-        env:
-          WORKSPACE: ${{ inputs.workspace }}
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: |
           mise run dagger build-artifact \
             --workspace="${WORKSPACE_ID}" \
@@ -71,8 +62,6 @@ jobs:
 
       - name: Test (unit)
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger test-unit --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload coverage
@@ -89,8 +78,6 @@ jobs:
       - name: Test (e2e)
         if: hashFiles(format('*/{0}/playwright.config.ts', inputs.workspace)) != ''
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger test-end-to-end --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload e2e report and videos
@@ -106,8 +93,6 @@ jobs:
 
       - name: Semgrep
         shell: bash
-        env:
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: mise run dagger semgrep --workspace="${WORKSPACE_ID}" --export
 
       - name: Upload Semgrep report
@@ -125,8 +110,6 @@ jobs:
         shell: bash
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          WORKSPACE: ${{ inputs.workspace }}
-          WORKSPACE_ID: ${{ inputs.workspace-id || format('@lightproject/{0}', inputs.workspace) }}
         run: |
           args=(--sonar-token=env:SONAR_TOKEN)
           if [[ -n "${SONAR_HOST_URL}" ]]; then

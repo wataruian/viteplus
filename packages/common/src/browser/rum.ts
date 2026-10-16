@@ -174,8 +174,8 @@ const initializeRum = (options: RumOptions = {}) => {
 
   const otlpEndpoint =
     options.otlpEndpoint ??
-    getEnv('OTEL_EXPORTER_OTLP_ENDPOINT') ??
-    getEnv('VITE_OTEL_EXPORTER_OTLP_ENDPOINT') ??
+    getEnv('OTLP_ENDPOINT') ??
+    getEnv('VITE_OTLP_ENDPOINT') ??
     'http://localhost:4318';
 
   const apiUrl = options.apiUrl ?? apiBaseUrl;

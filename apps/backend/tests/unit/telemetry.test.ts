@@ -65,7 +65,7 @@ describe.each(runtimes)('on $name', ({ cleanup, flush, importApp }) => {
     try {
       const app = await importApp({
         LOG_LEVEL: 'info',
-        OTEL_EXPORTER_OTLP_ENDPOINT: collector.url,
+        OTLP_ENDPOINT: collector.url,
         SKIP_OPENTELEMETRY: 'false',
       });
       const res = await app.request('/');

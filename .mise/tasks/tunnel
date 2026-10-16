@@ -54,13 +54,13 @@ if [[ -z "${otelUrl}" || -z "${faroUrl}" ]]; then
 fi
 
 echo ""
-echo "✅ OTEL_EXPORTER_OTLP_ENDPOINT | VITE_OTEL_EXPORTER_OTLP_ENDPOINT = ${otelUrl}"
+echo "✅ OTLP_ENDPOINT | VITE_OTLP_ENDPOINT = ${otelUrl}"
 echo "✅ FARO_ENDPOINT | VITE_FARO_ENDPOINT = ${faroUrl}"
 echo ""
 echo "To send a deployed environment's telemetry here, set them as GitHub Environment variables"
 echo "(Settings → Environments → <env> → Variables), then redeploy frontend and backend:"
-echo "  OTEL_EXPORTER_OTLP_ENDPOINT = ${otelUrl}"
-echo "  FARO_ENDPOINT               = ${faroUrl}"
+echo "  OTLP_ENDPOINT = ${otelUrl}"
+echo "  FARO_ENDPOINT = ${faroUrl}"
 echo "The URLs change on every run. Delete the variables afterwards to restore the defaults."
 echo ""
 echo "Press Ctrl+C here to stop the tunnels when done."

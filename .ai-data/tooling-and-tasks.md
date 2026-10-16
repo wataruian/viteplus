@@ -47,8 +47,8 @@ that `dagger/tsconfig.json` can't `extends` a root file).
   so it runs as `local` (no IP allowlist, stack traces on) — it is only for local `wrangler dev` and
   tests; never `wrangler deploy` without an environment.
 - `dagger call vp --workspace=@lightproject/<name> terminal`: drop into a shell in the built container.
-- GitHub Actions: `on-pull-request.yml` → `verify.yml` → `verify-workspace.yml` (per workspace, on
-  the self-hosted `dagger` runner); `on-push-main.yml` → `deploy.yml` → `deploy-workspace.yml`;
+- GitHub Actions: `on-pull-request.yml` → `verify.yml` → `verify-workspace.yml` (per workspace); every
+  job runs on the self-hosted runner (`[self-hosted, linux, arm64, dagger]`); `on-push-main.yml` → `deploy.yml` → `deploy-workspace.yml`;
   `trigger.yml` promotes a version to `staging`/`production`. See AGENTS.md "CI Pipeline".
 - `dagger/` is Dagger-managed tooling (its own `package.json` and `pnpm-lock.yaml`, outside the
   pnpm workspace) — Dagger's own conventions apply there. Don't hand-edit the generated

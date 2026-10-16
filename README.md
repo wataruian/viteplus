@@ -91,8 +91,8 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 
 `mise tunnel` exposes the local collector (OTLP, port 4318) and Faro receiver (port 12347) through free Cloudflare quick tunnels and prints their URLs. To point a deployed environment at them:
 
-1. Set the GitHub Environment variables `OTEL_EXPORTER_OTLP_ENDPOINT` and `FARO_ENDPOINT` on that environment (Settings → Environments → `develop`/`staging`/`production` → Variables).
-2. Redeploy the frontend and backend. The deploy workflow bakes both into the frontend build as `VITE_OTEL_EXPORTER_OTLP_ENDPOINT`/`VITE_FARO_ENDPOINT` (browsers send directly), and passes `OTEL_EXPORTER_OTLP_ENDPOINT` to the backend Worker as a runtime variable (Dagger `wrangler --worker-vars`).
+1. Set the GitHub Environment variables `OTLP_ENDPOINT` and `FARO_ENDPOINT` on that environment (Settings → Environments → `develop`/`staging`/`production` → Variables).
+2. Redeploy the frontend and backend. The deploy workflow bakes both into the frontend build as `VITE_OTLP_ENDPOINT`/`VITE_FARO_ENDPOINT` (browsers send directly), and passes `OTLP_ENDPOINT` to the backend Worker as a runtime variable (Dagger `wrangler --worker-vars`).
 3. Keep `mise tunnel` running while testing. Its URLs change on every run, and anyone with them can send telemetry to your machine. Delete the variables and redeploy to restore the defaults.
 
 ## 🚀 Getting Started
@@ -191,7 +191,7 @@ Run `dagger functions` to list everything available.
 - Node.js runtime, the pnpm binary, and the pnpm package store are shared globally across every workspace and the root install.
 - Vite Task's own task cache (`node_modules/.vite/task-cache`) is scoped **per target workspace**, since `turbo prune` rewrites `pnpm-lock.yaml` differently depending on which workspace is the build target — a shared cache volume would otherwise cause unrelated cache misses whenever a different workspace triggered the build.
 
-**Self-hosted runner + persistent engine**: CI (`.github/workflows/verify.yml`) runs on a self-hosted GitHub Actions runner rather than `ubuntu-latest`. Both the runner (`github-runner`) and a long-lived Dagger engine (`dagger-engine`) are defined in `docker-compose.yml` — the runner points at the engine via `_EXPERIMENTAL_DAGGER_RUNNER_HOST=docker-container://dagger-engine`, so the cache volumes above survive across CI runs instead of starting cold on every ephemeral GitHub-hosted VM. Bring both up with `docker compose up -d dagger-engine github-runner` (needs `GH_RUNNER_TOKEN` in `.env`, a PAT with `repo` + `manage_runners` scope).
+**Self-hosted runner + persistent engine**: every GitHub Actions job runs on a self-hosted runner (`runs-on: [self-hosted, linux, arm64, dagger]`, matching the runner's `LABELS`) rather than `ubuntu-latest`. Both the runner (`github-runner`) and a long-lived Dagger engine (`dagger-engine`) are defined in `docker-compose.yml` — the runner points at the engine via `_EXPERIMENTAL_DAGGER_RUNNER_HOST=docker-container://dagger-engine`, so the cache volumes above survive across CI runs instead of starting cold on every ephemeral GitHub-hosted VM. Bring both up with `docker compose up -d dagger-engine github-runner` (needs `GH_RUNNER_TOKEN` in `.env`, a PAT with `repo` + `manage_runners` scope).
 
 **Registry pull-through cache**: `registry-cache` (`rpardini/docker-registry-proxy`) is a transparent HTTPS caching proxy for `docker.io` and `ghcr.io` image pulls. `dagger-engine` is wired to it via `HTTP_PROXY`/`HTTPS_PROXY` (pointed at its static compose IP, since the engine's own internal build-sandbox resolver can't see compose service DNS names) plus its generated CA mounted into `/usr/local/share/ca-certificates`, which Dagger auto-trusts on startup — so every registry pull a Dagger Function makes, including CI's `mise run dagger ...` steps (via the persistent engine above), is cached automatically with no per-call or per-workflow changes needed.
 

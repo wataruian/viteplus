@@ -1,6 +1,7 @@
 name: 'Scan'
 
 on:
+  # uncomment for daily scan at 3:17 AM UTC (11:17 AM PHT), can be delayed depending on GitHub Actions minute-by-minute scheduling
   # schedule:
   #   - cron: '17 3 * * *'
   workflow_call:
@@ -8,7 +9,7 @@ on:
 jobs:
   scan-commit:
     name: Scan Commit
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 15
     permissions:
       contents: read
@@ -39,7 +40,7 @@ jobs:
 
   codeql:
     name: CodeQL (${{ matrix.language }})
-    runs-on: [self-hosted, dagger]
+    runs-on: [self-hosted, linux, arm64, dagger]
     timeout-minutes: 15
     permissions:
       actions: read

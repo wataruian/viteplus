@@ -911,9 +911,9 @@ AGENTS.md reflect the current state.
 
 ## 2026-10-15: Deployed Telemetry → Local Stack via CI (`mise tunnel`)
 
-- **GitHub Environment variables** `OTEL_EXPORTER_OTLP_ENDPOINT` / `FARO_ENDPOINT` (optional, per
+- **GitHub Environment variables** `OTLP_ENDPOINT` / `FARO_ENDPOINT` (optional, per
   environment) are read by `deploy-workspace.yml`. Frontend: baked in as
-  `VITE_OTEL_EXPORTER_OTLP_ENDPOINT` / `VITE_FARO_ENDPOINT` build env (both the publish and the
+  `VITE_OTLP_ENDPOINT` / `VITE_FARO_ENDPOINT` build env (both the publish and the
   wrangler step, so image and Worker match). Backend: runtime Worker var via the new Dagger
   `wrangler --worker-vars KEY=VALUE` → `wrangler deploy --var KEY:VALUE` (forwarded by
   `vp run … wrangler:deploy <args>`; verified with `--dry-run` that it binds next to
@@ -927,3 +927,13 @@ AGENTS.md reflect the current state.
   next to `VITE_API_URL` and always passes it to frontend builds, so `og:url`/`og:image` are emitted
   in every deployed environment. Verify no longer passes `VITE_ENV`/`VITE_API_URL` (the verify build
   is never deployed; both fall back to defaults) or an `environment` input to `verify-workspace.yml`.
+
+## 2026-10-16: Workflow `env` Hoisting and Full Runner Labels
+
+- **Shared step `env` hoisted to job level** in `deploy-workspace.yml` and `verify-workspace.yml`
+  (`WORKSPACE`, `WORKSPACE_ID`, `ENVIRONMENT`, `VITE_ENV`, `OTLP_ENDPOINT`, `FARO_ENDPOINT`).
+  Secrets (`CLOUDFLARE_*`, `SONAR_TOKEN`) and single-use values stay step-scoped so checkout and
+  composite actions never see them.
+- **`runs-on: [self-hosted, linux, arm64, dagger]`** on every job, matching the compose runner's
+  `LABELS` exactly; an x64 runner would need `arm64` changed. `.github/actionlint.yaml` declares the
+  custom `dagger` label so actionlint passes with no ignores.

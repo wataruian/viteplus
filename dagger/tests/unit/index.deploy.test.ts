@@ -192,7 +192,7 @@ describe('wrangler', () => {
       fakeSecret,
       fakeSecret,
       undefined,
-      ['OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com'],
+      ['OTLP_ENDPOINT=https://otel.example.com'],
     );
 
     expect(getLastContainer().capturedExecCalls).toContainEqual([
@@ -202,7 +202,7 @@ describe('wrangler', () => {
       '@lightproject/backend',
       'wrangler:deploy',
       '--var',
-      'OTEL_EXPORTER_OTLP_ENDPOINT:https://otel.example.com',
+      'OTLP_ENDPOINT:https://otel.example.com',
     ]);
   });
 
@@ -214,7 +214,7 @@ describe('wrangler', () => {
         fakeSecret,
         fakeSecret,
         undefined,
-        ['OTEL_EXPORTER_OTLP_ENDPOINT=https://otel.example.com'],
+        ['OTLP_ENDPOINT=https://otel.example.com'],
       ),
     ).rejects.toThrow(
       "workerVars is only supported for backend workspaces, got '@lightproject/frontend'",
