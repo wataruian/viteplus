@@ -94,7 +94,7 @@ const workerVarArgs = (workspaceName: string, workerVars?: string[]): string[] =
   }
 
   if (isFrontend(workspaceName)) {
-    throw new Error(`workerVars is only supported for backend workspaces, got '${workspaceName}'`);
+    throw new Error(`workerVar is only supported for backend workspaces, got '${workspaceName}'`);
   }
 
   return workerVars.flatMap((entry) => {

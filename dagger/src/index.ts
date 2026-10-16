@@ -555,7 +555,7 @@ export class Monorepo {
     cloudflareApiToken: Secret,
     cloudflareAccountId: Secret,
     buildEnv?: string[],
-    workerVars?: string[],
+    workerVar?: string[],
   ): Promise<string> {
     if (!DEPLOY_ENVIRONMENTS.has(environment)) {
       throw new Error(
@@ -563,7 +563,7 @@ export class Monorepo {
       );
     }
 
-    const varArgs = workerVarArgs(workspace, workerVars);
+    const varArgs = workerVarArgs(workspace, workerVar);
 
     const container = await this.build(workspace, buildEnv);
 

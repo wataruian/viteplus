@@ -139,7 +139,7 @@ jobs:
           fi
 
           if [[ "${WORKSPACE}" == "backend" && -n "${OTLP_ENDPOINT}" ]]; then
-            args+=("--worker-vars=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
+            args+=("--worker-var=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
           mise run dagger wrangler \

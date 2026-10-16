@@ -173,7 +173,7 @@ describe('workerVarArgs', () => {
     'throws for the frontend workspace %s',
     (workspaceName) => {
       expect(() => workerVarArgs(workspaceName, ['LOG_LEVEL=debug'])).toThrow(
-        `workerVars is only supported for backend workspaces, got '${workspaceName}'`,
+        `workerVar is only supported for backend workspaces, got '${workspaceName}'`,
       );
     },
   );

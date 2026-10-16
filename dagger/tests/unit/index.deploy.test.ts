@@ -217,7 +217,7 @@ describe('wrangler', () => {
         ['OTLP_ENDPOINT=https://otel.example.com'],
       ),
     ).rejects.toThrow(
-      "workerVars is only supported for backend workspaces, got '@lightproject/frontend'",
+      "workerVar is only supported for backend workspaces, got '@lightproject/frontend'",
     );
     expect(() => getLastContainer()).toThrow('no fake container has been created yet');
   });
