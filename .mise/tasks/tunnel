@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-#MISE description="Expose local OTEL + Faro telemetry ports via free Cloudflare quick tunnels"
+#MISE description="Expose local OTEL + Faro telemetry and SonarQube ports via free Cloudflare quick tunnels"
 
 set -o errexit # Bail out on any error
 
 otelPort="${OTEL_TUNNEL_PORT:-4318}"
 faroPort="${FARO_TUNNEL_PORT:-12347}"
+sonarPort="${SONAR_TUNNEL_PORT:-9010}"
 
 command -v cloudflared >/dev/null 2>&1 || {
   echo "cloudflared is not installed. Run: mise use -g cloudflared"
@@ -13,22 +14,26 @@ command -v cloudflared >/dev/null 2>&1 || {
 
 otelLog="$(mktemp)"
 faroLog="$(mktemp)"
+sonarLog="$(mktemp)"
 
 cleanup() {
   echo ""
   echo "Stopping tunnels..."
-  kill "${otelPid}" "${faroPid}" 2>/dev/null || true
-  rm -f "${otelLog}" "${faroLog}"
+  kill "${otelPid}" "${faroPid}" "${sonarPid}" 2>/dev/null || true
+  rm -f "${otelLog}" "${faroLog}" "${sonarLog}"
 }
 trap cleanup EXIT INT TERM
 
-echo "Starting Cloudflare quick tunnels for localhost:${otelPort} and localhost:${faroPort}..."
+echo "Starting Cloudflare quick tunnels for localhost:${otelPort}, localhost:${faroPort} and localhost:${sonarPort}..."
 
 cloudflared tunnel --url "http://localhost:${otelPort}" >"${otelLog}" 2>&1 &
 otelPid="${!}"
 
 cloudflared tunnel --url "http://localhost:${faroPort}" >"${faroLog}" 2>&1 &
 faroPid="${!}"
+
+cloudflared tunnel --url "http://localhost:${sonarPort}" >"${sonarLog}" 2>&1 &
+sonarPid="${!}"
 
 extractUrl() {
   local log="${1}"
@@ -46,24 +51,31 @@ extractUrl() {
 
 otelUrl="$(extractUrl "${otelLog}")"
 faroUrl="$(extractUrl "${faroLog}")"
+sonarUrl="$(extractUrl "${sonarLog}")"
 
-if [[ -z "${otelUrl}" || -z "${faroUrl}" ]]; then
+if [[ -z "${otelUrl}" || -z "${faroUrl}" || -z "${sonarUrl}" ]]; then
   echo "❌ Failed to get a tunnel URL. Log output:"
-  cat "${otelLog}" "${faroLog}"
+  cat "${otelLog}" "${faroLog}" "${sonarLog}"
   exit 1
 fi
 
 echo ""
 echo "✅ OTLP_ENDPOINT | VITE_OTLP_ENDPOINT = ${otelUrl}"
 echo "✅ FARO_ENDPOINT | VITE_FARO_ENDPOINT = ${faroUrl}"
+echo "✅ SONAR_HOST_URL = ${sonarUrl}"
 echo ""
 echo "To send a deployed environment's telemetry here, set them as GitHub Environment variables"
 echo "(Settings → Environments → <env> → Variables), then redeploy frontend and backend:"
 echo "  OTLP_ENDPOINT = ${otelUrl}"
 echo "  FARO_ENDPOINT = ${faroUrl}"
+echo ""
+echo "To run PR SonarQube analysis against this tunnel instead of the local container, set a"
+echo "repository variable (Settings → Secrets and variables → Actions → Variables), then re-run the PR checks:"
+echo "  SONAR_HOST_URL = ${sonarUrl}"
+echo ""
 echo "The URLs change on every run. Delete the variables afterwards to restore the defaults."
 echo ""
 echo "Press Ctrl+C here to stop the tunnels when done."
 echo ""
 
-wait "${otelPid}" "${faroPid}"
+wait "${otelPid}" "${faroPid}" "${sonarPid}"

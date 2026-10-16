@@ -110,9 +110,11 @@ jobs:
         shell: bash
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          USE_REMOTE_SONAR: ${{ vars.USE_REMOTE_SONAR || 'false' }}
         run: |
           args=(--sonar-token=env:SONAR_TOKEN)
-          if [[ -n "${SONAR_HOST_URL}" ]]; then
+          if [[ -n "${SONAR_HOST_URL}" && "${USE_REMOTE_SONAR}" == "true" ]]; then
             args+=(--sonar-host-url="${SONAR_HOST_URL}")
           else
             args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
