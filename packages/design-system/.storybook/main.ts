@@ -17,15 +17,7 @@ const config: StorybookConfig = {
   viteFinal: (c) =>
     mergeConfig(c, {
       build: {
-        chunkSizeWarningLimit: 2500,
-        rolldownOptions: {
-          onwarn(warning: { code?: string }, warn: (w: unknown) => void) {
-            if (warning.code === 'EVAL') {
-              return;
-            }
-            warn(warning);
-          },
-        },
+        chunkSizeWarningLimit: 1500,
       },
       plugins: [unocss()],
       server: { watch: { ignored: devServerWatchIgnored } },

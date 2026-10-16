@@ -29,18 +29,6 @@ export default defineConfig(({ mode }): UserConfig => {
     {
       build: {
         outDir: 'out',
-        rolldownOptions: {
-          external: [
-            'child_process',
-            'fs',
-            'fs/promises',
-            'path',
-            'stream',
-            'timers',
-            'util',
-            'zlib',
-          ],
-        },
       },
       pack: {
         deps: {
@@ -114,13 +102,7 @@ export default defineConfig(({ mode }): UserConfig => {
             'src/utils/compile.ts',
             'src/utils/update-stories.ts',
           ],
-          include: [
-            'src/**/*.ts',
-            'src/**/*.tsx',
-            '.storybook/manager.ts',
-            '.storybook/mode-channel.ts',
-            '.storybook/mode.tsx',
-          ],
+          include: ['.storybook/manager.ts', '.storybook/mode-channel.ts', '.storybook/mode.tsx'],
         },
         environment: 'jsdom',
       },
