@@ -915,10 +915,10 @@ AGENTS.md reflect the current state.
   environment) are read by `deploy-workspace.yml`. Frontend: baked in as
   `VITE_OTLP_ENDPOINT` / `VITE_FARO_ENDPOINT` build env (both the publish and the
   wrangler step, so image and Worker match). Backend: runtime Worker var via the new Dagger
-  `wrangler --worker-vars KEY=VALUE` → `wrangler deploy --var KEY:VALUE` (forwarded by
+  `wrangler --worker-var=KEY=VALUE` (repeatable) → `wrangler deploy --var KEY:VALUE` (forwarded by
   `vp run … wrangler:deploy <args>`; verified with `--dry-run` that it binds next to
   `[env.<env>.vars]`). Unset = unchanged deploy.
-- **`workerVars` is backend-only** (runtime-validated: UPPER_SNAKE_CASE key, non-empty value with no
+- **`--worker-var` is backend-only** (runtime-validated: UPPER_SNAKE_CASE key, non-empty value with no
   whitespace, rejected before building): frontend Workers are static assets, and design-system's
   `wrangler:deploy` runs two `wrangler deploy` commands, so trailing args would only reach the last.
 - `mise tunnel` now prints these variable names; quick-tunnel URLs change per run.
@@ -937,3 +937,7 @@ AGENTS.md reflect the current state.
 - **`runs-on: [self-hosted, linux, arm64, dagger]`** on every job, matching the compose runner's
   `LABELS` exactly; an x64 runner would need `arm64` changed. `.github/actionlint.yaml` declares the
   custom `dagger` label so actionlint passes with no ignores.
+- **Repeatable Dagger flags are named in the singular**: `wrangler()`'s parameter is `workerVar`
+  (CLI `--worker-var=VAR1=123 --worker-var=VAR2=456`, one entry per flag), while helpers that take
+  the whole list (`workerVarArgs(workspace, workerVars)`) keep the plural. `buildEnv`/`--build-env`
+  is left as-is.
