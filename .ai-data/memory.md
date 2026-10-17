@@ -970,3 +970,29 @@ AGENTS.md reflect the current state.
   many frontends talking to many backends.
 - `mise run docker` passes `BACKEND_PORT` into the backend container so it listens on the published
   port (`containerPort` follows `BACKEND_PORT`).
+
+## 2026-10-17: Typed Env with `@t3-oss/env-core`
+
+- **Decision (user)**: adopt `@t3-oss/env-core` 0.13.11 (catalog) with zod 4: fail fast on invalid env,
+  keep the `is*()` helper API, tests stub then re-import. Plan: `.ai-data/artifacts/t3-env-plan.md`.
+- **Shape**: `commonEnv` (`packages/common/src/environment/schema.ts`) holds the shared keys as
+  `shared`; `variables.ts` getters/`is*()` read it; `env.ts` keeps only primitives (`getEnv` etc.).
+  Apps: `apps/backend/src/env.ts` (`server` keys, `isServer: true`) and `apps/frontend/src/env.ts`
+  (`FRONTEND_PORT`). `validator.ts` (`validateEnv`/`commonEnvSchema`) removed.
+- **env-core gotchas (verified)**: without a `clientPrefix`, every key (even `shared`) throws on the
+  client, so `clientPrefix: 'VITE_'` + `client: {}` is required. `extends` makes inherited keys
+  server-only on the client, so app envs don't extend `commonEnv`. A generic wrapper around
+  `createEnv` loses key types; apps call `createEnv` directly with `appEnvOptions`.
+- **Workers**: workerd fills `process.env` with bindings at module load even without
+  `nodejs_compat` (checked with `unstable_dev`), so module-level validation works there.
+- **Pre-existing bug fixed**: `design-system/src/utils/compile.ts` called `process.loadEnvFile(.env)`
+  at import, so every process loading the UnoCSS config (frontend dev/build/tests) got the raw,
+  unexpanded `.env` (`BACKEND_URL="http://localhost:${BACKEND_PORT}"`) in `process.env`. Now only
+  the CLI path loads it. Validation surfaced it.
+- Flags set by external tools (`CI`, `DEBUG`, `VITEST`, `TELEMETRY_DEBUG`) stay lenient (`isTrue`);
+  app-owned backend flags are strict `true`/`false`. A non-integer port now fails at load.
+- **Follow-up (user)**: the backend env drops `client: {}`. `serverEnvOptions` (no `clientPrefix`)
+  is for server-only envs, because env-core's server-only option shape forbids `clientPrefix`.
+  `appEnvOptions` = `serverEnvOptions` + `clientPrefix: 'VITE_'`; the frontend omits `server: {}`.
+  `readRuntimeEnv` must get every declared shape (`{ ...client, ...shared }`): keys left out read
+  as unset (this is why `VITE_SAMPLE` was missing).

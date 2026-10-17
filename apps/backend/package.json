@@ -33,6 +33,7 @@
     "@hono/trpc-server": "catalog:",
     "@hono/zod-openapi": "catalog:",
     "@lightproject/common": "workspace:*",
+    "@t3-oss/env-core": "catalog:",
     "@trpc/server": "catalog:",
     "hono": "catalog:",
     "zod": "catalog:"

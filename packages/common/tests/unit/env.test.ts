@@ -2,26 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/tes
 
 import {
   getEnv,
-  getEnvName,
-  getLogFormat,
-  getLogLevel,
   hasEnvProperty,
   isBrowser,
-  isCi,
-  isDebug,
-  isDevelop,
-  isDevelopOrStagingOrProduction,
   isEdge,
   isFalse,
-  isLocal,
-  isLocalOrTest,
   isNode,
-  isNodeEnvTest,
-  isNonProduction,
-  isProduction,
-  isStaging,
-  isTest,
-  isVitest,
 } from '../../src/environment/env';
 import { getImportMetaEnvValue } from '../../src/environment/import-meta-env.node';
 
@@ -34,28 +19,10 @@ describe('Environment Helpers', () => {
     vi.unstubAllEnvs();
   });
 
-  describe('Environment Mode and Config', () => {
-    test.each([
-      { fn: () => getEnv('ANY_VAR'), key: 'ANY_VAR', label: 'getEnv', value: 'any_value' },
-      { fn: getEnvName, key: 'ENV', label: 'getEnvName', value: 'DEVELOP' },
-      { fn: getLogFormat, key: 'LOG_FORMAT', label: 'getLogFormat', value: 'json' },
-      { fn: getLogLevel, key: 'LOG_LEVEL', label: 'getLogLevel', value: 'debug' },
-    ])('should correctly handle $label', ({ fn, key, value }) => {
-      vi.stubEnv(key, value);
-      const result = fn();
-      expect(typeof result === 'string' ? result.toLowerCase() : result).toBe(value.toLowerCase());
-    });
-
-    test('getEnvName should default to local', () => {
-      vi.stubEnv('ENV', undefined);
-      vi.stubEnv('VITE_ENV', undefined);
-      expect(getEnvName()).toBe('local');
-    });
-
-    test('getEnvName should fall back to VITE_ENV when ENV is unset', () => {
-      vi.stubEnv('ENV', undefined);
-      vi.stubEnv('VITE_ENV', 'STAGING');
-      expect(getEnvName()).toBe('staging');
+  describe('getEnv', () => {
+    test('getEnv should return the variable value', () => {
+      vi.stubEnv('ANY_VAR', 'any_value');
+      expect(getEnv('ANY_VAR')).toBe('any_value');
     });
 
     test('getEnv should return undefined for non-existent variable', () => {
@@ -136,53 +103,6 @@ describe('Environment Helpers', () => {
     });
   });
 
-  describe('Environment Checks', () => {
-    test.each([
-      ['local', isLocal],
-      ['develop', isDevelop],
-      ['staging', isStaging],
-      ['production', isProduction],
-      ['test', isTest],
-    ])('should correctly identify %s environment', (env, checkFn) => {
-      vi.stubEnv('ENV', env);
-      expect(checkFn()).toBe(true);
-      vi.stubEnv('ENV', env === 'local' ? 'test' : 'local');
-      expect(checkFn()).toBe(false);
-    });
-
-    test('isLocalOrTest', () => {
-      vi.stubEnv('ENV', 'local');
-      expect(isLocalOrTest()).toBe(true);
-      vi.stubEnv('ENV', 'test');
-      expect(isLocalOrTest()).toBe(true);
-      vi.stubEnv('ENV', 'develop');
-      expect(isLocalOrTest()).toBe(false);
-    });
-
-    test('isDevelopOrStagingOrProduction', () => {
-      for (const env of ['develop', 'staging', 'production']) {
-        vi.stubEnv('ENV', env);
-        expect(isDevelopOrStagingOrProduction()).toBe(true);
-      }
-      vi.stubEnv('ENV', 'local');
-      expect(isDevelopOrStagingOrProduction()).toBe(false);
-    });
-  });
-
-  describe('Boolean Helpers', () => {
-    test.each([
-      ['isCi', 'CI', isCi],
-      ['isDebug', 'DEBUG', isDebug],
-    ])('%s should handle truthy and falsy values', (_label, envKey, checkFn) => {
-      for (const truthy of ['true', '1']) {
-        vi.stubEnv(envKey, truthy);
-        expect(checkFn()).toBe(true);
-      }
-      vi.stubEnv(envKey, 'false');
-      expect(checkFn()).toBe(false);
-    });
-  });
-
   describe('isBrowser', () => {
     test('should return true if window and document are defined', () => {
       vi.stubGlobal('window', {});
@@ -253,35 +173,6 @@ describe('Environment Helpers', () => {
     test('treats any other value as not false-ish', () => {
       expect(isFalse('true')).toBe(false);
       expect(isFalse('1')).toBe(false);
-    });
-  });
-
-  describe('isNodeEnvTest', () => {
-    test('reflects NODE_ENV', () => {
-      vi.stubEnv('NODE_ENV', 'test');
-      expect(isNodeEnvTest()).toBe(true);
-      vi.stubEnv('NODE_ENV', 'production');
-      expect(isNodeEnvTest()).toBe(false);
-    });
-  });
-
-  describe('isVitest', () => {
-    test('reflects the VITEST env var', () => {
-      vi.stubEnv('VITEST', 'true');
-      expect(isVitest()).toBe(true);
-      vi.stubEnv('VITEST', 'false');
-      expect(isVitest()).toBe(false);
-    });
-  });
-
-  describe('isNonProduction', () => {
-    test('is true for test/local/develop/staging and false for production', () => {
-      for (const env of ['test', 'local', 'develop', 'staging']) {
-        vi.stubEnv('ENV', env);
-        expect(isNonProduction()).toBe(true);
-      }
-      vi.stubEnv('ENV', 'production');
-      expect(isNonProduction()).toBe(false);
     });
   });
 });

@@ -185,6 +185,13 @@ vi.mock('../../src/environment/env', async (importOriginal) => ({
 
 let envOverrides: Record<string, string | undefined> = {};
 
+const importFreshInitializeTelemetry = async () => {
+  vi.resetModules();
+  const { initializeTelemetry: freshInitializeTelemetry } =
+    await import('../../src/server/telemetry');
+  return freshInitializeTelemetry;
+};
+
 beforeEach(() => {
   envOverrides = {};
   getEnvMock.mockImplementation((key: string) => envOverrides[key]);
@@ -264,7 +271,8 @@ describe('initializeTelemetry', () => {
     envOverrides['SERVICE_VERSION'] = '2.0.0';
     envOverrides['OTLP_ENDPOINT'] = 'http://env-otlp.example.com';
 
-    await initializeTelemetry();
+    const freshInitializeTelemetry = await importFreshInitializeTelemetry();
+    await freshInitializeTelemetry();
 
     expect(resourceFromAttributesMock).toHaveBeenCalledWith(
       expect.objectContaining({ 'service.name': 'env-service', 'service.version': '2.0.0' }),
@@ -286,7 +294,8 @@ describe('initializeTelemetry', () => {
     const setLoggerSpy = vi.spyOn(diag, 'setLogger').mockImplementation(() => true);
     envOverrides['TELEMETRY_DEBUG'] = 'true';
 
-    await initializeTelemetry();
+    const freshInitializeTelemetry = await importFreshInitializeTelemetry();
+    await freshInitializeTelemetry();
 
     expect(setLoggerSpy).toHaveBeenCalled();
     setLoggerSpy.mockRestore();

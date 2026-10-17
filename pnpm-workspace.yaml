@@ -40,6 +40,7 @@ catalog:
   '@playwright/test': npm:@playwright/test@1.63.0
   '@storybook/addon-docs': npm:@storybook/addon-docs@10.6.0
   '@storybook/react-vite': npm:@storybook/react-vite@10.6.0
+  '@t3-oss/env-core': npm:@t3-oss/env-core@0.13.11
   '@trpc/client': npm:@trpc/client@11.17.0
   '@trpc/server': npm:@trpc/server@11.17.0
   '@types/culori': npm:@types/culori@4.0.1

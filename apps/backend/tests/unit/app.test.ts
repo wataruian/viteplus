@@ -62,7 +62,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
   });
 
   test('starts up when BACKEND_PORT is not set', async () => {
-    const app = await importApp({ BACKEND_PORT: undefined });
+    const app = await importApp({ BACKEND_PORT: undefined, VITE_BACKEND_PORT: undefined });
 
     const res = await app.request('/');
     expect(res.status).toBe(200);

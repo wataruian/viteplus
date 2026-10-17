@@ -63,7 +63,6 @@ const renderApp = async (backend: RunningBackend, backendUrl: string | undefined
 
   vi.doMock('../../src/config', () => ({
     config: { backendUrl: backendUrl ?? defaultBackendUrl },
-    get: (key: string) => (key === 'BACKEND_URL' ? backendUrl : undefined),
   }));
 
   vi.doMock('../../src/providers/trpc-provider', async (importOriginal) => {
@@ -326,7 +325,6 @@ const successfulTrpcResult = {
 const renderAppWithMocks = async (options: {
   configModule: {
     config: { backendUrl: string | undefined };
-    get?: (key: string) => string | undefined;
   };
   trpcQuery: () => unknown;
 }) => {
@@ -344,7 +342,6 @@ const renderAppWithMocks = async (options: {
 
   vi.doMock('../../src/config', () => ({
     config: options.configModule.config,
-    get: options.configModule.get ?? (() => undefined),
   }));
 
   vi.doMock('../../src/providers/trpc-provider', () => ({

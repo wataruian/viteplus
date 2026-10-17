@@ -1,6 +1,7 @@
 import { SeverityNumber, logs } from '@opentelemetry/api-logs';
 
-import { getLogFormat, getLogLevel, isBrowser, isLocal } from '../environment/env';
+import { isBrowser } from '../environment/env';
+import { getLogFormat, getLogLevel, isLocal } from '../environment/variables';
 import { isRecord } from '../validators/validate';
 import { getBrowserLogSink } from './browser-sink';
 import { getClientId, getRequestId, getTraceContext } from './context';

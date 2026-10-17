@@ -1,3 +1,4 @@
+import { commonEnv } from '@lightproject/common/environment';
 import { logger, setClientId, startRequestScope } from '@lightproject/common/logger';
 import { recordGaugeWithExemplar } from '@lightproject/common/utils';
 import { useClientId } from '@lightproject/design-system/context';
@@ -6,7 +7,7 @@ import { useEffect, useState } from 'react';
 import heroImg from './assets/hero.png';
 import typescriptLogo from './assets/typescript.svg';
 import viteLogo from './assets/vite.svg';
-import { config, get } from './config';
+import { config } from './config';
 import { counterRef } from './counter';
 import { trpcClient } from './providers/trpc-provider';
 
@@ -97,11 +98,11 @@ const App = () => {
         await callTrpcSample(scope);
 
         scope.run(() => {
-          const url = get('BACKEND_URL');
-          if (url !== undefined && url !== '') {
-            logger.info(`BACKEND_URL is set: ${url}`);
-          } else {
+          const url = commonEnv.BACKEND_URL;
+          if (url === undefined) {
             logger.info(`BACKEND_URL is not set, using default URL: ${config.backendUrl}`);
+          } else {
+            logger.info(`BACKEND_URL is set: ${url}`);
           }
 
           logger.info('Frontend Start', {

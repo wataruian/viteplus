@@ -1,4 +1,3 @@
-import { logger } from '@lightproject/common/logger';
 import { tracer } from '@lightproject/common/utils';
 import { TRPCError } from '@trpc/server';
 import { Hono } from 'hono';
@@ -6,11 +5,19 @@ import { HTTPException } from 'hono/http-exception';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
 
-import { globalErrorHandler } from '../../src/middlewares/error-handler';
-import { handleTrpcRequest } from '../../src/routers/trpc';
-import { t } from '../../src/routers/utils';
 import type { AppEnv } from '../../src/schema';
 import { expectErrorEnvelope, parseErrorEnvelope, runtimes, stripVolatile } from './helpers/utils';
+
+const loadServerModules = async () => {
+  vi.resetModules();
+  const [{ logger }, { globalErrorHandler }, { handleTrpcRequest }, { t }] = await Promise.all([
+    import('@lightproject/common/logger'),
+    import('../../src/middlewares/error-handler'),
+    import('../../src/routers/trpc'),
+    import('../../src/routers/utils'),
+  ]);
+  return { globalErrorHandler, handleTrpcRequest, logger, t };
+};
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -18,6 +25,7 @@ afterEach(() => {
 });
 
 test('a plain (non-HTTPException) error thrown by a handler produces a generic 500 envelope', async () => {
+  const { globalErrorHandler } = await loadServerModules();
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
@@ -45,6 +53,7 @@ test('a plain (non-HTTPException) error thrown by a handler produces a generic 5
 
 test('a plain error message is masked (and has no stack) in production', async () => {
   vi.stubEnv('ENV', 'production');
+  const { globalErrorHandler } = await loadServerModules();
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
@@ -79,6 +88,7 @@ test.each([
   'in production an HTTPException($status) message is masked only for 5xx (tRPC failures arrive this way)',
   async ({ expected, status }) => {
     vi.stubEnv('ENV', 'production');
+    const { globalErrorHandler } = await loadServerModules();
     const app = new Hono<AppEnv>();
 
     app.use('*', async (c, next) => {
@@ -111,6 +121,7 @@ const batchErrorSchema = z.array(
 );
 
 const callBatchedBoom = async (error: Error) => {
+  const { globalErrorHandler, handleTrpcRequest, logger, t } = await loadServerModules();
   const loggerErrorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
   const router = t.router({
     boom: t.procedure.query(() => {
@@ -149,6 +160,7 @@ describe('tRPC errors (batched responses bypass the global error handler)', () =
 
   test('a non-batched 5xx is reported once (real cause), not again by the global error handler', async () => {
     vi.stubEnv('ENV', 'production');
+    const { globalErrorHandler, handleTrpcRequest, logger, t } = await loadServerModules();
     const loggerErrorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
     const router = t.router({
       boom: t.procedure.query(() => {
@@ -213,6 +225,7 @@ describe('tRPC errors (batched responses bypass the global error handler)', () =
 });
 
 test('a plain error with an empty message falls back to a generic message', async () => {
+  const { globalErrorHandler } = await loadServerModules();
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {

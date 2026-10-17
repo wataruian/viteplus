@@ -19,11 +19,10 @@ describe('config.frontendPort', () => {
     expect(config.frontendPort).toBe(4000);
   });
 
-  test('truncates a non-integer FRONTEND_PORT value', async () => {
+  test('rejects a non-integer FRONTEND_PORT value at load', async () => {
     vi.stubEnv('FRONTEND_PORT', '4000.9');
     vi.stubEnv('VITE_FRONTEND_PORT', undefined);
-    const config = await importConfig();
-    expect(config.frontendPort).toBe(4000);
+    await expect(importConfig()).rejects.toThrow(/FRONTEND_PORT/u);
   });
 
   test('falls back to VITE_FRONTEND_PORT when FRONTEND_PORT is unset', async () => {

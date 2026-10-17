@@ -13,6 +13,7 @@ const importConfig = async () => {
 describe('config.backendPort', () => {
   test('defaults to 2000 when BACKEND_PORT is not set', async () => {
     vi.stubEnv('BACKEND_PORT', undefined);
+    vi.stubEnv('VITE_BACKEND_PORT', undefined);
     const config = await importConfig();
     expect(config.backendPort).toBe(2000);
   });
@@ -39,7 +40,8 @@ describe('config.enableErrorStack', () => {
     expect(config.enableErrorStack).toBe(true);
 
     vi.stubEnv('ENABLE_ERROR_STACK', 'false');
-    expect(config.enableErrorStack).toBe(false);
+    const reloadedConfig = await importConfig();
+    expect(reloadedConfig.enableErrorStack).toBe(false);
   });
 
   test('defaults to isLocal() when ENABLE_ERROR_STACK is unset', async () => {
@@ -49,7 +51,8 @@ describe('config.enableErrorStack', () => {
     expect(config.enableErrorStack).toBe(true);
 
     vi.stubEnv('ENV', 'staging');
-    expect(config.enableErrorStack).toBe(false);
+    const reloadedConfig = await importConfig();
+    expect(reloadedConfig.enableErrorStack).toBe(false);
   });
 });
 

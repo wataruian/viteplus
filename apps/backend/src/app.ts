@@ -10,7 +10,8 @@ import { Hono } from 'hono';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 
 import packageJson from '../package.json' with { type: 'json' };
-import { config, get } from './config';
+import { config } from './config';
+import { env } from './env';
 import { globalErrorHandler, notFoundHandler } from './middlewares/error-handler';
 import { requestLogger } from './middlewares/logger';
 import { corsMiddleware, cspMiddleware } from './middlewares/security';
@@ -22,11 +23,11 @@ import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
 import type { AppEnv } from './schema';
 
 const getApp = async () => {
-  const port = get('BACKEND_PORT');
-  if (port !== undefined && port !== '') {
-    logger.info(`BACKEND_PORT is set: ${port}`);
-  } else {
+  const port = env.BACKEND_PORT;
+  if (port === undefined) {
     logger.info(`BACKEND_PORT is not set, using default port: ${config.backendPort}`);
+  } else {
+    logger.info(`BACKEND_PORT is set: ${port}`);
   }
 
   if (config.skipOpenTelemetry) {

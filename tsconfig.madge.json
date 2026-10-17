@@ -12,6 +12,7 @@
       "@lightproject/library": ["packages/library/src/index.ts"],
       "@lightproject/library/*": ["packages/library/src/*"],
       "@storybook/*": ["package.json"],
+      "@t3-oss/env-core": ["package.json"],
       "@vitejs/plugin-react": ["package.json"],
       "storybook/*": ["package.json"],
       "virtual:*": ["package.json"],

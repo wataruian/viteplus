@@ -2,7 +2,7 @@
 
 ## Environment Management
 
-- Use the unified `getEnv` utility and boolean helpers from `@lightproject/common/environment`.
+- Read env through the typed `commonEnv` getters and boolean helpers from `@lightproject/common/environment`; app-specific keys go in the app's `src/env.ts` (`createEnv` + `serverEnvOptions` for server-only envs, `appEnvOptions` when there are `client` keys). `getEnv` is the low-level reader.
 - Use semantic helpers like `isProduction()`, `isLocal()`, and `isDebug()` instead of manually comparing string environment variables.
 - This provides isomorphic support across Node.js, Vite, and fallback global contexts.
 

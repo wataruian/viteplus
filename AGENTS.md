@@ -92,11 +92,11 @@ When first entering the repository or a new package:
 
 ## Environment Management
 
-- **Isomorphic Access**: Use the unified `getEnv` and boolean helpers from `@lightproject/common/environment` for all environment variable access. This ensures compatibility across Node.js, Vite, and fallback global contexts.
-- **`VITE_` Fallback**: `getEnv('X')` reads `X`, then falls back to `VITE_X` (every `VITE_X` mirrors `X`, see `.env.example`), so call it with the unprefixed name. Named getters for shared variables live in `packages/common/src/environment/variables.ts`; add new ones there instead of calling `getEnv` with the same key in several places.
+- **Typed Env (`@t3-oss/env-core`)**: `packages/common/src/environment/schema.ts` defines `commonEnv`, the zod schema for variables both runtimes read (`ENV`, `LOG_LEVEL`, URLs, OTel settings, …). It is validated **once, at module load**, and fails fast with a list of invalid keys (values are never echoed). Each app adds its own keys in `src/env.ts` via `createEnv`: the backend uses `{ ...serverEnvOptions, isServer: true, server, runtimeEnv: readRuntimeEnv(server) }` (no `client` section; env-core rejects `clientPrefix` without one), the frontend `{ ...appEnvOptions, client, shared, runtimeEnv: readRuntimeEnv({ ...client, ...shared }) }`. `runtimeEnv` must cover every declared key, or the missing ones read as unset. `server` keys throw if read in the browser. App envs hold only app keys — read shared keys from `commonEnv` or its getters (env-core's `extends` treats inherited keys as server-only in the browser).
+- **Isomorphic Access**: Use the named getters and boolean helpers from `@lightproject/common/environment` (`variables.ts`, backed by `commonEnv`). `getEnv('X')` is the low-level reader: it reads `X`, then falls back to `VITE_X` (every `VITE_X` mirrors `X`, see `.env.example`), and feeds `readRuntimeEnv`. Add new shared variables to `commonEnv` + a getter instead of calling `getEnv` in several places.
+- **Testing Env**: Because values are read once, tests stub first and then re-import (`vi.resetModules()` + `await import(...)`); stubbing after import has no effect. When asserting an unset variable, also clear its `VITE_` mirror (Vitest copies `VITE_*` from `.env` into `process.env`).
 - **Config Files Exception**: `vite.config.ts` / `playwright.config.ts` read `process.env` directly — they load before `@lightproject/common` is built, and its `dist/` would not resolve.
 - **Boolean Helpers**: Favor semantic helpers like `isLocal()`, `isProduction()`, `isCi()`, and `isDebug()` over manual string comparisons.
-- **Type Safety**: The environment utility provides typed access and fallbacks for common variables like `LOG_LEVEL` and `LOG_FORMAT`.
 
 ## Dependency Management
 

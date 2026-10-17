@@ -31,15 +31,15 @@ const unsortedStyles = {
 
 const styles = sortKeysDeep(unsortedStyles);
 
-if (typeof globalThis.process.loadEnvFile === 'function' && fs.existsSync(envPath)) {
-  try {
-    globalThis.process.loadEnvFile(envPath);
-  } catch {
-    // Silently ignore loading .env file
-  }
-}
-
 if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
+  if (typeof globalThis.process.loadEnvFile === 'function' && fs.existsSync(envPath)) {
+    try {
+      globalThis.process.loadEnvFile(envPath);
+    } catch {
+      // Silently ignore loading .env file
+    }
+  }
+
   if (globalThis.process.argv[2] === 'true') {
     globalThis.process.env['STYLE_COMPILE_DEBUG'] = 'true';
   }

@@ -1,3 +1,3 @@
 export * from './env';
-export * from './validator';
+export * from './schema';
 export * from './variables';

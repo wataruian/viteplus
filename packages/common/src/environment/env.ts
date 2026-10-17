@@ -75,48 +75,4 @@ const isNode = () =>
   (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
     undefined;
 
-const getEnvName = () => getEnv('ENV')?.toLowerCase() ?? 'local';
-const getNodeEnv = () => getEnv('NODE_ENV');
-const isNodeEnvTest = () => getNodeEnv() === 'test';
-const isLocal = () => getEnvName() === 'local';
-const isDevelop = () => getEnvName() === 'develop';
-const isStaging = () => getEnvName() === 'staging';
-const isProduction = () => getEnvName() === 'production';
-const isVitest = () => isTrue(getEnv('VITEST'));
-const isTest = () => getEnvName() === 'test';
-const isLocalOrTest = () => isLocal() || isTest();
-const isDevelopOrStagingOrProduction = () => isDevelop() || isStaging() || isProduction();
-const isCi = () => isTrue(getEnv('CI'));
-const isDebug = () => isTrue(getEnv('DEBUG'));
-const getLogFormat = () => getEnv('LOG_FORMAT');
-const getLogLevel = () => getEnv('LOG_LEVEL');
-
-const isNonProduction = () =>
-  (isCi() || isTest() || isLocal() || isDevelop() || isStaging()) && !isProduction();
-
-export {
-  getEnv,
-  getEnvName,
-  getLogFormat,
-  getLogLevel,
-  getNodeEnv,
-  hasEnvProperty,
-  isBrowser,
-  isCi,
-  isDebug,
-  isDevelop,
-  isDevelopOrStagingOrProduction,
-  isEdge,
-  isFalse,
-  isLocal,
-  isLocalOrTest,
-  isNode,
-  isNodeEnvTest,
-  isNonProduction,
-  isProduction,
-  isStaging,
-  isTest,
-  isTrue,
-  isVitest,
-  vitePrefix,
-};
+export { getEnv, hasEnvProperty, isBrowser, isEdge, isFalse, isNode, isTrue, vitePrefix };

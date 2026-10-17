@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-import { getAllowedIps, getRequestIp, normalizeIp } from '../../src/middlewares/trust-proxy';
+import { getAllowedIps, normalizeIp } from '../../src/middlewares/trust-proxy';
 import type { AppEnv, NodeBindings } from '../../src/schema';
 import { errorEnvelope, runtimes } from './helpers/utils';
 
@@ -14,6 +14,8 @@ afterEach(() => {
 });
 
 const resolveIp = async (headers: Record<string, string>, env?: NodeBindings) => {
+  vi.resetModules();
+  const { getRequestIp } = await import('../../src/middlewares/trust-proxy');
   const app = new Hono<AppEnv>();
   let captured = '';
 

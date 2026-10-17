@@ -288,13 +288,13 @@ describe('initializeRum', () => {
   });
 
   test('falls back to primary env vars when options are omitted', async () => {
-    const rum = await importFreshRumModule();
-
     vi.stubEnv('SERVICE_NAME', 'env-service');
     vi.stubEnv('SERVICE_VERSION', '2.0.0');
     vi.stubEnv('ENV', 'staging');
     vi.stubEnv('FARO_ENDPOINT', 'https://faro.env.example.com');
     vi.stubEnv('OTLP_ENDPOINT', 'https://otlp.env.example.com');
+
+    const rum = await importFreshRumModule();
 
     rum.initializeRum();
 
@@ -314,8 +314,6 @@ describe('initializeRum', () => {
   });
 
   test('falls back to VITE_-prefixed env vars when primary vars are unset', async () => {
-    const rum = await importFreshRumModule();
-
     vi.stubEnv('SERVICE_NAME', undefined);
     vi.stubEnv('SERVICE_VERSION', undefined);
     vi.stubEnv('ENV', undefined);
@@ -327,6 +325,8 @@ describe('initializeRum', () => {
     vi.stubEnv('VITE_ENV', 'vite-staging');
     vi.stubEnv('VITE_FARO_ENDPOINT', 'https://faro.vite.example.com');
     vi.stubEnv('VITE_OTLP_ENDPOINT', 'https://otlp.vite.example.com');
+
+    const rum = await importFreshRumModule();
 
     rum.initializeRum();
 

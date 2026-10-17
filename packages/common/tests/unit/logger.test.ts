@@ -704,12 +704,14 @@ describe('Logger Format', () => {
       logFormat: 'pretty',
       title: 'should force json in non-local regardless of LOG_FORMAT',
     },
-  ] as const)('$title', ({ env, expected, logFormat, optionsMode }) => {
+  ] as const)('$title', async ({ env, expected, logFormat, optionsMode }) => {
     vi.stubEnv('ENV', env);
     if (logFormat) {
       vi.stubEnv('LOG_FORMAT', logFormat);
     }
-    const logger = new Logger(optionsMode ? { mode: optionsMode } : {});
+    vi.resetModules();
+    const { Logger: FreshLogger } = await import('../../src/logger/log');
+    const logger = new FreshLogger(optionsMode ? { mode: optionsMode } : {});
     expect(logger.mode).toBe(expected);
   });
 });
@@ -1455,9 +1457,11 @@ describe('Logger - level handling and output branches', () => {
     expect(logSpy).toHaveBeenCalledTimes(1);
   });
 
-  test('derives the default level from LOG_LEVEL when no explicit level option is given', () => {
+  test('derives the default level from LOG_LEVEL when no explicit level option is given', async () => {
     vi.stubEnv('LOG_LEVEL', 'error');
-    const logger = new Logger({ mode: 'json', silent: false });
+    vi.resetModules();
+    const { Logger: FreshLogger } = await import('../../src/logger/log');
+    const logger = new FreshLogger({ mode: 'json', silent: false });
     const logSpy = vi.mocked(globalThis.console.log);
 
     logger.warn('filtered out by env-derived level');

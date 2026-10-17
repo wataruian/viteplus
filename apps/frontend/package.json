@@ -12,6 +12,7 @@
     "@lightproject/backend": "workspace:*",
     "@lightproject/common": "workspace:*",
     "@lightproject/design-system": "workspace:*",
+    "@t3-oss/env-core": "catalog:",
     "@trpc/client": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
