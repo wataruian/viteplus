@@ -5,8 +5,10 @@ import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
 import { getPackageViteConfig } from '../../vite.config.ts';
 
-const port = Math.trunc(Number(globalThis.process.env['API_PORT'] ?? '3000'));
-const inspectorPort = Math.trunc(Number(globalThis.process.env['API_INSPECTOR_PORT'] ?? '9230'));
+const port = Math.trunc(Number(globalThis.process.env['BACKEND_PORT'] ?? '2000'));
+const inspectorPort = Math.trunc(
+  Number(globalThis.process.env['BACKEND_INSPECTOR_PORT'] ?? '8230'),
+);
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;

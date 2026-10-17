@@ -35,6 +35,7 @@ import {
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
+import { defaultOtlpEndpoint } from '../configs';
 import { getEnv } from '../environment';
 import { logger } from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
@@ -125,7 +126,7 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   }
   initialized = true;
 
-  const otlpEndpoint = options.otlpEndpoint ?? getEnv('OTLP_ENDPOINT') ?? 'http://localhost:4318';
+  const otlpEndpoint = options.otlpEndpoint ?? getEnv('OTLP_ENDPOINT') ?? defaultOtlpEndpoint;
 
   if (getEnv('TELEMETRY_DEBUG') === 'true') {
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);

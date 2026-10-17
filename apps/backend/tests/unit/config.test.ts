@@ -10,17 +10,17 @@ const importConfig = async () => {
   return config;
 };
 
-describe('config.apiPort', () => {
-  test('defaults to 3000 when API_PORT is not set', async () => {
-    vi.stubEnv('API_PORT', undefined);
+describe('config.backendPort', () => {
+  test('defaults to 2000 when BACKEND_PORT is not set', async () => {
+    vi.stubEnv('BACKEND_PORT', undefined);
     const config = await importConfig();
-    expect(config.apiPort).toBe(3000);
+    expect(config.backendPort).toBe(2000);
   });
 
-  test('uses API_PORT when set', async () => {
-    vi.stubEnv('API_PORT', '4321');
+  test('uses BACKEND_PORT when set', async () => {
+    vi.stubEnv('BACKEND_PORT', '4321');
     const config = await importConfig();
-    expect(config.apiPort).toBe(4321);
+    expect(config.backendPort).toBe(4321);
   });
 });
 

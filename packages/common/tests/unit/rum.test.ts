@@ -599,4 +599,23 @@ describe('browser span ids', () => {
       expect.objectContaining({ ignoreUrls: [/^https:\/\/otlp\.example\.com/u] }),
     );
   });
+
+  test('propagates trace headers cross-origin only to the URLs the caller passes', async () => {
+    const options = await getInstrumentationOptions();
+
+    expect(options?.propagateTraceHeaderCorsUrls).toStrictEqual([]);
+  });
+
+  test('propagates trace headers to every given backend, matching each as a literal prefix', async () => {
+    const rum = await importFreshRumModule();
+    rum.initializeRum({
+      propagateTraceHeaderUrls: ['https://one.example.com', 'http://localhost:2000'],
+    });
+    const options = tracingInstrumentationMock.mock.calls.at(-1)?.[0].instrumentationOptions;
+
+    expect(options?.propagateTraceHeaderCorsUrls).toStrictEqual([
+      /^https:\/\/one\.example\.com/u,
+      /^http:\/\/localhost:2000/u,
+    ]);
+  });
 });

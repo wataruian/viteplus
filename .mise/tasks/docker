@@ -60,14 +60,15 @@ for project in "${projects[@]}"; do
   if [[ "${name}" == "design-system" || "${name}" == "frontend" ]]; then
     buildEnvArgs+=(
       "--build-env=VITE_ENV=${VITE_ENV}"
-      "--build-env=VITE_API_URL=${VITE_API_URL}"
+      "--build-env=VITE_BACKEND_URL=${VITE_BACKEND_URL}"
     )
   fi
 
   case "${name}" in
     "backend")
-      port="${API_PORT:-"3000"}"
-      containerPort="3000"
+      port="${BACKEND_PORT:-"2000"}"
+      containerPort="${port}"
+      runArgs+=(-e "BACKEND_PORT=${port}")
       if docker network inspect viteplus-net >/dev/null 2>&1; then
         runArgs+=(
           --network viteplus-net
@@ -82,7 +83,7 @@ for project in "${projects[@]}"; do
       storybookPort="${STORYBOOK_PORT:-"6006"}"
       ;;
     "frontend")
-      port="${ADMIN_PORT:-"3001"}"
+      port="${FRONTEND_PORT:-"2001"}"
       ;;
     *)
       echo "Invalid project: ${project}"

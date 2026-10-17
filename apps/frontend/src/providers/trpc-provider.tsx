@@ -1,5 +1,5 @@
 import type { AppRouter } from '@lightproject/backend';
-import { trpcUrl } from '@lightproject/common/configs';
+import { backendTrpcUrl } from '@lightproject/common/configs';
 import { getClientId, getRequestId } from '@lightproject/common/logger';
 import { type TRPCClient, type TRPCLink, createTRPCClient, httpLink } from '@trpc/client';
 
@@ -37,7 +37,7 @@ const createAppTrpcClient = (options: TrpcClientOptions): TRPCClient<AppRouter> 
     ],
   });
 
-const trpcClient: TRPCClient<AppRouter> = createAppTrpcClient({ url: trpcUrl });
+const trpcClient: TRPCClient<AppRouter> = createAppTrpcClient({ url: backendTrpcUrl });
 
 export { createAppTrpcClient, requestIdLink, trpcClient };
 export type { TrpcClientOptions };

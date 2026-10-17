@@ -199,15 +199,15 @@ describe('escapeRegExp', () => {
   });
 
   test('produces a pattern that matches the original string literally, not as a wildcard', () => {
-    const value = 'http://localhost:3000';
+    const value = 'http://localhost:2000';
     const pattern = new RegExp(`^${escapeRegExp(value)}$`, 'u');
 
     expect(pattern.test(value)).toBe(true);
-    expect(pattern.test('http://localhostx3000')).toBe(false);
+    expect(pattern.test('http://localhostx2000')).toBe(false);
   });
 
   test('produces a valid, non-throwing pattern from a string containing unresolved template syntax', () => {
-    const value = `http://localhost:\${API_PORT}`;
+    const value = `http://localhost:\${BACKEND_PORT}`;
 
     expect(() => new RegExp(`^${escapeRegExp(value)}$`, 'u')).not.toThrow();
     expect(new RegExp(`^${escapeRegExp(value)}$`, 'u').test(value)).toBe(true);

@@ -1,4 +1,4 @@
-import { apiBaseUrl } from '@lightproject/common/configs';
+import { backendBaseUrl } from '@lightproject/common/configs';
 import type * as ServerModule from '@lightproject/common/server';
 import { resetTelemetryForTests } from '@lightproject/common/server';
 import { startFakeOtelCollector } from '@lightproject/common/testing';
@@ -54,15 +54,15 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     expect(res.status).toBe(503);
   });
 
-  test('starts up when API_PORT is set', async () => {
-    const app = await importApp({ API_PORT: '4321' });
+  test('starts up when BACKEND_PORT is set', async () => {
+    const app = await importApp({ BACKEND_PORT: '4321' });
 
     const res = await app.request('/');
     expect(res.status).toBe(200);
   });
 
-  test('starts up when API_PORT is not set', async () => {
-    const app = await importApp({ API_PORT: undefined });
+  test('starts up when BACKEND_PORT is not set', async () => {
+    const app = await importApp({ BACKEND_PORT: undefined });
 
     const res = await app.request('/');
     expect(res.status).toBe(200);
@@ -72,8 +72,8 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
 test('server.fetch memoizes app creation and still serves requests correctly across calls', async () => {
   const { server } = await import('../../src/app');
 
-  const res1 = await server.fetch(new globalThis.Request(`${apiBaseUrl}/`));
-  const res2 = await server.fetch(new globalThis.Request(`${apiBaseUrl}/`));
+  const res1 = await server.fetch(new globalThis.Request(`${backendBaseUrl}/`));
+  const res2 = await server.fetch(new globalThis.Request(`${backendBaseUrl}/`));
 
   expect(res1.status).toBe(200);
   expect(res2.status).toBe(200);
@@ -93,7 +93,7 @@ test('flushes telemetry via executionCtx.waitUntil when the runtime provides one
     },
   };
 
-  const res = await app.request(`${apiBaseUrl}/`, {}, {}, executionCtx);
+  const res = await app.request(`${backendBaseUrl}/`, {}, {}, executionCtx);
 
   expect(res.status).toBe(200);
   expect(waitUntilCalls.length).toBeGreaterThan(0);
@@ -110,7 +110,7 @@ test('does not force-flush telemetry per request when the runtime has no executi
   const { getApp } = await import('../../src/app');
   const app = await getApp();
 
-  const res = await app.request(`${apiBaseUrl}/`);
+  const res = await app.request(`${backendBaseUrl}/`);
   expect(res.status).toBe(200);
   expect(flushTelemetry).not.toHaveBeenCalled();
 });
@@ -120,7 +120,9 @@ test('an extremely deep JSON query param still gets a normal response (no bare 5
   const app = await getApp();
   const deep = `${'['.repeat(7000)}${']'.repeat(7000)}`;
 
-  const res = await app.request(`${apiBaseUrl}/trpc/test.hello?input=${encodeURIComponent(deep)}`);
+  const res = await app.request(
+    `${backendBaseUrl}/trpc/test.hello?input=${encodeURIComponent(deep)}`,
+  );
 
   expect(res.headers.get('X-Request-Id')).toMatch(/^[\dA-Za-z]{22}$/u);
   expect(res.status).toBeLessThan(500);
@@ -130,7 +132,7 @@ test('every response carries the request id in X-Request-Id', async () => {
   const { getApp } = await import('../../src/app');
   const app = await getApp();
 
-  const res = await app.request(`${apiBaseUrl}/api/does-not-exist`);
+  const res = await app.request(`${backendBaseUrl}/api/does-not-exist`);
   const envelope = await parseErrorEnvelope(res);
 
   expect(res.headers.get('X-Request-Id')).toMatch(/^[\dA-Za-z]{22}$/u);
@@ -148,7 +150,7 @@ test('gives every request its own requestId, even under 500 concurrent requests'
   const app = await getApp();
 
   const responses = await Promise.all(
-    Array.from({ length: 500 }, async () => await app.request(`${apiBaseUrl}/`)),
+    Array.from({ length: 500 }, async () => await app.request(`${backendBaseUrl}/`)),
   );
   const requestIds = new Set(responses.map((res) => res.headers.get('X-Request-Id')));
 
@@ -162,7 +164,7 @@ test('adopts a valid caller-supplied X-Request-Id for the response, envelope and
     const app = await importFreshApp({ LOG_FORMAT: 'json', LOG_LEVEL: 'info' });
     const requestId = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
-    const res = await app.request(`${apiBaseUrl}/api/does-not-exist`, {
+    const res = await app.request(`${backendBaseUrl}/api/does-not-exist`, {
       headers: { 'X-Request-Id': requestId },
     });
     const envelope = await parseErrorEnvelope(res);
@@ -187,7 +189,7 @@ test.each([
   const { getApp } = await import('../../src/app');
   const app = await getApp();
 
-  const res = await app.request(`${apiBaseUrl}/api/does-not-exist`, {
+  const res = await app.request(`${backendBaseUrl}/api/does-not-exist`, {
     headers: new globalThis.Headers([['X-Request-Id', header]]),
   });
 
@@ -198,11 +200,11 @@ test('CORS preflight allows browsers to send X-Request-Id and X-Client-Id', asyn
   const { getApp } = await import('../../src/app');
   const app = await getApp();
 
-  const res = await app.request(`${apiBaseUrl}/trpc/test.hello`, {
+  const res = await app.request(`${backendBaseUrl}/trpc/test.hello`, {
     headers: {
       'Access-Control-Request-Headers': 'x-request-id, x-client-id',
       'Access-Control-Request-Method': 'GET',
-      Origin: 'http://localhost:3001',
+      Origin: 'http://localhost:2001',
     },
     method: 'OPTIONS',
   });
@@ -216,7 +218,7 @@ const requestLogsFor = async (headers: Record<string, string>) => {
   const logSpy = vi.spyOn(globalThis.console, 'log').mockImplementation(() => {});
   try {
     const app = await importFreshApp({ LOG_FORMAT: 'json', LOG_LEVEL: 'info' });
-    await app.request(`${apiBaseUrl}/`, { headers });
+    await app.request(`${backendBaseUrl}/`, { headers });
     return logSpy.mock.calls
       .map(([line]) => logLineSchema.parse(JSON.parse(String(line))))
       .filter(({ message }) => /^(?:Incoming Request|Outgoing Response):/u.test(message));
@@ -253,7 +255,7 @@ test.each(['/metrics', '/trpc/default.root'])(
     const { getApp } = await import('../../src/app');
     const app = await getApp();
 
-    const res = await app.request(`${apiBaseUrl}${route}`);
+    const res = await app.request(`${backendBaseUrl}${route}`);
 
     expect(res.headers.get('X-Request-Id')).toMatch(/^[\dA-Za-z]{22}$/u);
   },
@@ -268,7 +270,7 @@ test('with SKIP_OPENTELEMETRY=true, request logs still carry the response’s X-
       SKIP_OPENTELEMETRY: 'true',
     });
 
-    const res = await app.request(`${apiBaseUrl}/`);
+    const res = await app.request(`${backendBaseUrl}/`);
 
     const requestLogs = logSpy.mock.calls
       .map(([line]) => logLineSchema.parse(JSON.parse(String(line))))

@@ -248,7 +248,7 @@ Coverage reports are generated in the `coverage/` directory of each individual p
 vp exec --filter @lightproject/design-system playwright install chromium
 
 # Run them (each starts its own servers on dedicated ports: design-system Storybook 6116 +
-# preview app 6117, frontend 3111)
+# preview app 6117, frontend 2111)
 vp run -r test:e2e
 ```
 
@@ -260,4 +260,4 @@ In CI, `dagger call test-end-to-end --workspace=<pkg>` runs them in the `vite-pl
 
 ### Share tags (`apps/frontend`)
 
-`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `ADMIN_URL` (or `VITE_ADMIN_URL`), the same variable `@lightproject/common/configs` uses for `adminUrl` (see `.env.example`). Deploys derive it from the target environment's frontend Worker (`https://lightproject-frontend-<dev|staging|production>.wataru.workers.dev`), the same way they derive `VITE_API_URL`. The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.
+`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `FRONTEND_URL` (or `VITE_FRONTEND_URL`), the same variable `@lightproject/common/configs` uses for `frontendUrl` (see `.env.example`). Deploys derive it from the target environment's frontend Worker (`https://lightproject-frontend-<dev|staging|production>.wataru.workers.dev`), the same way they derive `VITE_BACKEND_URL`. The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.

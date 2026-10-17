@@ -11,7 +11,7 @@ const schema = commonEnvSchema.extend({
   ADDITIONAL_CORS_ORIGINS: z.string().optional(),
   ALLOWED_IPS: z.string().optional(),
   ALLOW_ALL_IPS: z.enum(['true', 'false']).optional(),
-  API_PORT: z.string().regex(/^\d+$/u).optional(),
+  BACKEND_PORT: z.string().regex(/^\d+$/u).optional(),
   BLOCK_ALL_IPS: z.enum(['true', 'false']).optional(),
   ENABLE_ERROR_STACK: z.enum(['true', 'false']).optional(),
   SKIP_OPENTELEMETRY: z.enum(['true', 'false']).optional(),
@@ -30,9 +30,9 @@ const config = {
   get allowedIps() {
     return get('ALLOWED_IPS');
   },
-  get apiPort() {
-    const port = get('API_PORT');
-    return port !== undefined && port !== '' ? Math.trunc(Number(port)) : 3000;
+  get backendPort() {
+    const port = get('BACKEND_PORT');
+    return port !== undefined && port !== '' ? Math.trunc(Number(port)) : 2000;
   },
   get blockAllIps() {
     return isTrue(get('BLOCK_ALL_IPS'));

@@ -1,10 +1,10 @@
-import { adminUrl, apiBaseUrl, docsHttpEndpoint, siteUrl } from '@lightproject/common/configs';
+import { backendBaseUrl, docsHttpEndpoint, frontendUrl } from '@lightproject/common/configs';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { isDocsPath } from '../../src/middlewares/security';
 import { runtimes } from './helpers/utils';
 
-const defaultOrigins = [apiBaseUrl, siteUrl, adminUrl];
+const defaultOrigins = [backendBaseUrl, frontendUrl];
 
 afterEach(() => {
   vi.unstubAllEnvs();

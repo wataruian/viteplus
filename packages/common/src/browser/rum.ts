@@ -24,7 +24,7 @@ import {
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
-import { apiBaseUrl } from '../configs';
+import { defaultFaroEndpoint, defaultOtlpEndpoint } from '../configs';
 import { getEnv, isBrowser } from '../environment';
 import {
   type BrowserLogSink,
@@ -47,7 +47,7 @@ interface RumOptions {
   environment?: string;
   faroEndpoint?: string;
   otlpEndpoint?: string;
-  apiUrl?: string;
+  propagateTraceHeaderUrls?: string[];
 }
 
 const faroLogLevel: Record<LogLevel, FaroLogLevel> = {
@@ -170,15 +170,13 @@ const initializeRum = (options: RumOptions = {}) => {
     options.faroEndpoint ??
     getEnv('FARO_ENDPOINT') ??
     getEnv('VITE_FARO_ENDPOINT') ??
-    'http://localhost:12347';
+    defaultFaroEndpoint;
 
   const otlpEndpoint =
     options.otlpEndpoint ??
     getEnv('OTLP_ENDPOINT') ??
     getEnv('VITE_OTLP_ENDPOINT') ??
-    'http://localhost:4318';
-
-  const apiUrl = options.apiUrl ?? apiBaseUrl;
+    defaultOtlpEndpoint;
 
   setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
 
@@ -225,7 +223,9 @@ const initializeRum = (options: RumOptions = {}) => {
               tagSpanWithIds(span, requestId ?? undefined);
             },
           },
-          propagateTraceHeaderCorsUrls: [new RegExp(`^${escapeRegExp(apiUrl)}`, 'u')],
+          propagateTraceHeaderCorsUrls: (options.propagateTraceHeaderUrls ?? []).map(
+            (url) => new RegExp(`^${escapeRegExp(url)}`, 'u'),
+          ),
           xhrInstrumentationOptions: { applyCustomAttributesOnSpan: tagXhrSpan },
         },
         spanProcessor: flushableSpanProcessor,

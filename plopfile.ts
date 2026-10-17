@@ -12,7 +12,7 @@ const plopfile = (plop: NodePlopAPI) => {
     const files = [componentPath, testPath, storiesPath, registryPath].map((file) =>
       plop.renderString(file, answers),
     );
-    execFileSync('vp', ['fmt', ...files], { stdio: 'inherit' });
+    execFileSync('vp', ['format', ...files], { stdio: 'inherit' });
     return `formatted ${files.length} files`;
   });
 

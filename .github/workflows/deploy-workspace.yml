@@ -75,21 +75,21 @@ jobs:
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
 
-          API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
-          ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          BACKEND_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          FRONTEND_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
             design-system|frontend)
               args+=(
                 "--build-env=VITE_ENV=${ENVIRONMENT}"
-                "--build-env=VITE_API_URL=${API_URL}"
+                "--build-env=VITE_BACKEND_URL=${BACKEND_URL}"
               )
               ;;
           esac
 
           if [[ "${WORKSPACE}" == "frontend" ]]; then
-            args+=("--build-env=VITE_ADMIN_URL=${ADMIN_URL}")
+            args+=("--build-env=VITE_FRONTEND_URL=${FRONTEND_URL}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then
@@ -113,21 +113,21 @@ jobs:
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
-          API_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
-          ADMIN_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          BACKEND_URL="https://lightproject-backend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
+          FRONTEND_URL="https://lightproject-frontend-${WORKER_SUFFIX}.${WORKERS_SUBDOMAIN}"
 
           args=()
           case "${WORKSPACE}" in
             design-system|frontend)
               args+=(
                 "--build-env=VITE_ENV=${ENVIRONMENT}"
-                "--build-env=VITE_API_URL=${API_URL}"
+                "--build-env=VITE_BACKEND_URL=${BACKEND_URL}"
               )
               ;;
           esac
 
           if [[ "${WORKSPACE}" == "frontend" ]]; then
-            args+=("--build-env=VITE_ADMIN_URL=${ADMIN_URL}")
+            args+=("--build-env=VITE_FRONTEND_URL=${FRONTEND_URL}")
           fi
 
           if [[ "${WORKSPACE}" == "frontend" && -n "${OTLP_ENDPOINT}" ]]; then

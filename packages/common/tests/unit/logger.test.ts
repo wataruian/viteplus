@@ -395,10 +395,10 @@ describe('redactUrl', () => {
       JSON.stringify({ 0: { json: { password: 'hunter2', token: 'abc', user: 'al' } } }),
     );
 
-    const redacted = redactUrl(`http://localhost:3000/trpc/auth.login?batch=1&input=${input}`);
+    const redacted = redactUrl(`http://localhost:2000/trpc/auth.login?batch=1&input=${input}`);
 
     expect(decodeURIComponent(redacted)).toBe(
-      'http://localhost:3000/trpc/auth.login?batch=1&input={"0":{"json":{"password":"REDACTED","token":"REDACTED","user":"al"}}}',
+      'http://localhost:2000/trpc/auth.login?batch=1&input={"0":{"json":{"password":"REDACTED","token":"REDACTED","user":"al"}}}',
     );
   });
 

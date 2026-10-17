@@ -1,5 +1,5 @@
 import { z } from '@hono/zod-openapi';
-import { openApiVersion, trpcUrl } from '@lightproject/common/configs';
+import { backendTrpcUrl, openApiVersion } from '@lightproject/common/configs';
 import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { appRouter } from '../../../src/routers/trpc';
@@ -37,7 +37,7 @@ const successCode = 200;
 
 describe('normalizeTrpcGetQuery', () => {
   test('rewrites plain query params into a JSON input param', () => {
-    const request = new globalThis.Request(`${trpcUrl}/test.hello?name=Foo`);
+    const request = new globalThis.Request(`${backendTrpcUrl}/test.hello?name=Foo`);
 
     const result = normalizeTrpcGetQuery(request, { name: 'Foo' });
 
@@ -49,7 +49,7 @@ describe('normalizeTrpcGetQuery', () => {
 
   test('leaves the request untouched when an input= param is already present', () => {
     const request = new globalThis.Request(
-      `${trpcUrl}/test.hello?input=${encodeURIComponent(JSON.stringify({ name: 'Foo' }))}`,
+      `${backendTrpcUrl}/test.hello?input=${encodeURIComponent(JSON.stringify({ name: 'Foo' }))}`,
     );
 
     const result = normalizeTrpcGetQuery(request, { input: JSON.stringify({ name: 'Foo' }) });
@@ -58,14 +58,14 @@ describe('normalizeTrpcGetQuery', () => {
   });
 
   test('leaves the request untouched when there are no query params at all', () => {
-    const request = new globalThis.Request(`${trpcUrl}/default.root`);
+    const request = new globalThis.Request(`${backendTrpcUrl}/default.root`);
     const result = normalizeTrpcGetQuery(request, {});
 
     expect(result).toBe(request);
   });
 
   test('rewrites multiple query params into a single JSON input object', () => {
-    const request = new globalThis.Request(`${trpcUrl}/test.profile?age=42&name=Foo`);
+    const request = new globalThis.Request(`${backendTrpcUrl}/test.profile?age=42&name=Foo`);
     const result = normalizeTrpcGetQuery(request, { age: '42', name: 'Foo' });
 
     const resultUrl = new globalThis.URL(result.url);

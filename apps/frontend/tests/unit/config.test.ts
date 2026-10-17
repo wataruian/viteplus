@@ -11,55 +11,55 @@ const importConfig = async () => {
   return config;
 };
 
-describe('config.adminPort', () => {
-  test('uses ADMIN_PORT when set', async () => {
-    vi.stubEnv('ADMIN_PORT', '4000');
-    vi.stubEnv('VITE_ADMIN_PORT', undefined);
+describe('config.frontendPort', () => {
+  test('uses FRONTEND_PORT when set', async () => {
+    vi.stubEnv('FRONTEND_PORT', '4000');
+    vi.stubEnv('VITE_FRONTEND_PORT', undefined);
     const config = await importConfig();
-    expect(config.adminPort).toBe(4000);
+    expect(config.frontendPort).toBe(4000);
   });
 
-  test('truncates a non-integer ADMIN_PORT value', async () => {
-    vi.stubEnv('ADMIN_PORT', '4000.9');
-    vi.stubEnv('VITE_ADMIN_PORT', undefined);
+  test('truncates a non-integer FRONTEND_PORT value', async () => {
+    vi.stubEnv('FRONTEND_PORT', '4000.9');
+    vi.stubEnv('VITE_FRONTEND_PORT', undefined);
     const config = await importConfig();
-    expect(config.adminPort).toBe(4000);
+    expect(config.frontendPort).toBe(4000);
   });
 
-  test('falls back to VITE_ADMIN_PORT when ADMIN_PORT is unset', async () => {
-    vi.stubEnv('ADMIN_PORT', undefined);
-    vi.stubEnv('VITE_ADMIN_PORT', '5000');
+  test('falls back to VITE_FRONTEND_PORT when FRONTEND_PORT is unset', async () => {
+    vi.stubEnv('FRONTEND_PORT', undefined);
+    vi.stubEnv('VITE_FRONTEND_PORT', '5000');
     const config = await importConfig();
-    expect(config.adminPort).toBe(5000);
+    expect(config.frontendPort).toBe(5000);
   });
 
-  test('defaults to 3001 when neither ADMIN_PORT nor VITE_ADMIN_PORT is set', async () => {
-    vi.stubEnv('ADMIN_PORT', undefined);
-    vi.stubEnv('VITE_ADMIN_PORT', undefined);
+  test('defaults to 2001 when neither FRONTEND_PORT nor VITE_FRONTEND_PORT is set', async () => {
+    vi.stubEnv('FRONTEND_PORT', undefined);
+    vi.stubEnv('VITE_FRONTEND_PORT', undefined);
     const config = await importConfig();
-    expect(config.adminPort).toBe(3001);
+    expect(config.frontendPort).toBe(2001);
   });
 });
 
-describe('config.viteApiUrl', () => {
-  test('uses API_URL when set', async () => {
-    vi.stubEnv('API_URL', 'http://from-api-url.test');
-    vi.stubEnv('VITE_API_URL', undefined);
+describe('config.viteBackendUrl', () => {
+  test('uses BACKEND_URL when set', async () => {
+    vi.stubEnv('BACKEND_URL', 'http://from-backend-url.test');
+    vi.stubEnv('VITE_BACKEND_URL', undefined);
     const config = await importConfig();
-    expect(config.viteApiUrl).toBe('http://from-api-url.test');
+    expect(config.viteBackendUrl).toBe('http://from-backend-url.test');
   });
 
-  test('falls back to VITE_API_URL when API_URL is unset', async () => {
-    vi.stubEnv('API_URL', undefined);
-    vi.stubEnv('VITE_API_URL', 'http://example.test');
+  test('falls back to VITE_BACKEND_URL when BACKEND_URL is unset', async () => {
+    vi.stubEnv('BACKEND_URL', undefined);
+    vi.stubEnv('VITE_BACKEND_URL', 'http://example.test');
     const config = await importConfig();
-    expect(config.viteApiUrl).toBe('http://example.test');
+    expect(config.viteBackendUrl).toBe('http://example.test');
   });
 
-  test('falls back to the shared apiBaseUrl when neither API_URL nor VITE_API_URL is set', async () => {
-    vi.stubEnv('API_URL', undefined);
-    vi.stubEnv('VITE_API_URL', undefined);
+  test('falls back to the shared backendBaseUrl when neither BACKEND_URL nor VITE_BACKEND_URL is set', async () => {
+    vi.stubEnv('BACKEND_URL', undefined);
+    vi.stubEnv('VITE_BACKEND_URL', undefined);
     const config = await importConfig();
-    expect(config.viteApiUrl).toBe('http://localhost:3000');
+    expect(config.viteBackendUrl).toBe('http://localhost:2000');
   });
 });

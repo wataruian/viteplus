@@ -112,22 +112,22 @@ describe('withBuildEnv', () => {
   test('applies each KEY=VALUE entry for a frontend workspace', () => {
     const container = withBuildEnv(new FakeContainer(world), '@lightproject/frontend', [
       'VITE_ENV=production',
-      'VITE_API_URL=https://api.example.com',
+      'VITE_BACKEND_URL=https://backend.example.com',
     ]);
     expect(asFakeContainer(container).capturedEnvVariables).toStrictEqual(
       new Map([
         ['VITE_ENV', 'production'],
-        ['VITE_API_URL', 'https://api.example.com'],
+        ['VITE_BACKEND_URL', 'https://backend.example.com'],
       ]),
     );
   });
 
   test('splits only on the first "=" so values may contain it', () => {
     const container = withBuildEnv(new FakeContainer(world), '@lightproject/frontend', [
-      'VITE_API_URL=https://api.example.com?x=1',
+      'VITE_BACKEND_URL=https://backend.example.com?x=1',
     ]);
-    expect(asFakeContainer(container).capturedEnvVariables.get('VITE_API_URL')).toBe(
-      'https://api.example.com?x=1',
+    expect(asFakeContainer(container).capturedEnvVariables.get('VITE_BACKEND_URL')).toBe(
+      'https://backend.example.com?x=1',
     );
   });
 

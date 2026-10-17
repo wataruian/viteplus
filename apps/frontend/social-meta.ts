@@ -5,7 +5,7 @@ const shareImageWidth = 1200;
 const shareImageHeight = 630;
 const shareImageAlt = 'Vite+ Monorepo Starter frontend';
 
-const resolveSiteUrl = (rawUrl: string | undefined): URL | undefined => {
+const resolveWebsiteUrl = (rawUrl: string | undefined): URL | undefined => {
   const trimmed = rawUrl?.trim() ?? '';
   if (trimmed === '') {
     return undefined;
@@ -13,11 +13,11 @@ const resolveSiteUrl = (rawUrl: string | undefined): URL | undefined => {
 
   const url = globalThis.URL.parse(trimmed.endsWith('/') ? trimmed : `${trimmed}/`);
   if (url === null) {
-    throw new Error(`ADMIN_URL / VITE_ADMIN_URL must be an absolute URL, got: ${trimmed}`);
+    throw new Error(`FRONTEND_URL / VITE_FRONTEND_URL must be an absolute URL, got: ${trimmed}`);
   }
 
   if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-    throw new Error(`ADMIN_URL / VITE_ADMIN_URL must use http(s), got: ${trimmed}`);
+    throw new Error(`FRONTEND_URL / VITE_FRONTEND_URL must use http(s), got: ${trimmed}`);
   }
 
   return url;
@@ -29,15 +29,15 @@ const meta = (attrs: Record<string, string>): HtmlTagDescriptor => ({
   tag: 'meta',
 });
 
-const socialMetaTags = (siteUrl: URL | undefined): HtmlTagDescriptor[] => {
-  if (siteUrl === undefined) {
+const socialMetaTags = (websiteUrl: URL | undefined): HtmlTagDescriptor[] => {
+  if (websiteUrl === undefined) {
     return [];
   }
 
-  const imageUrl = new globalThis.URL(shareImagePath, siteUrl).href;
+  const imageUrl = new globalThis.URL(shareImagePath, websiteUrl).href;
 
   return [
-    meta({ content: siteUrl.href, property: 'og:url' }),
+    meta({ content: websiteUrl.href, property: 'og:url' }),
     meta({ content: imageUrl, property: 'og:image' }),
     meta({ content: String(shareImageWidth), property: 'og:image:width' }),
     meta({ content: String(shareImageHeight), property: 'og:image:height' }),
@@ -51,25 +51,25 @@ const summaryCard = '<meta name="twitter:card" content="summary" />';
 const largeImageCard = '<meta name="twitter:card" content="summary_large_image" />';
 
 const transformSocialMetaHtml = (
-  siteUrl: URL | undefined,
+  websiteUrl: URL | undefined,
   html: string,
 ): { html: string; tags: HtmlTagDescriptor[] } => ({
-  html: siteUrl === undefined ? html : html.replace(summaryCard, largeImageCard),
-  tags: socialMetaTags(siteUrl),
+  html: websiteUrl === undefined ? html : html.replace(summaryCard, largeImageCard),
+  tags: socialMetaTags(websiteUrl),
 });
 
-const createSocialMetaTransform = (siteUrl: URL | undefined) => (html: string) =>
-  transformSocialMetaHtml(siteUrl, html);
+const createSocialMetaTransform = (websiteUrl: URL | undefined) => (html: string) =>
+  transformSocialMetaHtml(websiteUrl, html);
 
-const socialMeta = (rawSiteUrl: string | undefined): Plugin => ({
+const socialMeta = (rawWebsiteUrl: string | undefined): Plugin => ({
   name: 'lightproject:social-meta',
-  transformIndexHtml: createSocialMetaTransform(resolveSiteUrl(rawSiteUrl)),
+  transformIndexHtml: createSocialMetaTransform(resolveWebsiteUrl(rawWebsiteUrl)),
 });
 
 export {
   createSocialMetaTransform,
   meta,
-  resolveSiteUrl,
+  resolveWebsiteUrl,
   shareImageHeight,
   shareImagePath,
   shareImageWidth,

@@ -97,11 +97,11 @@ const App = () => {
         await callTrpcSample(scope);
 
         scope.run(() => {
-          const url = get('API_URL') ?? get('VITE_API_URL');
+          const url = get('BACKEND_URL') ?? get('VITE_BACKEND_URL');
           if (url !== undefined && url !== '') {
-            logger.info(`VITE_API_URL is set: ${url}`);
+            logger.info(`VITE_BACKEND_URL is set: ${url}`);
           } else {
-            logger.info(`VITE_API_URL is not set, using default URL: ${config.viteApiUrl}`);
+            logger.info(`VITE_BACKEND_URL is not set, using default URL: ${config.viteBackendUrl}`);
           }
 
           logger.info('Frontend Start', {

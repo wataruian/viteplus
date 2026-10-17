@@ -22,11 +22,11 @@ import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
 import type { AppEnv } from './schema';
 
 const getApp = async () => {
-  const port = get('API_PORT');
+  const port = get('BACKEND_PORT');
   if (port !== undefined && port !== '') {
-    logger.info(`API_PORT is set: ${port}`);
+    logger.info(`BACKEND_PORT is set: ${port}`);
   } else {
-    logger.info(`API_PORT is not set, using default port: ${config.apiPort}`);
+    logger.info(`BACKEND_PORT is not set, using default port: ${config.backendPort}`);
   }
 
   if (config.skipOpenTelemetry) {

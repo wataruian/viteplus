@@ -8,19 +8,21 @@ import { type UserConfig, defineConfig, loadEnv, mergeConfig } from 'vite-plus';
 import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 import { socialMeta } from './social-meta.ts';
 
-const port = Math.trunc(Number(globalThis.process.env['ADMIN_PORT'] ?? '3001'));
-const inspectorPort = Math.trunc(Number(globalThis.process.env['ADMIN_INSPECTOR_PORT'] ?? '9231'));
+const port = Math.trunc(Number(globalThis.process.env['FRONTEND_PORT'] ?? '2001'));
+const inspectorPort = Math.trunc(
+  Number(globalThis.process.env['FRONTEND_INSPECTOR_PORT'] ?? '8231'),
+);
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');
   const commonTaskProps = getCommonTaskProps(rootDir, mode);
-  const { ADMIN_URL: adminUrlEnv = '', VITE_ADMIN_URL: viteAdminUrlEnv = '' } = loadEnv(
+  const { FRONTEND_URL: frontendUrlEnv = '', VITE_FRONTEND_URL: viteFrontendUrlEnv = '' } = loadEnv(
     mode,
     rootDir,
-    ['ADMIN_', 'VITE_ADMIN_'],
+    ['FRONTEND_', 'VITE_FRONTEND_'],
   );
-  const adminUrl = adminUrlEnv.trim() === '' ? viteAdminUrlEnv : adminUrlEnv;
+  const frontendUrl = frontendUrlEnv.trim() === '' ? viteFrontendUrlEnv : frontendUrlEnv;
 
   return mergeConfig(
     getPackageViteConfig({
@@ -45,7 +47,7 @@ export default defineConfig(({ mode }): UserConfig => {
             .map((file) => path.resolve(dir, '../../packages/design-system/src', file)),
           configFile: path.resolve(dir, '../../packages/design-system/uno.config.ts'),
         }),
-        socialMeta(adminUrl),
+        socialMeta(frontendUrl),
       ],
       preview: {
         port,

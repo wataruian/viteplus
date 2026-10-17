@@ -1,4 +1,4 @@
-import { adminUrl, apiBaseUrl, docsEndpoint, siteUrl } from '@lightproject/common/configs';
+import { backendBaseUrl, docsEndpoint, frontendUrl } from '@lightproject/common/configs';
 import { isLocalOrTest } from '@lightproject/common/environment';
 import { cors } from 'hono/cors';
 import { createMiddleware } from 'hono/factory';
@@ -18,7 +18,7 @@ const isLoopbackOrigin = (origin: string): boolean => {
 
 const allowLoopbackOrigins = isLocalOrTest();
 
-const allowedOrigins: string[] = [apiBaseUrl, adminUrl, siteUrl].filter(
+const allowedOrigins: string[] = [backendBaseUrl, frontendUrl].filter(
   (origin) => origin !== '' && (allowLoopbackOrigins || !isLoopbackOrigin(origin)),
 );
 

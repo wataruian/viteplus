@@ -1,9 +1,9 @@
-import { apiBaseUrl } from '@lightproject/common/configs';
+import { backendBaseUrl } from '@lightproject/common/configs';
 import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { runtimes } from './helpers/utils';
 
-const allowedOrigin = apiBaseUrl;
+const allowedOrigin = backendBaseUrl;
 const disallowedOrigin = 'https://example.com';
 
 afterEach(() => {

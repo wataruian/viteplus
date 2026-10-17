@@ -9,12 +9,12 @@ const isWrangler = globalThis.process.argv[3] === 'true';
 
 const storybookPort = Math.trunc(Number(globalThis.process.env['STORYBOOK_PORT'] ?? '6006'));
 const storybookInspectorPort = Math.trunc(
-  Number(globalThis.process.env['STORYBOOK_INSPECTOR_PORT'] ?? '9232'),
+  Number(globalThis.process.env['STORYBOOK_INSPECTOR_PORT'] ?? '6232'),
 );
 
 const designSystemPort = Math.trunc(Number(globalThis.process.env['DESIGN_SYSTEM_PORT'] ?? '6007'));
 const designSystemInspectorPort = Math.trunc(
-  Number(globalThis.process.env['DESIGN_SYSTEM_INSPECTOR_PORT'] ?? '9233'),
+  Number(globalThis.process.env['DESIGN_SYSTEM_INSPECTOR_PORT'] ?? '6233'),
 );
 
 const viteCommand = isProd ? 'preview' : 'dev';

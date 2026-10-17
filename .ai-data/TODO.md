@@ -26,8 +26,7 @@
   `-storybook`) in the Cloudflare dashboard (or `wrangler delete --name <name>`) once the
   `-dev`/`-staging`/`-production` Workers are deployed and verified — nothing deploys to them anymore
   (user will do this manually). Until then the old backend still runs without `ENV` (docs/stack
-  traces exposed). Also remove the now-unused `WORKERS_SUBDOMAIN` GitHub variable (keep `VITE_API_URL`: PR
-  verification builds in `verify-workspace.yml` still read it).
+  traces exposed).
 - **`ALLOW_ALL_IPS = "true"` in every backend environment** (hardcoded in `apps/backend/wrangler.toml`)
   makes the API public; revisit (per-environment `ALLOWED_IPS`, or auth) before it serves real data.
 

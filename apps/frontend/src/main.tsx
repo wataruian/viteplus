@@ -1,4 +1,5 @@
 import { initializeRum } from '@lightproject/common/browser';
+import { backendBaseUrl } from '@lightproject/common/configs';
 import { generateShortUuid } from '@lightproject/common/utils';
 import { ClientIdProvider, ModeProvider, ThemeProvider } from '@lightproject/design-system/context';
 import { StrictMode, Suspense, lazy } from 'react';
@@ -15,6 +16,7 @@ const Page = isPreviewRoute
   : lazy(async () => await import('./app'));
 
 initializeRum({
+  propagateTraceHeaderUrls: [backendBaseUrl],
   serviceName: packageJson.name,
   serviceVersion: packageJson.version,
 });

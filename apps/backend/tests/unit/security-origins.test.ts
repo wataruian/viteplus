@@ -3,12 +3,12 @@ import { expect, test, vi } from 'vite-plus/test';
 
 vi.mock('@lightproject/common/configs', async (importOriginal) => {
   const actual = await importOriginal<typeof ConfigsModule>();
-  return { ...actual, adminUrl: '', apiBaseUrl: '', siteUrl: '' };
+  return { ...actual, backendBaseUrl: '', frontendUrl: '' };
 });
 
 const baselineOrigins: string[] = [];
 
-test('no default API/admin/site URL configured leaves only the baseline workers.dev origins', async () => {
+test('no default backend/frontend URL configured leaves only the baseline workers.dev origins', async () => {
   vi.resetModules();
   const { allowedOrigins, uniqueOrigins } = await import('../../src/middlewares/security');
 
@@ -21,15 +21,14 @@ test.each([
   { allowed: true, env: 'local' },
   { allowed: true, env: 'test' },
 ])(
-  'localhost API/admin/site URLs are trusted only locally/in tests (ENV=$env)',
+  'localhost backend/frontend URLs are trusted only locally/in tests (ENV=$env)',
   async ({ allowed, env }) => {
     vi.doMock('@lightproject/common/configs', async (importOriginal) => {
       const actual = await importOriginal<typeof ConfigsModule>();
       return {
         ...actual,
-        adminUrl: 'http://localhost:3001',
-        apiBaseUrl: 'https://api.example.com',
-        siteUrl: 'not a url',
+        backendBaseUrl: 'https://backend.example.com',
+        frontendUrl: 'http://localhost:2001',
       };
     });
     vi.stubEnv('ENV', env);
@@ -37,9 +36,17 @@ test.each([
 
     const { uniqueOrigins } = await import('../../src/middlewares/security');
 
-    expect(uniqueOrigins.includes('http://localhost:3001')).toBe(allowed);
-    expect(uniqueOrigins).toContain('https://api.example.com');
+    expect(uniqueOrigins.includes('http://localhost:2001')).toBe(allowed);
+    expect(uniqueOrigins).toContain('https://backend.example.com');
     vi.doUnmock('@lightproject/common/configs');
     vi.unstubAllEnvs();
   },
 );
+
+test('isLoopbackOrigin treats an unparsable origin as non-loopback', async () => {
+  vi.resetModules();
+  const { isLoopbackOrigin } = await import('../../src/middlewares/security');
+
+  expect(isLoopbackOrigin('not a url')).toBe(false);
+  expect(isLoopbackOrigin('http://localhost:2000')).toBe(true);
+});

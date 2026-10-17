@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const port = Math.trunc(Number(globalThis.process.env['ADMIN_E2E_PORT'] ?? '3111'));
+const port = Math.trunc(Number(globalThis.process.env['FRONTEND_E2E_PORT'] ?? '2111'));
 
 export default defineConfig({
   forbidOnly: true,

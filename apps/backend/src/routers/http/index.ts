@@ -1,8 +1,8 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import {
-  apiEndpoint,
   docsHttpEndpoint,
+  httpEndpoint,
   openApiHttpJsonEndpoint,
   openApiVersion,
   requestTypes,
@@ -21,7 +21,7 @@ const apiRouter = mergeHttpRouters({
   test: testRouter,
 });
 
-httpRouter.route(apiEndpoint, apiRouter);
+httpRouter.route(httpEndpoint, apiRouter);
 
 if (isLocal()) {
   assertHttpRoutesDocumented(apiRouter);

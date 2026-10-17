@@ -1,3 +1,4 @@
+import type * as ConfigsModule from '@lightproject/common/configs';
 import type * as CommonLoggerModule from '@lightproject/common/logger';
 import type * as UtilsModule from '@lightproject/common/utils';
 import { generateShortUuid } from '@lightproject/common/utils';
@@ -30,8 +31,8 @@ const trpcResultSchema = z.object({
   success: z.boolean(),
 });
 
-const testApiUrl = 'http://backend.test';
-const defaultApiUrl = 'http://localhost:3000';
+const testBackendUrl = 'http://backend.test';
+const defaultBackendUrl = 'http://localhost:2000';
 const shortUuidPattern = /^[\dA-Za-z]{22}$/u;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u;
 
@@ -46,20 +47,21 @@ const findEntry = (entries: ParsedLogEntry[], message: string): ParsedLogEntry =
   return entry;
 };
 
-const renderApp = async (backend: RunningBackend, apiUrl: string | undefined) => {
+const renderApp = async (backend: RunningBackend, backendUrl: string | undefined) => {
   vi.resetModules();
   vi.unstubAllEnvs();
   vi.stubEnv('LOG_FORMAT', 'json');
   vi.stubEnv('LOG_LEVEL', 'info');
 
-  vi.doMock('@lightproject/common/configs', () => ({
-    apiBaseUrl: apiUrl ?? defaultApiUrl,
-    trpcUrl: `${apiUrl ?? defaultApiUrl}/trpc`,
+  vi.doMock('@lightproject/common/configs', async (importOriginal) => ({
+    ...(await importOriginal<typeof ConfigsModule>()),
+    backendBaseUrl: backendUrl ?? defaultBackendUrl,
+    backendTrpcUrl: `${backendUrl ?? defaultBackendUrl}/trpc`,
   }));
 
   vi.doMock('../../src/config', () => ({
-    config: { viteApiUrl: apiUrl ?? defaultApiUrl },
-    get: (key: string) => (key === 'VITE_API_URL' ? apiUrl : undefined),
+    config: { viteBackendUrl: backendUrl ?? defaultBackendUrl },
+    get: (key: string) => (key === 'VITE_BACKEND_URL' ? backendUrl : undefined),
   }));
 
   vi.doMock('../../src/providers/trpc-provider', async (importOriginal) => {
@@ -223,14 +225,14 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
     vi.resetModules();
   });
 
-  test('renders the expected page structure and logs startup + tRPC activity when VITE_API_URL is set', async () => {
-    const { cleanup, container, entries } = await renderApp(getBackend(), testApiUrl);
+  test('renders the expected page structure and logs startup + tRPC activity when VITE_BACKEND_URL is set', async () => {
+    const { cleanup, container, entries } = await renderApp(getBackend(), testBackendUrl);
     try {
       assertRenderedHtml(container);
 
-      const apiUrlEntry = findEntry(entries, 'VITE_API_URL is set');
-      expect(apiUrlEntry.message).toBe(`VITE_API_URL is set: ${testApiUrl}`);
-      expect(apiUrlEntry.level).toBe('info');
+      const backendUrlEntry = findEntry(entries, 'VITE_BACKEND_URL is set');
+      expect(backendUrlEntry.message).toBe(`VITE_BACKEND_URL is set: ${testBackendUrl}`);
+      expect(backendUrlEntry.level).toBe('info');
 
       assertTrpcAndStartupLogs(entries);
     } finally {
@@ -238,12 +240,12 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
     }
   });
 
-  test('falls back to the default API URL and still logs the tRPC result when VITE_API_URL is unset', async () => {
+  test('falls back to the default backend URL and still logs the tRPC result when VITE_BACKEND_URL is unset', async () => {
     const { cleanup, entries } = await renderApp(getBackend(), undefined);
     try {
-      const notSetEntry = findEntry(entries, 'VITE_API_URL is not set');
+      const notSetEntry = findEntry(entries, 'VITE_BACKEND_URL is not set');
       expect(notSetEntry.message).toBe(
-        `VITE_API_URL is not set, using default URL: ${defaultApiUrl}`,
+        `VITE_BACKEND_URL is not set, using default URL: ${defaultBackendUrl}`,
       );
 
       assertTrpcAndStartupLogs(entries);
@@ -253,7 +255,7 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
   });
 
   test('re-runs the sample tRPC call on button click under a fresh request id the backend adopts', async () => {
-    const { cleanup, container, entries, logSpy } = await renderApp(getBackend(), testApiUrl);
+    const { cleanup, container, entries, logSpy } = await renderApp(getBackend(), testBackendUrl);
     try {
       const startEntry = findEntry(entries, 'Frontend Start');
       const button = trpcSampleButton(container);
@@ -282,7 +284,7 @@ describe.each(backendRuntimes)('App on the $name backend', ({ start }) => {
   });
 
   test('keeps the counter value when the tRPC sample button re-renders the app', async () => {
-    const { cleanup, container, logSpy } = await renderApp(getBackend(), testApiUrl);
+    const { cleanup, container, logSpy } = await renderApp(getBackend(), testBackendUrl);
     try {
       const counter = container.querySelector('button#counter');
       if (!(counter instanceof globalThis.HTMLButtonElement)) {
@@ -321,7 +323,7 @@ const successfulTrpcResult = {
 
 const renderAppWithMocks = async (options: {
   configModule: {
-    config: { viteApiUrl: string | undefined };
+    config: { viteBackendUrl: string | undefined };
     get?: (key: string) => string | undefined;
   };
   trpcQuery: () => unknown;
@@ -331,8 +333,9 @@ const renderAppWithMocks = async (options: {
   vi.stubEnv('LOG_FORMAT', 'json');
   vi.stubEnv('LOG_LEVEL', 'info');
 
-  vi.doMock('@lightproject/common/configs', () => ({
-    apiBaseUrl: defaultApiUrl,
+  vi.doMock('@lightproject/common/configs', async (importOriginal) => ({
+    ...(await importOriginal<typeof ConfigsModule>()),
+    backendBaseUrl: defaultBackendUrl,
   }));
 
   vi.doMock('../../src/config', () => ({
@@ -403,7 +406,7 @@ describe('App error handling', () => {
     'records a span exception and logs an error when the tRPC call rejects with %s, without blocking initialization',
     async (_label, rejection) => {
       const { cleanup, logSpy } = await renderAppWithMocks({
-        configModule: { config: { viteApiUrl: undefined } },
+        configModule: { config: { viteBackendUrl: undefined } },
         trpcQuery: () => {
           throw rejection;
         },
@@ -422,7 +425,7 @@ describe('App error handling', () => {
         expect(findEntry(entries, 'Failed to call tRPC server').level).toBe('error');
 
         findEntry(entries, 'Frontend Start');
-        findEntry(entries, 'VITE_API_URL is not set');
+        findEntry(entries, 'VITE_BACKEND_URL is not set');
       } finally {
         cleanup();
       }
@@ -438,7 +441,7 @@ describe('App error handling', () => {
       const { cleanup, logSpy } = await renderAppWithMocks({
         configModule: {
           config: {
-            get viteApiUrl(): string | undefined {
+            get viteBackendUrl(): string | undefined {
               throw makeRejection();
             },
           },
@@ -466,7 +469,7 @@ describe('App error handling', () => {
   test('logs an error and re-enables the button when a clicked tRPC sample call rejects', async () => {
     let shouldReject = false;
     const { cleanup, container, logSpy } = await renderAppWithMocks({
-      configModule: { config: { viteApiUrl: undefined } },
+      configModule: { config: { viteBackendUrl: undefined } },
       trpcQuery: () => {
         if (shouldReject) {
           throw new Error('tRPC boom');
@@ -513,7 +516,7 @@ describe('App error handling', () => {
     globalThis.process.on('unhandledRejection', handleUnhandledRejection);
 
     const { cleanup, logSpy } = await renderAppWithMocks({
-      configModule: { config: { viteApiUrl: undefined } },
+      configModule: { config: { viteBackendUrl: undefined } },
       trpcQuery: () => successfulTrpcResult,
     });
 
@@ -540,8 +543,9 @@ describe('App error handling', () => {
     vi.stubEnv('LOG_FORMAT', 'json');
     vi.stubEnv('LOG_LEVEL', 'info');
 
-    vi.doMock('@lightproject/common/configs', () => ({
-      apiBaseUrl: defaultApiUrl,
+    vi.doMock('@lightproject/common/configs', async (importOriginal) => ({
+      ...(await importOriginal<typeof ConfigsModule>()),
+      backendBaseUrl: defaultBackendUrl,
     }));
 
     vi.doMock('@lightproject/common/logger', async () => {
@@ -557,7 +561,7 @@ describe('App error handling', () => {
     });
 
     vi.doMock('../../src/config', () => ({
-      config: { viteApiUrl: undefined },
+      config: { viteBackendUrl: undefined },
     }));
 
     const queryMock = vi.fn(() => successfulTrpcResult);

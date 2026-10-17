@@ -30,7 +30,7 @@ const registerShutdownSignals = () => {
 };
 
 const init = async () => {
-  const port = config.apiPort;
+  const port = config.backendPort;
   const app = await getApp();
 
   serve({

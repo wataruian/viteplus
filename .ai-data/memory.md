@@ -953,3 +953,20 @@ AGENTS.md reflect the current state.
   near-identical blocks are the expected one-story-file-per-component pattern in dev-only Storybook
   docs, not shipped code (stories were already excluded from coverage). Trade-off accepted: a new
   story file copied from an existing one won't be flagged.
+
+## 2026-10-17: Template App Env Vars Renamed to `BACKEND_*` / `FRONTEND_*`
+
+- The template apps now use `BACKEND_PORT`/`BACKEND_INSPECTOR_PORT`/`BACKEND_URL` (2000/8230) and
+  `FRONTEND_PORT`/`FRONTEND_INSPECTOR_PORT`/`FRONTEND_E2E_PORT`/`FRONTEND_URL` (2001/8231/2111), each
+  with its `VITE_*` twin. `@lightproject/common/configs` exposes `backendBaseUrl`, `backendUrl`,
+  `backendTrpcUrl`, `backendHealthCheckUrl`, `backendDocs{Http,Trpc}Url` and `frontendUrl`.
+- **`API_*` / `ADMIN_*` (3000/9230, 3001/9231/3111) are reserved** for future real API/admin apps
+  and are unused by apps for now. `endpoints.ts` already exports them (`apiBaseUrl`, `adminUrl`,
+  `apiUrl`, `apiTrpcUrl`, `apiHealthCheckUrl`, `apiDocs{Http,Trpc}Url`; shared paths use
+  `httpEndpoint`) and they are unit-tested — do not remove them or their `.env.example` entries.
+- **`initializeRum()` no longer assumes a backend**: `propagateTraceHeaderUrls?: string[]` lists the
+  cross-origin backends that receive trace headers (default none; same-origin always does). Each
+  app passes its own (the frontend passes `[backendBaseUrl]`), since `packages/common` is shared by
+  many frontends talking to many backends.
+- `mise run docker` passes `BACKEND_PORT` into the backend container so it listens on the published
+  port (`containerPort` follows `BACKEND_PORT`).
