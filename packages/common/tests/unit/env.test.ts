@@ -65,6 +65,28 @@ describe('Environment Helpers', () => {
     test('getEnv should return the provided default value when unset', () => {
       expect(getEnv('NON_EXISTENT_ET93', 'fallback-value')).toBe('fallback-value');
     });
+
+    test('getEnv should fall back to the VITE_ prefixed variable', () => {
+      vi.stubEnv('ET94_KEY', undefined);
+      vi.stubEnv('VITE_ET94_KEY', 'from-vite');
+      expect(getEnv('ET94_KEY')).toBe('from-vite');
+    });
+
+    test('getEnv should prefer the unprefixed variable over the VITE_ one', () => {
+      vi.stubEnv('ET95_KEY', 'from-plain');
+      vi.stubEnv('VITE_ET95_KEY', 'from-vite');
+      expect(getEnv('ET95_KEY')).toBe('from-plain');
+    });
+
+    test('getEnv should not double the VITE_ prefix for already prefixed keys', () => {
+      vi.stubEnv('VITE_ET96_KEY', undefined);
+      vi.stubEnv('VITE_VITE_ET96_KEY', 'doubled');
+      expect(getEnv('VITE_ET96_KEY')).toBeUndefined();
+    });
+
+    test('getEnv should return the default value when neither variable is set', () => {
+      expect(getEnv('NON_EXISTENT_ET97', 'fallback-value')).toBe('fallback-value');
+    });
   });
 
   describe('import-meta-env.node stub', () => {

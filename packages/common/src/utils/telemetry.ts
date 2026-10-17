@@ -1,6 +1,6 @@
 import { type Span, context, metrics, trace } from '@opentelemetry/api';
 
-import { getEnv } from '../environment';
+import { getOtelServiceName } from '../environment/variables';
 import { generateShortUuid } from './text';
 
 interface ResolvedTelemetryConfig {
@@ -27,8 +27,8 @@ const getServiceInstanceId = (): string => {
   return serviceInstanceId;
 };
 
-const tracer = trace.getTracer(getEnv('OTEL_SERVICE_NAME') ?? 'application');
-const getMeter = () => metrics.getMeter(getEnv('OTEL_SERVICE_NAME') ?? 'application');
+const tracer = trace.getTracer(getOtelServiceName());
+const getMeter = () => metrics.getMeter(getOtelServiceName());
 
 const runWithSpan = <R>(span: Span, fn: () => R): R =>
   context.with(trace.setSpan(context.active(), span), fn);

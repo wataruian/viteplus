@@ -1,5 +1,7 @@
 import { getImportMetaEnvValue } from '#import-meta-env';
 
+const vitePrefix = 'VITE_';
+
 const hasEnvProperty = (obj: object): obj is object & { env: Record<string, string | undefined> } =>
   'env' in obj;
 
@@ -30,8 +32,12 @@ const getImportMetaEnv = (key: string): string | undefined => {
   return undefined;
 };
 
+const getEnvVar = (key: string): string | undefined => getProcessEnv(key) ?? getImportMetaEnv(key);
+
 const getEnv = (key: string, defaultValue?: string): string | undefined =>
-  getProcessEnv(key) ?? getImportMetaEnv(key) ?? defaultValue;
+  getEnvVar(key) ??
+  (key.startsWith(vitePrefix) ? undefined : getEnvVar(`${vitePrefix}${key}`)) ??
+  defaultValue;
 
 const isTrue = (value = '') => {
   if (value) {
@@ -69,8 +75,7 @@ const isNode = () =>
   (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
     undefined;
 
-const getEnvName = () =>
-  getEnv('ENV')?.toLowerCase() ?? getEnv('VITE_ENV')?.toLowerCase() ?? 'local';
+const getEnvName = () => getEnv('ENV')?.toLowerCase() ?? 'local';
 const getNodeEnv = () => getEnv('NODE_ENV');
 const isNodeEnvTest = () => getNodeEnv() === 'test';
 const isLocal = () => getEnvName() === 'local';
@@ -113,4 +118,5 @@ export {
   isTest,
   isTrue,
   isVitest,
+  vitePrefix,
 };

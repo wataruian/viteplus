@@ -35,8 +35,13 @@ import {
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
-import { defaultOtlpEndpoint } from '../configs';
-import { getEnv } from '../environment';
+import {
+  getDeploymentEnvironment,
+  getOtlpEndpoint,
+  getServiceName,
+  getServiceVersion,
+  isTelemetryDebug,
+} from '../environment';
 import { logger } from '../logger';
 import { flushExemplarMetrics } from '../utils/exemplar-metrics';
 import {
@@ -126,15 +131,15 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   }
   initialized = true;
 
-  const otlpEndpoint = options.otlpEndpoint ?? getEnv('OTLP_ENDPOINT') ?? defaultOtlpEndpoint;
+  const otlpEndpoint = options.otlpEndpoint ?? getOtlpEndpoint();
 
-  if (getEnv('TELEMETRY_DEBUG') === 'true') {
+  if (isTelemetryDebug()) {
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
   }
 
-  const serviceName = options.serviceName ?? getEnv('SERVICE_NAME') ?? '@lightproject/app';
-  const serviceVersion = options.serviceVersion ?? getEnv('SERVICE_VERSION') ?? '1.0.0';
-  const environment = options.environment ?? getEnv('ENV') ?? 'local';
+  const serviceName = options.serviceName ?? getServiceName();
+  const serviceVersion = options.serviceVersion ?? getServiceVersion();
+  const environment = options.environment ?? getDeploymentEnvironment();
 
   setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
 

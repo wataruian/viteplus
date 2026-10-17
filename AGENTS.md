@@ -93,6 +93,8 @@ When first entering the repository or a new package:
 ## Environment Management
 
 - **Isomorphic Access**: Use the unified `getEnv` and boolean helpers from `@lightproject/common/environment` for all environment variable access. This ensures compatibility across Node.js, Vite, and fallback global contexts.
+- **`VITE_` Fallback**: `getEnv('X')` reads `X`, then falls back to `VITE_X` (every `VITE_X` mirrors `X`, see `.env.example`), so call it with the unprefixed name. Named getters for shared variables live in `packages/common/src/environment/variables.ts`; add new ones there instead of calling `getEnv` with the same key in several places.
+- **Config Files Exception**: `vite.config.ts` / `playwright.config.ts` read `process.env` directly — they load before `@lightproject/common` is built, and its `dist/` would not resolve.
 - **Boolean Helpers**: Favor semantic helpers like `isLocal()`, `isProduction()`, `isCi()`, and `isDebug()` over manual string comparisons.
 - **Type Safety**: The environment utility provides typed access and fallbacks for common variables like `LOG_LEVEL` and `LOG_FORMAT`.
 

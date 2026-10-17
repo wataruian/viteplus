@@ -1,14 +1,18 @@
-import { getEnv } from '../environment';
+import {
+  getAdminUrl,
+  getApiBaseUrl,
+  getBackendBaseUrl,
+  getFrontendUrl,
+  getSiteUrl,
+} from '../environment/variables';
 
 type RequestType = (typeof requestTypes)[keyof typeof requestTypes];
 
-const backendBaseUrl =
-  getEnv('BACKEND_URL') ?? getEnv('VITE_BACKEND_URL') ?? 'http://localhost:2000';
-const frontendUrl =
-  getEnv('FRONTEND_URL') ?? getEnv('VITE_FRONTEND_URL') ?? 'http://localhost:2001';
-const apiBaseUrl = getEnv('API_URL') ?? getEnv('VITE_API_URL') ?? 'http://localhost:3000';
-const adminUrl = getEnv('ADMIN_URL') ?? getEnv('VITE_ADMIN_URL') ?? 'http://localhost:3001';
-const siteUrl = getEnv('SITE_URL') ?? getEnv('VITE_SITE_URL') ?? 'http://localhost:3002';
+const backendBaseUrl = getBackendBaseUrl();
+const frontendUrl = getFrontendUrl();
+const apiBaseUrl = getApiBaseUrl();
+const adminUrl = getAdminUrl();
+const siteUrl = getSiteUrl();
 
 const openApiVersion = '3.0.0';
 

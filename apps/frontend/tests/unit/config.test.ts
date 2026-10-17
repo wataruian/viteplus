@@ -41,25 +41,25 @@ describe('config.frontendPort', () => {
   });
 });
 
-describe('config.viteBackendUrl', () => {
+describe('config.backendUrl', () => {
   test('uses BACKEND_URL when set', async () => {
     vi.stubEnv('BACKEND_URL', 'http://from-backend-url.test');
     vi.stubEnv('VITE_BACKEND_URL', undefined);
     const config = await importConfig();
-    expect(config.viteBackendUrl).toBe('http://from-backend-url.test');
+    expect(config.backendUrl).toBe('http://from-backend-url.test');
   });
 
   test('falls back to VITE_BACKEND_URL when BACKEND_URL is unset', async () => {
     vi.stubEnv('BACKEND_URL', undefined);
     vi.stubEnv('VITE_BACKEND_URL', 'http://example.test');
     const config = await importConfig();
-    expect(config.viteBackendUrl).toBe('http://example.test');
+    expect(config.backendUrl).toBe('http://example.test');
   });
 
   test('falls back to the shared backendBaseUrl when neither BACKEND_URL nor VITE_BACKEND_URL is set', async () => {
     vi.stubEnv('BACKEND_URL', undefined);
     vi.stubEnv('VITE_BACKEND_URL', undefined);
     const config = await importConfig();
-    expect(config.viteBackendUrl).toBe('http://localhost:2000');
+    expect(config.backendUrl).toBe('http://localhost:2000');
   });
 });

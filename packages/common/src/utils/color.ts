@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 
-import { getEnv } from '../environment/env';
+import { getChalkLevel } from '../environment/variables';
 import { getRandomText } from './text';
 
 const chalkInstance = chalk;
 const defaultChalkLevel = 3 as 0 | 1 | 2 | 3;
-const chalkLevelEnv = getEnv('CHALK_LEVEL') ?? defaultChalkLevel.toString();
+const chalkLevelEnv = getChalkLevel() ?? defaultChalkLevel.toString();
 
 const parsedLevel = Math.trunc(Number(chalkLevelEnv));
 const normalizedChalkLevel = Number.isNaN(parsedLevel) ? 3 : Math.min(3, Math.max(0, parsedLevel));

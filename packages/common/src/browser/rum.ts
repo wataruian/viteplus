@@ -24,8 +24,14 @@ import {
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
 
-import { defaultFaroEndpoint, defaultOtlpEndpoint } from '../configs';
-import { getEnv, isBrowser } from '../environment';
+import {
+  getDeploymentEnvironment,
+  getFaroEndpoint,
+  getOtlpEndpoint,
+  getServiceName,
+  getServiceVersion,
+  isBrowser,
+} from '../environment';
 import {
   type BrowserLogSink,
   type LogEntry,
@@ -152,31 +158,11 @@ const initializeRum = (options: RumOptions = {}) => {
 
   isInitialized = true;
 
-  const serviceName =
-    options.serviceName ??
-    getEnv('SERVICE_NAME') ??
-    getEnv('VITE_SERVICE_NAME') ??
-    '@lightproject/app';
-
-  const serviceVersion =
-    options.serviceVersion ??
-    getEnv('SERVICE_VERSION') ??
-    getEnv('VITE_SERVICE_VERSION') ??
-    '1.0.0';
-
-  const environment = options.environment ?? getEnv('ENV') ?? getEnv('VITE_ENV') ?? 'local';
-
-  const faroEndpoint =
-    options.faroEndpoint ??
-    getEnv('FARO_ENDPOINT') ??
-    getEnv('VITE_FARO_ENDPOINT') ??
-    defaultFaroEndpoint;
-
-  const otlpEndpoint =
-    options.otlpEndpoint ??
-    getEnv('OTLP_ENDPOINT') ??
-    getEnv('VITE_OTLP_ENDPOINT') ??
-    defaultOtlpEndpoint;
+  const serviceName = options.serviceName ?? getServiceName();
+  const serviceVersion = options.serviceVersion ?? getServiceVersion();
+  const environment = options.environment ?? getDeploymentEnvironment();
+  const faroEndpoint = options.faroEndpoint ?? getFaroEndpoint();
+  const otlpEndpoint = options.otlpEndpoint ?? getOtlpEndpoint();
 
   setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
 

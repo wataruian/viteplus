@@ -9,6 +9,7 @@ import { logs as otelLogsApi } from '@opentelemetry/api-logs';
 import type * as SdkTraceWebModule from '@opentelemetry/sdk-trace-web';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
+import type * as EnvModule from '../../src/environment/env';
 import {
   PullMetricReader,
   flushTelemetry,
@@ -177,7 +178,8 @@ vi.mock('../../src/logger', () => ({
   logger: { debug: loggerDebugMock, error: loggerErrorMock, info: loggerInfoMock },
 }));
 
-vi.mock('../../src/environment', () => ({
+vi.mock('../../src/environment/env', async (importOriginal) => ({
+  ...(await importOriginal<typeof EnvModule>()),
   getEnv: getEnvMock,
 }));
 

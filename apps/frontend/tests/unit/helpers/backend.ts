@@ -1,4 +1,5 @@
 import { getApp } from '@lightproject/backend';
+import { getEnv } from '@lightproject/common/environment';
 
 type BackendFetch = (input: RequestInfo | URL | string, init?: RequestInit) => Promise<Response>;
 
@@ -21,7 +22,8 @@ const startNodeBackend = async (): Promise<RunningBackend> => {
 };
 
 const startWranglerBackend = async (): Promise<RunningBackend> => {
-  const baseUrl = await Promise.resolve(globalThis.process.env['WRANGLER_TEST_BASE_URL']);
+  const baseUrl = await Promise.resolve(getEnv('WRANGLER_TEST_BASE_URL'));
+
   if (baseUrl === undefined) {
     throw new Error('WRANGLER_TEST_BASE_URL is not set; did the wrangler global setup run?');
   }
