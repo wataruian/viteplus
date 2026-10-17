@@ -50,4 +50,4 @@ const setupCounter = (element: HTMLButtonElement): (() => void) => {
 const counterRef: RefCallback<HTMLButtonElement> = (element) =>
   element ? setupCounter(element) : undefined;
 
-export { counterRef, setupCounter };
+export { counterRef, INCREMENT_STEP, INITIAL_COUNT, setupCounter };

@@ -37,3 +37,5 @@ if (container) {
     </StrictMode>,
   );
 }
+
+export { Page, container, isPreviewRoute };

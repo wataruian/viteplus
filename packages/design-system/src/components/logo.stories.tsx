@@ -22,4 +22,5 @@ const Default: StoryObj<typeof meta> = {
 };
 
 export { Default };
+
 export default meta;

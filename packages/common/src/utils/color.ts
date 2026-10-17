@@ -111,10 +111,16 @@ export {
   getAnsiEscapeCodes,
   getNextRandomColor,
   getRandomColor,
+  green,
+  magenta,
   normalizedChalkLevel,
+  orange,
   parsedLevel,
+  pink,
+  purple,
   requestColors,
   resetColor,
   resetColorAnsiEscapeCode,
+  teal,
 };
 export type { ColorFunction };

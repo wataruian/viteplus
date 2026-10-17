@@ -50,5 +50,5 @@ const Typography = forwardRef<HTMLElement, TypographyProps>(
 
 Typography.displayName = 'Typography';
 
-export { Typography, typographyStyles };
+export { Typography, typographyStyles, typographyVariants };
 export type { TypographyProps, TypographyVariants };

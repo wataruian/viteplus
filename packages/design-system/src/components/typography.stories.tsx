@@ -61,4 +61,5 @@ const SubHeadline: StoryObj<typeof meta> = {
 };
 
 export { Body, Caption, Default, Display, Headline, SubHeadline };
+
 export default meta;

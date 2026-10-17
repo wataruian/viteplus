@@ -103,5 +103,5 @@ const startFakeOtelCollector = async (): Promise<FakeOtelCollector> => {
   return { close, requestsFor, url, waitForRequest };
 };
 
-export { decodeBody, startFakeOtelCollector };
+export { decodeBody, defaultTimeoutMs, pollIntervalMs, startFakeOtelCollector };
 export type { FakeOtelCollector, RecordedRequest };

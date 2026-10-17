@@ -310,6 +310,7 @@ export {
   getRedactFn,
   isSensitiveKey,
   mapEntriesWithLabels,
+  maxSerializationDepth,
   parseJson,
   redact,
   redactJsonParamValue,

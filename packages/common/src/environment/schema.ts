@@ -73,4 +73,13 @@ const appEnvOptions: AppEnvOptions = {
   clientPrefix: vitePrefix,
 };
 
-export { appEnvOptions, commonEnv, readRuntimeEnv, serverEnvOptions };
+export {
+  appEnvOptions,
+  commonEnv,
+  flag,
+  onValidationError,
+  readRuntimeEnv,
+  serverEnvOptions,
+  sharedShape,
+};
+export type { AppEnvOptions, ServerEnvOptions };

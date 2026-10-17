@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Call a Dagger Function, forwarding flags, with optional --export"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 func="${1:?"Usage: mise run dagger <function> [--workspace=<ws>] [--export[=<path>]] [--no-output] [--<flag>=<value> ...]"}"
 shift

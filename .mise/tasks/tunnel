@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Expose local OTEL + Faro telemetry and SonarQube ports via free Cloudflare quick tunnels"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 otelPort="${OTEL_TUNNEL_PORT:-4318}"
 faroPort="${FARO_TUNNEL_PORT:-12347}"

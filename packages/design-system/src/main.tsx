@@ -13,3 +13,5 @@ if (container) {
     </StrictMode>,
   );
 }
+
+export { container };

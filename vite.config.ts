@@ -186,7 +186,6 @@ const getCommonViteConfig = ({
       isolate: false,
       pool: 'forks',
       testTimeout: 30_000,
-      // testTimeout: 60 * 60 * 1000, // 1 hour
     },
   };
 };
@@ -472,6 +471,7 @@ const getRootViteConfig = (): UserConfig => {
 };
 
 export {
+  artifactExclusions,
   devServerWatchIgnored,
   getCommonTaskProps,
   getCommonViteConfig,
@@ -482,5 +482,6 @@ export {
   getTaskCache,
   ignorePatterns,
 };
+export type { CommonTaskProps, RunTasks, TaskCache, TaskCacheConfig };
 
 export default defineConfig(getRootViteConfig());

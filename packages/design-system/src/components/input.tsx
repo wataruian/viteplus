@@ -38,5 +38,5 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export { Input, inputStyles };
+export { Input, inputStyles, inputVariants };
 export type { InputProps, InputVariants };

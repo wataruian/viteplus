@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Start the dev, prod, or wrangler server"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 mode="${1:-"dev"}"
 

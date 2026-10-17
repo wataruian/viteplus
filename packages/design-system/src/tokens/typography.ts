@@ -7,24 +7,24 @@ const fonts = {
 } as const;
 
 const fontSizes = {
-  '2xl': '1.5rem', // 24px
-  '3xl': '1.875rem', // 30px
-  '4xl': '2.25rem', // 36px
-  '5xl': '3rem', // 48px
-  '6xl': '3.75rem', // 60px
-  '7xl': '4.5rem', // 72px
-  '8xl': '6rem', // 96px
-  base: '1rem', // 16px
-  lg: '1.125rem', // 18px
-  liquidDisplay: 'min(7.5rem, 12vw)', // min(120px, 12vw)
-  sm: '0.875rem', // 14px
-  textBody: '1rem', // 16px
-  textCaption: '0.75rem', // 12px
-  textDisplay: '6rem', // 96px
-  textHeadline: '2.25rem', // 36px
-  textSubHeadline: '1.5rem', // 24px
-  xl: '1.25rem', // 20px
-  xs: '0.75rem', // 12px
+  '2xl': '1.5rem',
+  '3xl': '1.875rem',
+  '4xl': '2.25rem',
+  '5xl': '3rem',
+  '6xl': '3.75rem',
+  '7xl': '4.5rem',
+  '8xl': '6rem',
+  base: '1rem',
+  lg: '1.125rem',
+  liquidDisplay: 'min(7.5rem, 12vw)',
+  sm: '0.875rem',
+  textBody: '1rem',
+  textCaption: '0.75rem',
+  textDisplay: '6rem',
+  textHeadline: '2.25rem',
+  textSubHeadline: '1.5rem',
+  xl: '1.25rem',
+  xs: '0.75rem',
 } as const;
 
 const fontWeights = {

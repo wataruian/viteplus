@@ -127,15 +127,15 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 
 We use `mise` as the primary task runner for high-level repository automation. Tasks are defined in `.mise/tasks/`.
 
-| Command                                    | Description                                                 |
-| :----------------------------------------- | :---------------------------------------------------------- |
-| `mise run check`                           | Run type checking, formatting, linting, building, and tests |
-| `mise run clean`                           | Clean up build artifacts, tools, and AI caches              |
-| `mise run fix`                             | Apply the editor's on-save code actions to all files        |
-| `mise run create`                          | Create standard backend, frontend, and library templates    |
-| `mise run init`                            | Initialize the workspace                                    |
-| `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action         |
-| `mise run start`                           | Start the dev or prod server                                |
+| Command                                    | Description                                                                                                                             |
+| :----------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `mise run check`                           | Run type checking, formatting, linting, building, and tests                                                                             |
+| `mise run clean`                           | Clean up build artifacts, tools, and AI caches                                                                                          |
+| `mise run fix`                             | Export all top-level declarations, then apply the editor's on-save code actions to all files (`--remove-comments` also strips comments) |
+| `mise run create`                          | Create standard backend, frontend, and library templates                                                                                |
+| `mise run init`                            | Initialize the workspace                                                                                                                |
+| `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action                                                                                     |
+| `mise run start`                           | Start the dev or prod server                                                                                                            |
 
 ### The `vp` Command Reference
 

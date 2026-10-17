@@ -428,5 +428,18 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
 
 Preview.displayName = 'Preview';
 
-export { Preview, previewStyles };
+export {
+  MockError,
+  Preview,
+  ScaleRow,
+  getExtraProps,
+  isBlockComponent,
+  isForwardRefComponent,
+  isRecord,
+  isWideComponent,
+  previewStyles,
+  previewVariants,
+  renderChildren,
+  scales,
+};
 export type { PreviewProps, PreviewVariants };

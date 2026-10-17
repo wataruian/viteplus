@@ -65,4 +65,4 @@ if (import.meta.url === `file://${globalThis.process.argv[1]}`) {
   globalThis.console.log('✅ Done compiling styles');
 }
 
-export { componentsGlob, files, raw, styles, stylesRegistry };
+export { componentsGlob, envPath, files, raw, styles, stylesRegistry, unsortedStyles };

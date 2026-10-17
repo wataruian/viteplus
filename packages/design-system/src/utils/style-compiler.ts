@@ -377,6 +377,8 @@ export {
   extractStylesFromFile,
   getKey,
   getRootName,
+  isFunction,
+  isObject,
   parseObjectLiteral,
   parseValue,
   resolvePath,
@@ -385,5 +387,6 @@ export {
   sortRegistryKeys,
   stripTemplate,
   unwrap,
+  warn,
 };
 export type { ASTNode, Ctx };

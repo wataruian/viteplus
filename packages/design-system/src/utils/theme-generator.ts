@@ -2,8 +2,6 @@ import { type Color, type Oklch, type Rgb, clampChroma, converter, parse } from 
 
 import { classPrefix } from './helpers';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 interface ThemeColors {
   accent: string;
   danger?: string | undefined;
@@ -16,15 +14,11 @@ interface ThemeColors {
 
 type ColorScale = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
-// ─── Colors ──────────────────────────────────────────────────────────────────
-
 const danger = '#ef4444';
 const info = '#3b82f6';
 const success = '#10b981';
 const surface = '#000000';
 const warning = '#f59e0b';
-
-// ─── Themes ──────────────────────────────────────────────────────────────────
 
 const themes: Record<string, ThemeColors> = {
   default: {
@@ -45,17 +39,6 @@ const themes: Record<string, ThemeColors> = {
   },
 };
 
-// ─── OKLCH scale lightness stops ─────────────────────────────────────────────
-//
-// Best practice: interpolate only the Lightness channel in OKLCH space.
-// Chroma and Hue are held constant from the base color to preserve its identity.
-//
-//   50  → near-white  (L≈0.97)
-//   500 → overridden to the base color's actual L at generation time
-//   950 → near-black  (L≈0.11)
-//
-// Surface uses the same stops but with ~15% chroma for a subtle neutral tint.
-
 const lightnessStops: Record<ColorScale, number> = {
   100: 0.94,
   200: 0.88,
@@ -69,8 +52,6 @@ const lightnessStops: Record<ColorScale, number> = {
   900: 0.18,
   950: 0.11,
 };
-
-// ─── OKLCH converters ─────────────────────────────────────────────────────────
 
 const toOklch: (color: Color) => Oklch = converter('oklch');
 const toRgb: (color: Color) => Rgb = converter('rgb');
@@ -98,8 +79,6 @@ const makeOklch = (l: number, c: number, h: number): Oklch => ({
   l,
   mode: 'oklch',
 });
-
-// ─── Public API ───────────────────────────────────────────────────────────────
 
 const getLightnessStops = () =>
   Object.keys(lightnessStops).toSorted((a, b) => Math.trunc(Number(a)) - Math.trunc(Number(b)));

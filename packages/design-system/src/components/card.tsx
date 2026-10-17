@@ -42,5 +42,5 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = 'Card';
 
-export { Card, cardStyles };
+export { Card, cardStyles, cardVariants };
 export type { CardProps, CardVariants };

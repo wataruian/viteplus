@@ -22,4 +22,4 @@ const env = createEnv({
   server,
 });
 
-export { env };
+export { env, flag, server };

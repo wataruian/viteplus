@@ -17,8 +17,6 @@ const layoutStyles = {
   },
 } as const;
 
-// ─── Container ───────────────────────────────────────────────────────────────
-
 const containerVariants = cva(layoutStyles.base, {
   defaultVariants: {
     type: 'container',
@@ -45,8 +43,6 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
 
 Container.displayName = 'Container';
 
-// ─── Section ─────────────────────────────────────────────────────────────────
-
 const sectionVariants = cva(layoutStyles.base, {
   defaultVariants: {
     type: 'section',
@@ -72,7 +68,5 @@ const Section = forwardRef<HTMLElement, SectionProps>(
 
 Section.displayName = 'Section';
 
-// ─── Exports ─────────────────────────────────────────────────────────────────
-
-export { Container, Section, layoutStyles };
+export { Container, Section, containerVariants, layoutStyles, sectionVariants };
 export type { ContainerProps, ContainerVariants, SectionProps, SectionVariants };

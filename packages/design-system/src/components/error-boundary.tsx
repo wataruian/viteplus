@@ -139,5 +139,5 @@ const ErrorBoundary = forwardRef<ErrorBoundaryBase, ErrorBoundaryProps>((props, 
 
 ErrorBoundary.displayName = 'ErrorBoundary';
 
-export { ErrorBoundary, ErrorBoundaryBase, errorBoundaryStyles };
+export { ErrorBoundary, ErrorBoundaryBase, errorBoundaryStyles, errorBoundaryVariants };
 export type { ErrorBoundaryProps, ErrorBoundaryState, ErrorBoundaryVariants };

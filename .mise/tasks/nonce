@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Replace nonce.txt with a freshly generated nonce"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 usage="Usage: mise run nonce [--root | --all | --workspace=@lightproject/<name>|dagger]"
 

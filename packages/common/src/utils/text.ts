@@ -100,6 +100,7 @@ const toPascalCase = (str: string): string =>
     .join('');
 
 export {
+  BASE62_ALPHABET,
   decodeShortUuid,
   escapeRegExp,
   generateShortUuid,
@@ -107,6 +108,7 @@ export {
   getRandomText,
   padEmoji,
   safeToString,
+  SHORT_UUID_LENGTH,
   toPascalCase,
   upperCaseFirstLetter,
   uppercasePerWord,

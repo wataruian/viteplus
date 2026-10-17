@@ -37,4 +37,5 @@ const Warning: StoryObj<typeof meta> = {
 };
 
 export { Danger, Default, Warning };
+
 export default meta;

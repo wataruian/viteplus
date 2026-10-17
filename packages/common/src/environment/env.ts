@@ -75,4 +75,16 @@ const isNode = () =>
   (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node !==
     undefined;
 
-export { getEnv, hasEnvProperty, isBrowser, isEdge, isFalse, isNode, isTrue, vitePrefix };
+export {
+  getEnv,
+  getEnvVar,
+  getImportMetaEnv,
+  getProcessEnv,
+  hasEnvProperty,
+  isBrowser,
+  isEdge,
+  isFalse,
+  isNode,
+  isTrue,
+  vitePrefix,
+};

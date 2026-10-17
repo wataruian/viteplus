@@ -52,5 +52,5 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 
 Badge.displayName = 'Badge';
 
-export { Badge, badgeStyles };
+export { Badge, badgeStyles, badgeVariants };
 export type { BadgeProps, BadgeVariants };

@@ -229,4 +229,7 @@ const App = () => {
   );
 };
 
+export { callTrpcSample, runTrpcSample };
+export type { RequestScope };
+
 export default App;

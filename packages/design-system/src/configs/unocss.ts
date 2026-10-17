@@ -92,4 +92,13 @@ const unoCssBaseConfig: UserConfig = {
 
 const unoCssConfig = defineConfig(unoCssBaseConfig);
 
-export { resolvedWebFontsOptions, unoCssBaseConfig, unoCssConfig };
+export {
+  intentClasses,
+  isVitest,
+  resolvedWebFontsOptions,
+  safelist,
+  semanticColors,
+  themes,
+  unoCssBaseConfig,
+  unoCssConfig,
+};

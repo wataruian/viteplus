@@ -301,9 +301,12 @@ export {
   findMatchingBraceEnd,
   generateVariantStories,
   getVariants,
+  isWhitespaceChar,
+  isWordChar,
   mergeExports,
   parseArgTypeEntry,
   sanitizeStoryName,
+  skipWhile,
   updateStories,
   updateStoryFile,
 };

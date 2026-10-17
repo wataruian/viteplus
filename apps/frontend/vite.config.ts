@@ -13,6 +13,8 @@ const inspectorPort = Math.trunc(
   Number(globalThis.process.env['FRONTEND_INSPECTOR_PORT'] ?? '8231'),
 );
 
+export { inspectorPort, port };
+
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');

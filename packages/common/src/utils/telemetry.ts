@@ -43,6 +43,7 @@ export {
   type Span,
   type SpanStatus,
 } from '@opentelemetry/api';
+
 export {
   METRIC_EXPORT_INTERVAL_MS,
   getMeter,

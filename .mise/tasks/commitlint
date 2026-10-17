@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Lint commit messages between two refs (defaults to origin/main..HEAD) with commitlint"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 from="origin/main"
 to="HEAD"

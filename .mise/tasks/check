@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Run type checking, formatting, linting, building, and tests"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 cache="true"
 install="false"

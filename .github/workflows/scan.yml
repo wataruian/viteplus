@@ -1,9 +1,8 @@
 name: 'Scan'
 
 on:
-  # uncomment for daily scan at 3:17 AM UTC (11:17 AM PHT), can be delayed depending on GitHub Actions minute-by-minute scheduling
-  # schedule:
-  #   - cron: '17 3 * * *'
+  schedule:
+    - cron: '17 3 * * *'
   workflow_call:
 
 jobs:
@@ -64,4 +63,4 @@ jobs:
         uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
         with:
           category: '/language:${{ matrix.language }}'
-          upload: never
+          # upload: never

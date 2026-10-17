@@ -50,4 +50,5 @@ const Xl: StoryObj<typeof meta> = {
 };
 
 export { Default, Lg, Md, Sm, Xl };
+
 export default meta;

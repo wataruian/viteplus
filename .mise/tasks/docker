@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Run or stop the local docker services (up|down)"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 action="${1:?"Usage: mise run docker <up|down> [--app=<name>]"}"
 shift

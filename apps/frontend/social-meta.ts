@@ -68,12 +68,15 @@ const socialMeta = (rawWebsiteUrl: string | undefined): Plugin => ({
 
 export {
   createSocialMetaTransform,
+  largeImageCard,
   meta,
   resolveWebsiteUrl,
+  shareImageAlt,
   shareImageHeight,
   shareImagePath,
   shareImageWidth,
   socialMeta,
   socialMetaTags,
+  summaryCard,
   transformSocialMetaHtml,
 };

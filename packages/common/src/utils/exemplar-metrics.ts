@@ -244,12 +244,16 @@ const recordGaugeWithExemplar = async (options: GaugeExemplarOptions): Promise<v
 export {
   countBufferedDataPoints,
   fitExemplarLabels,
+  FLUSH_INTERVAL_MS,
   flushExemplarMetrics,
+  MAX_BUFFERED_DATA_POINTS,
+  MAX_EXEMPLAR_LABEL_CHARS,
   recordGaugeWithExemplar,
   scheduleExemplarFlush,
   toOtlpAttributes,
   toOtlpAttributeValue,
   toOtlpMetric,
+  TRACE_LABEL_CHARS,
 };
 export type {
   AttributeValue,

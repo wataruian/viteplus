@@ -74,5 +74,5 @@ const ModeSwitcher = forwardRef<HTMLButtonElement | HTMLAnchorElement, ModeSwitc
 
 ModeSwitcher.displayName = 'ModeSwitcher';
 
-export { ModeSwitcher, modeSwitcherStyles };
+export { ModeSwitcher, modeSwitcherStyles, modeSwitcherVariants };
 export type { ModeSwitcherProps, ModeSwitcherVariants };

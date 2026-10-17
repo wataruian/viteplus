@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Create standard backend, frontend, and library templates"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
 type="backend"
 name="sample"

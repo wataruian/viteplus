@@ -83,5 +83,5 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
 
 ThemeSwitcher.displayName = 'ThemeSwitcher';
 
-export { ThemeSwitcher, themeSwitcherStyles };
+export { ThemeSwitcher, themeSwitcherStyles, themeSwitcherVariants };
 export type { ThemeSwitcherProps, ThemeSwitcherVariants };

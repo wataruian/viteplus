@@ -15,4 +15,4 @@ const env = createEnv({
   shared,
 });
 
-export { env };
+export { client, env, shared };

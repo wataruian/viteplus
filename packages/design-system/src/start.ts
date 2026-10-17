@@ -161,3 +161,24 @@ for (const signal of signals) {
     cleanup();
   });
 }
+
+export {
+  cleanup,
+  collectDescendantPids,
+  designSystemCommand,
+  designSystemInspectorPort,
+  designSystemPort,
+  FORCE_KILL_GRACE_PERIOD_MS,
+  isPidAlive,
+  isProd,
+  isWrangler,
+  resolveStorybookCommand,
+  signals,
+  storybook,
+  storybookCommand,
+  storybookInspectorPort,
+  storybookPort,
+  vite,
+  viteCommand,
+  vpBin,
+};

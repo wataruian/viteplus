@@ -14,8 +14,6 @@ const SONAR_SCANNER_USER = 'scanner-cli';
 const SONAR_WORKING_DIRECTORY = '/usr/src/.scannerwork';
 const CURL_IMAGE = 'curlimages/curl:8.14.1';
 
-// Internal-only address on the docker-compose network; SonarQube
-// Community Edition has no built-in TLS termination to put behind it.
 const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000'; // NOSONAR
 
 const SONAR_LOCAL_DOCKER_NETWORK = 'viteplus-net';

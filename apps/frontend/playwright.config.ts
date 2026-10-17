@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const port = Math.trunc(Number(globalThis.process.env['FRONTEND_E2E_PORT'] ?? '2111'));
 
+export { port };
+
 export default defineConfig({
   forbidOnly: true,
   fullyParallel: false,

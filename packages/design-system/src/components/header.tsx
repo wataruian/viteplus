@@ -69,5 +69,5 @@ const Header = forwardRef<HTMLElement, HeaderProps>(
 
 Header.displayName = 'Header';
 
-export { Header, headerStyles };
+export { Header, headerStyles, headerVariants };
 export type { HeaderProps, HeaderVariants };

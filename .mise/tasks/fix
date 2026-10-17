@@ -1,12 +1,25 @@
 #!/usr/bin/env bash
-#MISE description="Apply the editor's on-save code actions (fixAll.oxc, organize/sort imports, organize link definitions, sort JSON) to all files"
+#MISE description="Export all top-level declarations, then apply the editor's on-save code actions (fixAll.oxc, organize/sort imports, organize link definitions, sort JSON) to all files; --remove-comments also strips comments"
 
-set -o errexit # Bail out on any error
+set -o errexit
 
-# source.organizeImports, source.sortImports, source.sort.json, source.organizeLinkDefinitions
-node scripts/code-actions.ts
+codeActionArgs=()
 
-# source.fixAll.oxc — keep going on unfixable issues so the formatting pass still runs
+while [[ "${#}" -gt 0 ]]; do
+  case "${1}" in
+    --remove-comments)
+      codeActionArgs+=("--remove-comments")
+      shift
+      ;;
+    *)
+      echo "Usage: mise run fix [--remove-comments]"
+      exit 1
+      ;;
+  esac
+done
+
+node scripts/code-actions.ts "${codeActionArgs[@]}"
+
 lintSuccess="true"
 vp lint --fix || lintSuccess="false"
 
@@ -16,7 +29,6 @@ if [[ "${lintSuccess}" == "false" ]]; then
   exit 1
 fi
 
-# editor.formatOnSave (oxfmt, including its `sortImports`) — normalizes the output of the steps above
 formatSuccess="true"
 vp format --write || formatSuccess="false"
 

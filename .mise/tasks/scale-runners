@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Scale the self-hosted github-runner pool to match queued CI demand"
 
-set -o errexit # Bail out on any error
+set -o errexit
 set -o pipefail
 
 : "${GH_RUNNER_TOKEN:?GH_RUNNER_TOKEN is required (needs actions:read)}"

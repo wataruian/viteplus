@@ -52,4 +52,6 @@ const plopfile = (plop: NodePlopAPI) => {
   });
 };
 
+export { componentPath, registryPath, storiesPath, testPath };
+
 export default plopfile;

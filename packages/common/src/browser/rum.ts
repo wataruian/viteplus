@@ -226,6 +226,7 @@ const initializeRum = (options: RumOptions = {}) => {
 };
 
 export { faro } from '@grafana/faro-web-sdk';
+
 export {
   createFaroLogSink,
   faroLogLevel,

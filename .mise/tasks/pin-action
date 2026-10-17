@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #MISE description="Print a SHA-pinned 'uses:' line for a GitHub Action tag (e.g. actions/checkout@v7.0.1)"
 
-set -o errexit  # Bail out on any error
-set -o nounset  # Fail on unset variables
-set -o pipefail # Fail if any command in a pipeline fails
+set -o errexit
+set -o nounset
+set -o pipefail
 
 usage="Usage: mise run pin-action <owner>/<repo>[/<path>]@<tag> [...]"
 

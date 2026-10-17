@@ -39,5 +39,5 @@ const Icon = forwardRef<HTMLSpanElement, IconProps>(
 
 Icon.displayName = 'Icon';
 
-export { Icon, iconStyles };
+export { Icon, iconStyles, iconVariants };
 export type { IconProps, IconVariants };
