@@ -9,6 +9,7 @@ allowBuilds:
   workerd: true
 
 catalog:
+  '@cloudflare/workers-types': npm:@cloudflare/workers-types@5.20261016.1
   '@commitlint/cli': npm:@commitlint/cli@21.2.1
   '@commitlint/config-conventional': npm:@commitlint/config-conventional@21.2.0
   '@commitlint/types': npm:@commitlint/types@21.2.0
@@ -61,6 +62,8 @@ catalog:
   commitizen: npm:commitizen@4.3.2
   culori: npm:culori@4.0.2
   cz-conventional-changelog: npm:cz-conventional-changelog@3.3.0
+  drizzle-kit: npm:drizzle-kit@1.0.0-rc.4
+  drizzle-orm: npm:drizzle-orm@1.0.0-rc.4
   esbuild: npm:esbuild@0.28.1
   fast-glob: npm:fast-glob@3.3.3
   helmet: npm:helmet@8.1.0
@@ -72,10 +75,12 @@ catalog:
   openapi-types: npm:openapi-types@12.1.3
   picocolors: npm:picocolors@1.1.1
   plop: npm:plop@4.0.5
+  postgres: npm:postgres@3.4.9
   react: npm:react@19.2.4
   react-dom: npm:react-dom@19.2.4
   redact-object: npm:redact-object@4.0.4
   rimraf: npm:rimraf@6.1.3
+  smol-toml: npm:smol-toml@1.9.1
   storybook: npm:storybook@10.6.0
   superjson: npm:superjson@2.2.6
   supertest: npm:supertest@7.2.2

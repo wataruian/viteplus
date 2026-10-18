@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "display": "Database",
+  "exclude": ["node_modules", "dist", "coverage", ".wrangler"],
+  "extends": "../../tsconfig.json",
+  "include": ["./**/*.ts", "../../vite.config.ts"]
+}

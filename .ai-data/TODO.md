@@ -14,6 +14,10 @@
   `dagger ready` that overlapped with a local `vp run ready` (2026-09-28); the same run passes when
   the machine is idle. Consider speeding them up (the drift test re-imports `Preview` after
   `vi.resetModules()` per case) before the shared self-hosted runner gets busy.
+- **`generateShortUuid` 1M-ids test is timeout-prone too** — `packages/common/tests/unit/text.test.ts`
+  ("does not repeat across 1M ids") hit the 30s timeout in a local `vp run ready` (2026-10-18)
+  but passes alone in ~9s and on the next `ready`. It is CPU-bound (1M ids into a `Set`); consider
+  fewer ids (collision odds at 122 bits are negligible either way) or an explicit per-test timeout.
 - **Drop the `sharp` / `undici` 7.x / `source-map-js` overrides** in `pnpm-workspace.yaml` once
   wrangler's miniflare (exact `sharp`/`undici` pins) and magicast (exact `source-map-js` pin) depend
   on patched versions (`vp pm audit` clean without them).
@@ -29,5 +33,19 @@
   traces exposed).
 - **`ALLOW_ALL_IPS = "true"` in every backend environment** (hardcoded in `apps/backend/wrangler.toml`)
   makes the API public; revisit (per-environment `ALLOWED_IPS`, or auth) before it serves real data.
+- **`packages/database` follow-ups** (added 2026-10-18):
+  - Not in CI yet: add `database` to `all-workspaces` in `.github/workflows/verify.yml`, and run
+    `test:integration` in Dagger with a Postgres service binding.
+  - Create the remote D1 databases per environment and Hyperdrive configs, then wire migrations
+    (`db:migrate:d1:remote`, `db:migrate:postgres`) into the deploy pipeline before app deploys.
+  - Upgrade `drizzle-orm`/`drizzle-kit` from `1.0.0-rc.4` to 1.0 GA when it ships, then check
+    whether `drizzle-kit migrate` with `d1-http` can re-run (see architecture); if so,
+    `scripts/migrate-d1-remote.ts` + `scripts/remote-d1.ts` can go.
+  - `packages/database/wrangler.toml`: `[env.develop]` points at the throwaway
+    `lightproject-migrate-test` D1; `staging`/`production` have no `database_id` yet.
+  - The stashed `apps/workers` (`stash@{0}`) still has its own `worker_jobs` migrations and
+    hand-written SQL stores: on unstash, delete `apps/workers/migrations` + `scripts/migrate.ts`,
+    rewrite the Postgres/D1 stores on `@lightproject/database`, and resolve the expected conflicts
+    in `docker-compose.yml`/`.env.example` (Postgres credentials are now `lightproject`).
 
 Not a TODO: `bak/` is intentionally tracked (see `architecture.md`).

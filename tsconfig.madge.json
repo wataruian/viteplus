@@ -6,6 +6,8 @@
       "@lightproject/backend/*": ["apps/backend/src/*"],
       "@lightproject/common": ["packages/common/src/index.ts"],
       "@lightproject/common/*": ["packages/common/src/*"],
+      "@lightproject/database": ["packages/database/src/index.ts"],
+      "@lightproject/database/*": ["packages/database/src/*"],
       "@lightproject/design-system": ["packages/design-system/src/index.ts"],
       "@lightproject/design-system/*": ["packages/design-system/src/*"],
       "@lightproject/frontend/*": ["apps/frontend/src/*"],

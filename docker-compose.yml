@@ -117,6 +117,24 @@ services:
       mimir:
         condition: service_started
 
+  postgres:
+    image: postgres:17.6-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - '${COMPOSE_BIND_ADDRESS:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lightproject}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lightproject}
+      POSTGRES_DB: ${POSTGRES_DB:-lightproject}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   registry-cache:
     image: rpardini/docker-registry-proxy:0.7.0
     container_name: registry-cache
@@ -238,6 +256,7 @@ services:
 
 volumes:
   grafana-storage:
+  postgres-data:
   loki-storage:
   mimir-storage:
   otel-storage:

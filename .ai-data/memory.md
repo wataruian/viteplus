@@ -996,3 +996,61 @@ AGENTS.md reflect the current state.
   `appEnvOptions` = `serverEnvOptions` + `clientPrefix: 'VITE_'`; the frontend omits `server: {}`.
   `readRuntimeEnv` must get every declared shape (`{ ...client, ...shared }`): keys left out read
   as unset (this is why `VITE_SAMPLE` was missing).
+
+## 2026-10-18: `packages/database` (Drizzle 1.0 RC, Postgres + D1)
+
+- **Decisions (user)**: a shared `packages/database` comes before `apps/workers`; ORM = Drizzle
+  `1.0.0-rc.4` (after a Drizzle/Prisma/Kysely comparison); support **both** Postgres and D1; one
+  shared D1 for all apps; start with `users` (sample) and `worker_jobs` (from the stashed workers).
+- **Verified facts**: Drizzle 1.0 writes folder-per-migration (`<ts>_name/migration.sql` +
+  `snapshot.json`), which `wrangler d1 migrations apply` can't read, so D1 uses Drizzle's migrator
+  (local: `getPlatformProxy` + `drizzle-orm/d1/migrator`; remote: drizzle-kit `d1-http`).
+  `drizzle-orm/zod` ships inside 1.0. `drizzle-kit/api-postgres` can diff snapshots but the
+  sqlite API can't, hence the CLI-based drift test. Drizzle's `AnyD1Database` is `any` unless
+  Cloudflare's types are visible; `@cloudflare/workers-types/index.ts` is importable (real
+  exports, no globals) but must be a `dependency`, not a devDependency, or the dts bundler
+  resolves it to the ambient `index.d.ts` and fails (`MISSING_EXPORT`).
+  `getPlatformProxy({ persist: { path: X/v3 } })` and `wrangler --persist-to X` share one local D1.
+- **Local Postgres** recreated with `lightproject` credentials (the earlier container was
+  initialized as `workers`; POSTGRES_* only apply on first init).
+
+## 2026-10-18: Packages Don't Depend on Other Workspace Packages
+
+- **Decision (user)**: packages in `packages/` have no `@lightproject/*` dependencies; only apps
+  combine them. `packages/database` dropped `@lightproject/common`: ids use
+  `globalThis.crypto.randomUUID()` (`newId` in `src/shared`), Postgres notices go to an
+  `onNotice` option (ignored by default; apps pass their logger), and the local D1 migration
+  script writes to stdout/stderr. Moving `database` to `apps/` was rejected: `apps/` is for
+  deployables. AGENTS.md now states the rule; "Shared Foundation" scopes `common` to the apps.
+
+## 2026-10-18: `db:sync` — D1 Schema Generated from Postgres
+
+- **Decision (user, after a recommendation)**: one-way Postgres → D1 generation instead of
+  two-way sync (two-way overwrites hand edits, conflicts when both change, and SQLite → Postgres
+  loses precision silently). `vp run db:sync` = generate `src/d1/schema.ts` + `vp check --fix` +
+  `drizzle-kit generate` for both dialects. The parity test discovers tables itself (no script
+  edits a test file); its type-level check is a mapped type over all exported tables.
+- **Verified facts**: Drizzle exposes everything needed at runtime (`columnType`, `dimensions`,
+  `defaultFn` identity, `enumValues` identity with the `src/shared` array, index `where` as SQL
+  rendered by `PgDialect.sqlToQuery`); index columns are `IndexedColumn` wrappers, matched by
+  name. JSON `$type` exists only at compile time, so the generated D1 column reuses the Postgres
+  one via `typeof postgres.<table>.<column>['_']['data']` (type-only import). Lint
+  `no-use-before-define` rejects even lazy `.references(() => t.id)` to a later const, so tables
+  are ordered by FK dependency. Regenerating changed D1 column order (alphabetical) without a
+  new migration. Mutation-checked: a hand edit to the generated file fails both tsc and parity.
+- **Follow-up (user)**: `db:sync` was folded into `vp run db:generate [name]`, the single command
+  for schema changes (regenerate D1 schema + write both migrations, optional folder name).
+
+## 2026-10-18: Remote D1 Migrations (`packages/database`)
+
+- **Decision (user)**: `packages/database/wrangler.toml` holds the local `DB` binding plus
+  `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for
+  `db:migrate:d1:remote`. develop temporarily uses the throwaway `lightproject-migrate-test`.
+- **Verified facts**: wrangler's published `.d.ts` imports packages it doesn't ship, so
+  `unstable_readConfig` is error-typed under lint; `wrangler.toml` is read with `smol-toml` + zod
+  instead. drizzle-kit `migrate` with `d1-http` (1.0.0-rc.4, latest) fails on every run after
+  the first (array vs object rows in the migrations-table upgrade check), so the remote path is
+  our own script on `drizzle-orm/sqlite-proxy` + D1 `/raw`; the migrator also calls the batch
+  callback with nothing to apply, which D1 rejects as empty SQL. Trial-applied a new migration to
+  the remote test DB, re-ran (no-op), then reverted it remotely (DROP COLUMN + delete row).
+- Empty migration folders (files deleted, folder kept) also break migrate; now a unit test.

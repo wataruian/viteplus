@@ -56,8 +56,9 @@ This document outlines the goals, guidelines, and best practices for AI agents w
   - `apps/`: Dedicated to deployable applications:
     - `apps/frontend`: Frontend application built with Vite.
     - `apps/backend`: Hono API (Fetch-API/WinterCG-compatible), served via `@hono/node-server` locally and `wrangler` at the edge.
-  - `packages/`: Dedicated to shared libraries and utilities:
+  - `packages/`: Dedicated to shared libraries and utilities. **A package never depends on another workspace package** (no `@lightproject/*` in its `dependencies`); only apps combine packages. When a package needs something an app provides (e.g. logging), take it as an option (e.g. `onNotice` in `packages/database`) instead of importing `packages/common`:
     - `packages/common`: Shared internal library (logging, environment).
+    - `packages/database`: Shared Drizzle ORM (1.0 RC) schema, clients and migrations for **both** Postgres (Node, or Cloudflare via Hyperdrive) and D1. **Only edit `src/postgres/schema.ts`**; `src/d1/schema.ts` is generated from it. After any schema change run `vp run db:generate <name>` (e.g. `add_sample`; names both migration folders; regenerates the D1 schema, formats/lints it, writes both migrations), then `vp run db:migrate:postgres` / `db:migrate:d1:local`. Constructs with no faithful SQLite equivalent (arrays, numeric, serial, SQL defaults, …) make `db:generate` fail with the reason; parity and migration-drift tests fail if the files diverge. It owns all tables and migrations — apps never keep their own. Details: `.ai-data/architecture.md` → "Database".
     - `packages/design-system`: Shared UI component library using UnoCSS.
     - `packages/library`: General purpose library templates.
   - `bak/`: **Intentionally tracked** archive of earlier app/library setups (incl. build caches and a Prisma engine binary), kept for future reuse. It is not a workspace member and is excluded from lint/format (`ignorePatterns`), Sonar, and CodeQL. Do not flag it as cleanup/TODO or propose removing it from git; leave it untouched unless explicitly asked.
@@ -134,7 +135,7 @@ When first entering the repository or a new package:
   - **Theme Awareness**: If UI elements are invisible or low-contrast, check that the suffixed `adaptive-*` / `inverse-*` tokens are used (e.g. `bg-adaptive-surface` with `text-inverse-surface`, or `border-adaptive-primary`). There is no bare `bg-adaptive` / `text-adaptive` / `bg-inverse` — those generate no CSS, leaving the element transparent over the primary-tinted `:root` background. Use `surface` for neutral backgrounds; the other colors (`primary`, `accent`, …) tint with the theme.
   - **Stuck GitHub Actions runs**: A run can get stuck `queued` with zero jobs ever assigned (a GitHub-side scheduling issue, sometimes tied to the self-hosted `dagger` runner/engine not picking it up). In that state, `gh run cancel` fails with a 409 ("not queued yet") and `gh run delete` fails with a 403 — neither works via CLI/API. It has to time out on GitHub's side; check the runner/dagger-engine health to prevent new runs from getting stuck the same way.
 - **Staged Checks**: Use `vp staged` for pre-commit checks to ensure only valid code is committed.
-- **Shared Foundation**: Treat `packages/common` as the foundation for the entire monorepo. Use it for shared logic, types, and cross-cutting concerns like logging and environment management.
+- **Shared Foundation**: Treat `packages/common` as the foundation for the apps. Use it for shared logic, types, and cross-cutting concerns like logging and environment management. Other packages stay independent of it (see Monorepo Structure).
 - **Design System Sovereignty**:
   - All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`.
   - **Tokens First**: Favor semantic tokens (`adaptive`, `inverse`, `primary`) over hard-coded hex or Tailwind colors.

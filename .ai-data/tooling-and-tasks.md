@@ -21,6 +21,26 @@ Available automation commands:
 - `vp build`: Builds apps for production.
 - `vp pack`: Packages libraries (like `design-system` and `common`) for ESM/CJS distribution.
 
+## Database tasks (`packages/database`)
+
+- `docker compose up -d postgres`: local Postgres (`lightproject`/`lightproject`, `POSTGRES_URL`).
+- `vp run db:generate [name]`: after editing `src/postgres/schema.ts`, regenerate `src/d1/schema.ts`
+  (formatted/linted) and write both migrations.
+  `name` (e.g. `add_sample`: lowercase, digits, `_`/`-`) names both migration folders
+  `<timestamp>_<name>`; without it drizzle-kit picks random words.
+- `vp run db:migrate:postgres` / `vp run db:migrate:d1:local`: apply locally (D1 into the shared
+  `.wrangler/state` that apps' `wrangler dev --persist-to ../../.wrangler/state` reads).
+- `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote`: apply to the remote D1 of that `[env.*]` in
+  `packages/database/wrangler.toml` (credentials from the root `.env`; see architecture).
+- `vp run db:check` (drizzle-kit migration consistency), `vp run db:studio` (Postgres).
+  Studio's UI is the public site `https://local.drizzle.studio` talking to `localhost:4983`, which
+  browsers treat as local-network access: use Chrome (allow "Local network access" when asked).
+  Brave kept "Connecting…" forever even with Shields off, Local network access allowed and an
+  mkcert-trusted HTTPS server (2026-10-18); Safari needs `mkcert -install` first. DBeaver opens
+  both databases (local D1 = the `.sqlite` file under `.wrangler/state/v3/d1/`).
+- `vp run test:unit`: parity, drift, client tests and the contract on a local D1.
+  `vp run test:integration`: the contract on real Postgres (not in `ready`/CI yet).
+
 ## Dependency Management
 
 The monorepo uses `pnpm` (managed automatically by `vp`) with a **Catalog-based approach**:

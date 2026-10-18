@@ -151,14 +151,17 @@ We use `mise` as the primary task runner for high-level repository automation. T
 
 ### App Specific Scripts
 
-| Application                                   | Command    | Description                      |
-| :-------------------------------------------- | :--------- | :------------------------------- |
-| **Frontend** (`/apps/frontend`)               | `vp dev`   | Start Vite development server.   |
-|                                               | `vp build` | Build production bundle.         |
-| **Backend** (`/apps/backend`)                 | `vp dev`   | Start Hono API.                  |
-|                                               | `vp pack`  | Build optimized CJS/ESM library. |
-| **Common** (`/packages/common`)               | `vp pack`  | Build shared library modules.    |
-| **Design System** (`/packages/design-system`) | `vp pack`  | Build UI library components.     |
+| Application                                   | Command                                              | Description                                                                                  |
+| :-------------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| **Frontend** (`/apps/frontend`)               | `vp dev`                                             | Start Vite development server.                                                               |
+|                                               | `vp build`                                           | Build production bundle.                                                                     |
+| **Backend** (`/apps/backend`)                 | `vp dev`                                             | Start Hono API.                                                                              |
+|                                               | `vp pack`                                            | Build optimized CJS/ESM library.                                                             |
+| **Common** (`/packages/common`)               | `vp pack`                                            | Build shared library modules.                                                                |
+| **Database** (`/packages/database`)           | `vp run db:generate [name]`                          | Generate the D1 schema from Postgres + both migrations (folders named `<timestamp>_<name>`). |
+|                                               | `vp run db:migrate:postgres` / `db:migrate:d1:local` | Apply them locally.                                                                          |
+|                                               | `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote` | Apply them to a remote D1.                                                                   |
+| **Design System** (`/packages/design-system`) | `vp pack`                                            | Build UI library components.                                                                 |
 
 ### ⚓️ Git Hooks
 
