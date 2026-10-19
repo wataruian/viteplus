@@ -5,7 +5,7 @@ import { SONAR_WORKING_DIRECTORY } from '../../src/helpers/constants';
 import { LOCAL_ORCHESTRATOR_HOME, POLL_CONTAINER_HOME } from '../../src/helpers/sonar';
 import { getLastContainer, resetLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
-import { seedMountFiles } from './helpers/fixtures';
+import { seedMountFiles, seedWorkspaceDirs } from './helpers/fixtures';
 import { createMonorepo } from './helpers/monorepo';
 
 beforeEach(() => {
@@ -190,7 +190,7 @@ describe('sonar', () => {
     );
   });
 
-  test('passes the pull request scope to the scanner', async () => {
+  test('scans a pull request into its own project', async () => {
     seedMountFiles();
     world.execExitCode = 0;
     world.files.set('/usr/src/sonar.exit-code', '0');
@@ -202,12 +202,10 @@ describe('sonar', () => {
       'https://sonarcloud.io',
       undefined,
       '42',
-      'ci',
-      'main',
     );
 
     expect(getLastContainer().capturedExecCalls.at(-1)?.[2]).toContain(
-      '-Dsonar.pullrequest.key=42 -Dsonar.pullrequest.branch=ci -Dsonar.pullrequest.base=main',
+      "-Dsonar.projectKey=lightproject-viteplus-backend-pr-42 -Dsonar.projectName='Vite+ Monorepo - backend (PR #42)'",
     );
   });
 
@@ -245,5 +243,49 @@ describe('sonar', () => {
     await expect(result.file('sonar.row.md').contents()).resolves.toBe(
       '| dagger | ✅ Passed | - | - | - | - |\n',
     );
+  });
+});
+
+describe('sonarCleanup', () => {
+  test('deletes the pull request project of every workspace', async () => {
+    seedWorkspaceDirs();
+    world.execStdout = 'deleted lightproject-viteplus-backend-pr-42';
+
+    await expect(
+      createMonorepo().sonarCleanup('42', fakeSecret, undefined, 'https://sonarcloud.io'),
+    ).resolves.toBe('deleted lightproject-viteplus-backend-pr-42');
+    const script = getLastContainer().capturedExecCalls.at(-1)?.[2];
+    for (const name of [
+      'backend',
+      'common',
+      'database',
+      'design-system',
+      'frontend',
+      'library',
+      'dagger',
+    ]) {
+      expect(script).toContain(`lightproject-viteplus-${name}-pr-42`);
+    }
+    expect(script).not.toContain('README');
+  });
+
+  test('runs through the docker socket for the local instance', async () => {
+    seedWorkspaceDirs();
+    await createMonorepo().sonarCleanup('42', fakeSecret, fakeSocket);
+
+    expect(getLastContainer().capturedExecCalls.at(-1)?.[2]).toContain('docker run --rm -i');
+  });
+
+  test('requires the docker socket for the local instance', async () => {
+    await expect(createMonorepo().sonarCleanup('42', fakeSecret)).rejects.toThrow(
+      'dockerSocket is required',
+    );
+  });
+
+  test('rejects a pull request that is not a number', async () => {
+    seedWorkspaceDirs();
+    await expect(
+      createMonorepo().sonarCleanup('1; rm -rf /', fakeSecret, fakeSocket),
+    ).rejects.toThrow('pullRequest must be a pull request number');
   });
 });

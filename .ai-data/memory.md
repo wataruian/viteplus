@@ -1100,3 +1100,19 @@ AGENTS.md reflect the current state.
   caller job still succeeds, so the deploy goes ahead.
 - **`resolve-workspaces`**: `^\dagger/` became `^dagger/`. `\d` is not a valid escape in grep's
   BRE/ERE; it matched a literal `d`, but newer GNU grep warns "stray \ before d".
+
+## 2026-10-19: Sonar Back to the Official Image, One Project per Pull Request
+
+- **Reverted the branch plugin**: the compose `sonarqube` service is `sonarqube:26.9.0.129388-community`
+  again. Going from the plugin image (26.5) to 26.9 is an upgrade, but the `sonarqube-extensions`
+  volume still holds the plugin jar, so recreate it (and `sonarqube-data`, then a new `SONAR_TOKEN`).
+- **`sonar.yml` removed, `main` no longer scanned**: the SonarQube step is back in
+  `verify-workspace.yml`; the `main` scan only served as the plugin's comparison baseline, and it gated
+  the `develop` deploy.
+- **Isolation without branches**: `sonarProject` gives each PR (`-pr-<n>`) or dispatched branch
+  (`-<branch>`, `/` → `-`) its own project key, so concurrent PRs never overwrite each other.
+  Trade-off: a fresh project has no new-code baseline on its first analysis.
+- **Cleanup on close**: `on-pull-request-closed.yml` → Dagger `sonarCleanup` deletes
+  `lightproject-viteplus-<ws>-pr-<n>` for every workspace under `apps/` and `packages/` plus `dagger`
+  (404 is fine). It checks out the base branch (trusted code) and shares the `pr-<n>` concurrency group,
+  so closing cancels a running scan. Needs a `SONAR_TOKEN` with Administer permission.

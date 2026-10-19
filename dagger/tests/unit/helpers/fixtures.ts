@@ -14,4 +14,9 @@ const seedMountFiles = (prunedFullEntries: string[] = []): void => {
   world.dirs.set('.pruned/full', prunedFullEntries);
 };
 
-export { seedMountFiles, seedPackageJsons };
+const seedWorkspaceDirs = (): void => {
+  world.dirs.set('apps', ['backend/', 'frontend/', 'README.md']);
+  world.dirs.set('packages', ['common/', 'database/', 'design-system/', 'library/']);
+};
+
+export { seedMountFiles, seedPackageJsons, seedWorkspaceDirs };

@@ -53,7 +53,8 @@ import {
   localSonarRunner,
   pollQualityGate,
   remoteSonarRunner,
-  sonarScope,
+  sonarCleanupRunner,
+  sonarProject,
 } from './helpers/sonar';
 
 @object()
@@ -353,14 +354,11 @@ export class Monorepo {
     sonarHostUrl?: string,
     branch?: string,
     pullRequest?: string,
-    pullRequestBranch?: string,
-    pullRequestBase?: string,
   ): Promise<Directory> {
-    const scope = sonarScope({ branch, pullRequest, pullRequestBase, pullRequestBranch });
     const isDagger = workspace === DAGGER_WORKSPACE;
     const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
-    const projectKey = `lightproject-viteplus-${shortName}`;
+    const project = sonarProject(shortName, { branch, pullRequest });
     const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;
     const useLocalNetwork = hostUrl === SONAR_LOCAL_HOST_URL;
 
@@ -389,13 +387,12 @@ export class Monorepo {
     }
 
     const sonarArgs = [
-      `-Dsonar.projectKey=${projectKey}`,
-      `-Dsonar.projectName='Vite+ Monorepo - ${shortName}'`,
+      `-Dsonar.projectKey=${project.key}`,
+      `-Dsonar.projectName='${project.name}'`,
       `-Dsonar.sources=${workspaceDir}`,
       `-Dsonar.javascript.lcov.reportPaths=${workspaceDir}/coverage/lcov.info`,
       '-Dsonar.qualitygate.wait=true',
       `-Dsonar.working.directory=${SONAR_WORKING_DIRECTORY}`,
-      ...scope.args,
     ].join(' ');
 
     const {
@@ -403,15 +400,7 @@ export class Monorepo {
       reportTaskPath,
       exitCodePath,
     } = useLocalNetwork && dockerSocket !== undefined
-      ? localSonarRunner(
-          dockerSocket,
-          scanRoot,
-          sonarToken,
-          hostUrl,
-          sonarArgs,
-          projectKey,
-          scope.issuesQuery,
-        )
+      ? localSonarRunner(dockerSocket, scanRoot, sonarToken, hostUrl, sonarArgs, project.key)
       : remoteSonarRunner(scanRoot, sonarToken, hostUrl, sonarArgs);
 
     const [stdout, exitCodeText] = await Promise.all([
@@ -443,17 +432,47 @@ export class Monorepo {
         : /^ceTaskId=(?<id>.+)$/mu.exec(reportTaskContents)?.groups?.id;
 
     if (ceTaskId !== undefined) {
-      const pollContainer = pollQualityGate(
-        sonarToken,
-        hostUrl,
-        projectKey,
-        ceTaskId,
-        scope.issuesQuery,
-      );
+      const pollContainer = pollQualityGate(sonarToken, hostUrl, project.key, ceTaskId);
       result = await attachReportFiles(pollContainer, POLL_CONTAINER_HOME, result);
     }
 
     return attachSonarRow(result, shortName);
+  }
+
+  @func()
+  public async sonarCleanup(
+    pullRequest: string,
+    sonarToken: Secret,
+    dockerSocket?: Socket,
+    sonarHostUrl?: string,
+  ): Promise<string> {
+    const hostUrl = sonarHostUrl ?? SONAR_LOCAL_HOST_URL;
+    const useLocalNetwork = hostUrl === SONAR_LOCAL_HOST_URL;
+
+    if (useLocalNetwork && dockerSocket === undefined) {
+      throw new Error(
+        'dockerSocket is required for the local SonarQube target (pass sonarHostUrl for a remote instance instead)',
+      );
+    }
+
+    const groupEntries = await Promise.all(
+      ['apps', 'packages'].map(async (group) => await this.source.directory(group).entries()),
+    );
+    const shortNames = [
+      ...groupEntries
+        .flat()
+        .filter((entry) => entry.endsWith('/'))
+        .map((entry) => entry.slice(0, -1)),
+      DAGGER_WORKSPACE,
+    ];
+    const projectKeys = shortNames.map((name) => sonarProject(name, { pullRequest }).key);
+
+    return await sonarCleanupRunner(
+      projectKeys,
+      sonarToken,
+      hostUrl,
+      useLocalNetwork ? dockerSocket : undefined,
+    ).stdout();
   }
 
   @func()

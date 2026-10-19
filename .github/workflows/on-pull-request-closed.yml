@@ -1,0 +1,50 @@
+name: 'Pull Request Closed'
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  sonar-cleanup:
+    name: 'Delete Sonar projects for PR #${{ github.event.pull_request.number }}'
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, arm64, dagger]
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          setup-vp: 'false'
+
+      - name: Set up Dagger
+        uses: ./.github/actions/setup-dagger
+
+      - name: Delete Sonar projects
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          USE_REMOTE_SONAR: ${{ vars.USE_REMOTE_SONAR || 'false' }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          args=(--pull-request="${PR_NUMBER}" --sonar-token=env:SONAR_TOKEN)
+          if [[ -n "${SONAR_HOST_URL}" && "${USE_REMOTE_SONAR}" == "true" ]]; then
+            args+=(--sonar-host-url="${SONAR_HOST_URL}")
+          else
+            args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
+          fi
+          mise run dagger sonar-cleanup "${args[@]}"

@@ -1,15 +1,16 @@
 import { Secret, Socket } from '@dagger.io/dagger';
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
-import { SONAR_WORKING_DIRECTORY } from '../../src/helpers/constants';
+import { SONAR_LOCAL_DOCKER_NETWORK, SONAR_WORKING_DIRECTORY } from '../../src/helpers/constants';
 import {
   LOCAL_ORCHESTRATOR_HOME,
-  buildPollScript,
+  buildDeleteScript,
   localSonarRunner,
   remoteSonarRunner,
-  sonarScope,
+  sonarCleanupRunner,
+  sonarProject,
 } from '../../src/helpers/sonar';
-import { FakeDirectory } from './helpers/dagger-fakes';
+import { FakeDirectory, getLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 
 beforeEach(() => {
@@ -49,48 +50,61 @@ describe('remoteSonarRunner', () => {
   });
 });
 
-describe('sonarScope', () => {
-  test('scans the main branch when neither a branch nor a pull request is given', () => {
-    expect(sonarScope({})).toStrictEqual({ args: [], issuesQuery: '' });
-  });
-
-  test('scopes a branch scan and its issue search to that branch', () => {
-    expect(sonarScope({ branch: 'feature/x.y_z-1' })).toStrictEqual({
-      args: ['-Dsonar.branch.name=feature/x.y_z-1'],
-      issuesQuery: '&branch=feature%2Fx.y_z-1',
+describe('sonarProject', () => {
+  test('uses the base project when neither a branch nor a pull request is given', () => {
+    expect(sonarProject('backend', {})).toStrictEqual({
+      key: 'lightproject-viteplus-backend',
+      name: 'Vite+ Monorepo - backend',
     });
   });
 
-  test('scopes a pull request scan and its issue search to that pull request', () => {
-    expect(
-      sonarScope({ pullRequest: '42', pullRequestBase: 'main', pullRequestBranch: 'ci' }),
-    ).toStrictEqual({
-      args: [
-        '-Dsonar.pullrequest.key=42',
-        '-Dsonar.pullrequest.branch=ci',
-        '-Dsonar.pullrequest.base=main',
-      ],
-      issuesQuery: '&pullRequest=42',
+  test('gives each pull request its own project', () => {
+    expect(sonarProject('backend', { pullRequest: '42' })).toStrictEqual({
+      key: 'lightproject-viteplus-backend-pr-42',
+      name: 'Vite+ Monorepo - backend (PR #42)',
+    });
+  });
+
+  test('gives each branch its own project, with slashes turned into dashes in the key', () => {
+    expect(sonarProject('backend', { branch: 'feature/x.y_z-1' })).toStrictEqual({
+      key: 'lightproject-viteplus-backend-feature-x.y_z-1',
+      name: 'Vite+ Monorepo - backend (feature/x.y_z-1)',
     });
   });
 
   test.each([
     [{ branch: 'main', pullRequest: '1' }, 'pass either branch or pullRequest, not both'],
     [{ pullRequest: 'abc' }, 'pullRequest must be a pull request number'],
-    [{ pullRequest: '1', pullRequestBase: 'main' }, 'pullRequestBranch must be a branch name'],
-    [{ pullRequest: '1', pullRequestBranch: 'ci' }, 'pullRequestBase must be a branch name'],
-    [{ pullRequestBranch: 'ci' }, 'pullRequestBranch and pullRequestBase need pullRequest'],
-    [{ branch: 'x; rm -rf /' }, 'branch must be a branch name'],
+    [{ pullRequest: '' }, 'pullRequest must be a pull request number'],
+    [{ branch: "x'; rm -rf /" }, 'branch must be a branch name'],
     [{ branch: '' }, 'branch must be a branch name'],
   ])('rejects %o', (options, message) => {
-    expect(() => sonarScope(options)).toThrow(message);
+    expect(() => sonarProject('backend', options)).toThrow(message);
   });
 });
 
-describe('buildPollScript', () => {
-  test('appends the scope to the issue search', () => {
-    expect(buildPollScript('demo', '/out', '&pullRequest=7')).toContain(
-      'componentKeys=demo&pullRequest=7&resolved=false',
+describe('buildDeleteScript', () => {
+  test('deletes every key and treats a missing project as success', () => {
+    const script = buildDeleteScript(['a-pr-1', 'b-pr-1']);
+
+    expect(script).toContain('for key in a-pr-1 b-pr-1; do');
+    expect(script).toContain('/api/projects/delete?project=$key');
+    expect(script).toContain('404) echo "not found $key" ;;');
+  });
+});
+
+describe('sonarCleanupRunner', () => {
+  test('calls a remote instance directly', () => {
+    sonarCleanupRunner(['a-pr-1'], fakeSecret, 'https://sonarcloud.io');
+
+    expect(getLastContainer().capturedExecCalls.at(-1)?.[2]).toBe(buildDeleteScript(['a-pr-1']));
+  });
+
+  test('reaches the local instance through the compose network', () => {
+    sonarCleanupRunner(['a-pr-1'], fakeSecret, 'http://sonarqube:9000', fakeSocket);
+
+    expect(getLastContainer().capturedExecCalls.at(-1)?.[2]).toContain(
+      `docker run --rm -i --network ${SONAR_LOCAL_DOCKER_NETWORK}`,
     );
   });
 });
