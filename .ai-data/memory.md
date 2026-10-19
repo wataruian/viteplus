@@ -1080,3 +1080,13 @@ AGENTS.md reflect the current state.
   cached) and before the PR comment job, and `on-push-main.yml` calls it next to `scan.yml`
   (not gating the deploy), so `main` is the baseline PRs are compared against. Issue search in the report is scoped the same way.
 - **Known gap**: the scan root has no `.git`, so PR analysis can't compute changed lines.
+
+## 2026-10-19: Stale Self-Hosted Runner Cleanup
+
+- **Why runners were left behind**: the `myoung34/github-runner` entrypoint deregisters on SIGTERM
+  (fetches a token, runs `config.sh remove`), but Docker's default 10 s stop timeout could SIGKILL
+  it first, and `docker rm -f`/Docker Desktop quit/crashes never run the deregistration step.
+- **Fix**: `stop_grace_period: 60s` on `github-runner` (and `docker stop --time 60` in
+  `scale-runners`); new `.mise/tasks/prune-runners` deletes offline, idle `GH_RUNNER_NAME-*` runners
+  with no local container. `runner-scaler` runs it every tick, so leftovers are cleared on the next
+  `docker compose up`. Run it by hand (`--dry-run` first) right after a `down`.

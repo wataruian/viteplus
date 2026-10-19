@@ -84,7 +84,7 @@ for containerId in $(compose ps -q github-runner); do
   fi
 
   echo "Removing idle runner: ${runnerName} (${containerId})"
-  docker stop "${containerId}" >/dev/null
+  docker stop --time 60 "${containerId}" >/dev/null
   docker rm "${containerId}" >/dev/null
   removed=$((removed + 1))
 done

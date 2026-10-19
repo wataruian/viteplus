@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+#MISE description="Deregister offline self-hosted runners (named GH_RUNNER_NAME-*) whose container no longer exists"
+#USAGE flag "--dry-run" help="List the runners that would be removed without removing them"
+
+set -o errexit
+set -o pipefail
+
+: "${GH_RUNNER_TOKEN:?GH_RUNNER_TOKEN is required (needs administration:write)}"
+: "${GH_REPO_URL:?GH_REPO_URL is required}"
+: "${GH_RUNNER_NAME:?GH_RUNNER_NAME is required}"
+
+dryRun="${usage_dry_run:-false}"
+repoSlug="${GH_REPO_URL#https://github.com/}"
+
+api() {
+  local method="${1}" path="${2}"
+  curl -sSf -X "${method}" \
+    -H "Authorization: Bearer ${GH_RUNNER_TOKEN}" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/${repoSlug}/${path}"
+}
+
+liveNames=""
+if docker info >/dev/null 2>&1; then
+  for containerId in $(docker ps -aq --filter "label=com.docker.compose.service=github-runner"); do
+    hostname="$(docker inspect --format '{{.Config.Hostname}}' "${containerId}")"
+    liveNames+="${GH_RUNNER_NAME}-${hostname}"$'\n'
+  done
+fi
+
+stale="$(
+  api GET "actions/runners?per_page=100" | jq -r --arg prefix "${GH_RUNNER_NAME}-" --arg live "${liveNames}" '
+    ($live | split("\n")) as $liveNames
+    | .runners[]
+    | select(.status == "offline" and (.busy | not) and (.name | startswith($prefix)))
+    | select(.name as $name | $liveNames | index($name) | not)
+    | "\(.id) \(.name)"'
+)"
+
+if [[ -z "${stale}" ]]; then
+  echo "No stale runners"
+  exit 0
+fi
+
+while read -r runnerId runnerName; do
+  if [[ "${dryRun}" == "true" ]]; then
+    echo "Would remove stale runner: ${runnerName} (${runnerId})"
+    continue
+  fi
+  echo "Removing stale runner: ${runnerName} (${runnerId})"
+  api DELETE "actions/runners/${runnerId}" >/dev/null
+done <<<"${stale}"
