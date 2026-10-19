@@ -1090,3 +1090,12 @@ AGENTS.md reflect the current state.
   `scale-runners`); new `.mise/tasks/prune-runners` deletes offline, idle `GH_RUNNER_NAME-*` runners
   with no local container. `runner-scaler` runs it every tick, so leftovers are cleared on the next
   `docker compose up`. Run it by hand (`--dry-run` first) right after a `down`.
+
+## 2026-10-19: Sonar Gates the Develop Deploy
+
+- **`on-push-main.yml`**: `develop` now `needs: [scan, sonar]`, so a failed `main` Sonar scan
+  (including a failed quality gate) blocks the deploy. Before this, Sonar ran next to `scan.yml`
+  without gating it. When no workspace is affected, the inner Sonar matrix is skipped and the
+  caller job still succeeds, so the deploy goes ahead.
+- **`resolve-workspaces`**: `^\dagger/` became `^dagger/`. `\d` is not a valid escape in grep's
+  BRE/ERE; it matched a literal `d`, but newer GNU grep warns "stray \ before d".

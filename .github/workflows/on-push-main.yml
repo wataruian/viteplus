@@ -22,7 +22,7 @@ jobs:
 
   develop:
     name: Develop
-    needs: scan
+    needs: [scan, sonar]
     concurrency:
       group: deploy-develop
       cancel-in-progress: true
