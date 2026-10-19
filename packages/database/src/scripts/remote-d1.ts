@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 const packageDir = globalThis.process.cwd();
 const rootEnvFile = path.resolve(packageDir, '../../.env');
+const wranglerConfig = path.join(packageDir, 'wrangler.toml');
 
 const wranglerSchema = z.object({
   env: z
@@ -35,7 +36,16 @@ interface RemoteD1 {
   token: string;
 }
 
-const resolveRemoteD1 = (env: NodeJS.ProcessEnv = globalThis.process.env): RemoteD1 => {
+interface RemoteD1Files {
+  envFile?: string;
+  wranglerConfig?: string;
+}
+
+const resolveRemoteD1 = (
+  env: NodeJS.ProcessEnv = globalThis.process.env,
+  files: RemoteD1Files = {},
+): RemoteD1 => {
+  const { envFile = rootEnvFile, wranglerConfig: configPath = wranglerConfig } = files;
   const cloudflareEnv = env['CLOUDFLARE_ENV'];
   if (cloudflareEnv === undefined || cloudflareEnv === '') {
     throw new Error(
@@ -43,9 +53,7 @@ const resolveRemoteD1 = (env: NodeJS.ProcessEnv = globalThis.process.env): Remot
     );
   }
 
-  const wrangler = wranglerSchema.parse(
-    parseToml(fs.readFileSync(path.join(packageDir, 'wrangler.toml'), 'utf8')),
-  );
+  const wrangler = wranglerSchema.parse(parseToml(fs.readFileSync(configPath, 'utf8')));
   const environments = new Map(Object.entries(wrangler.env ?? {}));
   const environment = environments.get(cloudflareEnv);
   if (!environment) {
@@ -61,7 +69,7 @@ const resolveRemoteD1 = (env: NodeJS.ProcessEnv = globalThis.process.env): Remot
     );
   }
 
-  const dotenv = fs.existsSync(rootEnvFile) ? parseEnv(fs.readFileSync(rootEnvFile, 'utf8')) : {};
+  const dotenv = fs.existsSync(envFile) ? parseEnv(fs.readFileSync(envFile, 'utf8')) : {};
   const credential = (key: string) => {
     const value = env[key] ?? dotenv[key];
     if (value === undefined || value === '') {
@@ -112,6 +120,7 @@ export {
   rawResponseSchema,
   resolveRemoteD1,
   rootEnvFile,
+  wranglerConfig,
   wranglerSchema,
 };
-export type { RemoteD1 };
+export type { RemoteD1, RemoteD1Files };

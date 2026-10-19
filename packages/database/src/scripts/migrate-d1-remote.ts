@@ -16,10 +16,7 @@ const joinStatements = (statements: readonly string[]) =>
 const migrateRemoteD1 = async () => {
   const remote = resolveRemoteD1();
   const query = createRemoteD1Query(remote);
-  const db = drizzle(async (sql, params, method) => {
-    const rows = await query(sql, params);
-    return { rows: method === 'get' ? rows[0] : rows };
-  });
+  const db = drizzle(async (sql, params) => ({ rows: await query(sql, params) }));
 
   globalThis.process.stdout.write(
     `Migrating remote D1 "${remote.databaseName}" (${remote.cloudflareEnv})…\n`,
