@@ -1,6 +1,8 @@
+import path from 'node:path';
+
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const isIntegration = globalThis.process.env['TEST_SUITE'] === 'integration';
 
@@ -11,6 +13,8 @@ export { d1Config, isIntegration, postgresConfig };
 
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
+  const rootDir = path.resolve(dir, '../..');
+  const commonTaskProps = getCommonTaskProps(rootDir, mode);
 
   return mergeConfig(
     getPackageViteConfig({
@@ -45,7 +49,9 @@ export default defineConfig(({ mode }): UserConfig => {
             command: `drizzle-kit studio ${postgresConfig}`,
           },
           'test:integration': {
-            cache: false,
+            cache: {
+              ...commonTaskProps.cache,
+            },
             command: 'TEST_SUITE=integration vp test',
           },
         },
