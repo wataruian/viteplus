@@ -43,7 +43,7 @@ export default defineConfig(({ mode }): UserConfig => {
           'test:integration': {
             cache: {
               ...commonTaskProps.cache,
-              env: [...(commonTaskProps.cache.env ?? []), 'DATABASE_DIALECT'],
+              env: [...(commonTaskProps.cache.env ?? []), 'DATABASE_DIALECT', 'POSTGRES_*'],
             },
             command: `DATABASE_DIALECT=\${DATABASE_DIALECT:-postgres} TEST_SUITE=integration vp test`,
           },

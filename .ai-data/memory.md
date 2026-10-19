@@ -1148,3 +1148,10 @@ AGENTS.md reflect the current state.
   parsing rows with `drizzle-orm/zod`. A first attempt with two hand-written repository files was
   dropped as duplication; Prisma was weighed and rejected (schema and migrations stay per
   provider, plus codegen and a heavier Workers bundle).
+- **Gotcha: cached Vite Tasks strip unlisted env vars.** A task with `cache` gets only its
+  `cache.env`/`cache.untrackedEnv` vars (plus defaults such as `PATH`, `CI`, `GITHUB_*`,
+  `*_TOKEN`). The root `getEnvArray` builds `cache.env` from the root `.env` keys, and Dagger
+  excludes `.env`, so in CI the list is only `VITE_*`: `test:integration` lost Dagger's
+  `POSTGRES_URL` and hit `localhost:5432` (ECONNREFUSED). Fixed by listing `DATABASE_DIALECT` and
+  `POSTGRES_*` on the task; verified with `dagger call test-integration` (fails without, passes
+  with). Any cached task that needs a CI-provided variable must list it the same way.
