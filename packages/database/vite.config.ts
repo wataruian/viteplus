@@ -52,7 +52,13 @@ export default defineConfig(({ mode }): UserConfig => {
       test: {
         coverage: {
           enabled: !isIntegration,
-          exclude: ['**/index.ts', 'src/scripts/**', 'src/types.ts'],
+          exclude: [
+            '**/index.ts',
+            'src/repositories/table.ts',
+            'src/repositories/types.ts',
+            'src/scripts/**',
+            'src/types.ts',
+          ],
         },
         ...(isIntegration
           ? {
