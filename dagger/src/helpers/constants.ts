@@ -113,15 +113,32 @@ const DAGGER_WORKSPACE = 'dagger';
 
 const DEPLOY_ENVIRONMENTS: ReadonlySet<string> = new Set(['develop', 'staging', 'production']);
 
-const MIGRATION_TASKS: Record<string, string | undefined> = {
-  d1: 'db:migrate:d1:remote',
-  postgres: 'db:migrate:postgres',
-};
+const DATABASE_DIALECTS: ReadonlySet<string> = new Set(['d1', 'postgres']);
 
-const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
+interface WorkspaceImage {
+  command: string[];
+  files: string[];
+}
+
+interface WorkspaceEntry {
+  image?: WorkspaceImage;
+  isFrontend: boolean;
+  path: string;
+}
+
+const DEFAULT_WORKSPACE_IMAGE: WorkspaceImage = { command: ['node', 'dist/index.mjs'], files: [] };
+
+const WORKSPACES: Record<string, WorkspaceEntry | undefined> = {
   '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
-  '@lightproject/database': { isFrontend: false, path: 'packages/database' },
+  '@lightproject/database': {
+    image: {
+      command: ['node', 'dist/scripts/migrate.mjs'],
+      files: ['migrations', 'wrangler.toml'],
+    },
+    isFrontend: false,
+    path: 'packages/database',
+  },
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
   '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
   '@lightproject/library': { isFrontend: false, path: 'packages/library' },
@@ -143,10 +160,11 @@ export {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
   DAGGER_WORKSPACE,
+  DATABASE_DIALECTS,
+  DEFAULT_WORKSPACE_IMAGE,
   DEPLOY_ENVIRONMENTS,
   DOCKER_CLI_IMAGE,
   MANIFEST_FILES,
-  MIGRATION_TASKS,
   NGINX_IMAGE,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
@@ -172,3 +190,4 @@ export {
   WORKSPACE_NAMES,
   WORKSPACES,
 };
+export type { WorkspaceEntry, WorkspaceImage };

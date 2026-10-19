@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 
-const packageDir = path.resolve(import.meta.dirname, '..');
+const packageDir = globalThis.process.cwd();
 const drizzleKit = path.join(packageDir, 'node_modules/.bin/drizzle-kit');
 const configs = ['drizzle.postgres.config.ts', 'drizzle.d1.config.ts'];
 

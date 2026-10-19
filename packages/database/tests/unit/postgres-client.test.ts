@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
-import { createPostgresDatabase } from '../../src/postgres';
+import { createPostgresDatabase } from '../../src/postgres/client';
 
 afterEach(() => {
   vi.restoreAllMocks();

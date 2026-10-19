@@ -67,53 +67,7 @@ jobs:
       - name: Set up Dagger
         uses: ./.github/actions/setup-dagger
 
-      - name: Migrate
-        if: inputs.workspace == 'database'
-        shell: bash
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          MIGRATION_TARGET: ${{ vars.DATABASE_MIGRATION_TARGET }}
-        run: |
-          args=()
-          case "${MIGRATION_TARGET}" in
-            '')
-              echo "::warning::DATABASE_MIGRATION_TARGET is not set for ${ENVIRONMENT}; skipping migrations."
-              exit 0
-              ;;
-            d1)
-              if [[ -z "${CLOUDFLARE_API_TOKEN}" || -z "${CLOUDFLARE_ACCOUNT_ID}" ]]; then
-                echo "::error::The d1 migration target needs the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets."
-                exit 1
-              fi
-              args+=(
-                --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN
-                --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID
-              )
-              ;;
-            postgres)
-              if [[ -z "${POSTGRES_URL}" ]]; then
-                echo "::error::The postgres migration target needs the POSTGRES_URL secret for ${ENVIRONMENT}."
-                exit 1
-              fi
-              args+=(--postgres-url=env:POSTGRES_URL)
-              ;;
-            *)
-              echo "::error::DATABASE_MIGRATION_TARGET must be 'd1' or 'postgres', got '${MIGRATION_TARGET}'."
-              exit 1
-              ;;
-          esac
-
-          echo "Migrating: ${WORKSPACE} (${ENVIRONMENT}, ${MIGRATION_TARGET})"
-          mise run dagger migrate \
-            --workspace="@lightproject/${WORKSPACE}" \
-            --environment="${ENVIRONMENT}" \
-            --target="${MIGRATION_TARGET}" \
-            "${args[@]}"
-
       - name: Build and publish
-        if: inputs.workspace != 'database'
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
@@ -149,6 +103,51 @@ jobs:
             --workspace="@lightproject/${WORKSPACE}" \
             --address="${REGISTRY_ADDRESS}/${WORKSPACE}" \
             --tag="${tag}" \
+            "${args[@]}"
+
+      - name: Migrate
+        if: inputs.workspace == 'database' && vars.DATABASE_MIGRATION_ENABLED == 'true'
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          DATABASE_DIALECT: ${{ vars.DATABASE_DIALECT }}
+        run: |
+          args=()
+          case "${DATABASE_DIALECT}" in
+            '')
+              echo "::error::DATABASE_MIGRATION_ENABLED is true but DATABASE_DIALECT is not set for ${ENVIRONMENT}."
+              exit 1
+              ;;
+            d1)
+              if [[ -z "${CLOUDFLARE_API_TOKEN}" || -z "${CLOUDFLARE_ACCOUNT_ID}" ]]; then
+                echo "::error::The d1 dialect needs the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets."
+                exit 1
+              fi
+              args+=(
+                --cloudflare-api-token=env:CLOUDFLARE_API_TOKEN
+                --cloudflare-account-id=env:CLOUDFLARE_ACCOUNT_ID
+              )
+              ;;
+            postgres)
+              if [[ -z "${POSTGRES_URL}" ]]; then
+                echo "::error::The postgres dialect needs the POSTGRES_URL secret for ${ENVIRONMENT}."
+                exit 1
+              fi
+              args+=(--postgres-url=env:POSTGRES_URL)
+              ;;
+            *)
+              echo "::error::DATABASE_DIALECT must be 'd1' or 'postgres', got '${DATABASE_DIALECT}'."
+              exit 1
+              ;;
+          esac
+
+          echo "Migrating: ${WORKSPACE} (${ENVIRONMENT}, ${DATABASE_DIALECT})"
+          mise run dagger migrate \
+            --workspace="@lightproject/${WORKSPACE}" \
+            --environment="${ENVIRONMENT}" \
+            --dialect="${DATABASE_DIALECT}" \
             "${args[@]}"
 
       - name: Deploy

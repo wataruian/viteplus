@@ -32,11 +32,12 @@ The repository is structured as a **Vite+-powered Monorepo**.
 - **Drizzle ORM 1.0 RC** (`drizzle-orm`/`drizzle-kit` pinned to `1.0.0-rc.4`), chosen over Prisma
   (codegen, heavy on Workers, D1 adapter in Preview) and Kysely (no schema/migration tooling).
   Comparison: `.ai-data/artifacts/orm-comparison.md` (local scratch).
-- **Two dialects, both first-class**: Postgres (`@lightproject/database/postgres`, postgres.js;
+- **Two dialects, both first-class**: Postgres (`src/postgres`, postgres.js;
   Node directly, Cloudflare through a Hyperdrive binding + `nodejs_compat`) and D1
-  (`@lightproject/database/d1`). Separate subpaths, so a D1-only Worker never bundles postgres.js.
+  (`src/d1`). Neither is a public subpath: `package.json` exports only `.`, and
+  `createDatabase` loads the selected dialect with a dynamic `import()`.
 - **Postgres is the source of truth; D1 is generated.** Only `src/postgres/schema.ts` is edited.
-  `vp run db:generate [name]` (`scripts/generate.ts` → `scripts/render-d1-schema.ts`, then `scripts/migrations.ts`) reads the
+  `vp run db:generate [name]` (`src/scripts/generate.ts` → `src/scripts/render-d1-schema.ts`, then `src/scripts/migrations.ts`) reads the
   exported Postgres tables at runtime (`getTableConfig`) and writes `src/d1/schema.ts` with the
   same column names and TypeScript types (`uuid`→`text`, `jsonb`→JSON `text` reusing the Postgres
   column's `$type`, `timestamptz`→integer epoch ms, `boolean`→integer boolean), keeps
@@ -46,6 +47,24 @@ The repository is structured as a **Vite+-powered Monorepo**.
   arrays, `numeric`, `serial`, `date`, bigint mode `bigint`, string timestamps, SQL defaults,
   functions not from `src/shared`, non-btree/unnamed/expression indexes, composite or circular
   foreign keys. Row types (`User`, `WorkerJob`, …) are exported once from the root entry.
+- **Apps query through one import**: `db.createDatabase(env)` (`import { db } from
+  '@lightproject/database'`; namespaced like the other packages' roots) picks the
+  dialect from `env.DATABASE_DIALECT` (else `process.env`) and returns repositories
+  (`db.users.findById/findByEmail/insert/update/remove`, `db.workerJobs.findById/insert`) with the
+  same row types on both. D1 needs the binding as `env.DB`; Postgres uses
+  `env.HYPERDRIVE.connectionString`, then `env.POSTGRES_URL`, then the `POSTGRES_*` env. Each
+  dialect is loaded with a dynamic `import()`, so the root entry imports neither driver.
+- **Repository layering (no casts)**: Drizzle's builders can't be typed over a generic table, so
+  each dialect has one table-generic `crud.ts` (`findBy`/`insert`/`update`/`remove`) that widens
+  the table to `PgTable`/`SQLiteTable` and parses rows with the `drizzle-orm/zod` schemas
+  generated from it (a zod parse per row). Domain repositories are written once in
+  `src/repositories/create.ts` on top of it; a new table is one `crud(table)` line per dialect in
+  `src/{postgres,d1}/repositories.ts`. Custom queries (joins, job claiming) go in the
+  `Database` interface with a per-dialect implementation. The shared contract tests exercise the
+  repositories on both dialects: unit tests on a local D1 and on PGlite (in-memory Postgres via
+  `drizzle-orm/pglite`; `createPostgresCrud` takes any `PgAsyncDatabase`), `test:integration` on
+  the real server. Prisma was reconsidered (2026-10-19) and rejected: it removes
+  only the query layer, while schema and migrations stay per provider.
 - **Guards that keep them in step** (unit tests): `schema-parity` discovers every exported table
   and compares columns, nullability, defaults, keys, foreign keys, indexes, checks and (at type
   level, for all tables at once) the inferred row types; `migrations-drift` runs
@@ -57,9 +76,10 @@ The repository is structured as a **Vite+-powered Monorepo**.
 - **Migrations**: `vp run db:generate` writes `migrations/{postgres,d1}/<timestamp>_<name>/`
   (Drizzle 1.0 folder format — not the flat files `wrangler d1 migrations` reads, so D1 is
   migrated by Drizzle's migrator too, tracked in `__drizzle_migrations` on both). Apply:
-  `db:migrate:postgres` (drizzle-kit, `POSTGRES_URL`), `db:migrate:d1:local` (local, shared state),
-  `CLOUDFLARE_ENV=<develop|staging|production> vp run db:migrate:d1:remote`
-  (`scripts/migrate-d1-remote.ts`: Drizzle's sqlite-proxy migrator over Cloudflare's D1 `/raw`
+  `vp run db:migrate`, which picks the migrator from `DATABASE_DIALECT`: `postgres` →
+  drizzle-orm's postgres-js migrator (`POSTGRES_URL` or the `POSTGRES_*` parts); `d1` → local D1
+  (shared state), or with `CLOUDFLARE_ENV=<develop|staging|production>` the remote D1
+  (`src/scripts/migrate-d1-remote.ts`: Drizzle's sqlite-proxy migrator over Cloudflare's D1 `/raw`
   HTTP endpoint; the database is the `DB` binding of `[env.<CLOUDFLARE_ENV>]` in
   `packages/database/wrangler.toml`, credentials `CLOUDFLARE_ACCOUNT_ID`/`CLOUDFLARE_API_TOKEN`
   from the environment or root `.env`). Not `drizzle-kit migrate` with `d1-http`: in 1.0.0-rc.4
@@ -69,7 +89,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
   behind when files are deleted), which break every migrate run the same way.
 - **One database for all apps**, one migration history: apps bind the same D1 (`database_id`
   from `packages/database/wrangler.toml` locally, `lightproject-local`) and run `wrangler dev`
-  with `--persist-to ../../.wrangler/state`, the folder `db:migrate:d1:local` migrates. Apps never keep
+  with `--persist-to ../../.wrangler/state`, the folder `DATABASE_DIALECT=d1 vp run db:migrate` migrates. Apps never keep
   their own tables or migrations.
 - **Lint note**: `sort-keys` orders column objects alphabetically, so generated tables list
   columns alphabetically (cosmetic).

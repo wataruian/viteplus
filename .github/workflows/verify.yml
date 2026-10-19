@@ -148,7 +148,7 @@ jobs:
       workspace: backend
 
   frontend:
-    needs: [setup, dagger, common, design-system, backend]
+    needs: [setup, dagger, common, database, design-system, backend]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -157,6 +157,8 @@ jobs:
       needs.dagger.result != 'cancelled' &&
       needs.common.result != 'failure' &&
       needs.common.result != 'cancelled' &&
+      needs.database.result != 'failure' &&
+      needs.database.result != 'cancelled' &&
       needs.design-system.result != 'failure' &&
       needs.design-system.result != 'cancelled' &&
       needs.backend.result != 'failure' &&

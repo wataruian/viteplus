@@ -5,7 +5,7 @@ import { parseEnv } from 'node:util';
 import { parse as parseToml } from 'smol-toml';
 import { z } from 'zod';
 
-const packageDir = path.resolve(import.meta.dirname, '..');
+const packageDir = globalThis.process.cwd();
 const rootEnvFile = path.resolve(packageDir, '../../.env');
 
 const wranglerSchema = z.object({
@@ -39,7 +39,7 @@ const resolveRemoteD1 = (env: NodeJS.ProcessEnv = globalThis.process.env): Remot
   const cloudflareEnv = env['CLOUDFLARE_ENV'];
   if (cloudflareEnv === undefined || cloudflareEnv === '') {
     throw new Error(
-      'Set CLOUDFLARE_ENV to the D1 environment to migrate, e.g. `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote`',
+      'Set CLOUDFLARE_ENV to the D1 environment to migrate, e.g. `DATABASE_DIALECT=d1 CLOUDFLARE_ENV=develop vp run db:migrate`',
     );
   }
 

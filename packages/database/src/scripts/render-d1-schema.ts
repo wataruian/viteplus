@@ -1,7 +1,7 @@
 import { SQL, getColumns, is } from 'drizzle-orm';
 import { PgColumn, PgDialect, PgTable, getTableConfig } from 'drizzle-orm/pg-core';
 
-import * as shared from '../src/shared';
+import * as shared from '../shared';
 
 class UnsupportedSchemaError extends Error {
   public constructor(where: string, reason: string) {

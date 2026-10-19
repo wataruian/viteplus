@@ -2,11 +2,11 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import * as postgres from '../src/postgres/schema';
+import * as postgres from '../postgres/schema';
 import { generateMigrations, migrationNameArgument, packageDir } from './migrations';
 import { renderD1Schema } from './render-d1-schema';
 
-const target = path.resolve(import.meta.dirname, '../src/d1/schema.ts');
+const target = path.resolve(packageDir, 'src/d1/schema.ts');
 const vp = path.join(packageDir, 'node_modules/.bin/vp');
 
 const syncD1Schema = () => {

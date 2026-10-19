@@ -25,36 +25,30 @@
         "require": "./dist/index.cjs"
       }
     ],
-    "./*": [
-      {
-        "typescript": "./src/*/index.ts"
-      },
-      {
-        "types": {
-          "import": "./dist/*/index.d.mts",
-          "require": "./dist/*/index.d.cts"
-        }
-      },
-      {
-        "import": "./dist/*/index.mjs",
-        "require": "./dist/*/index.cjs"
-      }
-    ],
     "./package.json": "./package.json"
   },
   "dependencies": {
     "@cloudflare/workers-types": "catalog:",
     "drizzle-orm": "catalog:",
-    "postgres": "catalog:"
+    "postgres": "catalog:",
+    "smol-toml": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "drizzle-kit": "catalog:",
-    "smol-toml": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:",
-    "wrangler": "catalog:",
-    "zod": "catalog:"
+    "wrangler": "catalog:"
+  },
+  "peerDependencies": {
+    "wrangler": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "wrangler": {
+      "optional": true
+    }
   }
 }

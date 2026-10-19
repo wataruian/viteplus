@@ -1044,8 +1044,8 @@ AGENTS.md reflect the current state.
 ## 2026-10-18: Remote D1 Migrations (`packages/database`)
 
 - **Decision (user)**: `packages/database/wrangler.toml` holds the local `DB` binding plus
-  `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for
-  `db:migrate:d1:remote`. develop temporarily uses the throwaway `lightproject-migrate-test`.
+  `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for remote D1
+  migrations (now `DATABASE_DIALECT=d1 vp run db:migrate`). develop temporarily uses the throwaway `lightproject-migrate-test`.
 - **Verified facts**: wrangler's published `.d.ts` imports packages it doesn't ship, so
   `unstable_readConfig` is error-typed under lint; `wrangler.toml` is read with `smol-toml` + zod
   instead. drizzle-kit `migrate` with `d1-http` (1.0.0-rc.4, latest) fails on every run after
@@ -1059,9 +1059,10 @@ AGENTS.md reflect the current state.
 
 - **Decision (user)**: verify `database` on PRs (incl. integration tests), apply migrations at
   deploy, and run `test:integration` in `vp run ready` / `mise run check`. Where deploys migrate
-  is chosen per environment by the GitHub variable `DATABASE_MIGRATION_TARGET` (`d1`/`postgres`).
+  is chosen per environment by a GitHub variable (`d1`/`postgres`; now `DATABASE_DIALECT`, see
+  "migrator image" below).
 - Dagger: `testIntegration` binds a throwaway Postgres (`withPostgres`, also used by `ready`);
-  `migrate(workspace, environment, target, …secrets)` maps target → task via `MIGRATION_TASKS`.
+  `migrate(workspace, environment, …secrets)` applied the migrations (now runs the migrator image).
   The deploy `database` job gates `backend`.
 - **Verified**: `test-integration` passed in Dagger; `migrate --target=postgres` applied the
   migrations to the local compose Postgres via `host.docker.internal`; `--target=d1` with dummy
@@ -1116,3 +1117,34 @@ AGENTS.md reflect the current state.
   `lightproject-viteplus-<ws>-pr-<n>` for every workspace under `apps/` and `packages/` plus `dagger`
   (404 is fine). It checks out the base branch (trusted code) and shares the `pr-<n>` concurrency group,
   so closing cancels a running scan. Needs a `SONAR_TOKEN` with Administer permission.
+
+## 2026-10-19 — `packages/database` migrator image
+
+- **Container migrations**: `packages/database` now publishes an image (Dagger `vp`) whose command is
+  `node dist/scripts/migrate.mjs`. `scripts/` moved into `src/scripts/` so the regular `vp pack`
+  builds it (no TS runner at runtime); `src/scripts/migrate.ts` loads each migrator via dynamic
+  `import()`, so the image never needs wrangler (only the local D1 migrator uses it).
+  `smol-toml`, `zod` moved to `dependencies` (drizzle-kit stays dev-only: running it needed the
+  `.ts` drizzle config in the image; the orm migrator reuses the same migrations table, verified
+  against a drizzle-kit-migrated database); `wrangler` is also an optional
+  `peerDependency`, because tsdown bundles devDependencies (it pulled wrangler/workerd into `dist`,
+  101 MB, and broke local D1 migrations). Built scripts resolve paths from `process.cwd()` (the package dir),
+  not `import.meta.dirname`, and avoid top-level await (the CJS build rejects it). `vp run
+  db:migrate` runs the same built file, so `vp run build` must run first.
+- **Dagger `vp` images bake Node in**: the vite-plus image's `node` is a shim that downloads Node
+  into `VITE_PLUS_JS_RUNTIME_PATH`, a cache volume that published images do not carry, so offline
+  containers failed to start (verified: `docker run --network none … node --version` errors).
+  `vp()` now drops that mount and runs `node --version` to bake the runtime into the image.
+- **CI**: deploy always publishes `<REGISTRY_ADDRESS>/database`; Dagger `migrate` runs that image
+  and only runs when the GitHub variable `DATABASE_MIGRATION_ENABLED=true`.
+- **One `db:migrate`, chosen by `DATABASE_DIALECT`** (`d1`/`postgres`; also the GitHub variable
+  and Dagger `migrate --dialect`): `postgres` → drizzle-orm's postgres-js migrator.
+  `d1` migrates the remote D1 when `CLOUDFLARE_ENV` is set, else the local one. The integration
+  suite (`tests/integration/database.test.ts`) runs the contract against `DATABASE_DIALECT`; its
+  task defaults it to `postgres` (`${DATABASE_DIALECT:-postgres}`) and fingerprints it in the cache.
+- **Repository API**: apps call `createDatabase(env)` (one import; dialect from `DATABASE_DIALECT`)
+  and get `users`/`workerJobs` repositories. Implemented once in `src/repositories/create.ts` over
+  a table-generic `crud.ts` per dialect, cast-free by widening to `PgTable`/`SQLiteTable` and
+  parsing rows with `drizzle-orm/zod`. A first attempt with two hand-written repository files was
+  dropped as duplication; Prisma was weighed and rejected (schema and migrations stay per
+  provider, plus codegen and a heavier Workers bundle).

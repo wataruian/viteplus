@@ -140,6 +140,8 @@ class FakeContainer extends Container {
   public readonly capturedEnvVariables = new Map<string, string>();
   public readonly capturedCachePaths: string[] = [];
   public readonly capturedDirectoryPaths: string[] = [];
+  public readonly capturedFilePaths: string[] = [];
+  public readonly capturedRemovedMounts: string[] = [];
   public readonly capturedExecCalls: string[][] = [];
   public readonly capturedPublishedRefs: string[] = [];
   public readonly capturedUsers: string[] = [];
@@ -178,10 +180,18 @@ class FakeContainer extends Container {
   };
 
   public override withFile = (
-    _path: string,
+    path: string,
     _source: DaggerModule.File,
     _opts?: DaggerModule.ContainerWithFileOpts,
-  ): this => this;
+  ): this => {
+    this.capturedFilePaths.push(path);
+    return this;
+  };
+
+  public override withoutMount = (path: string): this => {
+    this.capturedRemovedMounts.push(path);
+    return this;
+  };
 
   public override withNewFile = (
     path: string,

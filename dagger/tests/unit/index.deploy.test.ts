@@ -1,7 +1,7 @@
 import { Secret, Socket } from '@dagger.io/dagger';
 import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
-import { MIGRATION_TASKS } from '../../src/helpers/constants';
+import { VITE_PLUS_JS_RUNTIME_PATH } from '../../src/helpers/constants';
 import { asFakeContainer, getLastContainer, resetLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 import { seedMountFiles } from './helpers/fixtures';
@@ -70,6 +70,36 @@ describe('vp', () => {
     expect(fake.capturedDirectoryPaths).not.toContain('/app/packages/common/dist');
     expect(fake.capturedWorkdir).toBe('/app/apps/backend');
     expect(fake.capturedDefaultArgs).toStrictEqual(['node', 'dist/index.mjs']);
+    expect(fake.capturedFilePaths).toStrictEqual([]);
+  });
+
+  test('bakes the JS runtime into the image instead of leaving it on the cache volume', async () => {
+    seedMountFiles();
+    world.dirs.set('/app', []);
+
+    const fake = asFakeContainer(await createMonorepo().vp('@lightproject/backend'));
+
+    expect(fake.capturedRemovedMounts).toStrictEqual([VITE_PLUS_JS_RUNTIME_PATH]);
+    expect(fake.capturedExecCalls.at(-1)).toStrictEqual(['node', '--version']);
+  });
+
+  test("adds the workspace's image files and command (database: the migrator)", async () => {
+    seedMountFiles();
+    world.dirs.set('/app', []);
+    world.dirs.set('packages/database', [
+      'drizzle.postgres.config.ts',
+      'migrations/',
+      'src/',
+      'wrangler.toml',
+    ]);
+
+    const fake = asFakeContainer(await createMonorepo().vp('@lightproject/database'));
+
+    expect(fake.capturedDirectoryPaths).toContain('/app/packages/database/migrations');
+    expect(fake.capturedDirectoryPaths).not.toContain('/app/packages/database/src');
+    expect(fake.capturedFilePaths).toStrictEqual(['/app/packages/database/wrangler.toml']);
+    expect(fake.capturedWorkdir).toBe('/app/packages/database');
+    expect(fake.capturedDefaultArgs).toStrictEqual(['node', 'dist/scripts/migrate.mjs']);
   });
 
   test('copies nothing when the root has neither apps nor packages', async () => {
@@ -233,54 +263,55 @@ describe('wrangler', () => {
   );
 });
 
+const seedDatabaseImage = (): void => {
+  seedMountFiles();
+  world.dirs.set('/app', []);
+  world.dirs.set('packages/database', ['migrations/', 'src/']);
+};
+
 describe('migrate', () => {
-  test.each([
-    ['d1', 'db:migrate:d1:remote'],
-    ['postgres', 'db:migrate:postgres'],
-  ])('runs the %s migration task for the target environment', async (target, task) => {
-    seedMountFiles();
-    world.execStdout = 'migrated';
+  test.each(['d1', 'postgres'])(
+    'runs the %s migrator image for the target environment',
+    async (dialect) => {
+      seedDatabaseImage();
+      world.execStdout = 'migrated';
 
-    const stdout = await createMonorepo().migrate(
-      '@lightproject/database',
-      'production',
-      target,
-      fakeSecret,
-      fakeSecret,
-      fakeSecret,
-    );
+      const stdout = await createMonorepo().migrate(
+        '@lightproject/database',
+        'production',
+        dialect,
+        fakeSecret,
+        fakeSecret,
+        fakeSecret,
+      );
 
-    expect(stdout).toBe('migrated');
-    const container = getLastContainer();
-    expect(container.capturedWorkdir).toBe('/app/packages/database');
-    expect(container.capturedEnvVariables.get('CLOUDFLARE_ENV')).toBe('production');
-    expect(container.capturedEnvVariables.get('HTTPS_PROXY')).toBe('');
-    expect(container.capturedEnvVariables.get('MIGRATE_REQUESTED_AT')).toMatch(
-      /^\d{4}-\d{2}-\d{2}T/u,
-    );
-    expect(container.capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
-      '--filter',
-      '@lightproject/database',
-      task,
-    ]);
-  });
+      expect(stdout).toBe('migrated');
+      const container = getLastContainer();
+      expect(container.capturedWorkdir).toBe('/app/packages/database');
+      expect(container.capturedEnvVariables.get('DATABASE_DIALECT')).toBe(dialect);
+      expect(container.capturedEnvVariables.get('CLOUDFLARE_ENV')).toBe('production');
+      expect(container.capturedEnvVariables.get('HTTPS_PROXY')).toBe('');
+      expect(container.capturedEnvVariables.get('MIGRATE_REQUESTED_AT')).toMatch(
+        /^\d{4}-\d{2}-\d{2}T/u,
+      );
+      expect(container.capturedExecCalls.at(-1)).toStrictEqual([
+        'node',
+        'dist/scripts/migrate.mjs',
+      ]);
+    },
+  );
 
   test.each([
     ['d1', [fakeSecret, fakeSecret, undefined]],
     ['postgres', [undefined, undefined, fakeSecret]],
-  ] as const)('runs %s with only its own credentials', async (target, secrets) => {
-    seedMountFiles();
+  ] as const)('runs %s with only its own credentials', async (dialect, secrets) => {
+    seedDatabaseImage();
 
-    await createMonorepo().migrate('@lightproject/database', 'develop', target, ...secrets);
+    await createMonorepo().migrate('@lightproject/database', 'develop', dialect, ...secrets);
 
-    expect(getLastContainer().capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
-      '--filter',
-      '@lightproject/database',
-      MIGRATION_TASKS[target],
+    expect(getLastContainer().capturedExecCalls.at(-1)).toStrictEqual([
+      'node',
+      'dist/scripts/migrate.mjs',
     ]);
   });
 
@@ -291,12 +322,12 @@ describe('migrate', () => {
       'cloudflareApiToken and cloudflareAccountId are required',
     ],
     ['postgres', [fakeSecret, fakeSecret, undefined], 'postgresUrl is required'],
-    ['sqlite', [fakeSecret, fakeSecret, fakeSecret], "Invalid migration target 'sqlite'"],
+    ['sqlite', [fakeSecret, fakeSecret, fakeSecret], "Invalid database dialect 'sqlite'"],
   ] as const)(
-    'rejects target %s with missing inputs before mounting',
-    async (target, secrets, message) => {
+    'rejects dialect %s with missing inputs before mounting',
+    async (dialect, secrets, message) => {
       await expect(
-        createMonorepo().migrate('@lightproject/database', 'develop', target, ...secrets),
+        createMonorepo().migrate('@lightproject/database', 'develop', dialect, ...secrets),
       ).rejects.toThrow(message);
       expect(() => getLastContainer()).toThrow('no fake container has been created yet');
     },

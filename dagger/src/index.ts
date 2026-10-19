@@ -21,8 +21,8 @@ import {
 import {
   BUILD_ARTIFACT_KEEP,
   DAGGER_WORKSPACE,
+  DATABASE_DIALECTS,
   DOCKER_CLI_IMAGE,
-  MIGRATION_TASKS,
   NGINX_IMAGE,
   ROOT_FILES,
   SEMGREP_EXCLUSIONS,
@@ -31,6 +31,7 @@ import {
   SONAR_LOCAL_HOST_URL,
   SONAR_WORKING_DIRECTORY,
   SOURCE_IGNORE,
+  VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_USER,
 } from './helpers/constants';
 import {
@@ -43,6 +44,7 @@ import {
   withPostgres,
   withoutProxy,
   workerVarArgs,
+  workspaceImage,
   workspacePath,
 } from './helpers/container';
 import { attachSonarRow, coverageRow, e2eRow, semgrepRow } from './helpers/report';
@@ -553,10 +555,25 @@ export class Monorepo {
     }
 
     const workspaceDir = workspacePath(workspace);
+    const { command, files } = workspaceImage(workspace);
+
+    const sourceEntries =
+      files.length > 0 ? await this.source.directory(workspaceDir).entries() : [];
+    for (const name of files) {
+      const target = `/app/${workspaceDir}/${name}`;
+      const sourcePath = `${workspaceDir}/${name}`;
+      container = sourceEntries.includes(`${name}/`)
+        ? container.withDirectory(target, this.source.directory(sourcePath), {
+            owner: VITE_PLUS_USER,
+          })
+        : container.withFile(target, this.source.file(sourcePath), { owner: VITE_PLUS_USER });
+    }
 
     return withBuildEnv(container, workspace, buildEnv)
       .withWorkdir(`/app/${workspaceDir}`)
-      .withDefaultArgs(['node', 'dist/index.mjs']);
+      .withoutMount(VITE_PLUS_JS_RUNTIME_PATH)
+      .withExec(['node', '--version'])
+      .withDefaultArgs(command);
   }
 
   @func()
@@ -652,33 +669,32 @@ export class Monorepo {
   public async migrate(
     workspace: string,
     environment: string,
-    target: string,
+    dialect: string,
     cloudflareApiToken?: Secret,
     cloudflareAccountId?: Secret,
     postgresUrl?: Secret,
   ): Promise<string> {
     assertDeployEnvironment(environment);
 
-    const task = MIGRATION_TASKS[target];
-    if (task === undefined) {
+    if (!DATABASE_DIALECTS.has(dialect)) {
       throw new Error(
-        `Invalid migration target '${target}' (expected one of: ${Object.keys(MIGRATION_TASKS).join(', ')})`,
+        `Invalid database dialect '${dialect}' (expected one of: ${[...DATABASE_DIALECTS].join(', ')})`,
       );
     }
     if (
-      target === 'd1' &&
+      dialect === 'd1' &&
       (cloudflareApiToken === undefined || cloudflareAccountId === undefined)
     ) {
-      throw new Error('cloudflareApiToken and cloudflareAccountId are required for the d1 target');
+      throw new Error('cloudflareApiToken and cloudflareAccountId are required for the d1 dialect');
     }
-    if (target === 'postgres' && postgresUrl === undefined) {
-      throw new Error('postgresUrl is required for the postgres target');
+    if (dialect === 'postgres' && postgresUrl === undefined) {
+      throw new Error('postgresUrl is required for the postgres dialect');
     }
 
-    const container = await mountFiles(this.source, workspace);
+    const container = await this.vp(workspace);
 
     let migrateContainer = withoutProxy(container)
-      .withWorkdir(`/app/${workspacePath(workspace)}`)
+      .withEnvVariable('DATABASE_DIALECT', dialect)
       .withEnvVariable('CLOUDFLARE_ENV', environment)
       .withEnvVariable('MIGRATE_REQUESTED_AT', new Date().toISOString());
 
@@ -691,6 +707,6 @@ export class Monorepo {
       migrateContainer = migrateContainer.withSecretVariable('POSTGRES_URL', postgresUrl);
     }
 
-    return migrateContainer.withExec(['vp', 'run', '--filter', workspace, task]).stdout();
+    return migrateContainer.withExec(workspaceImage(workspace).command).stdout();
   }
 }

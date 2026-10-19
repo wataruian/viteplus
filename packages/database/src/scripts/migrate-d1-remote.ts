@@ -5,7 +5,7 @@ import { migrate } from 'drizzle-orm/sqlite-proxy/migrator';
 
 import { createRemoteD1Query, resolveRemoteD1 } from './remote-d1';
 
-const migrationsFolder = path.resolve(import.meta.dirname, '../migrations/d1');
+const migrationsFolder = path.resolve('migrations/d1');
 
 const joinStatements = (statements: readonly string[]) =>
   statements
@@ -39,13 +39,5 @@ const migrateRemoteD1 = async () => {
     `Remote D1 "${remote.databaseName}" is up to date (${applied.length} migration(s) applied)\n`,
   );
 };
-
-try {
-  await migrateRemoteD1();
-} catch (error) {
-  const reason = error instanceof Error ? error.message : JSON.stringify(error);
-  globalThis.process.stderr.write(`db:migrate:d1:remote failed: ${reason}\n`);
-  globalThis.process.exit(1);
-}
 
 export { joinStatements, migrateRemoteD1, migrationsFolder };

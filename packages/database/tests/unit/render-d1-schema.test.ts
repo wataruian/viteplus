@@ -27,8 +27,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { describe, expect, test } from 'vite-plus/test';
 
-import { UnsupportedSchemaError, renderD1Schema } from '../../scripts/render-d1-schema';
 import * as postgres from '../../src/postgres/schema';
+import { UnsupportedSchemaError, renderD1Schema } from '../../src/scripts/render-d1-schema';
 import { jobStatuses, newId, now } from '../../src/shared';
 
 describe('renderD1Schema', () => {

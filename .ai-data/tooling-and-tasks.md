@@ -28,10 +28,14 @@ Available automation commands:
   (formatted/linted) and write both migrations.
   `name` (e.g. `add_sample`: lowercase, digits, `_`/`-`) names both migration folders
   `<timestamp>_<name>`; without it drizzle-kit picks random words.
-- `vp run db:migrate:postgres` / `vp run db:migrate:d1:local`: apply locally (D1 into the shared
-  `.wrangler/state` that apps' `wrangler dev --persist-to ../../.wrangler/state` reads).
-- `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote`: apply to the remote D1 of that `[env.*]` in
+- `DATABASE_DIALECT=postgres|d1 vp run db:migrate`: one task for every target, running the built
+  `dist/scripts/migrate.mjs` (from `src/scripts/migrate.ts`; run `vp run build` first, the
+  migrator image runs the same file). `postgres` → `POSTGRES_URL`/`POSTGRES_*`; `d1` → the local D1
+  in the shared `.wrangler/state` that apps' `wrangler dev --persist-to ../../.wrangler/state`
+  reads, or with `CLOUDFLARE_ENV=develop|staging|production` that remote D1 in
   `packages/database/wrangler.toml` (credentials from the root `.env`; see architecture).
+- `vp run test:integration` runs the database contract against `DATABASE_DIALECT` (default
+  `postgres`, needs the compose Postgres; `d1` uses a throwaway local D1).
 - `vp run db:check` (drizzle-kit migration consistency), `vp run db:studio` (Postgres).
   Studio's UI is the public site `https://local.drizzle.studio` talking to `localhost:4983`, which
   browsers treat as local-network access: use Chrome (allow "Local network access" when asked).
