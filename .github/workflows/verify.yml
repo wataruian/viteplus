@@ -98,21 +98,6 @@ jobs:
     with:
       workspace: common
 
-  database:
-    needs: [setup, dagger]
-    if: >-
-      !cancelled() &&
-      needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'database') &&
-      needs.dagger.result != 'failure' &&
-      needs.dagger.result != 'cancelled'
-    permissions:
-      contents: read
-    uses: ./.github/workflows/verify-workspace.yml
-    secrets: inherit
-    with:
-      workspace: database
-
   design-system:
     needs: [setup, dagger]
     if: >-
@@ -128,8 +113,23 @@ jobs:
     with:
       workspace: design-system
 
+  database:
+    needs: [setup, dagger]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'database') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: database
+
   backend:
-    needs: [setup, dagger, common]
+    needs: [setup, dagger, common, database]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -137,7 +137,9 @@ jobs:
       needs.dagger.result != 'failure' &&
       needs.dagger.result != 'cancelled' &&
       needs.common.result != 'failure' &&
-      needs.common.result != 'cancelled'
+      needs.common.result != 'cancelled' &&
+      needs.database.result != 'failure' &&
+      needs.database.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml

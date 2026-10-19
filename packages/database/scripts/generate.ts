@@ -3,16 +3,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import * as postgres from '../src/postgres/schema';
-import { generateMigrations, migrationNameArgument } from './migrations';
+import { generateMigrations, migrationNameArgument, packageDir } from './migrations';
 import { renderD1Schema } from './render-d1-schema';
 
 const target = path.resolve(import.meta.dirname, '../src/d1/schema.ts');
+const vp = path.join(packageDir, 'node_modules/.bin/vp');
 
 const syncD1Schema = () => {
   const before = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : '';
   fs.writeFileSync(target, renderD1Schema(postgres));
   try {
-    execFileSync('vp', ['check', '--fix', target], { encoding: 'utf8', stdio: 'pipe' });
+    execFileSync(vp, ['check', '--fix', target], { encoding: 'utf8', stdio: 'pipe' });
   } catch (error) {
     const output =
       error instanceof Error && 'stdout' in error && 'stderr' in error
@@ -39,4 +40,4 @@ try {
   globalThis.process.exit(1);
 }
 
-export { syncD1Schema, target };
+export { syncD1Schema, target, vp };
