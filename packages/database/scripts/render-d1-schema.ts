@@ -39,8 +39,10 @@ const columnName = (column: PgColumn | IndexColumn) => {
 const sortedList = (values: Set<string>) =>
   [...values].toSorted((a, b) => a.localeCompare(b)).join(', ');
 
-const quote = (value: string) =>
-  `'${value.replaceAll('\\', String.raw`\\`).replaceAll("'", String.raw`\'`)}'`;
+const quote = (value: string) => {
+  const escaped = value.replaceAll('\\', String.raw`\\`).replaceAll("'", String.raw`\'`);
+  return `'${escaped}'`;
+};
 
 const sharedReference = (value: object, imports: Imports, where: string, what: string) => {
   const name = sharedNames.get(value);
@@ -62,10 +64,16 @@ const sqlText = (fragment: SQL, where: string) => {
   return sql;
 };
 
-const enumOption = (column: PgColumn, imports: Imports, where: string) =>
-  column.enumValues === undefined
-    ? ''
-    : `, { enum: ${sharedNames.get(column.enumValues) === undefined ? `[${column.enumValues.map((value) => quote(value)).join(', ')}]` : sharedReference(column.enumValues, imports, where, 'enum values')} }`;
+const enumOption = (column: PgColumn, imports: Imports, where: string) => {
+  if (column.enumValues === undefined) {
+    return '';
+  }
+  const values =
+    sharedNames.get(column.enumValues) === undefined
+      ? `[${column.enumValues.map((value) => quote(value)).join(', ')}]`
+      : sharedReference(column.enumValues, imports, where, 'enum values');
+  return `, { enum: ${values} }`;
+};
 
 const unsupportedTypes: Partial<Record<string, string>> = {
   PgBigInt64: "bigint mode 'bigint' has no D1 equivalent; use { mode: 'number' }",
@@ -251,7 +259,8 @@ const renderExtras = (
   const checks = config.checks.map(({ name, value }) => {
     imports.builders.add('check');
     imports.sql = true;
-    return `check(${quote(name)}, sql.raw(${quote(sqlText(value, `${tableExport} check ${name}`))}))`;
+    const expression = sqlText(value, `${tableExport} check ${name}`);
+    return `check(${quote(name)}, sql.raw(${quote(expression)}))`;
   });
   const indexes = config.indexes.map(({ config: index }) =>
     renderIndex(index, tableExport, columnRef, imports),
@@ -295,18 +304,22 @@ const renderTable = (
   );
   const columns = Object.entries(getColumns(table))
     .toSorted(([a], [b]) => a.localeCompare(b))
-    .map(
-      ([key, column]) =>
-        `    ${key}: ${renderColumn(column, tableExport, key, references.get(column) ?? '', imports)},`,
-    );
+    .map(([key, column]) => {
+      const rendered = renderColumn(
+        column,
+        tableExport,
+        key,
+        references.get(column) ?? '',
+        imports,
+      );
+      return `    ${key}: ${rendered},`;
+    });
   const extras = renderExtras(config, tableExport, columnRef, imports);
 
   imports.builders.add('sqliteTable');
   const body = `{\n${columns.join('\n')}\n  }`;
-  const extraConfig =
-    extras.length === 0
-      ? ''
-      : `,\n  (table) => [\n${extras.map((extra) => `    ${extra},`).join('\n')}\n  ]`;
+  const extraLines = extras.map((extra) => `    ${extra},`).join('\n');
+  const extraConfig = extras.length === 0 ? '' : `,\n  (table) => [\n${extraLines}\n  ]`;
   return `const ${tableExport} = sqliteTable(\n  ${quote(config.name)},\n  ${body}${extraConfig},\n);`;
 };
 

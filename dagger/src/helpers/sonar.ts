@@ -27,7 +27,66 @@ const LOCAL_ORCHESTRATOR_HOME = '/root';
 
 const REPORT_FILE_NAMES = ['sonar-quality-gate.json', 'sonar-issues.json'];
 
-const buildPollScript = (projectKey: string, outputDir: string): string =>
+const SONAR_REF_PATTERN = /^[\w./-]+$/u;
+const SONAR_PULL_REQUEST_PATTERN = /^\d+$/u;
+
+interface SonarScopeOptions {
+  branch?: string;
+  pullRequest?: string;
+  pullRequestBranch?: string;
+  pullRequestBase?: string;
+}
+
+interface SonarScope {
+  args: string[];
+  issuesQuery: string;
+}
+
+const requireRef = (name: string, value: string | undefined): string => {
+  if (value === undefined || !SONAR_REF_PATTERN.test(value)) {
+    throw new Error(`${name} must be a branch name made of letters, digits, '.', '_', '-' or '/'`);
+  }
+  return value;
+};
+
+const sonarScope = ({
+  branch,
+  pullRequest,
+  pullRequestBranch,
+  pullRequestBase,
+}: SonarScopeOptions): SonarScope => {
+  if (pullRequest !== undefined) {
+    if (branch !== undefined) {
+      throw new Error('pass either branch or pullRequest, not both');
+    }
+    if (!SONAR_PULL_REQUEST_PATTERN.test(pullRequest)) {
+      throw new Error('pullRequest must be a pull request number');
+    }
+    const head = requireRef('pullRequestBranch', pullRequestBranch);
+    const base = requireRef('pullRequestBase', pullRequestBase);
+    return {
+      args: [
+        `-Dsonar.pullrequest.key=${pullRequest}`,
+        `-Dsonar.pullrequest.branch=${head}`,
+        `-Dsonar.pullrequest.base=${base}`,
+      ],
+      issuesQuery: `&pullRequest=${pullRequest}`,
+    };
+  }
+  if (pullRequestBranch !== undefined || pullRequestBase !== undefined) {
+    throw new Error('pullRequestBranch and pullRequestBase need pullRequest');
+  }
+  if (branch === undefined) {
+    return { args: [], issuesQuery: '' };
+  }
+  const name = requireRef('branch', branch);
+  return {
+    args: [`-Dsonar.branch.name=${name}`],
+    issuesQuery: `&branch=${encodeURIComponent(name)}`,
+  };
+};
+
+const buildPollScript = (projectKey: string, outputDir: string, issuesQuery = ''): string =>
   [
     'set -eu',
     'task_status=""',
@@ -46,7 +105,7 @@ const buildPollScript = (projectKey: string, outputDir: string): string =>
     'if [ -n "$analysis_id" ]; then',
     `  curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/qualitygates/project_status?analysisId=\${analysis_id}" > ${outputDir}/sonar-quality-gate.json`,
     'fi',
-    `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}&resolved=false&ps=50" > ${outputDir}/sonar-issues.json`,
+    `curl -s -u "\${SONAR_TOKEN}:" "\${SONAR_HOST_URL}/api/issues/search?componentKeys=${projectKey}${issuesQuery}&resolved=false&ps=50" > ${outputDir}/sonar-issues.json`,
   ].join('\n');
 
 const attachReportFiles = async (
@@ -82,6 +141,7 @@ const pollQualityGate = (
   hostUrl: string,
   projectKey: string,
   ceTaskId: string,
+  issuesQuery = '',
 ): Container =>
   dag
     .container()
@@ -89,7 +149,7 @@ const pollQualityGate = (
     .withSecretVariable('SONAR_TOKEN', sonarToken)
     .withEnvVariable('SONAR_HOST_URL', hostUrl)
     .withEnvVariable('CE_TASK_ID', ceTaskId)
-    .withExec(['sh', '-c', buildPollScript(projectKey, POLL_CONTAINER_HOME)]);
+    .withExec(['sh', '-c', buildPollScript(projectKey, POLL_CONTAINER_HOME, issuesQuery)]);
 
 const localSonarRunner = (
   dockerSocket: Socket,
@@ -98,8 +158,9 @@ const localSonarRunner = (
   hostUrl: string,
   sonarArgs: string,
   projectKey: string,
+  issuesQuery = '',
 ): SonarRunResult => {
-  const pollScript = buildPollScript(projectKey, POLL_CONTAINER_HOME);
+  const pollScript = buildPollScript(projectKey, POLL_CONTAINER_HOME, issuesQuery);
 
   const orchestrationScript = [
     'set -eu',
@@ -167,10 +228,14 @@ export {
   LOCAL_ORCHESTRATOR_HOME,
   POLL_CONTAINER_HOME,
   REPORT_FILE_NAMES,
+  SONAR_PULL_REQUEST_PATTERN,
+  SONAR_REF_PATTERN,
   attachReportFiles,
   buildPollScript,
   localSonarRunner,
   pollQualityGate,
   remoteSonarRunner,
+  requireRef,
+  sonarScope,
 };
-export type { SonarRunResult };
+export type { SonarRunResult, SonarScope, SonarScopeOptions };
