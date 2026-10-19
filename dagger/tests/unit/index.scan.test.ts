@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, test } from 'vite-plus/test';
 
 import { SONAR_WORKING_DIRECTORY } from '../../src/helpers/constants';
 import { LOCAL_ORCHESTRATOR_HOME, POLL_CONTAINER_HOME } from '../../src/helpers/sonar';
-import { resetLastContainer } from './helpers/dagger-fakes';
+import { getLastContainer, resetLastContainer } from './helpers/dagger-fakes';
 import { resetDaggerWorld, world } from './helpers/dagger-world';
 import { seedMountFiles } from './helpers/fixtures';
 import { createMonorepo } from './helpers/monorepo';
@@ -188,6 +188,33 @@ describe('sonar', () => {
     await expect(result.file('sonar.row.md').contents()).resolves.toBe(
       '| backend | _no report (scan failed or skipped)_ | | | | |\n',
     );
+  });
+
+  test('passes the pull request scope to the scanner', async () => {
+    seedMountFiles();
+    world.execExitCode = 0;
+    world.files.set('/usr/src/sonar.exit-code', '0');
+
+    await createMonorepo().sonar(
+      '@lightproject/backend',
+      fakeSecret,
+      undefined,
+      'https://sonarcloud.io',
+      undefined,
+      '42',
+      'ci',
+      'main',
+    );
+
+    expect(getLastContainer().capturedExecCalls.at(-1)?.[2]).toContain(
+      '-Dsonar.pullrequest.key=42 -Dsonar.pullrequest.branch=ci -Dsonar.pullrequest.base=main',
+    );
+  });
+
+  test('rejects an unsafe branch name before scanning', async () => {
+    await expect(
+      createMonorepo().sonar('@lightproject/backend', fakeSecret, fakeSocket, undefined, 'a b'),
+    ).rejects.toThrow('branch must be a branch name');
   });
 
   test('runs the local scanner for the dagger workspace, attaching coverage from dagger', async () => {

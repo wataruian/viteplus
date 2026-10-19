@@ -1,0 +1,130 @@
+name: 'Sonar'
+
+on:
+  workflow_call:
+    inputs:
+      workspace:
+        description: 'Workspace (defaults to the workspaces affected by the triggering push/pull_request)'
+        required: false
+        type: string
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: [self-hosted, linux, arm64, dagger]
+    timeout-minutes: 5
+    outputs:
+      targets: ${{ steps.targets.outputs.targets }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          setup-mise: 'false'
+
+      - name: Resolve workspaces
+        id: workspaces
+        uses: ./.github/actions/resolve-workspaces
+        with:
+          workspace-input: ${{ inputs.workspace }}
+          all-workspaces: 'design-system frontend backend common database library'
+
+      - name: Build scan targets
+        id: targets
+        shell: bash
+        env:
+          WORKSPACES: ${{ steps.workspaces.outputs.workspace_list }}
+          RUN_DAGGER: ${{ steps.workspaces.outputs.run-dagger-verify }}
+        run: |
+          targets="[]"
+          for workspace in ${WORKSPACES}; do
+            targets="$(jq -c --arg w "${workspace}" '. + [{workspace: $w, id: "@lightproject/\($w)"}]' <<< "${targets}")"
+          done
+          if [[ "${RUN_DAGGER}" == "true" ]]; then
+            targets="$(jq -c '. + [{workspace: "dagger", id: "dagger"}]' <<< "${targets}")"
+          fi
+          echo "targets=${targets}" >> "${GITHUB_OUTPUT}"
+
+  sonar:
+    name: Sonar ${{ matrix.workspace }}
+    needs: setup
+    if: needs.setup.outputs.targets != '[]'
+    runs-on: [self-hosted, linux, arm64, dagger]
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.setup.outputs.targets) }}
+    env:
+      _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
+      WORKSPACE: ${{ matrix.workspace }}
+      WORKSPACE_ID: ${{ matrix.id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up toolchain
+        uses: ./.github/actions/setup-toolchain
+        with:
+          setup-vp: 'false'
+
+      - name: Set up Dagger
+        uses: ./.github/actions/setup-dagger
+
+      - name: SonarQube
+        shell: bash
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          USE_REMOTE_SONAR: ${{ vars.USE_REMOTE_SONAR || 'false' }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_REF: ${{ github.head_ref }}
+          PR_BASE_REF: ${{ github.base_ref }}
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          args=(--sonar-token=env:SONAR_TOKEN)
+          if [[ -n "${PR_NUMBER}" ]]; then
+            args+=(--pull-request="${PR_NUMBER}" --pull-request-branch="${PR_HEAD_REF}" --pull-request-base="${PR_BASE_REF}")
+          else
+            args+=(--branch="${BRANCH_NAME}")
+          fi
+          if [[ -n "${SONAR_HOST_URL}" && "${USE_REMOTE_SONAR}" == "true" ]]; then
+            args+=(--sonar-host-url="${SONAR_HOST_URL}")
+          else
+            args+=(--docker-socket="${DOCKER_SOCKET:-"/var/run/docker.sock"}")
+          fi
+          mise run dagger sonar --workspace="${WORKSPACE_ID}" --export "${args[@]}"
+
+      - name: Upload SonarQube report
+        if: '!cancelled()'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sonar-${{ matrix.workspace }}
+          path: |
+            tmp/artifacts/${{ matrix.workspace }}/sonar-quality-gate.json
+            tmp/artifacts/${{ matrix.workspace }}/sonar-issues.json
+            tmp/artifacts/${{ matrix.workspace }}/sonar.row.md
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Summarize SonarQube report
+        if: '!cancelled()'
+        shell: bash
+        run: |
+          row="tmp/artifacts/${WORKSPACE}/sonar.row.md"
+          {
+            echo "### SonarQube report (${GITHUB_REF_NAME})"
+            echo
+            echo "| Workspace | Quality Gate | New Coverage | New Violations | Failed Conditions | Issues |"
+            echo "|---|---|---|---|---|---|"
+            if [[ -f "${row}" ]]; then
+              cat "${row}"
+            else
+              echo "| ${WORKSPACE} | _no report (scan failed or skipped)_ | | | | |"
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"

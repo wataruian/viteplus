@@ -1066,3 +1066,17 @@ AGENTS.md reflect the current state.
 - **Verified**: `test-integration` passed in Dagger; `migrate --target=postgres` applied the
   migrations to the local compose Postgres via `host.docker.internal`; `--target=d1` with dummy
   credentials reached Cloudflare and was rejected (no remote change).
+
+## 2026-10-19: Sonar Branch and Pull Request Analysis
+
+- **Community branch plugin** (`mc1arke/sonarqube-with-community-branch-plugin:26.5.0.122743-community`)
+  replaces `sonarqube:26.9.0.129388-community`. The Community Build rejects `sonar.branch.name` /
+  `sonar.pullrequest.*`, so before this every scan overwrote one analysis per project and the UI
+  showed whichever PR ran last. The plugin's newest release is 26.5, so SonarQube was downgraded,
+  which meant recreating the `sonarqube-data` volume and generating a new `SONAR_TOKEN`.
+- **Every CI scan is scoped and goes through `sonar.yml`**: a matrix over the affected workspaces
+  that passes the PR number/head/base on `pull_request` and `--branch=<ref_name>` otherwise. It moved
+  out of `verify-workspace.yml`: `verify.yml` calls it after all verify jobs (so `testUnit` is
+  cached) and before the PR comment job, and `on-push-main.yml` calls it next to `scan.yml`
+  (not gating the deploy), so `main` is the baseline PRs are compared against. Issue search in the report is scoped the same way.
+- **Known gap**: the scan root has no `.git`, so PR analysis can't compute changed lines.

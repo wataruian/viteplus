@@ -168,9 +168,20 @@ jobs:
     with:
       workspace: frontend
 
+  sonar:
+    name: Sonar
+    needs: [setup, common, database, design-system, library, backend, frontend, dagger]
+    if: "!cancelled() && needs.setup.result == 'success'"
+    permissions:
+      contents: read
+    uses: ./.github/workflows/sonar.yml
+    secrets: inherit
+    with:
+      workspace: ${{ inputs.workspace }}
+
   artifacts:
     name: Publish artifacts
-    needs: [setup, common, database, design-system, library, backend, frontend, dagger]
+    needs: [setup, common, database, design-system, library, backend, frontend, dagger, sonar]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&

@@ -158,7 +158,7 @@ services:
       retries: 10
 
   sonarqube:
-    image: sonarqube:26.9.0.129388-community
+    image: mc1arke/sonarqube-with-community-branch-plugin:26.5.0.122743-community
     container_name: sonarqube
     restart: unless-stopped
     ports:

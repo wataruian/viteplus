@@ -13,6 +13,13 @@ jobs:
       security-events: write
     uses: ./.github/workflows/scan.yml
 
+  sonar:
+    name: Sonar
+    permissions:
+      contents: read
+    uses: ./.github/workflows/sonar.yml
+    secrets: inherit
+
   develop:
     name: Develop
     needs: scan

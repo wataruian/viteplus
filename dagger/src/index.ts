@@ -53,6 +53,7 @@ import {
   localSonarRunner,
   pollQualityGate,
   remoteSonarRunner,
+  sonarScope,
 } from './helpers/sonar';
 
 @object()
@@ -350,7 +351,12 @@ export class Monorepo {
     sonarToken: Secret,
     dockerSocket?: Socket,
     sonarHostUrl?: string,
+    branch?: string,
+    pullRequest?: string,
+    pullRequestBranch?: string,
+    pullRequestBase?: string,
   ): Promise<Directory> {
+    const scope = sonarScope({ branch, pullRequest, pullRequestBase, pullRequestBranch });
     const isDagger = workspace === DAGGER_WORKSPACE;
     const workspaceDir = isDagger ? 'dagger' : workspacePath(workspace);
     const shortName = isDagger ? DAGGER_WORKSPACE : shortWorkspaceName(workspaceDir);
@@ -389,6 +395,7 @@ export class Monorepo {
       `-Dsonar.javascript.lcov.reportPaths=${workspaceDir}/coverage/lcov.info`,
       '-Dsonar.qualitygate.wait=true',
       `-Dsonar.working.directory=${SONAR_WORKING_DIRECTORY}`,
+      ...scope.args,
     ].join(' ');
 
     const {
@@ -396,7 +403,15 @@ export class Monorepo {
       reportTaskPath,
       exitCodePath,
     } = useLocalNetwork && dockerSocket !== undefined
-      ? localSonarRunner(dockerSocket, scanRoot, sonarToken, hostUrl, sonarArgs, projectKey)
+      ? localSonarRunner(
+          dockerSocket,
+          scanRoot,
+          sonarToken,
+          hostUrl,
+          sonarArgs,
+          projectKey,
+          scope.issuesQuery,
+        )
       : remoteSonarRunner(scanRoot, sonarToken, hostUrl, sonarArgs);
 
     const [stdout, exitCodeText] = await Promise.all([
@@ -428,7 +443,13 @@ export class Monorepo {
         : /^ceTaskId=(?<id>.+)$/mu.exec(reportTaskContents)?.groups?.id;
 
     if (ceTaskId !== undefined) {
-      const pollContainer = pollQualityGate(sonarToken, hostUrl, projectKey, ceTaskId);
+      const pollContainer = pollQualityGate(
+        sonarToken,
+        hostUrl,
+        projectKey,
+        ceTaskId,
+        scope.issuesQuery,
+      );
       result = await attachReportFiles(pollContainer, POLL_CONTAINER_HOME, result);
     }
 
