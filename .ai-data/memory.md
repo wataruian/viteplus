@@ -1093,7 +1093,8 @@ AGENTS.md reflect the current state.
 
 ## 2026-10-19: Sonar Gates the Develop Deploy
 
-- **`on-push-main.yml`**: `develop` now `needs: [scan, sonar]`, so a failed `main` Sonar scan
+- **`on-push-main.yml`**: the jobs now run in sequence, `scan` → `sonar` → `develop` (`sonar` needs
+  `scan`; `develop` needs both), so a failed `main` Sonar scan
   (including a failed quality gate) blocks the deploy. Before this, Sonar ran next to `scan.yml`
   without gating it. When no workspace is affected, the inner Sonar matrix is skipped and the
   caller job still succeeds, so the deploy goes ahead.

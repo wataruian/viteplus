@@ -15,6 +15,7 @@ jobs:
 
   sonar:
     name: Sonar
+    needs: scan
     permissions:
       contents: read
     uses: ./.github/workflows/sonar.yml
