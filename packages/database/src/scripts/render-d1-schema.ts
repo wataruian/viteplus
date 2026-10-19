@@ -337,7 +337,10 @@ const orderByDependencies = (tables: readonly (readonly [string, PgTable])[]) =>
     ]),
   );
   const ordered: string[] = [];
-  const visit = (name: string, path: readonly string[]) => {
+  const visit = (
+    [name, ownTargets]: readonly [string, ReadonlySet<string>],
+    path: readonly string[],
+  ) => {
     if (ordered.includes(name)) {
       return;
     }
@@ -347,15 +350,16 @@ const orderByDependencies = (tables: readonly (readonly [string, PgTable])[]) =>
         'circular foreign keys between tables are not supported',
       );
     }
-    for (const target of [...(dependencies.get(name) ?? [])].toSorted((a, b) =>
-      a.localeCompare(b),
-    )) {
+    const targets = [...dependencies]
+      .filter(([target]) => ownTargets.has(target))
+      .toSorted(([a], [b]) => a.localeCompare(b));
+    for (const target of targets) {
       visit(target, [...path, name]);
     }
     ordered.push(name);
   };
-  for (const [name] of tables) {
-    visit(name, []);
+  for (const entry of dependencies) {
+    visit(entry, []);
   }
   return ordered.flatMap((name) => tables.filter(([candidate]) => candidate === name));
 };
