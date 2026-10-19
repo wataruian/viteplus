@@ -1,8 +1,13 @@
 import { CacheSharingMode, type Container, type Directory, dag } from '@dagger.io/dagger';
 
 import {
+  DEPLOY_ENVIRONMENTS,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
+  POSTGRES_IMAGE,
+  POSTGRES_SERVICE_CREDENTIAL,
+  POSTGRES_SERVICE_HOST,
+  POSTGRES_SERVICE_PORT,
   TASK_CACHE_PATH,
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_PACKAGE_MANAGER_PATH,
@@ -116,6 +121,39 @@ const workerVarArgs = (workspaceName: string, workerVars?: string[]): string[] =
   });
 };
 
+const assertDeployEnvironment = (environment: string): void => {
+  if (!DEPLOY_ENVIRONMENTS.has(environment)) {
+    throw new Error(
+      `Invalid environment '${environment}' (expected one of: ${[...DEPLOY_ENVIRONMENTS].join(', ')})`,
+    );
+  }
+};
+
+const withoutProxy = (container: Container): Container =>
+  container
+    .withEnvVariable('HTTP_PROXY', '')
+    .withEnvVariable('HTTPS_PROXY', '')
+    .withEnvVariable('http_proxy', '')
+    .withEnvVariable('https_proxy', '');
+
+const withPostgres = (container: Container): Container => {
+  const postgres = dag
+    .container()
+    .from(POSTGRES_IMAGE)
+    .withEnvVariable('POSTGRES_USER', POSTGRES_SERVICE_CREDENTIAL)
+    .withEnvVariable('POSTGRES_PASSWORD', POSTGRES_SERVICE_CREDENTIAL)
+    .withEnvVariable('POSTGRES_DB', POSTGRES_SERVICE_CREDENTIAL)
+    .withExposedPort(POSTGRES_SERVICE_PORT)
+    .asService({ useEntrypoint: true });
+
+  const credential = POSTGRES_SERVICE_CREDENTIAL;
+  const url = `postgres://${credential}:${credential}@${POSTGRES_SERVICE_HOST}:${POSTGRES_SERVICE_PORT}/${credential}`;
+
+  return container
+    .withServiceBinding(POSTGRES_SERVICE_HOST, postgres)
+    .withEnvVariable('POSTGRES_URL', url);
+};
+
 const withPlaywrightChromium = (container: Container, workspaceName: string): Container =>
   container
     .withUser('root')
@@ -140,6 +178,7 @@ const withPlaywrightChromium = (container: Container, workspaceName: string): Co
 
 export {
   WORKER_VAR_KEY,
+  assertDeployEnvironment,
   installArgs,
   isFrontend,
   outputDirectory,
@@ -147,7 +186,9 @@ export {
   withBuildEnv,
   withInstallCaches,
   withPlaywrightChromium,
+  withPostgres,
   withTaskCache,
+  withoutProxy,
   workerVarArgs,
   workspace,
   workspacePath,

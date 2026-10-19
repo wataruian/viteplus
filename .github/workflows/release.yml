@@ -76,6 +76,7 @@ jobs:
             apps/backend/package.json \
             apps/frontend/package.json \
             packages/common/package.json \
+            packages/database/package.json \
             packages/design-system/package.json \
             packages/library/package.json \
             --release "${RELEASE_VERSION}" \

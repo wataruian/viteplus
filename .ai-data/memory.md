@@ -1054,3 +1054,15 @@ AGENTS.md reflect the current state.
   callback with nothing to apply, which D1 rejects as empty SQL. Trial-applied a new migration to
   the remote test DB, re-ran (no-op), then reverted it remotely (DROP COLUMN + delete row).
 - Empty migration folders (files deleted, folder kept) also break migrate; now a unit test.
+
+## 2026-10-19: `packages/database` in CI
+
+- **Decision (user)**: verify `database` on PRs (incl. integration tests), apply migrations at
+  deploy, and run `test:integration` in `vp run ready` / `mise run check`. Where deploys migrate
+  is chosen per environment by the GitHub variable `DATABASE_MIGRATION_TARGET` (`d1`/`postgres`).
+- Dagger: `testIntegration` binds a throwaway Postgres (`withPostgres`, also used by `ready`);
+  `migrate(workspace, environment, target, …secrets)` maps target → task via `MIGRATION_TASKS`.
+  The deploy `database` job gates `backend`.
+- **Verified**: `test-integration` passed in Dagger; `migrate --target=postgres` applied the
+  migrations to the local compose Postgres via `host.docker.internal`; `--target=d1` with dummy
+  credentials reached Cloudflare and was rejected (no remote change).

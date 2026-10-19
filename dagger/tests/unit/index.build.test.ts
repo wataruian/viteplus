@@ -199,3 +199,55 @@ describe('testEndToEnd', () => {
     );
   });
 });
+
+describe('testIntegration', () => {
+  test('runs test:integration against a bound throwaway Postgres', async () => {
+    seedMountFiles();
+    world.dirs.set('packages/database', ['package.json', 'tests/']);
+    world.dirs.set('packages/database/tests', ['integration/', 'unit/']);
+    world.execStdout = '5 passed';
+
+    const result = await createMonorepo().testIntegration('@lightproject/database');
+
+    const container = getLastContainer();
+    const postgres = container.capturedServiceBindings.get('postgres');
+    expect(postgres?.capturedImage).toBe('postgres:17.6-alpine');
+    expect(postgres?.capturedEnvVariables.get('POSTGRES_DB')).toBe('lightproject');
+    expect(container.capturedEnvVariables.get('POSTGRES_URL')).toBe(
+      'postgres://lightproject:lightproject@postgres:5432/lightproject',
+    );
+    expect(container.capturedExecCalls).toContainEqual([
+      'vp',
+      'run',
+      '--filter',
+      '@lightproject/database',
+      'test:integration',
+    ]);
+    await expect(result.file('test-integration.exit-code').contents()).resolves.toBe('0');
+    await expect(result.file('test-integration.output').contents()).resolves.toBe('5 passed');
+  });
+
+  test('records a failing exit code instead of throwing', async () => {
+    seedMountFiles();
+    world.dirs.set('packages/database', ['tests/']);
+    world.dirs.set('packages/database/tests', ['integration/']);
+    world.execExitCode = 1;
+
+    const result = await createMonorepo().testIntegration('@lightproject/database');
+
+    await expect(result.file('test-integration.exit-code').contents()).resolves.toBe('1');
+  });
+
+  test.each([
+    ['without a tests directory', ['package.json', 'src/']],
+    ['without tests/integration', ['package.json', 'tests/']],
+  ])('rejects a workspace %s', async (_label, entries) => {
+    seedMountFiles();
+    world.dirs.set('packages/library', entries);
+    world.dirs.set('packages/library/tests', ['unit/']);
+
+    await expect(createMonorepo().testIntegration('@lightproject/library')).rejects.toThrow(
+      'Workspace @lightproject/library has no integration tests (tests/integration)',
+    );
+  });
+});

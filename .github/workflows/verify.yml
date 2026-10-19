@@ -38,7 +38,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'design-system frontend backend common library'
+          all-workspaces: 'design-system frontend backend common database library'
 
       - name: Resolve workspaces with e2e tests
         id: e2e
@@ -98,6 +98,21 @@ jobs:
     with:
       workspace: common
 
+  database:
+    needs: [setup, dagger]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'database') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: database
+
   design-system:
     needs: [setup, dagger]
     if: >-
@@ -153,7 +168,7 @@ jobs:
 
   artifacts:
     name: Publish artifacts
-    needs: [setup, common, design-system, library, backend, frontend, dagger]
+    needs: [setup, common, database, design-system, library, backend, frontend, dagger]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&

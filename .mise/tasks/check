@@ -82,6 +82,7 @@ executeCommand vp run -r lint --fix
 executeCommand vp run -r type-check
 executeCommand vp run -r build
 executeCommand vp run -r test:unit
+executeCommand vp run -r test:integration
 executeCommand vp run -r test:e2e
 
 echo ""

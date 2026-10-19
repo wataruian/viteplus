@@ -21,8 +21,8 @@ import {
 import {
   BUILD_ARTIFACT_KEEP,
   DAGGER_WORKSPACE,
-  DEPLOY_ENVIRONMENTS,
   DOCKER_CLI_IMAGE,
+  MIGRATION_TASKS,
   NGINX_IMAGE,
   ROOT_FILES,
   SEMGREP_EXCLUSIONS,
@@ -34,11 +34,14 @@ import {
   VITE_PLUS_USER,
 } from './helpers/constants';
 import {
+  assertDeployEnvironment,
   isFrontend,
   outputDirectory,
   shortWorkspaceName,
   withBuildEnv,
   withPlaywrightChromium,
+  withPostgres,
+  withoutProxy,
   workerVarArgs,
   workspacePath,
 } from './helpers/container';
@@ -94,7 +97,7 @@ export class Monorepo {
 
   @func()
   public async ready(): Promise<Directory> {
-    const container = withInstalledRootSource(this.rootSource);
+    const container = withPostgres(withInstalledRootSource(this.rootSource));
 
     const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
 
@@ -227,6 +230,34 @@ export class Monorepo {
     }
 
     return result.withNewFile('test-unit.row.md', coverageRow(shortName, summaryJson));
+  }
+
+  @func()
+  public async testIntegration(workspace: string): Promise<Directory> {
+    const workspaceDir = workspacePath(workspace);
+    const workspaceEntries = await this.source.directory(workspaceDir).entries();
+    const testEntries = workspaceEntries.includes('tests/')
+      ? await this.source.directory(`${workspaceDir}/tests`).entries()
+      : [];
+    if (!testEntries.includes('integration/')) {
+      throw new Error(`Workspace ${workspace} has no integration tests (tests/integration)`);
+    }
+
+    const container = withPostgres(await this.build(workspace));
+    const testContainer = container.withExec(
+      ['vp', 'run', '--filter', workspace, 'test:integration'],
+      { expect: ReturnType.Any },
+    );
+
+    const [exitCode, stdout] = await Promise.all([
+      testContainer.exitCode(),
+      testContainer.stdout(),
+    ]);
+
+    return outputDirectory('test-integration', stdout).withNewFile(
+      'test-integration.exit-code',
+      `${exitCode}`,
+    );
   }
 
   @func()
@@ -557,11 +588,7 @@ export class Monorepo {
     buildEnv?: string[],
     workerVar?: string[],
   ): Promise<string> {
-    if (!DEPLOY_ENVIRONMENTS.has(environment)) {
-      throw new Error(
-        `Invalid environment '${environment}' (expected one of: ${[...DEPLOY_ENVIRONMENTS].join(', ')})`,
-      );
-    }
+    assertDeployEnvironment(environment);
 
     const varArgs = workerVarArgs(workspace, workerVar);
 
@@ -569,11 +596,7 @@ export class Monorepo {
 
     const workspaceDir = workspacePath(workspace);
 
-    const deployContainer = container
-      .withEnvVariable('HTTP_PROXY', '')
-      .withEnvVariable('HTTPS_PROXY', '')
-      .withEnvVariable('http_proxy', '')
-      .withEnvVariable('https_proxy', '')
+    const deployContainer = withoutProxy(container)
       .withWorkdir(`/app/${workspaceDir}`)
       .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken)
       .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId)
@@ -583,5 +606,51 @@ export class Monorepo {
     return withBuildEnv(deployContainer, workspace, buildEnv)
       .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy', ...varArgs])
       .stdout();
+  }
+
+  @func()
+  public async migrate(
+    workspace: string,
+    environment: string,
+    target: string,
+    cloudflareApiToken?: Secret,
+    cloudflareAccountId?: Secret,
+    postgresUrl?: Secret,
+  ): Promise<string> {
+    assertDeployEnvironment(environment);
+
+    const task = MIGRATION_TASKS[target];
+    if (task === undefined) {
+      throw new Error(
+        `Invalid migration target '${target}' (expected one of: ${Object.keys(MIGRATION_TASKS).join(', ')})`,
+      );
+    }
+    if (
+      target === 'd1' &&
+      (cloudflareApiToken === undefined || cloudflareAccountId === undefined)
+    ) {
+      throw new Error('cloudflareApiToken and cloudflareAccountId are required for the d1 target');
+    }
+    if (target === 'postgres' && postgresUrl === undefined) {
+      throw new Error('postgresUrl is required for the postgres target');
+    }
+
+    const container = await mountFiles(this.source, workspace);
+
+    let migrateContainer = withoutProxy(container)
+      .withWorkdir(`/app/${workspacePath(workspace)}`)
+      .withEnvVariable('CLOUDFLARE_ENV', environment)
+      .withEnvVariable('MIGRATE_REQUESTED_AT', new Date().toISOString());
+
+    if (cloudflareApiToken !== undefined && cloudflareAccountId !== undefined) {
+      migrateContainer = migrateContainer
+        .withSecretVariable('CLOUDFLARE_API_TOKEN', cloudflareApiToken)
+        .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId);
+    }
+    if (postgresUrl !== undefined) {
+      migrateContainer = migrateContainer.withSecretVariable('POSTGRES_URL', postgresUrl);
+    }
+
+    return migrateContainer.withExec(['vp', 'run', '--filter', workspace, task]).stdout();
   }
 }

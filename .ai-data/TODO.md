@@ -34,15 +34,14 @@
 - **`ALLOW_ALL_IPS = "true"` in every backend environment** (hardcoded in `apps/backend/wrangler.toml`)
   makes the API public; revisit (per-environment `ALLOWED_IPS`, or auth) before it serves real data.
 - **`packages/database` follow-ups** (added 2026-10-18):
-  - Not in CI yet: add `database` to `all-workspaces` in `.github/workflows/verify.yml`, and run
-    `test:integration` in Dagger with a Postgres service binding.
-  - Create the remote D1 databases per environment and Hyperdrive configs, then wire migrations
-    (`db:migrate:d1:remote`, `db:migrate:postgres`) into the deploy pipeline before app deploys.
+  - Set the `DATABASE_MIGRATION_TARGET` variable (`d1`/`postgres`; repository level, or per
+    GitHub Environment to override) and the `POSTGRES_URL` secret for `postgres`; until then
+    deploys skip migrations with a warning.
+  - Dagger `ready` fails at `test:e2e` (pre-existing): its container never installs Playwright
+    browsers (`withPlaywrightChromium`).
   - Upgrade `drizzle-orm`/`drizzle-kit` from `1.0.0-rc.4` to 1.0 GA when it ships, then check
     whether `drizzle-kit migrate` with `d1-http` can re-run (see architecture); if so,
     `scripts/migrate-d1-remote.ts` + `scripts/remote-d1.ts` can go.
-  - `packages/database/wrangler.toml`: `[env.develop]` points at the throwaway
-    `lightproject-migrate-test` D1; `staging`/`production` have no `database_id` yet.
   - The stashed `apps/workers` (`stash@{0}`) still has its own `worker_jobs` migrations and
     hand-written SQL stores: on unstash, delete `apps/workers/migrations` + `scripts/migrate.ts`,
     rewrite the Postgres/D1 stores on `@lightproject/database`, and resolve the expected conflicts

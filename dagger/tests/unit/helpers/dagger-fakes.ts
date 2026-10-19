@@ -3,7 +3,7 @@ import { vi } from 'vite-plus/test';
 
 import { type DaggerWorld, joinPath } from './dagger-world';
 
-const { CacheVolume, Client, Container, Directory, File } =
+const { CacheVolume, Client, Container, Directory, File, Service } =
   await vi.importActual<typeof DaggerModule>('@dagger.io/dagger');
 
 const tick = async (): Promise<void> => {
@@ -125,7 +125,18 @@ class FakeDirectory extends Directory {
   };
 }
 
+class FakeService extends Service {
+  public readonly container: FakeContainer;
+
+  public constructor(container: FakeContainer) {
+    super();
+    this.container = container;
+  }
+}
+
 class FakeContainer extends Container {
+  public readonly capturedServiceBindings = new Map<string, FakeContainer>();
+  public isService = false;
   public readonly capturedEnvVariables = new Map<string, string>();
   public readonly capturedCachePaths: string[] = [];
   public readonly capturedDirectoryPaths: string[] = [];
@@ -218,6 +229,19 @@ class FakeContainer extends Container {
     _opts?: DaggerModule.ContainerWithExposedPortOpts,
   ): this => this;
 
+  public override asService = (_opts?: DaggerModule.ContainerAsServiceOpts): FakeService => {
+    this.isService = true;
+    return new FakeService(this);
+  };
+
+  public override withServiceBinding = (alias: string, service: DaggerModule.Service): this => {
+    if (!(service instanceof FakeService)) {
+      throw new TypeError('expected a FakeService');
+    }
+    this.capturedServiceBindings.set(alias, service.container);
+    return this;
+  };
+
   public override withUser = (name: string): this => {
     this.capturedUsers.push(name);
     return this;
@@ -256,7 +280,7 @@ class FakeContainer extends Container {
   public override asTarball = (): FakeFile => this.file('__tarball__');
 }
 
-let lastContainer: FakeContainer | undefined = undefined;
+const containers: FakeContainer[] = [];
 
 class FakeClient extends Client {
   public readonly capturedCacheVolumeKeys: string[] = [];
@@ -278,7 +302,7 @@ class FakeClient extends Client {
 
   public override container = (): FakeContainer => {
     const container = new FakeContainer(this.world);
-    lastContainer = container;
+    containers.push(container);
     return container;
   };
 
@@ -288,14 +312,15 @@ class FakeClient extends Client {
 const createFakeDag = (world: DaggerWorld): DaggerModule.Client => new FakeClient(world);
 
 const getLastContainer = (): FakeContainer => {
-  if (!lastContainer) {
+  const container = containers.findLast(({ isService }) => !isService);
+  if (!container) {
     throw new Error('no fake container has been created yet');
   }
-  return lastContainer;
+  return container;
 };
 
 const resetLastContainer = (): void => {
-  lastContainer = undefined;
+  containers.length = 0;
 };
 
 const asFakeDirectory = (directory: DaggerModule.Directory): FakeDirectory => {
@@ -320,6 +345,7 @@ export {
   FakeContainer,
   FakeDirectory,
   FakeFile,
+  FakeService,
   getLastContainer,
   resetLastContainer,
   tick,

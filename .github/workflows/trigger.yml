@@ -19,6 +19,7 @@ on:
         default: all
         options:
           - all
+          - database
           - design-system
           - frontend
           - backend

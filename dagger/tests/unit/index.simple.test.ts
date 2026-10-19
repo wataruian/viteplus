@@ -38,7 +38,14 @@ describe('ready', () => {
 
     const result = await createMonorepo().ready();
 
-    expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', 'ready']);
+    const container = getLastContainer();
+    expect(container.capturedExecCalls).toContainEqual(['vp', 'run', 'ready']);
+    expect(container.capturedServiceBindings.get('postgres')?.capturedImage).toBe(
+      'postgres:17.6-alpine',
+    );
+    expect(container.capturedEnvVariables.get('POSTGRES_URL')).toBe(
+      'postgres://lightproject:lightproject@postgres:5432/lightproject',
+    );
     await expect(result.file('ready.output').contents()).resolves.toBe('ready output');
   });
 });

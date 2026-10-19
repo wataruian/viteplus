@@ -75,6 +75,11 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      - name: Test (integration)
+        if: hashFiles(format('*/{0}/tests/integration/**', inputs.workspace)) != ''
+        shell: bash
+        run: mise run dagger test-integration --workspace="${WORKSPACE_ID}" --export
+
       - name: Test (e2e)
         if: hashFiles(format('*/{0}/playwright.config.ts', inputs.workspace)) != ''
         shell: bash

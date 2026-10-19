@@ -13,6 +13,11 @@ const SONAR_SCANNER_IMAGE = 'sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1';
 const SONAR_SCANNER_USER = 'scanner-cli';
 const SONAR_WORKING_DIRECTORY = '/usr/src/.scannerwork';
 const CURL_IMAGE = 'curlimages/curl:8.14.1';
+const POSTGRES_IMAGE = 'postgres:17.6-alpine';
+
+const POSTGRES_SERVICE_HOST = 'postgres';
+const POSTGRES_SERVICE_PORT = 5432;
+const POSTGRES_SERVICE_CREDENTIAL = 'lightproject'; // NOSONAR
 
 const SONAR_LOCAL_HOST_URL = 'http://sonarqube:9000'; // NOSONAR
 
@@ -108,9 +113,15 @@ const DAGGER_WORKSPACE = 'dagger';
 
 const DEPLOY_ENVIRONMENTS: ReadonlySet<string> = new Set(['develop', 'staging', 'production']);
 
+const MIGRATION_TASKS: Record<string, string | undefined> = {
+  d1: 'db:migrate:d1:remote',
+  postgres: 'db:migrate:postgres',
+};
+
 const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
   '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
+  '@lightproject/database': { isFrontend: false, path: 'packages/database' },
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
   '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
   '@lightproject/library': { isFrontend: false, path: 'packages/library' },
@@ -135,9 +146,14 @@ export {
   DEPLOY_ENVIRONMENTS,
   DOCKER_CLI_IMAGE,
   MANIFEST_FILES,
+  MIGRATION_TASKS,
   NGINX_IMAGE,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
+  POSTGRES_IMAGE,
+  POSTGRES_SERVICE_CREDENTIAL,
+  POSTGRES_SERVICE_HOST,
+  POSTGRES_SERVICE_PORT,
   ROOT_FILES,
   SEMGREP_EXCLUSIONS,
   SEMGREP_IMAGE,
