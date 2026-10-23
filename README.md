@@ -151,17 +151,20 @@ We use `mise` as the primary task runner for high-level repository automation. T
 
 ### App Specific Scripts
 
-| Application                                   | Command                                              | Description                                                                                  |
-| :-------------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| **Frontend** (`/apps/frontend`)               | `vp dev`                                             | Start Vite development server.                                                               |
-|                                               | `vp build`                                           | Build production bundle.                                                                     |
-| **Backend** (`/apps/backend`)                 | `vp dev`                                             | Start Hono API.                                                                              |
-|                                               | `vp pack`                                            | Build optimized CJS/ESM library.                                                             |
-| **Common** (`/packages/common`)               | `vp pack`                                            | Build shared library modules.                                                                |
-| **Database** (`/packages/database`)           | `vp run db:generate [name]`                          | Generate the D1 schema from Postgres + both migrations (folders named `<timestamp>_<name>`). |
-|                                               | `vp run db:migrate:postgres` / `db:migrate:d1:local` | Apply them locally.                                                                          |
-|                                               | `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote` | Apply them to a remote D1.                                                                   |
-| **Design System** (`/packages/design-system`) | `vp pack`                                            | Build UI library components.                                                                 |
+| Application                                   | Command                                                                                    | Description                                                                                   |
+| :-------------------------------------------- | :----------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| **Frontend** (`/apps/frontend`)               | `vp dev`                                                                                   | Start Vite development server.                                                                |
+|                                               | `vp build`                                                                                 | Build production bundle.                                                                      |
+| **Backend** (`/apps/backend`)                 | `vp dev`                                                                                   | Start Hono API.                                                                               |
+|                                               | `vp pack`                                                                                  | Build optimized CJS/ESM library.                                                              |
+| **Workers** (`/apps/workers`)                 | `vp run dev`                                                                               | Start the job workers (Node, one thread per worker; `JOB_STORE=memory\|database`).            |
+|                                               | `vp run wrangler:dev`                                                                      | Run the Cloudflare runtime (Durable Object loops) locally.                                    |
+|                                               | `vp run enqueue <function> '<json>' [count]`                                               | Enqueue jobs from the CLI (Postgres).                                                         |
+| **Common** (`/packages/common`)               | `vp pack`                                                                                  | Build shared library modules.                                                                 |
+| **Database** (`/packages/database`)           | `vp run db:generate [name]`                                                                | Generate the D1 files from `src/postgres/` + both migrations (`<timestamp>_<name>`).          |
+|                                               | `DATABASE_DIALECT=postgres\|d1 vp run db:migrate`                                          | Apply them (after `vp run build`); `d1` with `CLOUDFLARE_ENV=develop` targets that remote D1. |
+|                                               | `dagger call load --workspace=@lightproject/database --docker-socket=/var/run/docker.sock` | Build the migrator image (`database:latest`); run it with `DATABASE_DIALECT=postgres\|d1`.    |
+| **Design System** (`/packages/design-system`) | `vp pack`                                                                                  | Build UI library components.                                                                  |
 
 ### ⚓️ Git Hooks
 

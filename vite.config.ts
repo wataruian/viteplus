@@ -284,7 +284,7 @@ const getPackageViteConfig = ({
               },
             ],
           },
-          command: 'tsc',
+          command: 'tsgo',
         },
         ...(!excludeDevCommand && devCommand
           ? {
@@ -371,6 +371,7 @@ const getRootViteConfig = (): UserConfig => {
         'max-params': 'off',
         'max-statements': 'off',
         'new-cap': 'off',
+        'no-await-in-loop': 'off',
         'no-continue': 'off',
         'no-control-regex': 'off',
         'no-empty-function': 'off',
@@ -447,7 +448,7 @@ const getRootViteConfig = (): UserConfig => {
         },
         'dagger:type-check': {
           ...commonTaskProps,
-          command: 'cd dagger && tsc',
+          command: 'cd dagger && tsgo',
         },
         madge: {
           ...commonTaskProps,

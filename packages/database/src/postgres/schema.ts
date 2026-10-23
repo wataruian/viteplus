@@ -11,7 +11,15 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { type JsonValue, jobStatusList, jobStatuses, newId, now } from '../shared';
+import {
+  type JsonValue,
+  dedupeKeyPredicate,
+  finishedJobsPredicate,
+  jobStatusList,
+  jobStatuses,
+  newId,
+  now,
+} from '../shared';
 
 const timestampColumn = (name: string) => timestamp(name, { mode: 'date', withTimezone: true });
 
@@ -47,7 +55,7 @@ const workerJobs = pgTable(
     check('worker_jobs_status_check', sql.raw(`status IN (${jobStatusList})`)),
     uniqueIndex('worker_jobs_dedupe_idx')
       .on(table.functionName, table.dedupeKey)
-      .where(sql`dedupe_key IS NOT NULL`),
+      .where(sql.raw(dedupeKeyPredicate)),
     index('worker_jobs_pending_idx')
       .on(table.functionName, table.runAt)
       .where(sql`status = 'pending'`),
@@ -56,7 +64,7 @@ const workerJobs = pgTable(
       .where(sql`status = 'running'`),
     index('worker_jobs_finished_idx')
       .on(table.status, table.updatedAt)
-      .where(sql`status IN ('succeeded', 'dead')`),
+      .where(sql.raw(finishedJobsPredicate)),
   ],
 );
 

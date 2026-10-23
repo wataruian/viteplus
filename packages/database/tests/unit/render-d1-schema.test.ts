@@ -2,13 +2,16 @@ import { is, sql } from 'drizzle-orm';
 import {
   type AnyPgColumn,
   PgTable,
+  UniqueConstraint,
   bigint,
   boolean,
   char,
   date,
   doublePrecision,
+  foreignKey,
   getTableConfig,
   index,
+  inet,
   integer,
   json,
   jsonb,
@@ -25,10 +28,14 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { describe, expect, test } from 'vite-plus/test';
+import { describe, expect, test, vi } from 'vite-plus/test';
 
-import { UnsupportedSchemaError, renderD1Schema } from '../../scripts/render-d1-schema';
 import * as postgres from '../../src/postgres/schema';
+import {
+  UnsupportedSchemaError,
+  renderD1Schema,
+  renderExtras,
+} from '../../src/scripts/render-d1-schema';
 import { jobStatuses, newId, now } from '../../src/shared';
 
 describe('renderD1Schema', () => {
@@ -98,6 +105,7 @@ describe('renderD1Schema', () => {
 
   test('renders foreign keys, constraints and indexes, declaring referenced tables first', () => {
     const owners = pgTable('owners', { id: uuid('id').primaryKey() });
+    const vets = pgTable('vets', { id: uuid('id').primaryKey() });
     const pets = pgTable(
       'pets',
       {
@@ -108,7 +116,7 @@ describe('renderD1Schema', () => {
           onUpdate: 'set null',
         }),
         parentId: uuid('parent_id'),
-        vetId: uuid('vet_id').references(() => owners.id),
+        vetId: uuid('vet_id').references(() => vets.id),
       },
       (table) => [
         primaryKey({ columns: [table.ownerId, table.name] }),
@@ -116,15 +124,18 @@ describe('renderD1Schema', () => {
         index('pets_kind_idx')
           .on(table.kind)
           .where(sql`kind <> 'fish'`),
+        index('pets_name_idx').on(table.name),
       ],
     );
 
-    const source = renderD1Schema({ owners, pets });
+    const source = renderD1Schema({ owners, pets, vets });
 
     expect(source.indexOf("'owners'")).toBeLessThan(source.indexOf("'pets'"));
+    expect(source.indexOf("'vets'")).toBeLessThan(source.indexOf("'pets'"));
     for (const expected of [
       "ownerId: text('owner_id').references(() => owners.id, { onDelete: 'cascade', onUpdate: 'set null' })",
-      "vetId: text('vet_id').references(() => owners.id)",
+      "vetId: text('vet_id').references(() => vets.id)",
+      "index('pets_name_idx').on(table.name)",
       'primaryKey({ columns: [table.ownerId, table.name] })',
       "unique('pets_kind_name_uq').on(table.kind, table.name)",
       String.raw`index('pets_kind_idx').on(table.kind).where(sql.raw('kind <> \'fish\''))`,
@@ -236,9 +247,41 @@ describe('renderD1Schema', () => {
       'the referenced table must be exported too',
     ],
     ['circular foreign keys', { loopA, loopB }, 'circular foreign keys between tables'],
+    [
+      'unmapped column types',
+      { t: pgTable('t', { n: inet('n') }) },
+      'PgInet has no D1 mapping yet',
+    ],
+    [
+      'composite foreign keys',
+      {
+        parent,
+        t: pgTable('t', { a: uuid('a'), b: uuid('b') }, (table) => [
+          foreignKey({ columns: [table.a, table.b], foreignColumns: [parent.a, parent.b] }),
+        ]),
+      },
+      'composite foreign keys are not supported',
+    ],
     ['no tables', { now }, 'no Postgres tables are exported'],
   ] as const)('refuses %s with a clear reason', (_case, schema, reason) => {
     expect(() => renderD1Schema(schema)).toThrow(UnsupportedSchemaError);
     expect(() => renderD1Schema(schema)).toThrow(reason);
+  });
+
+  test('renders a unique constraint without a name as an empty name', () => {
+    const table = pgTable('t', { a: text('a') });
+    const config = getTableConfig(table);
+    const constraint = new UniqueConstraint(table, [config.columns[0]], false);
+    vi.spyOn(constraint, 'getName').mockReturnValue(undefined);
+    const imports = {
+      builders: new Set<string>(),
+      postgresTypes: false,
+      shared: new Set<string>(),
+      sql: false,
+    };
+
+    expect(
+      renderExtras({ ...config, uniqueConstraints: [constraint] }, 't', () => 'table.a', imports),
+    ).toStrictEqual(["unique('').on(table.a)"]);
   });
 });

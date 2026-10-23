@@ -75,6 +75,7 @@ jobs:
             package.json \
             apps/backend/package.json \
             apps/frontend/package.json \
+            apps/workers/package.json \
             packages/common/package.json \
             packages/database/package.json \
             packages/design-system/package.json \

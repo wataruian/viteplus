@@ -23,6 +23,7 @@ on:
           - design-system
           - frontend
           - backend
+          - workers
       version:
         description: 'Git tag/ref to deploy (required for staging/production, ignored for pr)'
         required: false

@@ -30,19 +30,11 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'db:generate': {
             cache: false,
-            command: 'tsx --conditions=typescript scripts/generate.ts',
+            command: 'tsx --conditions=typescript src/scripts/generate.ts',
           },
-          'db:migrate:d1:local': {
+          'db:migrate': {
             cache: false,
-            command: 'tsx --conditions=typescript scripts/migrate-d1-local.ts',
-          },
-          'db:migrate:d1:remote': {
-            cache: false,
-            command: 'tsx --conditions=typescript scripts/migrate-d1-remote.ts',
-          },
-          'db:migrate:postgres': {
-            cache: false,
-            command: `drizzle-kit migrate ${postgresConfig}`,
+            command: 'node dist/scripts/migrate.mjs',
           },
           'db:studio': {
             cache: false,
@@ -51,15 +43,24 @@ export default defineConfig(({ mode }): UserConfig => {
           'test:integration': {
             cache: {
               ...commonTaskProps.cache,
+              env: [...(commonTaskProps.cache.env ?? []), 'POSTGRES_*'],
             },
-            command: 'TEST_SUITE=integration vp test',
+            command: [
+              'DATABASE_DIALECT=postgres TEST_SUITE=integration vp test',
+              'DATABASE_DIALECT=d1 TEST_SUITE=integration vp test',
+            ],
           },
         },
       },
       test: {
         coverage: {
           enabled: !isIntegration,
-          exclude: ['**/index.ts', 'src/types.ts'],
+          exclude: [
+            '**/index.ts',
+            'src/repositories/table.ts',
+            'src/repositories/types.ts',
+            'src/types.ts',
+          ],
         },
         ...(isIntegration
           ? {

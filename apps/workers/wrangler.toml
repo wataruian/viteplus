@@ -1,0 +1,81 @@
+name = "lightproject-workers"
+main = "src/runtimes/edge.ts"
+
+compatibility_date = "2026-08-26"
+
+[triggers]
+crons = ["* * * * *"]
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true
+
+[vars]
+ENV = "local"
+JOB_STORE = "database"
+DATABASE_DIALECT = "d1"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-local"
+database_id = "lightproject-database-local"
+
+[[durable_objects.bindings]]
+name = "WORKER_LOOP"
+class_name = "WorkerLoop"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["WorkerLoop"]
+
+[env.develop]
+name = "lightproject-workers-dev"
+
+[env.develop.vars]
+ENV = "develop"
+JOB_STORE = "database"
+DATABASE_DIALECT = "d1"
+
+[[env.develop.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-dev"
+database_id = "9f1bf2ea-f0d4-4a0a-941d-7020ee0557a0"
+
+[[env.develop.durable_objects.bindings]]
+name = "WORKER_LOOP"
+class_name = "WorkerLoop"
+
+[env.staging]
+name = "lightproject-workers-staging"
+
+[env.staging.vars]
+ENV = "staging"
+JOB_STORE = "database"
+DATABASE_DIALECT = "d1"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-staging"
+database_id = "9aec85c6-8fdb-4d4e-8398-8fd6100ce5e6"
+
+[[env.staging.durable_objects.bindings]]
+name = "WORKER_LOOP"
+class_name = "WorkerLoop"
+
+[env.production]
+name = "lightproject-workers-production"
+
+[env.production.vars]
+ENV = "production"
+JOB_STORE = "database"
+DATABASE_DIALECT = "d1"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-production"
+database_id = "09adc8ae-43b3-4bd1-a517-7292fd83bb96"
+
+[[env.production.durable_objects.bindings]]
+name = "WORKER_LOOP"
+class_name = "WorkerLoop"

@@ -1044,8 +1044,8 @@ AGENTS.md reflect the current state.
 ## 2026-10-18: Remote D1 Migrations (`packages/database`)
 
 - **Decision (user)**: `packages/database/wrangler.toml` holds the local `DB` binding plus
-  `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for
-  `db:migrate:d1:remote`. develop temporarily uses the throwaway `lightproject-migrate-test`.
+  `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for remote D1
+  migrations (now `DATABASE_DIALECT=d1 vp run db:migrate`). develop temporarily uses the throwaway `lightproject-migrate-test`.
 - **Verified facts**: wrangler's published `.d.ts` imports packages it doesn't ship, so
   `unstable_readConfig` is error-typed under lint; `wrangler.toml` is read with `smol-toml` + zod
   instead. drizzle-kit `migrate` with `d1-http` (1.0.0-rc.4, latest) fails on every run after
@@ -1059,9 +1059,10 @@ AGENTS.md reflect the current state.
 
 - **Decision (user)**: verify `database` on PRs (incl. integration tests), apply migrations at
   deploy, and run `test:integration` in `vp run ready` / `mise run check`. Where deploys migrate
-  is chosen per environment by the GitHub variable `DATABASE_MIGRATION_TARGET` (`d1`/`postgres`).
+  is chosen per environment by a GitHub variable (`d1`/`postgres`; now `DATABASE_DIALECT`, see
+  "migrator image" below).
 - Dagger: `testIntegration` binds a throwaway Postgres (`withPostgres`, also used by `ready`);
-  `migrate(workspace, environment, target, …secrets)` maps target → task via `MIGRATION_TASKS`.
+  `migrate(workspace, environment, …secrets)` applied the migrations (now runs the migrator image).
   The deploy `database` job gates `backend`.
 - **Verified**: `test-integration` passed in Dagger; `migrate --target=postgres` applied the
   migrations to the local compose Postgres via `host.docker.internal`; `--target=d1` with dummy
@@ -1116,3 +1117,365 @@ AGENTS.md reflect the current state.
   `lightproject-viteplus-<ws>-pr-<n>` for every workspace under `apps/` and `packages/` plus `dagger`
   (404 is fine). It checks out the base branch (trusted code) and shares the `pr-<n>` concurrency group,
   so closing cancels a running scan. Needs a `SONAR_TOKEN` with Administer permission.
+
+## 2026-10-19 — `packages/database` migrator image
+
+- **Container migrations**: `packages/database` now publishes an image (Dagger `vp`) whose command is
+  `node dist/scripts/migrate.mjs`. `scripts/` moved into `src/scripts/` so the regular `vp pack`
+  builds it (no TS runner at runtime); `src/scripts/migrate.ts` loads each migrator via dynamic
+  `import()`, so the image never needs wrangler (only the local D1 migrator uses it).
+  `smol-toml`, `zod` moved to `dependencies` (drizzle-kit stays dev-only: running it needed the
+  `.ts` drizzle config in the image; the orm migrator reuses the same migrations table, verified
+  against a drizzle-kit-migrated database); `wrangler` is also an optional
+  `peerDependency`, because tsdown bundles devDependencies (it pulled wrangler/workerd into `dist`,
+  101 MB, and broke local D1 migrations). Built scripts resolve paths from `process.cwd()` (the package dir),
+  not `import.meta.dirname`, and avoid top-level await (the CJS build rejects it). `vp run
+  db:migrate` runs the same built file, so `vp run build` must run first.
+- **Dagger `vp` images bake Node in**: the vite-plus image's `node` is a shim that downloads Node
+  into `VITE_PLUS_JS_RUNTIME_PATH`, a cache volume that published images do not carry, so offline
+  containers failed to start (verified: `docker run --network none … node --version` errors).
+  `vp()` now drops that mount and runs `node --version` to bake the runtime into the image.
+- **CI**: deploy always publishes `<REGISTRY_ADDRESS>/database`; Dagger `migrate` runs that image
+  and only runs when the GitHub variable `DATABASE_MIGRATION_ENABLED=true`.
+- **One `db:migrate`, chosen by `DATABASE_DIALECT`** (`d1`/`postgres`; also the GitHub variable
+  and Dagger `migrate --dialect`): `postgres` → drizzle-orm's postgres-js migrator.
+  `d1` migrates the remote D1 when `CLOUDFLARE_ENV` is set, else the local one. The integration
+  suite (`tests/integration/database.test.ts`) runs the contract against `DATABASE_DIALECT`; its
+  task defaults it to `postgres` (`${DATABASE_DIALECT:-postgres}`) and fingerprints it in the cache.
+- **Repository API**: apps call `createDatabase(env)` (one import; dialect from `DATABASE_DIALECT`)
+  and get `users`/`workerJobs` repositories. Implemented once in `src/repositories/create.ts` over
+  a table-generic `crud.ts` per dialect, cast-free by widening to `PgTable`/`SQLiteTable` and
+  parsing rows with `drizzle-orm/zod`. A first attempt with two hand-written repository files was
+  dropped as duplication; Prisma was weighed and rejected (schema and migrations stay per
+  provider, plus codegen and a heavier Workers bundle).
+- **Gotcha: cached Vite Tasks strip unlisted env vars.** A task with `cache` gets only its
+  `cache.env`/`cache.untrackedEnv` vars (plus defaults such as `PATH`, `CI`, `GITHUB_*`,
+  `*_TOKEN`). The root `getEnvArray` builds `cache.env` from the root `.env` keys, and Dagger
+  excludes `.env`, so in CI the list is only `VITE_*`: `test:integration` lost Dagger's
+  `POSTGRES_URL` and hit `localhost:5432` (ECONNREFUSED). Fixed by listing `DATABASE_DIALECT` and
+  `POSTGRES_*` on the task; verified with `dagger call test-integration` (fails without, passes
+  with). Any cached task that needs a CI-provided variable must list it the same way.
+
+## 2026-10-20: `apps/workers` Rebuilt on `packages/database`
+
+- **Decision (user)**: restart the stashed workers app from scratch instead of rewriting it in
+  place, in reviewable steps (database queue → core → Node runtime → Cloudflare runtime → wiring).
+  The app keeps no job model, SQL or migrations: `Job` = `types.WorkerJob`, `JobStore` mirrors
+  `db.workerJobs`, `JOB_STORE=memory|database` (the dialect is `DATABASE_DIALECT`'s).
+- **Queue in `packages/database`**: `db.workerJobs.enqueue/claim/heartbeat/complete/fail/purge`
+  per dialect. `enqueue` targets the partial dedupe index with a no-op `DO UPDATE` (returns the
+  existing job unchanged; any other conflict throws). Verified: drizzle 1.0.0-rc.4's SQLite
+  `onConflictDoNothing({ where })` renders the `where` after `DO NOTHING` (syntax error), and its
+  `onConflictDoUpdate` stamps `$onUpdateFn` columns (hence `SET updated_at = updated_at`).
+- **Decision (user)**: Cloudflare runs always-on workers as a Durable Object alarm loop (not the
+  old once-a-minute cron drain, not Containers); the cron is only a watchdog.
+- **Decision (user)**: follow the backend: Node APIs only in `runtimes/node.ts`; the Node image is
+  published on deploy like the backend's (containers can run it), the Worker via wrangler.
+- **Decision (user)**: `vp run wrangler:dev` follows `.env` (`wrangler dev` loads it and it
+  overrides `[vars]`), so with `DATABASE_DIALECT="postgres"` local Cloudflare dev uses Postgres.
+- **Verified facts**: in local workerd without `nodejs_compat`, the core + database store ran on
+  D1 and on Postgres (postgres.js over `cloudflare:sockets`), and `globalThis.process.env` holds
+  `[vars]`. Wrangler bundles the Postgres driver even for D1-only use (dynamic `import()`); it
+  does not stop D1 from loading. Vitest loads workspace packages from `dist/`, so
+  `packages/database` must be built before workers tests see new exports. A `z.discriminatedUnion`
+  over `schemas.workerJob` needs an explicit type annotation or `vp pack` fails
+  (TS2883, non-portable inferred type). `vpx wrangler dev` children survive `pkill -f "wrangler
+  dev --config …"` (different command line): track the PID you start.
+- **Final review (same day)**: `EXPLAIN QUERY PLAN` showed the D1 purge scanning the whole
+  table. SQLite uses a partial index only when the query provably implies its `WHERE`, and it
+  cannot infer `status IN ('succeeded', 'dead')` from `status = ?`; the predicate must be repeated
+  as the same literal (bound parameters do not count). `selectExpiredJobs` now adds it via
+  `sql.raw`, and `tests/unit/d1-query-plans.test.ts` pins claim/purge to their indexes
+  (mutation-checked). Postgres plans were already index scans. Also: the Cloudflare runtime now
+  refuses `JOB_STORE=memory`, and `tsx` is a declared workers devDependency.
+
+## 2026-10-21: `type-check` Runs `tsgo`; Why `vp check` Is Not Enough
+
+- **Why `tsc` was still needed after `vp check`**: tsgolint (the engine behind `vp check`'s type
+  check) reports only semantic diagnostics. `declaration`/`composite` (on in
+  `tsconfig.base.json`) add a second set, declaration diagnostics, computed while working out the
+  `.d.ts` (e.g. TS2883 "inferred type cannot be named… not portable", the TS9xxx
+  `isolatedDeclarations` errors). tsgolint never computes them and has no flag for it, and
+  `isolatedDeclarations` does not help (79 errors from tsgo on workers, none from `vp check`).
+  TypeScript also skips declaration diagnostics while semantic errors exist.
+- **Probe-verified** (temporary file): 9 semantic errors tied to tsconfig options (TS2307, TS2322,
+  TS2375, TS4111, TS7006, TS7030, TS2532, TS1294, TS6133) — `tsc`, `tsgo` and `vp check` all
+  identical; TS2883 alone — `tsc` and `tsgo` report it, `vp check` passes.
+- **Decision (user)**: the `type-check` task runs `tsgo` (same TS 7 compiler as `vp check`, 2-4x
+  faster cold) instead of `tsc`; it still runs after `vp check` for the declaration diagnostics.
+  Verified: writes the same `tsconfig.tsbuildinfo` (task cache), fails on the TS2883 probe, and
+  Dagger `type-check` passes for workers and database. `dagger:type-check` also switched to
+  `tsgo` (from the root `.bin`; same TS2322 as tsc on a decorator probe; Dagger `type-check
+  --workspace=dagger` passes).
+
+## 2026-10-21: `apps/workers` Final-Review Fixes
+
+- **Metrics were no-ops**: `jobs_processed`/`job_duration` were created at module load, before
+  `initializeTelemetry()`; `@opentelemetry/api` has no proxy meter, so they stayed `NoopCounter`
+  for good. Now created lazily (`getJobMetrics`), like the backend's `request_hits`.
+- **Trace context**: only the runner's own logs are written under `job.run` (synchronous
+  `runWithSpan` around each log call). Wrapping the whole async attempt does not work: the project's
+  `StackContextManager` drops the active span at the first `await` (same limit as the backend).
+  Handler logs/spans were then unlinked; resolved below (span-bound `context.logger`).
+- **Thread crash**: per-job `error` listeners left an idle thread's uncaught error unhandled
+  (`ERR_UNHANDLED_ERROR` in the main thread → process exit). Threads now keep lifetime listeners
+  and are retired on error/exit (integration test `stray` mode fails without the fix).
+- **`WORKER_CONCURRENCY`** is parsed by a zod transform in `env.ts`, so a bad value fails at load;
+  before, it threw inside the edge `alarm()`/`scheduled()` outside their `try`, silently stopping
+  the loops.
+- **Enqueue** re-parses the JSON-stored payload with the function schema.
+- **Edge abort**: `createInProcessExecutor` waits up to `abortGraceMs` (5 s) for an aborted handler
+  to settle before the loop claims the next job; past that it logs a warning (cannot be killed).
+- **Rejected**: reusing one store across edge alarms — Workers forbid sharing I/O objects across
+  invocations, and Hyperdrive pools connections.
+- `edge.ts` uses `@cloudflare/workers-types` instead of hand-written `*Like` interfaces. It is a
+  `dependency`, as in `packages/database`: as a dev dependency the `.d.ts` bundler inlines it and
+  fails with `MISSING_EXPORT` (its `index.d.ts` is ambient). `startWorker`/`startPurger` share
+  `startLoop` (`core/loop.ts`).
+- **Unknown `WORKER_CONCURRENCY` names** fail at startup: `config.assertKnownFunctions(functions)`
+  takes the registry as an argument (config stays registry-free; `client.ts` re-exports the
+  registry, so checking in `functions/index.ts` would fail enqueue-only consumers). Node calls it
+  in `start()`; `edge.ts` at module load (workerd refuses to start — verified with `wrangler dev`).
+- **Edge entry exports**: `edge.ts` exported helpers (`alarmBudgetMs`, …) by name, and workerd
+  rejects any entry export that is not a handler or class ("Incorrect type for map entry"), so the
+  Worker never started. It now exports only `WorkerLoop` and the default handler.
+- **Second review round**: thread executor now reports an abort only after the handler settled or
+  the thread was terminated (it rejected at once before, so a retry could overlap the old attempt);
+  enqueue validates `maxAttempts`/`delayMs`/`runAt`; `WORKER_CONCURRENCY` entries are parsed strictly
+  (`=3`, `ping=2=8`, `ping=0x4` rejected); a failed graceful shutdown exits 1; `vp run enqueue`
+  validates its count; madge maps `@lightproject/workers` to `src/client.ts` (the package entry).
+- **Local runs need mise's env**: `vp run` does not load `.env`; `mise.toml` (`[env] _.file`) does,
+  with `${VAR}` expansion (Node's `--env-file` does not expand, so it breaks the URL keys). Verified
+  end to end with `mise exec`: Node and edge each processed `ping` jobs against local Postgres.
+
+## 2026-10-21: Job Handler Telemetry (Decision: user asked for best practice)
+
+- **One SDK per thread + W3C propagation** (OTel's model for separate processes/threads): each Node
+  worker thread runs `initializeTelemetry` (own `service.instance.id`, matching the single-writer
+  rule), the `job.run` span crosses `postMessage` as a `traceparent` carrier, and the handler runs
+  under `job.handler`, its child. Rejected: forwarding thread logs to the main thread (custom
+  protocol, loses the thread's spans and fetch instrumentation).
+- **Span-bound `context.logger` / `context.withTrace`** instead of relying on the active context:
+  `StackContextManager` drops it at the first `await` (same reason the backend wraps each log in
+  `runWithRequestContext`). `JobContext.logger` is now `JobLogger` (`Pick<Logger, 'debug' | 'info'
+  | 'warn' | 'error'>`).
+- **Flush on close**: `close()` sends `shutdown`; the thread runs `shutdownTelemetry()` and exits;
+  terminated after `abortGraceMs` if it does not. A thread terminated for ignoring an abort loses
+  its unexported batch (inevitable).
+- Verified live (Grafana stack): Node — 2 jobs, Loki logs with distinct thread
+  `service_instance_id`s and trace ids, Tempo `job.handler` (thread instance) parented to `job.run`
+  (main instance); edge — the same trace id in the `ping` log. Unit test for the binding fails if
+  the plain logger is passed (mutation-checked).
+- **Gotcha**: `mise exec -- node …` does not forward SIGTERM to node; killing the `mise` PID left an
+  orphan worker that kept claiming jobs. Send signals to the node PID (`eval "$(mise env -s bash)"`).
+
+## 2026-10-21: D1 Query Modules Generated from Postgres (Decision: user — "avoid repeating code")
+
+- `src/d1/{crud,worker-jobs}.ts` are rendered from `src/postgres/` by `db:generate`
+  (`render-d1-queries.ts`), like the schema. Rejected: one dialect-generic module — Drizzle's
+  `PgAsyncDatabase` and `BaseSQLiteDatabase` builders don't unify without `any`. Rejected: AST
+  transforms — five identifier renames cover every difference, and anything else fails loudly.
+- Unified the sources so only renames differ: the claim/purge subqueries (`selectNextJob`,
+  `selectExpiredJobs`) live in the module, with Postgres' row lock as the one dropped call; D1's
+  partial-index predicate now also guards the Postgres purge (equivalent: purge only takes a
+  finished status); `crud.remove` uses `.returning().execute()` (types on both; a generic
+  `SQLiteTable` `await …returning()` is an error type, the reason D1 had `.all()`).
+- `AnyPostgresDatabase` (`PgAsyncDatabase<PgQueryResultHKT>`, postgres-js or PGlite) is the
+  source's db type; `PostgresDatabase` stays the postgres-js type.
+- Verified: `db:generate` → D1 schema unchanged, "No schema changes" for both migration sets;
+  database contract passes on Postgres and local D1; drift test fails on a hand-edited D1 copy
+  (mutation-checked).
+- **Table wiring generated too** (user request): `src/postgres/tables.ts` (`createPostgresTables`)
+  maps each table to the generic CRUD; `src/d1/tables.ts` is rendered from it. Both
+  `repositories.ts` call it, so a new table needs no D1-side edit. How-to:
+  `.ai-data/architecture.md` → "Adding a table".
+
+## 2026-10-21: Final Review Before Commit
+
+- **Edge entry exports regressed twice** (helpers re-exported from `edge.ts` → workerd refuses to
+  start). The helpers now live in `src/runtimes/worker-loop.ts` (importable, e.g. for tests) and
+  `edge.ts` only re-exports `WorkerLoop` + the default handler.
+- **Abort race (Node)**: the in-thread executor's grace equals the main thread's (5 s), so the
+  thread could reply "aborted" while its handler still ran and the main thread kept the thread.
+  `JobAbortedError.handlerSettled` → `handlerRunning: true` in the thread response → main thread
+  terminates instead. Integration test (`ignore` mode, main grace 6 s) fails without it (5.1 s).
+- **Idle edge loops back off** (`nextIdleDelay`: poll interval doubling to 30 s), cutting ~170k
+  alarms + D1 claims per day per env at `ping=2` while idle; telemetry flushed only on work/error.
+- Sonar CPD excludes the generated `src/d1/{crud,tables,worker-jobs}.ts`.
+- `EnqueueOptions`: `delayMs` and `runAt` mutually exclusive (type-level; `expectTypeOf` test).
+- **`no-await-in-loop` was turned off** (user decision, root `vite.config.ts`; later scoped, see
+  below): sequential awaits are a
+  valid use case (one job, batch or migration statement after another), and the rule had forced
+  recursion or `reduce` chains instead. `drain`, `sweepStatus` and the workers test's local-D1
+  migration are plain loops now. Run independent work with `Promise.all`; loop only when each step
+  depends on the previous one.
+- **Not changed**: `schemas` stays eager — the edge bundle
+  includes pg-core anyway (Postgres dialect via `createDatabase`), so laziness saves only two zod
+  schema builds. `@cloudflare/workers-types` stays a runtime dependency (as a devDependency the
+  `.d.ts` bundler inlines it and fails with `MISSING_EXPORT`).
+
+## 2026-10-21: Final Review Round 3 (User: "fix all with best practices")
+
+- **Outcome writes retried** (`writeWithRetry`, 3 tries, `storeRetryDelayMs` 250 ms × try): a
+  store blip after a successful final attempt used to leave the job `running`, and the reclaim
+  (`attempts + 1 > maxAttempts`) stored it `dead`. Docs had claimed store errors never count.
+- **Heartbeat expiry aborts**: failing heartbeats used to only warn, so a worker cut off from the
+  database kept running past its lease while another worker reclaimed the job. Now it aborts when
+  the lease would expire before the next heartbeat (test hangs to timeout without it).
+- **`UnrecoverableJobError`** (exported): handlers throw it for failures retries cannot fix; an
+  invalid payload throws it too. The runner settles `dead` at once; the thread protocol carries
+  `unrecoverable: true`. Naming follows BullMQ's `UnrecoverableError`.
+- **Idle backoff on Node too**, cap configurable: `WORKER_IDLE_POLL_MAX_MS` (default 30 s).
+- **Edge purge honours `JOB_PURGE_INTERVAL_MS`**: `isPurgeDue(scheduledTime, interval, 60 s)` —
+  stateless (no Durable Object), deterministic; a missed tick waits for the next interval.
+- **Worker dialect from one source**: the deploy passes the GitHub `DATABASE_DIALECT` variable as
+  `--worker-var` (job-level env, validated like the migrate step); `wrangler.toml` keeps `d1` as
+  the default when unset.
+- **`no-await-in-loop` scoped**: back on repo-wide, off via `lint.overrides` for
+  `apps/workers/src/core/**` and `**/tests/**` (the only five hits). A probe in `packages/common`
+  is still flagged. Keeps the guard against accidental serialization elsewhere without disable
+  comments.
+- `crud.remove` counts deleted rows (`Array.isArray(rows) && rows.length > 0`) instead of parsing
+  them, so a legacy row cannot turn a committed delete into an error.
+- Unit-only test helpers moved from `apps/workers/tests/shared/` to `tests/unit/helpers/` (folder
+  rule).
+- **Kept**: a store per edge alarm (Hyperdrive pools; per-invocation connect is the pattern).
+
+## 2026-10-21: Final Review Round 4 — Converging (User: "fix all once and for all")
+
+- **Why reviews kept finding issues** (told the user): fixes during final review widened scope
+  (new features → new edge cases), a fixed bug (edge entry exports) was reintroduced three times by
+  later edits with no regression guard, and each review samples differently. Process now: one pass
+  of minimal fixes, a regression test per fix, adversarial verification (mutation where possible),
+  then triage every review finding into fixed / rejected-with-recorded-reason.
+- **Edge entry guard**: `tests/unit/runtimes/edge.test.ts` asserts the entry's runtime exports are
+  exactly `WorkerLoop` + `default`; `cronTickMs` moved to `core/retention.ts`.
+- **Dialect**: forwarding the GitHub variable was reverted (a Worker switched to Postgres without
+  Hyperdrive/`POSTGRES_URL` cannot connect); the deploy now fails when it disagrees with
+  `wrangler.toml` (awk on `[env.<env>.vars]`, tested for match, mismatch and invalid values).
+- Telemetry setup failures are logged and retried, never thrown (unit test with a mocked SDK).
+- Heartbeat lease clock starts from the claim's `leaseExpiresAt`.
+- `isPurgeDue` compares interval windows of this tick and the previous one: once per interval for
+  any interval (90 s over 30 min → 20).
+- Claim split into `selectExpiredLease` then `selectDuePending`, each index-ordered `LIMIT 1`;
+  plan test asserts no `TEMP B-TREE` (mutation-checked).
+- `no-await-in-loop`: the override was then removed at the user's request — the rule is off
+  repo-wide again (user dislikes `lint.overrides`).
+- **Rejected, with reasons in architecture.md**: success after abort counts as aborted (cannot
+  tell finished from bailed-out); store per edge alarm (Hyperdrive pools); a committed-but-unacked
+  outcome write reported as lease-lost (metric label only, stored status correct);
+  `Array.isArray` in `crud.remove` (native narrowing, allowed by CLAUDE.md).
+
+## 2026-10-21: Final Review Round 5 — Triage
+
+- Every finding verified, then fixed or rejected with the reason recorded in `architecture.md`
+  ("Accepted trade-offs").
+- **Fixed**: telemetry failure is logged once and never retried (the old "retry" was a no-op:
+  common's `initialized` flag is set before the failing steps); memory store claims in the
+  database order (expired lease first, then oldest pending) and a contract test pins it on memory,
+  local D1, PGlite and Postgres (fails when the order is reversed); `cronTickMs` checked against
+  every `crons` entry in `wrangler.toml`; D1 plan tests require a keyed `SEARCH … (function_name=?`;
+  failing polls/alarms back off like idle ones (edge alarm also no longer re-arms in the past);
+  the thread bootstrap no longer has an unreachable rejection branch; the deploy's dialect parse
+  accepts any spacing, either quote style and trailing comments.
+- **Rejected**: one-statement claim (cheap second query vs. derived-table SQL in both dialects);
+  awaiting `returning()` directly (types are `unknown`/error, verified earlier); removing the
+  workers smoke-test exclusion (would warn on every deploy).
+- `no-await-in-loop` is off repo-wide (user: no overrides) — saved as user feedback.
+
+## 2026-10-21: Final Review Round 6 — Triage
+
+- **Fixed**: heartbeat abort is clock-based at each tick (a hanging heartbeat used to skip the
+  check; test hangs to timeout without it) and renewals only extend the lease (out-of-order
+  replies); `writeWithRetry` uses `withRetry` from `@lightproject/common/utils`; `WorkerLoop.fetch`
+  writes its slot only when none is stored (~1,440 billed writes/slot/day saved).
+- **Rejected (recorded in architecture.md)**: retrying telemetry setup (config errors only; export
+  retries are the SDK's); single-statement claim (repeat); lease-lost label on an unacked
+  committed write (repeat); purge catch-up after a dropped tick; one `vp check` spawn for
+  `db:generate`.
+
+## 2026-10-21: Final Review Round 7 — Triage
+
+- **Regression found and fixed**: round 6's tick-start abort used `leaseMs / 3`, so one failed
+  heartbeat aborted a healthy job. Now `leaseMs / 4`: a failed heartbeat between successful ones
+  is ridden out (fake-timer test with a 36 ms lease fails under `/3`), and a lease still ends with
+  a quarter left when heartbeats keep failing or hang. The earlier tolerance test had claimed with
+  a 30 s lease, so it could not see this.
+- **Attempt fencing**: `HeldWorkerJob.attempt`; Postgres/D1/memory `updateHeld` match
+  `attempts = attempt`, so a late write from an earlier attempt (even by the same worker) is
+  ignored. Contract test in both packages. Heartbeats are sent one at a time and stop on loss.
+- `WORKER_LEASE_MS` ≥ 20 s (quarter lease ≥ 5 s abort grace); thread exit during the grace
+  settles at once (integration test); `createIdleBackoff` replaces four copies of the backoff.
+- Note: the workers' D1 store tests load `@lightproject/database` from `dist/` — rebuild the
+  package after changing its API or they test stale code.
+- **Rejected (recorded)**: eager `schemas`; regex-based D1 generation (user-chosen design).
+
+## 2026-10-22: Final Review Round 8 — Triage
+
+- **Fixed**: the abort reserve is now `interval + abortGraceMs + margin` (was `interval` only, which
+  at a 20 s lease left exactly the 5 s grace and nothing for claim latency); grace, margin and
+  the lease minimum (now 30 s = default) share `src/core/timing.ts`, with a unit test tying them;
+  reclaim tests pass the current attempt for the old owner, so the owner fence is tested on its
+  own (mutation: removing the owner check now fails both owner tests).
+- **Rejected (recorded)**: success reply racing an abort (repeat); "dead" thread-bootstrap catch
+  (still guards `serveThread`/`createJobStore`); shared error/idle backoff (same documented bound).
+- Vitest here bails after the first failure: use `--bail=0` when mutation-checking several tests.
+
+## 2026-10-22: Final Review Round 9 — Stopping Rule Applied
+
+- The review (unverified by its own account) found new classes again; per the agreed rule, each
+  was verified, the clear bugs fixed with tests, and design questions moved to `TODO.md`.
+- **Fixed**: timer settings capped at 2^31-1 ms (`maxTimerMs`); a `delayMs` that overflows the
+  date is rejected; idle backoff never polls faster than the poll interval; an invalid run request
+  gets an unrecoverable error instead of crashing the thread (unit test with a fake port);
+  `vp run enqueue` validates the payload once (in `enqueue`).
+- **To decide (TODO.md)**: shutdown deadline vs orchestrator kill timeout; thread start failures
+  burning attempts; database clock vs replica clocks for lease expiry.
+- **Recorded/inherent**: terminated threads lose telemetry. **Settled**: `no-await-in-loop` off.
+
+## 2026-10-23: The Three Open Decisions, Resolved (User: "fix all applying best practices")
+
+- **Database clock** (pg-boss/graphile-worker pattern): `ClaimWorkerJob`/`RenewWorkerJob`/
+  `FailWorkerJob` take durations (`leaseMs`, `retryAfterMs`); `now` is optional, injected only by
+  tests. Per-dialect `clock.ts` (`dbTime(now, plusMs)`: `now() + n * interval '1 millisecond'` /
+  `CAST(unixepoch('subsec') * 1000 AS INTEGER) + n`; D1 blocks `sqlite_version()` but allows
+  this). The runner times its own abort from when it sent the claim, never from a DB timestamp.
+  Contract test without `now` on PGlite, local D1, Postgres and D1 integration.
+- **`release`** (BullMQ "move back to wait" equivalent): fenced like other writes; `attempts - 1`,
+  `run_at = now`, `pending`. Outcome `released` (span OK).
+- **Shutdown**: pool `stop({ graceMs })` aborts in-flight jobs after `WORKER_SHUTDOWN_GRACE_MS`
+  (20 s default) → runner releases them. Pool test covers it.
+- **Thread start failures**: `ready` handshake; death before it → `JobNotStartedError` → release;
+  3 consecutive → `registerShutdown(...)('Worker threads keep failing to start', 1)`. Integration
+  test with a fixture that throws at load; mutation (no `ready`) misclassifies a crash and fails.
+- `registerShutdownSignals` → `registerShutdown` (returns the shutdown function).
+
+## 2026-10-23: Final Review Round 10 — Fixed All
+
+- **Shutdown requests are idempotent**: several executors reaching 3 start failures each called
+  `shutdown`, and the repeat took the "again" branch → `process.exit(1)`, skipping releases and
+  flushes. Only a second _signal_ escalates now (unit test; fails with the old behavior).
+- **Retry delay clamped** (`retryDelay`: rounded, 0..2^31-1, non-finite → max): a custom backoff
+  returning fractions or huge values made Postgres reject `::integer` and the job lost its retry.
+- **Shutdown budget**: default grace 15 s (was 20 s); worst case ≈ 26 s incl. thread telemetry
+  flush and store close, within Kubernetes' 30 s.
+- **Dialect check moved** into the first deploy step, before "Build and publish" pushes the image.
+- **Edge alarm** computes its next time after the drain (a long drain no longer re-arms in the past).
+- **Workers' local D1 helper** uses drizzle's `migrate` (devDependency `drizzle-orm: catalog:`),
+  like `packages/database`, instead of splitting migration files by hand.
+- **Dedupe revives dead jobs** (BullMQ deduplication semantics): one upsert with per-column
+  `CASE WHEN status = 'dead'`; contract test on memory, PGlite, local D1, Postgres and D1.
+- `strictFlag` (strict `'true'`/`'false'` env boolean) moved to `@lightproject/common/environment`;
+  backend and workers import it (`as flag`). Note: apps' tests load common from `dist/` — rebuild
+  `packages/common` after changing it.
+- `bindLogger` builds its four methods from one `at(level)` helper.
+
+## 2026-10-23 — Final Review Round 11 — Fixed All
+
+- **Main-process telemetry flush is capped** at `telemetryFlushMs` (3 s, `core/timing.ts`) via the
+  runner's `settleWithin` (now log-free; callers log). An unreachable collector held it for the
+  OTel batch processors' 30 s default, past the orchestrator's stop timeout. Worst-case stop is now
+  grace + 5 s abort + 5 s thread flush + 3 s ≈ 28 s; `shutdownGraceMs` (15 s) moved to `timing.ts`
+  (env default) and `timing.test.ts` checks the sum stays under 29 s.
+- **AGENTS.md** said "stop timeout above grace + 5 s"; corrected to grace + 13 s (≈ 28 s, keep ≥ 30 s),
+  matching `architecture.md`.

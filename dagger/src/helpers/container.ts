@@ -1,6 +1,7 @@
 import { CacheSharingMode, type Container, type Directory, dag } from '@dagger.io/dagger';
 
 import {
+  DEFAULT_WORKSPACE_IMAGE,
   DEPLOY_ENVIRONMENTS,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
@@ -13,9 +14,11 @@ import {
   VITE_PLUS_PACKAGE_MANAGER_PATH,
   VITE_PLUS_USER,
   WORKSPACES,
+  type WorkspaceEntry,
+  type WorkspaceImage,
 } from './constants';
 
-const workspace = (workspaceName: string): { isFrontend: boolean; path: string } => {
+const workspace = (workspaceName: string): WorkspaceEntry => {
   const entry = WORKSPACES[workspaceName];
   if (!entry) {
     throw new Error(`Workspace ${workspaceName} is not supported`);
@@ -27,6 +30,9 @@ const workspace = (workspaceName: string): { isFrontend: boolean; path: string }
 const workspacePath = (workspaceName: string): string => workspace(workspaceName).path;
 
 const isFrontend = (workspaceName: string): boolean => workspace(workspaceName).isFrontend;
+
+const workspaceImage = (workspaceName: string): WorkspaceImage =>
+  workspace(workspaceName).image ?? DEFAULT_WORKSPACE_IMAGE;
 
 const shortWorkspaceName = (workspaceDir: string): string => {
   const [, name] = workspaceDir.split('/');
@@ -191,5 +197,6 @@ export {
   withoutProxy,
   workerVarArgs,
   workspace,
+  workspaceImage,
   workspacePath,
 };
