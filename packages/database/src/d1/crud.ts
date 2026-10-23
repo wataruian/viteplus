@@ -25,8 +25,8 @@ const createD1Crud =
         return select.parse(rows[0]);
       },
       remove: async (column, value) => {
-        const rows = await db.delete(base).where(eq(columns[column], value)).returning().all();
-        return rows.length > 0;
+        const rows = await db.delete(base).where(eq(columns[column], value)).returning().execute();
+        return Array.isArray(rows) && rows.length > 0;
       },
       update: async (column, value, changes) =>
         parseFirst(

@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'database design-system frontend backend'
+          all-workspaces: 'database design-system frontend backend workers'
 
   design-system:
     needs: setup
@@ -86,6 +86,23 @@ jobs:
     secrets: inherit
     with:
       workspace: backend
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
+
+  workers:
+    needs: [setup, database]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'workers') &&
+      needs.database.result != 'failure' &&
+      needs.database.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: workers
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 

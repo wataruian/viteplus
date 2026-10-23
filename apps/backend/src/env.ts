@@ -1,8 +1,10 @@
-import { readRuntimeEnv, serverEnvOptions } from '@lightproject/common/environment';
+import {
+  strictFlag as flag,
+  readRuntimeEnv,
+  serverEnvOptions,
+} from '@lightproject/common/environment';
 import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
-
-const flag = z.stringbool({ falsy: ['false'], truthy: ['true'] });
 
 const server = {
   ADDITIONAL_CORS_ORIGINS: z.string().optional(),
@@ -22,4 +24,4 @@ const env = createEnv({
   server,
 });
 
-export { env, flag, server };
+export { env, server };

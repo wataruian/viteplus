@@ -142,6 +142,7 @@ const WORKSPACES: Record<string, WorkspaceEntry | undefined> = {
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
   '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
   '@lightproject/library': { isFrontend: false, path: 'packages/library' },
+  '@lightproject/workers': { isFrontend: false, path: 'apps/workers' },
 };
 
 const WORKSPACE_NAMES = Object.keys(WORKSPACES);

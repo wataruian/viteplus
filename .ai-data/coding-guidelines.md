@@ -23,3 +23,8 @@
 
 - **Type Safety**: Strictly avoid `any` and `unknown`. Do not use `@ts-ignore` or `eslint-disable`.
 - **Testing**: Maintain a 100% test pass rate using Vitest (`vp test`).
+- **Awaiting in loops**: `no-await-in-loop` is off repo-wide (user decision; no per-file
+  overrides), because sequential awaits are often the point (claim one job after another, purge
+  batch by batch, retry a write, run migrations in order). Loop with `await` only when each step
+  depends on the previous one; run independent work with `Promise.all`/`Promise.allSettled`. Never
+  fake a loop with recursion or a `reduce` chain.

@@ -1,21 +1,15 @@
-import type { PgAsyncDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core';
-
 import { createRepositories } from '../repositories/create';
-import { createPostgresDatabase } from './client';
-import { createPostgresCrud } from './crud';
-import { users, workerJobs } from './schema';
+import { type AnyPostgresDatabase, createPostgresDatabase } from './client';
+import { createPostgresTables } from './tables';
+import { createPostgresWorkerJobQueue } from './worker-jobs';
 
-const createPostgresRepositories = (
-  db: PgAsyncDatabase<PgQueryResultHKT>,
-  close: () => Promise<void>,
-) => {
-  const crud = createPostgresCrud(db);
-  return createRepositories({
+const createPostgresRepositories = (db: AnyPostgresDatabase, close: () => Promise<void>) =>
+  createRepositories({
     close,
     dialect: 'postgres',
-    tables: { users: crud(users), workerJobs: crud(workerJobs) },
+    tables: createPostgresTables(db),
+    workerJobQueue: createPostgresWorkerJobQueue(db),
   });
-};
 
 const connectPostgresRepositories = (url: string) => {
   const { close, db } = createPostgresDatabase({ url });

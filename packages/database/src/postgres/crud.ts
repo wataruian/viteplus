@@ -1,12 +1,13 @@
 import { eq, getColumns } from 'drizzle-orm';
-import type { PgAsyncDatabase, PgQueryResultHKT, PgTable } from 'drizzle-orm/pg-core';
+import type { PgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod';
 import type { z } from 'zod';
 
 import type { TableRepository } from '../repositories/table';
+import type { AnyPostgresDatabase } from './client';
 
 const createPostgresCrud =
-  (db: PgAsyncDatabase<PgQueryResultHKT>) =>
+  (db: AnyPostgresDatabase) =>
   <T extends PgTable>(table: T) => {
     const base: PgTable = table;
     const columns = getColumns(base);
@@ -24,8 +25,8 @@ const createPostgresCrud =
         return select.parse(rows[0]);
       },
       remove: async (column, value) => {
-        const rows = await db.delete(base).where(eq(columns[column], value)).returning();
-        return select.array().parse(rows).length > 0;
+        const rows = await db.delete(base).where(eq(columns[column], value)).returning().execute();
+        return Array.isArray(rows) && rows.length > 0;
       },
       update: async (column, value, changes) =>
         parseFirst(

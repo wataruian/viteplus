@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "display": "Workers",
+  "exclude": ["node_modules", "dist", ".wrangler", "coverage"],
+  "extends": "../../tsconfig.json",
+  "include": ["./**/*.ts", "../../vite.config.ts"]
+}

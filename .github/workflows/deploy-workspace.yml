@@ -32,6 +32,7 @@ jobs:
       WORKSPACE: ${{ inputs.workspace }}
       OTLP_ENDPOINT: ${{ vars.OTLP_ENDPOINT }}
       FARO_ENDPOINT: ${{ vars.FARO_ENDPOINT }}
+      DATABASE_DIALECT: ${{ vars.DATABASE_DIALECT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,7 +43,7 @@ jobs:
         shell: bash
         run: |
           case "${WORKSPACE}" in
-            backend | frontend) configs=("apps/${WORKSPACE}/wrangler.toml") ;;
+            backend | frontend | workers) configs=("apps/${WORKSPACE}/wrangler.toml") ;;
             design-system)
               configs=(
                 "packages/design-system/wrangler.design-system.toml"
@@ -58,6 +59,24 @@ jobs:
               exit 1
             fi
           done
+
+          if [[ "${WORKSPACE}" == "workers" && -n "${DATABASE_DIALECT}" ]]; then
+            worker_dialect="$(awk -v section="[env.${ENVIRONMENT}.vars]" '
+              { line = $0; gsub(/[[:space:]]/, "", line) }
+              line == section { found = 1; next }
+              line ~ /^\[/ { found = 0 }
+              found && line ~ /^DATABASE_DIALECT=/ {
+                sub(/^DATABASE_DIALECT=/, "", line)
+                sub(/#.*/, "", line)
+                gsub(/["\047]/, "", line)
+                print line
+              }
+            ' apps/workers/wrangler.toml)"
+            if [[ "${worker_dialect}" != "${DATABASE_DIALECT}" ]]; then
+              echo "::error::apps/workers/wrangler.toml sets DATABASE_DIALECT='${worker_dialect}' for ${ENVIRONMENT}, but the migrated database is '${DATABASE_DIALECT}'. Update [env.${ENVIRONMENT}] (and its database binding) to match."
+              exit 1
+            fi
+          fi
 
       - name: Set up toolchain
         uses: ./.github/actions/setup-toolchain
@@ -112,7 +131,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          DATABASE_DIALECT: ${{ vars.DATABASE_DIALECT }}
         run: |
           args=()
           case "${DATABASE_DIALECT}" in
@@ -184,7 +202,7 @@ jobs:
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
           fi
 
-          if [[ "${WORKSPACE}" == "backend" && -n "${OTLP_ENDPOINT}" ]]; then
+          if [[ ("${WORKSPACE}" == "backend" || "${WORKSPACE}" == "workers") && -n "${OTLP_ENDPOINT}" ]]; then
             args+=("--worker-var=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
@@ -196,7 +214,7 @@ jobs:
             "${args[@]}"
 
       - name: Smoke test
-        if: inputs.workspace != 'database'
+        if: inputs.workspace != 'database' && inputs.workspace != 'workers'
         shell: bash
         run: |
           case "${WORKSPACE}" in

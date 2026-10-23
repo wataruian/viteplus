@@ -8,6 +8,8 @@ const flag = z
   .optional()
   .transform((value) => isTrue(value));
 
+const strictFlag = z.stringbool({ falsy: ['false'], truthy: ['true'] });
+
 const sharedShape = {
   ADMIN_URL: z.url().optional(),
   API_URL: z.url().optional(),
@@ -81,5 +83,6 @@ export {
   readRuntimeEnv,
   serverEnvOptions,
   sharedShape,
+  strictFlag,
 };
 export type { AppEnvOptions, ServerEnvOptions };

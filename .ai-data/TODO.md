@@ -2,8 +2,8 @@
 
 - **TypeScript 7** — ⏸ **On hold until TypeScript 7.1 stable is released** (skip 7.0.x).
   Currently 6.0.2 (vite-plus is now on 1.1.0). Decide whether
-  `@typescript/native-preview` (`tsgo`, used for `pack.dts.generator`) is still needed once TS 7
-  ships the native compiler as `tsc`.
+  `@typescript/native-preview` (`tsgo`, used for `pack.dts.generator` and the `type-check` task)
+  is still needed once TS 7 ships the native compiler as `tsc`.
 - **Renovate isn't producing PRs** — no `renovate/*` branches exist on the remote while
   dependencies were months behind (hono was 4.6.12 vs 4.13.x). Confirm the Renovate GitHub App
   is installed on the repo and check the Dependency Dashboard issue.
@@ -44,9 +44,14 @@
   - Upgrade `drizzle-orm`/`drizzle-kit` from `1.0.0-rc.4` to 1.0 GA when it ships, then check
     whether `drizzle-kit migrate` with `d1-http` can re-run (see architecture); if so,
     `src/scripts/migrate-d1-remote.ts` + `src/scripts/remote-d1.ts` can go.
-  - The stashed `apps/workers` (`stash@{0}`) still has its own `worker_jobs` migrations and
-    hand-written SQL stores: on unstash, delete `apps/workers/migrations` + `scripts/migrate.ts`,
-    rewrite the Postgres/D1 stores on `@lightproject/database`, and resolve the expected conflicts
-    in `docker-compose.yml`/`.env.example` (Postgres credentials are now `lightproject`).
+- **`apps/workers` follow-ups** (rebuilt on `packages/database`, 2026-10-20):
+  - First real deploy: confirm the `WorkerLoop` Durable Objects run on develop, and (when an env
+    uses Postgres) whether the driver needs `nodejs_compat` through a real Hyperdrive binding.
+  - Exercise loop retirement (lower `WORKER_CONCURRENCY`, confirm surplus loops stop).
+  - On the first deploy, confirm handler telemetry outside local dev: `job.handler` spans under
+    `job.run` and `context.logger` entries with trace ids, from the container (per-thread SDK)
+    and the Worker (verified only against the local Grafana stack).
+  - `mise run docker` does not include `workers` yet (no port; needs a database to be useful).
+  - Drop the old workers stashes once this is committed.
 
 Not a TODO: `bak/` is intentionally tracked (see `architecture.md`).

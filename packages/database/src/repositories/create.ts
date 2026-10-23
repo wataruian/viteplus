@@ -1,6 +1,6 @@
 import type { DatabaseDialect } from '../environment/dialect';
 import { now } from '../shared';
-import type { Database, Tables } from './types';
+import type { Database, Tables, WorkerJobQueue } from './types';
 
 interface Timestamped {
   createdAt?: Date | undefined;
@@ -18,12 +18,14 @@ interface RepositoriesOptions {
   close: () => Promise<void>;
   dialect: DatabaseDialect;
   tables: Tables;
+  workerJobQueue: WorkerJobQueue;
 }
 
 const createRepositories = ({
   close,
   dialect,
   tables: { users, workerJobs },
+  workerJobQueue,
 }: RepositoriesOptions): Database => ({
   close,
   dialect,
@@ -35,6 +37,7 @@ const createRepositories = ({
     update: async (id, changes) => await users.update('id', id, changes),
   },
   workerJobs: {
+    ...workerJobQueue,
     findById: async (id) => await workerJobs.findBy('id', id),
     insert: async (job) => await workerJobs.insert(stamped(job)),
   },

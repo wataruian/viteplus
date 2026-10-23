@@ -1,3 +1,4 @@
+import type { PgAsyncDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -31,5 +32,7 @@ const createPostgresDatabase = ({
 
 type PostgresDatabase = ReturnType<typeof createPostgresDatabase>['db'];
 
+type AnyPostgresDatabase = PgAsyncDatabase<PgQueryResultHKT>;
+
 export { createPostgresDatabase, ignoreNotice };
-export type { PostgresDatabase, PostgresDatabaseOptions };
+export type { AnyPostgresDatabase, PostgresDatabase, PostgresDatabaseOptions };

@@ -38,7 +38,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'design-system frontend backend common database library'
+          all-workspaces: 'design-system frontend backend common database library workers'
 
       - name: Resolve workspaces with e2e tests
         id: e2e
@@ -169,10 +169,26 @@ jobs:
   #   with:
   #     workspace: frontend
 
+  workers:
+    # needs: [setup, dagger, database]
+    needs: [setup, database]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      needs.database.result != 'failure' &&
+      needs.database.result != 'cancelled' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'workers')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: workers
+
   artifacts:
     name: Publish artifacts
-    # needs: [setup, common, database, design-system, library, backend, frontend, dagger]
-    needs: [setup, database]
+    # needs: [setup, common, database, design-system, library, backend, frontend, dagger, workers]
+    needs: [setup, database, workers]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&

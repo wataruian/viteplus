@@ -22,17 +22,21 @@ const runGenerate = async ({
   const generateMigrations = vi.fn(generate);
   const execFileSync = vi.fn(check);
   const written: string[] = [];
-  const target = `${globalThis.process.cwd()}/src/d1/schema.ts`;
-  const targetContents = () => (written.length > 0 ? formatted : (existing ?? ''));
+  const targets = ['schema.ts', 'crud.ts', 'tables.ts', 'worker-jobs.ts'].map(
+    (file) => `${globalThis.process.cwd()}/src/d1/${file}`,
+  );
+  const isTarget = (file: string) => targets.includes(file);
+  const targetContents = (file: string) =>
+    written.some((entry) => entry.startsWith(`${file}\n`)) ? formatted : (existing ?? '');
 
   vi.doMock('node:child_process', () => ({ execFileSync }));
   vi.doMock('node:fs', () => ({
     default: {
       ...actualFs,
       existsSync: (file: string) =>
-        file === target ? existing !== undefined : actualFs.existsSync(file),
+        isTarget(file) ? existing !== undefined : actualFs.existsSync(file),
       readFileSync: (file: string, encoding: BufferEncoding) =>
-        file === target ? targetContents() : actualFs.readFileSync(file, encoding),
+        isTarget(file) ? targetContents(file) : actualFs.readFileSync(file, encoding),
       writeFileSync: (file: string, contents: string) => {
         written.push(`${file}\n${contents}`);
       },
@@ -54,7 +58,7 @@ const runGenerate = async ({
       paths: undefined,
     }),
   );
-  return { execFileSync, generateMigrations, outcome, stderr, stdout, target, written };
+  return { execFileSync, generateMigrations, outcome, stderr, stdout, targets, written };
 };
 
 afterEach(() => {
@@ -66,28 +70,37 @@ afterEach(() => {
 });
 
 describe('db:generate', () => {
-  test('writes the D1 schema, formats it with vp check, then generates both migrations', async () => {
-    const run = await runGenerate({ formatted: 'new schema' });
+  test('writes every D1 file, formats each with vp check, then generates both migrations', async () => {
+    const run = await runGenerate({ formatted: 'new contents' });
 
-    expect(run.written).toHaveLength(1);
-    expect(run.written[0]).toContain(`${run.target}\n`);
+    expect(run.written.map((entry) => entry.split('\n')[0])).toStrictEqual(run.targets);
     expect(run.written[0]).toContain("sqliteTable(\n  'users',");
-    expect(run.execFileSync).toHaveBeenCalledWith(
-      run.outcome.paths?.vp,
-      ['check', '--fix', run.target],
-      { encoding: 'utf8', stdio: 'pipe' },
-    );
-    expect(run.stdout).toHaveBeenCalledWith(
-      'D1 schema updated from the Postgres schema (src/d1/schema.ts)\n',
-    );
+    expect(run.written[1]).toContain('const createD1Crud =');
+    expect(run.written[2]).toContain('const createD1Tables = (db: D1Database): Tables');
+    expect(run.written[3]).toContain('const createD1WorkerJobQueue = (db: D1Database)');
+    for (const target of run.targets) {
+      expect(run.execFileSync).toHaveBeenCalledWith(
+        run.outcome.paths?.vp,
+        ['check', '--fix', target],
+        { encoding: 'utf8', stdio: 'pipe' },
+      );
+    }
+    expect(run.stdout.mock.calls).toStrictEqual([
+      ['src/d1/schema.ts updated from src/postgres/schema.ts\n'],
+      ['src/d1/crud.ts updated from src/postgres/crud.ts\n'],
+      ['src/d1/tables.ts updated from src/postgres/tables.ts\n'],
+      ['src/d1/worker-jobs.ts updated from src/postgres/worker-jobs.ts\n'],
+    ]);
     expect(run.generateMigrations).toHaveBeenCalledExactlyOnceWith('add_sample');
     expect(run.outcome.exitCode).toBeUndefined();
   });
 
-  test('reports when the D1 schema was already in sync', async () => {
+  test('reports the D1 files that were already in sync', async () => {
     const run = await runGenerate({ existing: 'same', formatted: 'same' });
 
-    expect(run.stdout).toHaveBeenCalledWith('D1 schema already in sync with the Postgres schema\n');
+    expect(run.stdout).toHaveBeenCalledWith(
+      'src/d1/worker-jobs.ts already in sync with src/postgres/worker-jobs.ts\n',
+    );
   });
 
   test('fails with vp check output when the generated schema does not pass', async () => {
