@@ -117,6 +117,114 @@ vp run test:integration   # Node worker threads (timeouts, aborts, start failure
 Before finishing, run `vp run ready` from the repo root. To reproduce CI:
 `dagger call test-integration --workspace=@lightproject/workers`.
 
+### Local testing
+
+Manual end-to-end checks against a real database. Postgres runs on the Node runtime; local D1 only
+on the Cloudflare runtime (`wrangler dev`): Node has no D1 binding, so `vp run dev` and
+`vp run enqueue` refuse `DATABASE_DIALECT=d1`.
+
+**Environment**: the commands need the root `.env` in the shell (mise does this when activated).
+Without mise activation, run them through `mise x -- env KEY=value … <command>`: put overrides
+**after** `mise x --`, because `mise x` re-applies `.env` over variables set before it.
+
+**Prerequisites** (once):
+
+```sh
+docker compose up -d postgres   # repo root
+cd ../../packages/database && vp run build \
+  && DATABASE_DIALECT=postgres vp run db:migrate && DATABASE_DIALECT=d1 vp run db:migrate
+cd ../../apps/workers
+```
+
+**Query helpers**:
+
+```sh
+# Postgres
+pgq() { docker exec postgres psql -U lightproject -d lightproject -c "$1"; }
+pgjobs() { pgq "SELECT payload->>'message' AS msg, status, attempts, left(last_error, 60) AS error, run_at FROM worker_jobs ORDER BY created_at DESC LIMIT 10;"; }
+
+# Local D1
+d1() { vp exec wrangler d1 execute DB --local --persist-to ../../.wrangler/state --command "$1"; }
+d1jobs() { d1 "SELECT json_extract(payload,'\$.message') AS msg, status, attempts, substr(last_error,1,60) AS error, datetime(run_at/1000,'unixepoch') AS run_at FROM worker_jobs ORDER BY created_at DESC LIMIT 10;"; }
+```
+
+The enqueue CLI has no delay or raw-payload options, so cases that need them insert rows
+directly. A row needs every column (no SQL defaults besides `attempts`).
+
+#### Postgres (Node runtime)
+
+| Case                  | Commands                                                                                                                                      | Expected                                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| P1. Run jobs          | `DATABASE_DIALECT=postgres vp run dev`, then (2nd terminal) `DATABASE_DIALECT=postgres vp run enqueue ping '{"message":"hello"}' 3`, `pgjobs` | `Started 2 worker(s)…`, `Enqueued 3 ping job(s)`, `ping: hello` ×3, `succeeded` |
+| P2. Concurrency       | `DATABASE_DIALECT=postgres WORKER_CONCURRENCY=ping=4 vp run dev`                                                                              | `Started 4 worker(s)…`; an unknown function name stops the start                |
+| P3. Delayed job       | P1's `vp run dev`, then the delayed insert below                                                                                              | `pending` until `run_at`, then `ping: later`                                    |
+| P4. Invalid payload   | P1's `vp run dev`, then the invalid insert below                                                                                              | `Job attempt failed` (`retryable: false`), row `dead`, `Invalid payload: …`     |
+| P5. Retention purge   | `DATABASE_DIALECT=postgres JOB_RETENTION_SUCCEEDED_MS=1000 JOB_RETENTION_DEAD_MS=1000 JOB_PURGE_INTERVAL_MS=15000 vp run dev`                 | Sweeps on start and every 15 s: `Purged N succeeded and M dead job(s)`          |
+| P6. Graceful shutdown | Ctrl+C in the `vp run dev` terminal                                                                                                           | `Received SIGTERM; stopping (in-flight jobs get the shutdown grace)`            |
+| P7. Built output      | `vp run build && DATABASE_DIALECT=postgres vp run start`                                                                                      | Same as P1, from `dist/index.mjs`                                               |
+
+```sh
+# P3: delayed job (runs in 20 s)
+pgq "INSERT INTO worker_jobs (id, function_name, payload, status, attempts, max_attempts, run_at, created_at, updated_at)
+     VALUES (gen_random_uuid()::text, 'ping', '{\"message\":\"later\"}', 'pending', 0, 5, now() + interval '20 seconds', now(), now());"
+
+# P4: invalid payload (enqueue would reject it)
+pgq "INSERT INTO worker_jobs (id, function_name, payload, status, attempts, max_attempts, run_at, created_at, updated_at)
+     VALUES (gen_random_uuid()::text, 'ping', '{}', 'pending', 0, 5, now(), now(), now());"
+
+# Reset
+pgq "DELETE FROM worker_jobs;"
+```
+
+Container image (what CI publishes; from the repo root):
+
+```sh
+dagger call load --workspace=@lightproject/workers --docker-socket=/var/run/docker.sock
+docker run --rm --name workers -e JOB_STORE=database -e DATABASE_DIALECT=postgres \
+  -e POSTGRES_URL=postgres://lightproject:lightproject@host.docker.internal:5432/lightproject workers:latest
+docker stop -t 30 workers   # graceful stop within the 30 s budget
+```
+
+#### D1 (Cloudflare runtime)
+
+Extra flags after `vp run wrangler:dev` reach `wrangler dev`, and `--var KEY:value` overrides
+`.env`, so `.env` can stay on `postgres`. Fire the watchdog cron once after every start; it starts
+one `WorkerLoop` per worker. Stop with Ctrl+C (wrangler respawns a killed `workerd`).
+
+| Case                | Commands                                                                                                                                                                | Expected                                                                    |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| D1. Run jobs        | `vp run wrangler:dev --var DATABASE_DIALECT:d1`, then (2nd terminal) `curl "http://localhost:2002/__scheduled?cron=*+*+*+*+*"`, the bulk insert below, `d1jobs`         | `Cron * * * * *: 2 worker loop(s) running`, `ping: hello` ×5, `succeeded`   |
+| D2. Concurrency     | `vp run wrangler:dev --var DATABASE_DIALECT:d1 --var WORKER_CONCURRENCY:ping=3`, then the curl                                                                          | `3 worker loop(s) running`; loops above a lowered count stop                |
+| D3. Delayed job     | D1's server + curl, then the delayed insert below                                                                                                                       | `pending` until `run_at`, then `ping: later`                                |
+| D4. Invalid payload | D1's server + curl, then the invalid insert below                                                                                                                       | `Job attempt failed`, row `dead`, `Invalid payload: …`                      |
+| D5. Retention purge | `vp run wrangler:dev --var DATABASE_DIALECT:d1 --var JOB_RETENTION_SUCCEEDED_MS:1000 --var JOB_RETENTION_DEAD_MS:1000 --var JOB_PURGE_INTERVAL_MS:60000`, then the curl | Every tick sweeps (interval = tick): `Purged N succeeded and M dead job(s)` |
+
+```sh
+# D1: enqueue 5 jobs
+d1 "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 5)
+    INSERT INTO worker_jobs (id, function_name, payload, status, attempts, max_attempts, run_at, created_at, updated_at)
+    SELECT lower(hex(randomblob(16))), 'ping', '{\"message\":\"hello\"}', 'pending', 0, 5,
+           unixepoch()*1000, unixepoch()*1000, unixepoch()*1000 FROM n;"
+
+# D3: delayed job (runs in 20 s)
+d1 "INSERT INTO worker_jobs (id, function_name, payload, status, attempts, max_attempts, run_at, created_at, updated_at)
+    VALUES (lower(hex(randomblob(16))), 'ping', '{\"message\":\"later\"}', 'pending', 0, 5,
+            unixepoch()*1000 + 20000, unixepoch()*1000, unixepoch()*1000);"
+
+# D4: invalid payload
+d1 "INSERT INTO worker_jobs (id, function_name, payload, status, attempts, max_attempts, run_at, created_at, updated_at)
+    VALUES (lower(hex(randomblob(16))), 'ping', '{}', 'pending', 0, 5, unixepoch()*1000, unixepoch()*1000, unixepoch()*1000);"
+
+# Reset
+d1 "DELETE FROM worker_jobs;"
+```
+
+#### Telemetry (either runtime)
+
+`docker compose up -d` (repo root), run any case, then in Grafana (http://localhost:3300) search
+Tempo for `{resource.service.name="@lightproject/workers" && name="job.handler"}` and Loki for
+`{service_name="@lightproject/workers"}`; handler logs carry the job span's trace id.
+
 ## Deployment
 
 The `workers` deploy runs after `database` (it needs its migrations) and does two things:
