@@ -9,6 +9,9 @@
   "main": "./dist/client.cjs",
   "module": "./dist/client.mjs",
   "types": "./dist/client.d.mts",
+  "imports": {
+    "#tsx-api": "./src/runtimes/tsx-api.ts"
+  },
   "exports": {
     ".": [
       {

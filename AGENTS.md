@@ -145,6 +145,8 @@ When first entering the repository or a new package:
   - **Shortcuts**: Use standardized UnoCSS shortcuts for common elements (e.g., `btn-primary`, `btn-ghost`, `glass-nav`).
   - **Header Safety**: When using the sticky `Header`, always add a `pt-20` (80px) buffer to the main content area in the app to prevent overlapping.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
+  - The root `README.md` is generic to the monorepo; app/package specifics go in that workspace's own README.
+  - **Every app and package has its own `README.md`** (new ones get it when created), following `packages/database/README.md`: a short intro, then `## Setup`, `## Environment variables` (every variable the code reads, with its purpose and default), `## Development`, `## Testing`, `## Deployment`.
 - **AI Data & Context Management**:
   - The `./.ai-data` directory is the persistent, version-controlled knowledge base for the monorepo. Agents MUST always review the context files here (`architecture.md`, `coding-guidelines.md`, `tooling-and-tasks.md`, `web-standards.md`, and open items in `TODO.md`; `memory.md` is the chronological decision log) when starting a new task to align with repository standards.
   - The `./.ai-data/artifacts` directory is `.gitignore`d and must be used as a temporary scratchpad. Agents should write all drafts, implementation plans, generated code snippets, and temporary task output here before finalizing them.

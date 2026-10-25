@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
 
 const inspectorPort = Math.trunc(
   Number(globalThis.process.env['WORKERS_INSPECTOR_PORT'] ?? '8232'),
@@ -17,6 +17,7 @@ export { inspectorPort, isIntegration, wranglerPort };
 export default defineConfig(({ mode }): UserConfig => {
   const dir = import.meta.dirname;
   const rootDir = path.resolve(dir, '../..');
+  const commonTaskProps = getCommonTaskProps(rootDir, mode);
   const packageEnvPath = path.resolve(dir, '.env');
   const rootEnvPath = path.resolve(rootDir, '.env');
 
@@ -37,6 +38,23 @@ export default defineConfig(({ mode }): UserConfig => {
       startCommand: 'node dist/index.mjs',
     }),
     {
+      pack: {
+        entry: ['!src/**/tsx-api.ts', '!src/**/tsx-api.cjs.ts'],
+        inputOptions: (options, format) => ({
+          ...options,
+          resolve: {
+            ...options.resolve,
+            alias:
+              format === 'cjs'
+                ? {
+                    ...options.resolve?.alias,
+                    '#tsx-api': path.resolve(dir, 'src/runtimes/tsx-api.cjs.ts'),
+                  }
+                : (options.resolve?.alias ?? {}),
+          },
+        }),
+        outputOptions: { exports: 'named' },
+      },
       run: {
         tasks: {
           enqueue: {
@@ -44,7 +62,10 @@ export default defineConfig(({ mode }): UserConfig => {
             command: 'tsx --conditions=typescript scripts/enqueue.ts',
           },
           'test:integration': {
-            cache: false,
+            cache: {
+              ...commonTaskProps.cache,
+              output: [{ base: 'package', pattern: 'e2e-test-results/**/*' }],
+            },
             command: 'TEST_SUITE=integration vp test',
           },
           'wrangler:delete': {
@@ -64,7 +85,13 @@ export default defineConfig(({ mode }): UserConfig => {
       test: {
         coverage: {
           enabled: !isIntegration,
-          exclude: ['**/index.ts', 'src/client.ts', 'src/runtimes/**'],
+          exclude: [
+            '**/index.ts',
+            'src/client.ts',
+            'src/core/job.ts',
+            'src/core/store.ts',
+            'src/runtimes/**',
+          ],
         },
         env: { JOB_STORE: 'memory', SKIP_OPENTELEMETRY: 'true' },
         ...(isIntegration

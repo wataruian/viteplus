@@ -1479,3 +1479,15 @@ AGENTS.md reflect the current state.
   (env default) and `timing.test.ts` checks the sum stays under 29 s.
 - **AGENTS.md** said "stop timeout above grace + 5 s"; corrected to grace + 13 s (≈ 28 s, keep ≥ 30 s),
   matching `architecture.md`.
+
+## 2026-10-25 — Per-workspace READMEs
+
+- **Every app and package has its own `README.md`**, new ones included, following
+  `packages/database/README.md`: intro, Setup, Environment variables (all variables the code reads,
+  purpose and default), Development, Testing, Deployment.
+- **Root `README.md` is monorepo-generic**; app/package specifics move to the workspace README.
+- **Workers pack warnings fixed** (same pattern as common's `#import-meta-env`): `spawnThread`'s
+  `import.meta.resolve('tsx/esm/api')` moved behind the `#tsx-api` subpath import; the CJS build
+  aliases it to `src/runtimes/tsx-api.cjs.ts`, which throws (CJS threads start from `.cjs` entries,
+  so tsx is only reached from the ESM sources). `pack.outputOptions.exports: 'named'` silences
+  `MIXED_EXPORTS` for `edge.ts`, whose default + `WorkerLoop` exports workerd requires.
