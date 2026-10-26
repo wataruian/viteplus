@@ -6,15 +6,8 @@ This document provides a comprehensive overview of the `@lightproject/monorepo` 
 
 The repository is structured as a **Vite+-powered Monorepo**.
 
-- **`apps/`**: Contains deployable units of the system.
-  - **`backend`**: Hono API — a Fetch-API/WinterCG-compatible framework (`app.fetch`). The
-    portable core (`src/app.ts`) has no runtime-specific dependencies; `src/runtimes/` holds the
-    thin adapters that run it: `node.ts` (local dev via `@hono/node-server`) and `edge.ts` (the
-    `wrangler.toml` entry, deployed to Cloudflare Workers). Node-specific APIs are intentionally
-    confined to `runtimes/node.ts` and build/test tooling.
-  - **`frontend`**: Modern SPA built with React and Vite.
-  - **`workers`**: Always-running background job workers — see "Background Workers" below. Same
-    split as the backend: a Web-API-only core, Node APIs only in `runtimes/node.ts`.
+- **`apps/`**: Deployable units of the system. Empty for now (`apps/.gitkeep`); the real apps
+  (`api`, `admin`, `site`, `workers`) are created here from `templates/`.
 - **`packages/`**: Shared internal libraries and utilities.
   - **`common`**: The foundational library providing isomorphic environment management and structured logging.
     Entry points (`@lightproject/common/<dir>`) are split by runtime: `browser` (Faro RUM —
@@ -23,13 +16,24 @@ The repository is structured as a **Vite+-powered Monorepo**.
     `validators`, `typecast`. Browser code must not import `server`/`node`, and server code must
     not import `browser`.
   - **`design-system`**: Shared UI component library using UnoCSS and React.
-  - **`database`**: Shared Drizzle ORM schema, clients and migrations — see "Database" below.
+- **`templates/`**: Workspace templates (`templates/*` in `pnpm-workspace.yaml`, verified and
+  deployed like the others) that real apps and packages are created from with `mise run create`.
+  - **`backend`**: Hono API — a Fetch-API/WinterCG-compatible framework (`app.fetch`). The
+    portable core (`src/app.ts`) has no runtime-specific dependencies; `src/runtimes/` holds the
+    thin adapters that run it: `node.ts` (local dev via `@hono/node-server`) and `edge.ts` (the
+    `wrangler.toml` entry, deployed to Cloudflare Workers). Node-specific APIs are intentionally
+    confined to `runtimes/node.ts` and build/test tooling.
+  - **`frontend`**: Modern SPA built with React and Vite.
+  - **`tasks`**: Always-running background job workers — see "Background Workers" below. Same
+    split as the backend: a Web-API-only core, Node APIs only in `runtimes/node.ts`.
+  - **`datastore`**: Shared Drizzle ORM schema, clients and migrations — see "Database" below.
   - **`library`**: General purpose shared library templates.
+- **Templates and reserved names**: `templates/backend`, `templates/frontend`, `templates/tasks` and `templates/datastore` are templates for future real workspaces: `apps/api` (from `backend`), `apps/admin` and `apps/site` (from `frontend`), `apps/workers` (from `tasks`) and `packages/database` (from `datastore`). Each owns an env prefix: templates `BACKEND_*`/`FRONTEND_*`/`TASKS_*`/`DATASTORE_*` (ports 2000+/8230+), real ones `API_*`/`ADMIN_*`/`SITE_*`/`WORKERS_*`/`DATABASE_*` (ports 3000+/9230+). The real ones' keys are reserved in `.env.example` and unused until those workspaces exist; do not remove or reuse them. Only variables that would clash when two of them run side by side get the prefix: ports and URLs, `<APP>_CONCURRENCY` (it names that app's job functions), and the Postgres database (`<PKG>_POSTGRES_DB`/`<PKG>_POSTGRES_URL`: each database package keeps its own database and migration history on the shared compose server, created by `configs/postgres/create-databases.sh`). Everything else stays shared and unprefixed: `POSTGRES_HOST`/`PORT`/`USER`/`PASSWORD`, `DATABASE_DIALECT` and `DATABASE_MIGRATION_ENABLED` (shared despite the prefix), `JOB_STORE`, the `WORKER_*`/`JOB_*` tunables, `ALLOWED_IPS`, … New apps/packages come from `mise run create --type=backend|frontend|tasks|datastore|library --name=<name>` (`scaffold/scaffold.ts`, tested in `tests/unit/scaffold.test.ts`), which renames only the template's own names in the copy and adds its missing keys to `.env.example`. So a template must read its **own** URL/port app-locally (its `src/env.ts`/`config.ts`, e.g. the backend's `BACKEND_URL`), never through a name-specific getter in `packages/common` (common keeps those only for other apps that call it), must not use its own camelCase name for anything else, must reach other workspaces through the repo root (`../../templates/backend/…`, never a sibling path like `../backend/…`, which breaks once the copy lives in `apps/`), and wraps template-only README text in `<!-- template-only -->` … `<!-- /template-only -->`.
 - **`bak/`**: Intentionally tracked archive of earlier app/library setups, kept for future reuse.
   Not a workspace member; excluded from lint/format, Sonar, and CodeQL. Not a cleanup/TODO item —
   do not propose removing it from Git.
 
-## Database (`packages/database`)
+## Database (`templates/datastore`)
 
 - **Drizzle ORM 1.0 RC** (`drizzle-orm`/`drizzle-kit` pinned to `1.0.0-rc.4`), chosen over Prisma
   (codegen, heavy on Workers, D1 adapter in Preview) and Kysely (no schema/migration tooling).
@@ -63,11 +67,11 @@ The repository is structured as a **Vite+-powered Monorepo**.
   functions not from `src/shared`, non-btree/unnamed/expression indexes, composite or circular
   foreign keys. Row types (`User`, `WorkerJob`, …) are exported once from the root entry.
 - **Apps query through one import**: `db.createDatabase(env)` (`import { db } from
-  '@lightproject/database'`; namespaced like the other packages' roots) picks the
+  '@lightproject/datastore'`; namespaced like the other packages' roots) picks the
   dialect from `env.DATABASE_DIALECT` (else `process.env`) and returns repositories
   (`db.users.findById/findByEmail/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries) with the
   same row types on both. D1 needs the binding as `env.DB`; Postgres uses
-  `env.HYPERDRIVE.connectionString`, then `env.POSTGRES_URL`, then the `POSTGRES_*` env. Each
+  `env.HYPERDRIVE.connectionString`, then `env.DATASTORE_POSTGRES_URL`, then the `POSTGRES_*` env. Each
   dialect is loaded with a dynamic `import()`, so the root entry imports neither driver.
 - **Repository layering (no casts)**: Drizzle's builders can't be typed over a generic table, so
   each dialect has one table-generic `crud.ts` (`findBy`/`insert`/`update`/`remove`) that widens
@@ -115,18 +119,18 @@ The repository is structured as a **Vite+-powered Monorepo**.
   (Drizzle 1.0 folder format — not the flat files `wrangler d1 migrations` reads, so D1 is
   migrated by Drizzle's migrator too, tracked in `__drizzle_migrations` on both). Apply:
   `vp run db:migrate`, which picks the migrator from `DATABASE_DIALECT`: `postgres` →
-  drizzle-orm's postgres-js migrator (`POSTGRES_URL` or the `POSTGRES_*` parts); `d1` → local D1
+  drizzle-orm's postgres-js migrator (`DATASTORE_POSTGRES_URL` or the `POSTGRES_*` parts); `d1` → local D1
   (shared state), or with `CLOUDFLARE_ENV=<develop|staging|production>` the remote D1
   (`src/scripts/migrate-d1-remote.ts`: Drizzle's sqlite-proxy migrator over Cloudflare's D1 `/raw`
   HTTP endpoint; the database is the `DB` binding of `[env.<CLOUDFLARE_ENV>]` in
-  `packages/database/wrangler.toml`, credentials `CLOUDFLARE_ACCOUNT_ID`/`CLOUDFLARE_API_TOKEN`
+  `templates/datastore/wrangler.toml`, credentials `CLOUDFLARE_ACCOUNT_ID`/`CLOUDFLARE_API_TOKEN`
   from the environment or root `.env`). Not `drizzle-kit migrate` with `d1-http`: in 1.0.0-rc.4
   its migrations-table check reads rows as arrays while that driver returns objects, so every run
   after the first fails with "migrations in the database that do not match any local migration".
   A unit test also rejects migration folders missing `migration.sql`/`snapshot.json` (left
   behind when files are deleted), which break every migrate run the same way.
 - **One database for all apps**, one migration history: apps bind the same D1 (`database_id`
-  from `packages/database/wrangler.toml` locally, `lightproject-local`) and run `wrangler dev`
+  from `templates/datastore/wrangler.toml` locally, `lightproject-datastore-local`) and run `wrangler dev`
   with `--persist-to ../../.wrangler/state`, the folder `DATABASE_DIALECT=d1 vp run db:migrate` migrates. Apps never keep
   their own tables or migrations.
 - **Lint note**: `sort-keys` orders column objects alphabetically, so generated tables list
@@ -134,7 +138,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
 
 ### Adding a table
 
-Every edit is in `packages/database`, on the Postgres or dialect-neutral side; nothing under
+Every edit is in `templates/datastore`, on the Postgres or dialect-neutral side; nothing under
 `src/d1/` or `migrations/` is edited by hand. Example: an `orders` table that belongs to a user
 (this exact code was applied, generated and tested on both dialects before being documented).
 
@@ -321,7 +325,7 @@ Every edit is in `packages/database`, on the Postgres or dialect-neutral side; n
 Apps then use it through the same entry point as every table, on either dialect:
 
 ```ts
-import { db } from '@lightproject/database';
+import { db } from '@lightproject/datastore';
 
 const database = await db.createDatabase(env);
 const order = await database.orders.insert({ totalCents: 1250, userId: user.id });
@@ -330,10 +334,10 @@ const order = await database.orders.insert({ totalCents: 1250, userId: user.id }
 A schema-only change to an existing table needs steps 1, 7, 8 and 9 (plus 3/5 if its repository
 methods change).
 
-## Background Workers (`apps/workers`)
+## Background Workers (`templates/tasks`)
 
 - **Model**: each job function (`defineFunction` in `src/functions/`, registered in
-  `functions/index.ts`) gets `concurrency` workers (`WORKER_CONCURRENCY=name=n,…` overrides,
+  `functions/index.ts`) gets `concurrency` workers (`TASKS_CONCURRENCY=name=n,…` overrides,
   validated in the env schema at startup; names no registered function has fail the Node start
   and the Worker's module load via `config.assertKnownFunctions(functions)`). A
   worker loops claim → run → record. While the queue stays empty it backs off, on both runtimes:
@@ -345,7 +349,7 @@ methods change).
   idle maximum, purge interval, a function's `timeoutMs`) is capped at 2^31-1 ms, beyond which
   Node fires timers after 1 ms.
 - **No models, SQL or migrations in the app.** A job is `types.WorkerJob` (the `worker_jobs` row
-  owned by `packages/database`). `JobStore` (`src/core/store.ts`) mirrors `db.workerJobs`
+  owned by `templates/datastore`). `JobStore` (`src/core/store.ts`) mirrors `db.workerJobs`
   (enqueue/claim/heartbeat/complete/fail/release/purge + `findById`); production passes no `now`
   (database clock; the memory store uses its own), unit tests inject one (`storeClock`). `JOB_STORE=memory|database`: `memory` (dev/unit tests; same semantics,
   pinned by `tests/unit/helpers/job-store-contract.ts`, which also runs on the database store over a
@@ -405,7 +409,7 @@ methods change).
   error type on D1); a claim costs a second, cheap query when no lease has expired (the expired
   check reads at most one row of the small running index; one `UNION` statement cannot carry
   Postgres's `FOR UPDATE SKIP LOCKED` per branch without derived tables, which the generated D1
-  copy would also have to express); the deploy's smoke test skips `workers` explicitly (it has no
+  copy would also have to express); the deploy's smoke test skips `tasks` explicitly (it has no
   HTTP endpoint; the `case` fallback would only add a warning to every deploy); the edge purge
   runs only on the tick that crosses an interval boundary, so a dropped tick skips one interval
   (the next sweep removes everything past retention, capped per sweep); `db:generate` runs one
@@ -439,16 +443,16 @@ methods change).
     workerd refuses to start on any other export ("Incorrect type for map entry"), which no
     type-check catches. Handlers run in-process and cannot be killed: on timeout the loop
     waits up to 5 s for the handler to settle before claiming the next job, then logs and moves on
-    (a handler that ignores `context.signal` can overlap the next one). No `nodejs_compat`: D1 and Postgres (plain `POSTGRES_URL`) both ran
+    (a handler that ignores `context.signal` can overlap the next one). No `nodejs_compat`: D1 and Postgres (plain `DATASTORE_POSTGRES_URL`) both ran
     in local workerd without it; Postgres through a deployed Hyperdrive is not yet verified.
-- **Shared database**: the edge binds the same D1 as `packages/database` (local and per-env ids);
+- **Shared database**: the edge binds the same D1 as `templates/datastore` (local and per-env ids);
   a deployed env may use a remote Postgres instead (`DATABASE_DIALECT=postgres` + a `HYPERDRIVE`
-  binding, or a `POSTGRES_URL` secret). `wrangler.toml` is the Worker's source of truth (it holds
+  binding, or a `DATASTORE_POSTGRES_URL` secret). `wrangler.toml` is the Worker's source of truth (it holds
   the bindings that dialect needs); when the GitHub `DATABASE_DIALECT` variable (the migration's
   dialect) is set, the workers deploy fails unless `[env.<env>.vars]` names the same dialect, so a
   mismatch is a loud deploy error instead of a Worker reading an unmigrated database. (Forwarding
   the variable instead was rejected: a Worker switched to Postgres without a `HYPERDRIVE` binding
-  or `POSTGRES_URL` cannot connect.) Locally `wrangler dev` loads `.env`, whose values override
+  or `DATASTORE_POSTGRES_URL` cannot connect.) Locally `wrangler dev` loads `.env`, whose values override
   `[vars]`, so local Cloudflare dev follows `.env`'s `DATABASE_DIALECT` (decision 2026-10-20).
 - **Retention**: `purgeFinished` deletes succeeded jobs after `JOB_RETENTION_SUCCEEDED_MS` (7 d,
   the dedupe window for completed work) and dead ones after `JOB_RETENTION_DEAD_MS` (30 d), oldest first, in
@@ -457,7 +461,7 @@ methods change).
   `JOB_PURGE_INTERVAL_MS` (1 h, so ≤ 10k per status per hour by default); the edge cron sweeps on
   the first tick of each such interval, with the same settings. Raise the cap if more finish than that (verified live: the cap
   holds, the next sweep continues, recent jobs stay).
-- **Enqueue API**: `@lightproject/workers` exports `createJobClient(store).enqueue(fn, payload,
+- **Enqueue API**: `@lightproject/tasks` exports `createJobClient(store).enqueue(fn, payload,
   { delayMs | runAt, dedupeKey, maxAttempts })` (`delayMs` and `runAt` are mutually exclusive
   in the type); payloads are validated by the function's schema
   and JSON round-tripped exactly as the database stores them, then re-parsed, so a schema the stored
@@ -474,13 +478,13 @@ methods change).
   `context.withTrace(fn)` (a call started synchronously in `fn`, e.g. `fetch`, becomes a child).
   Verified live: Loki handler logs carry the trace id; Tempo shows `job.handler` under `job.run`
   across instances (Node and edge).
-- **CI/CD**: verified on PRs like `database`; deployed after `database` (needs its migrations):
+- **CI/CD**: verified on PRs like `datastore`; deployed after `datastore` (needs its migrations):
   `dagger publish` (Node image) + `dagger wrangler` (Worker, `OTLP_ENDPOINT` as a worker var). No
   smoke test: the Worker has no HTTP endpoint.
 
 ### Adding a job function
 
-Every edit is in `apps/workers`; both runtimes pick the function up from the registry, so neither
+Every edit is in `templates/tasks`; both runtimes pick the function up from the registry, so neither
 `runtimes/` nor `wrangler.toml` changes. Example: `send-welcome-email` (this exact code was
 written, linted, tested and run on Node before being documented).
 
@@ -529,7 +533,7 @@ written, linted, tested and run on Node before being documented).
    - **`signal`**: aborted on timeout or a lost lease; pass it to `fetch` and other cancellable
      work. A handler that ignores it is terminated (Node) or overlapped (edge) after a 5 s grace.
    - **Throw to retry** (with `backoff`, up to `maxAttempts`, then `dead`); throw
-     **`UnrecoverableJobError`** (from `@lightproject/workers`) for a failure retrying cannot fix
+     **`UnrecoverableJobError`** (from `@lightproject/tasks`) for a failure retrying cannot fix
      (e.g. an HTTP 4xx) to mark the job `dead` at once; **`skip(reason)`** to finish without
      retrying when the job no longer applies.
    - **`logger`** writes under the job's `job.handler` span; **`withTrace(fn)`** makes a call
@@ -599,17 +603,17 @@ written, linted, tested and run on Node before being documented).
 
    Then `vp run ready`.
 
-5. **Concurrency per environment** (optional): `WORKER_CONCURRENCY` overrides the function's
-   `concurrency`, e.g. `WORKER_CONCURRENCY="ping=2,send-welcome-email=4"` in `.env`, the
+5. **Concurrency per environment** (optional): `TASKS_CONCURRENCY` overrides the function's
+   `concurrency`, e.g. `TASKS_CONCURRENCY="ping=2,send-welcome-email=4"` in `.env`, the
    container's env, or a deployed Worker's vars. A name that matches no registered function stops
    both runtimes at startup.
 
-6. **Enqueue it** from another app (add `"@lightproject/workers": "workspace:*"` to its
+6. **Enqueue it** from another app (add `"@lightproject/tasks": "workspace:*"` to its
    `dependencies`); `dedupeKey` returns the existing job while it is pending, running or succeeded
    (until retention purges it), and revives a `dead` one with the new payload:
 
    ```ts
-   import { createJobClient, createJobStore, sendWelcomeEmail } from '@lightproject/workers';
+   import { createJobClient, createJobStore, sendWelcomeEmail } from '@lightproject/tasks';
 
    const store = await createJobStore('database', env);
    const jobs = createJobClient(store);

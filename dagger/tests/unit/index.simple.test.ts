@@ -22,13 +22,16 @@ describe('madge', () => {
 });
 
 describe('root', () => {
-  test('runs vp run -r root on the installed root source', async () => {
+  test('runs root:check, then root:test:unit, on the installed root source', async () => {
     world.execStdout = 'root output';
 
     const result = await createMonorepo().root();
 
-    expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'root']);
-    await expect(result.file('root.output').contents()).resolves.toBe('root output');
+    expect(getLastContainer().capturedExecCalls.slice(-2)).toStrictEqual([
+      ['vp', 'run', '-r', 'root:check'],
+      ['vp', 'run', '-r', 'root:test:unit'],
+    ]);
+    await expect(result.file('root.output').contents()).resolves.toBe('root outputroot output');
   });
 });
 
@@ -43,9 +46,11 @@ describe('ready', () => {
     expect(container.capturedServiceBindings.get('postgres')?.capturedImage).toBe(
       'postgres:17.6-alpine',
     );
-    expect(container.capturedEnvVariables.get('POSTGRES_URL')).toBe(
-      'postgres://lightproject:lightproject@postgres:5432/lightproject',
-    );
+    for (const variable of ['DATASTORE_POSTGRES_URL', 'TASKS_POSTGRES_URL']) {
+      expect(container.capturedEnvVariables.get(variable)).toBe(
+        'postgres://lightproject:lightproject@postgres:5432/lightproject',
+      );
+    }
     await expect(result.file('ready.output').contents()).resolves.toBe('ready output');
   });
 });

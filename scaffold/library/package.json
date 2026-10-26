@@ -1,0 +1,6 @@
+{
+  "bin": {
+    "create": "./index.ts"
+  },
+  "type": "module"
+}

@@ -1,0 +1,22 @@
+name = "lightproject-datastore"
+compatibility_date = "2026-08-26"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lightproject-datastore-local"
+database_id = "lightproject-datastore-local"
+
+[[env.develop.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-dev"
+database_id = "9f1bf2ea-f0d4-4a0a-941d-7020ee0557a0"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-staging"
+database_id = "9aec85c6-8fdb-4d4e-8398-8fd6100ce5e6"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-production"
+database_id = "09adc8ae-43b3-4bd1-a517-7292fd83bb96"

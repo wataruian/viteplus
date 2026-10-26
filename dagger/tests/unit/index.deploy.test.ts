@@ -18,7 +18,7 @@ const fakeSecret = new Secret();
 describe('nginx', () => {
   test('mounts the vite build from "out" and the storybook static site when both are present', async () => {
     seedMountFiles();
-    world.dirs.set('/app/apps/frontend', ['out/', 'storybook-static/']);
+    world.dirs.set('/app/templates/frontend', ['out/', 'storybook-static/']);
 
     const container = await createMonorepo().nginx('@lightproject/frontend');
 
@@ -31,7 +31,7 @@ describe('nginx', () => {
 
   test('falls back to "dist" when "out" is absent and skips storybook when absent', async () => {
     seedMountFiles();
-    world.dirs.set('/app/apps/frontend', ['dist/']);
+    world.dirs.set('/app/templates/frontend', ['dist/']);
 
     const container = await createMonorepo().nginx('@lightproject/frontend');
 
@@ -44,7 +44,7 @@ describe('nginx', () => {
 
   test('mounts neither vite artifact directory when neither is present', async () => {
     seedMountFiles();
-    world.dirs.set('/app/apps/frontend', []);
+    world.dirs.set('/app/templates/frontend', []);
 
     const container = await createMonorepo().nginx('@lightproject/frontend');
 
@@ -55,20 +55,21 @@ describe('nginx', () => {
 });
 
 describe('vp', () => {
-  test('copies dist artifacts for packages that have them, across apps and packages', async () => {
+  test('copies dist artifacts for packages that have them, across the workspace groups', async () => {
     seedMountFiles();
-    world.dirs.set('/app', ['apps/', 'packages/']);
-    world.dirs.set('/app/apps', ['frontend/']);
+    world.dirs.set('/app', ['apps/', 'packages/', 'templates/']);
+    world.dirs.set('/app/apps', []);
     world.dirs.set('/app/packages', ['common/']);
-    world.dirs.set('/app/apps/frontend', ['dist/']);
+    world.dirs.set('/app/templates', ['frontend/']);
+    world.dirs.set('/app/templates/frontend', ['dist/']);
     world.dirs.set('/app/packages/common', []);
 
     const container = await createMonorepo().vp('@lightproject/backend');
     const fake = asFakeContainer(container);
 
-    expect(fake.capturedDirectoryPaths).toContain('/app/apps/frontend/dist');
+    expect(fake.capturedDirectoryPaths).toContain('/app/templates/frontend/dist');
     expect(fake.capturedDirectoryPaths).not.toContain('/app/packages/common/dist');
-    expect(fake.capturedWorkdir).toBe('/app/apps/backend');
+    expect(fake.capturedWorkdir).toBe('/app/templates/backend');
     expect(fake.capturedDefaultArgs).toStrictEqual(['node', 'dist/index.mjs']);
     expect(fake.capturedFilePaths).toStrictEqual([]);
   });
@@ -83,22 +84,22 @@ describe('vp', () => {
     expect(fake.capturedExecCalls.at(-1)).toStrictEqual(['node', '--version']);
   });
 
-  test("adds the workspace's image files and command (database: the migrator)", async () => {
+  test("adds the workspace's image files and command (datastore: the migrator)", async () => {
     seedMountFiles();
     world.dirs.set('/app', []);
-    world.dirs.set('packages/database', [
+    world.dirs.set('templates/datastore', [
       'drizzle.postgres.config.ts',
       'migrations/',
       'src/',
       'wrangler.toml',
     ]);
 
-    const fake = asFakeContainer(await createMonorepo().vp('@lightproject/database'));
+    const fake = asFakeContainer(await createMonorepo().vp('@lightproject/datastore'));
 
-    expect(fake.capturedDirectoryPaths).toContain('/app/packages/database/migrations');
-    expect(fake.capturedDirectoryPaths).not.toContain('/app/packages/database/src');
-    expect(fake.capturedFilePaths).toStrictEqual(['/app/packages/database/wrangler.toml']);
-    expect(fake.capturedWorkdir).toBe('/app/packages/database');
+    expect(fake.capturedDirectoryPaths).toContain('/app/templates/datastore/migrations');
+    expect(fake.capturedDirectoryPaths).not.toContain('/app/templates/datastore/src');
+    expect(fake.capturedFilePaths).toStrictEqual(['/app/templates/datastore/wrangler.toml']);
+    expect(fake.capturedWorkdir).toBe('/app/templates/datastore');
     expect(fake.capturedDefaultArgs).toStrictEqual(['node', 'dist/scripts/migrate.mjs']);
   });
 
@@ -115,7 +116,7 @@ describe('vp', () => {
 describe('load', () => {
   test('loads and tags a frontend (nginx) image, adding the extra tag when given', async () => {
     seedMountFiles();
-    world.dirs.set('/app/apps/frontend', []);
+    world.dirs.set('/app/templates/frontend', []);
     world.execStdout = 'Loaded image: frontend:latest';
 
     const stdout = await createMonorepo().load('@lightproject/frontend', fakeSocket, 'v1.2.3');
@@ -147,7 +148,7 @@ describe('load', () => {
 describe('publish', () => {
   test('publishes a frontend (nginx) image with the extra tag when given', async () => {
     seedMountFiles();
-    world.dirs.set('/app/apps/frontend', []);
+    world.dirs.set('/app/templates/frontend', []);
 
     const message = await createMonorepo().publish(
       '@lightproject/frontend',
@@ -266,7 +267,7 @@ describe('wrangler', () => {
 const seedDatabaseImage = (): void => {
   seedMountFiles();
   world.dirs.set('/app', []);
-  world.dirs.set('packages/database', ['migrations/', 'src/']);
+  world.dirs.set('templates/datastore', ['migrations/', 'src/']);
 };
 
 describe('migrate', () => {
@@ -277,7 +278,7 @@ describe('migrate', () => {
       world.execStdout = 'migrated';
 
       const stdout = await createMonorepo().migrate(
-        '@lightproject/database',
+        '@lightproject/datastore',
         'production',
         dialect,
         fakeSecret,
@@ -287,7 +288,7 @@ describe('migrate', () => {
 
       expect(stdout).toBe('migrated');
       const container = getLastContainer();
-      expect(container.capturedWorkdir).toBe('/app/packages/database');
+      expect(container.capturedWorkdir).toBe('/app/templates/datastore');
       expect(container.capturedEnvVariables.get('DATABASE_DIALECT')).toBe(dialect);
       expect(container.capturedEnvVariables.get('CLOUDFLARE_ENV')).toBe('production');
       expect(container.capturedEnvVariables.get('HTTPS_PROXY')).toBe('');
@@ -307,12 +308,15 @@ describe('migrate', () => {
   ] as const)('runs %s with only its own credentials', async (dialect, secrets) => {
     seedDatabaseImage();
 
-    await createMonorepo().migrate('@lightproject/database', 'develop', dialect, ...secrets);
+    await createMonorepo().migrate('@lightproject/datastore', 'develop', dialect, ...secrets);
 
-    expect(getLastContainer().capturedExecCalls.at(-1)).toStrictEqual([
-      'node',
-      'dist/scripts/migrate.mjs',
-    ]);
+    const container = getLastContainer();
+    expect(container.capturedExecCalls.at(-1)).toStrictEqual(['node', 'dist/scripts/migrate.mjs']);
+    expect(container.capturedSecretVariables).toStrictEqual(
+      dialect === 'd1'
+        ? ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID']
+        : ['DATASTORE_POSTGRES_URL'],
+    );
   });
 
   test.each([
@@ -327,7 +331,7 @@ describe('migrate', () => {
     'rejects dialect %s with missing inputs before mounting',
     async (dialect, secrets, message) => {
       await expect(
-        createMonorepo().migrate('@lightproject/database', 'develop', dialect, ...secrets),
+        createMonorepo().migrate('@lightproject/datastore', 'develop', dialect, ...secrets),
       ).rejects.toThrow(message);
       expect(() => getLastContainer()).toThrow('no fake container has been created yet');
     },
@@ -338,7 +342,7 @@ describe('migrate', () => {
     async (environment) => {
       await expect(
         createMonorepo().migrate(
-          '@lightproject/database',
+          '@lightproject/datastore',
           environment,
           'd1',
           fakeSecret,

@@ -54,7 +54,6 @@ const SOURCE_IGNORE: string[] = [
   '.mise',
   '.outputs',
   '**/.pruned',
-  '.templates',
   '**/.vite-hooks',
   '.vscode',
   '**/bak',
@@ -111,6 +110,8 @@ const MANIFEST_FILES: string[] = [
 
 const DAGGER_WORKSPACE = 'dagger';
 
+const WORKSPACE_GROUPS: readonly string[] = ['apps', 'packages', 'templates'];
+
 const DEPLOY_ENVIRONMENTS: ReadonlySet<string> = new Set(['develop', 'staging', 'production']);
 
 const DATABASE_DIALECTS: ReadonlySet<string> = new Set(['d1', 'postgres']);
@@ -129,20 +130,20 @@ interface WorkspaceEntry {
 const DEFAULT_WORKSPACE_IMAGE: WorkspaceImage = { command: ['node', 'dist/index.mjs'], files: [] };
 
 const WORKSPACES: Record<string, WorkspaceEntry | undefined> = {
-  '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
+  '@lightproject/backend': { isFrontend: false, path: 'templates/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
-  '@lightproject/database': {
+  '@lightproject/datastore': {
     image: {
       command: ['node', 'dist/scripts/migrate.mjs'],
       files: ['migrations', 'wrangler.toml'],
     },
     isFrontend: false,
-    path: 'packages/database',
+    path: 'templates/datastore',
   },
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
-  '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
-  '@lightproject/library': { isFrontend: false, path: 'packages/library' },
-  '@lightproject/workers': { isFrontend: false, path: 'apps/workers' },
+  '@lightproject/frontend': { isFrontend: true, path: 'templates/frontend' },
+  '@lightproject/library': { isFrontend: false, path: 'templates/library' },
+  '@lightproject/tasks': { isFrontend: false, path: 'templates/tasks' },
 };
 
 const WORKSPACE_NAMES = Object.keys(WORKSPACES);
@@ -188,6 +189,7 @@ export {
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_PACKAGE_MANAGER_PATH,
   VITE_PLUS_USER,
+  WORKSPACE_GROUPS,
   WORKSPACE_NAMES,
   WORKSPACES,
 };

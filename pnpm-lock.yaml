@@ -524,162 +524,6 @@ importers:
         specifier: 'catalog:'
         version: 0.5.0
 
-  apps/backend:
-    dependencies:
-      '@hono/node-server':
-        specifier: 'catalog:'
-        version: 2.1.1(hono@4.13.8)
-      '@hono/swagger-ui':
-        specifier: 'catalog:'
-        version: 0.6.1(hono@4.13.8)
-      '@hono/trpc-server':
-        specifier: 'catalog:'
-        version: 0.4.2(@trpc/server@11.17.0(typescript@6.0.2))(hono@4.13.8)
-      '@hono/zod-openapi':
-        specifier: 'catalog:'
-        version: 1.6.3(hono@4.13.8)(zod@4.4.3)
-      '@lightproject/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@t3-oss/env-core':
-        specifier: 'catalog:'
-        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
-      '@trpc/server':
-        specifier: 'catalog:'
-        version: 11.17.0(typescript@6.0.2)
-      hono:
-        specifier: 'catalog:'
-        version: 4.13.8
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 25.5.2
-      '@typescript/native-preview':
-        specifier: 'catalog:'
-        version: 7.0.0-dev.20260405.1
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
-      wrangler:
-        specifier: 'catalog:'
-        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
-
-  apps/frontend:
-    dependencies:
-      '@iconify-json/logos':
-        specifier: 'catalog:'
-        version: 1.2.1
-      '@iconify-json/ph':
-        specifier: 'catalog:'
-        version: 1.2.2
-      '@lightproject/backend':
-        specifier: workspace:*
-        version: link:../backend
-      '@lightproject/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@lightproject/design-system':
-        specifier: workspace:*
-        version: link:../../packages/design-system
-      '@t3-oss/env-core':
-        specifier: 'catalog:'
-        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
-      '@trpc/client':
-        specifier: 'catalog:'
-        version: 11.17.0(@trpc/server@11.17.0(typescript@6.0.2))(typescript@6.0.2)
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
-      superjson:
-        specifier: 'catalog:'
-        version: 2.2.6
-      unocss:
-        specifier: 'catalog:'
-        version: 66.6.7(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0))
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@playwright/test':
-        specifier: 'catalog:'
-        version: 1.63.0
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.14)
-      '@typescript/native-preview':
-        specifier: 'catalog:'
-        version: 7.0.0-dev.20260405.1
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 6.0.1(@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0))
-      jsdom:
-        specifier: 'catalog:'
-        version: 30.0.1
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-      vite:
-        specifier: 'catalog:'
-        version: '@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)'
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
-      wrangler:
-        specifier: 'catalog:'
-        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
-
-  apps/workers:
-    dependencies:
-      '@cloudflare/workers-types':
-        specifier: 'catalog:'
-        version: 5.20261016.1
-      '@lightproject/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@lightproject/database':
-        specifier: workspace:*
-        version: link:../../packages/database
-      '@t3-oss/env-core':
-        specifier: 'catalog:'
-        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 25.5.2
-      '@typescript/native-preview':
-        specifier: 'catalog:'
-        version: 7.0.0-dev.20260405.1
-      drizzle-orm:
-        specifier: 'catalog:'
-        version: 1.0.0-rc.4(@cloudflare/workers-types@5.20261016.1)(@electric-sql/pglite@0.5.10)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(zod@4.4.3)
-      tsx:
-        specifier: 'catalog:'
-        version: 4.21.0
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
-      wrangler:
-        specifier: 'catalog:'
-        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
-
   packages/common:
     dependencies:
       '@grafana/faro-react':
@@ -764,46 +608,6 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
-
-  packages/database:
-    dependencies:
-      '@cloudflare/workers-types':
-        specifier: 'catalog:'
-        version: 5.20261016.1
-      drizzle-orm:
-        specifier: 'catalog:'
-        version: 1.0.0-rc.4(@cloudflare/workers-types@5.20261016.1)(@electric-sql/pglite@0.5.10)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(zod@4.4.3)
-      postgres:
-        specifier: 'catalog:'
-        version: 3.4.9
-      smol-toml:
-        specifier: 'catalog:'
-        version: 1.9.1
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
-    devDependencies:
-      '@electric-sql/pglite':
-        specifier: 'catalog:'
-        version: 0.5.10
-      '@types/node':
-        specifier: 'catalog:'
-        version: 25.5.2
-      '@typescript/native-preview':
-        specifier: 'catalog:'
-        version: 7.0.0-dev.20260405.1
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 1.0.0-rc.4
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
-      wrangler:
-        specifier: 'catalog:'
-        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
 
   packages/design-system:
     dependencies:
@@ -890,7 +694,35 @@ importers:
         specifier: 'catalog:'
         version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
 
-  packages/library:
+  templates/backend:
+    dependencies:
+      '@hono/node-server':
+        specifier: 'catalog:'
+        version: 2.1.1(hono@4.13.8)
+      '@hono/swagger-ui':
+        specifier: 'catalog:'
+        version: 0.6.1(hono@4.13.8)
+      '@hono/trpc-server':
+        specifier: 'catalog:'
+        version: 0.4.2(@trpc/server@11.17.0(typescript@6.0.2))(hono@4.13.8)
+      '@hono/zod-openapi':
+        specifier: 'catalog:'
+        version: 1.6.3(hono@4.13.8)(zod@4.4.3)
+      '@lightproject/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
+      '@trpc/server':
+        specifier: 'catalog:'
+        version: 11.17.0(typescript@6.0.2)
+      hono:
+        specifier: 'catalog:'
+        version: 4.13.8
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -904,6 +736,174 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
+      wrangler:
+        specifier: 'catalog:'
+        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
+
+  templates/datastore:
+    dependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261016.1
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 1.0.0-rc.4(@cloudflare/workers-types@5.20261016.1)(@electric-sql/pglite@0.5.10)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(zod@4.4.3)
+      postgres:
+        specifier: 'catalog:'
+        version: 3.4.9
+      smol-toml:
+        specifier: 'catalog:'
+        version: 1.9.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@electric-sql/pglite':
+        specifier: 'catalog:'
+        version: 0.5.10
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260405.1
+      drizzle-kit:
+        specifier: 'catalog:'
+        version: 1.0.0-rc.4
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
+      wrangler:
+        specifier: 'catalog:'
+        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
+
+  templates/frontend:
+    dependencies:
+      '@iconify-json/logos':
+        specifier: 'catalog:'
+        version: 1.2.1
+      '@iconify-json/ph':
+        specifier: 'catalog:'
+        version: 1.2.2
+      '@lightproject/backend':
+        specifier: workspace:*
+        version: link:../backend
+      '@lightproject/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@lightproject/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
+      '@trpc/client':
+        specifier: 'catalog:'
+        version: 11.17.0(@trpc/server@11.17.0(typescript@6.0.2))(typescript@6.0.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      superjson:
+        specifier: 'catalog:'
+        version: 2.2.6
+      unocss:
+        specifier: 'catalog:'
+        version: 66.6.7(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0))
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.63.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260405.1
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.0.1(@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0))
+      jsdom:
+        specifier: 'catalog:'
+        version: 30.0.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: '@voidzero-dev/vite-plus-core@1.3.0(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)'
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
+      wrangler:
+        specifier: 'catalog:'
+        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
+
+  templates/library:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260405.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
+
+  templates/tasks:
+    dependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261016.1
+      '@lightproject/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@lightproject/datastore':
+        specifier: workspace:*
+        version: link:../datastore
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.11(typescript@6.0.2)(zod@4.4.3)
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260405.1
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 1.0.0-rc.4(@cloudflare/workers-types@5.20261016.1)(@electric-sql/pglite@0.5.10)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(zod@4.4.3)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.3.0(@opentelemetry/api@1.9.1)(@types/node@25.5.2)(@typescript/native-preview@7.0.0-dev.20260405.1)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(jsdom@30.0.1)(playwright@1.63.0)(tsx@4.21.0)(typescript@6.0.2)(yaml@2.9.0)
+      wrangler:
+        specifier: 'catalog:'
+        version: 4.136.2(@cloudflare/workers-types@5.20261016.1)(@types/node@25.5.2)
 
 packages:
 

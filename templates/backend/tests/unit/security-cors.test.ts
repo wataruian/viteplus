@@ -1,0 +1,115 @@
+import { afterAll, afterEach, describe, expect, test, vi } from 'vite-plus/test';
+
+import { config } from '../../src/config';
+import { runtimes } from './helpers/utils';
+
+const allowedOrigin = config.backendUrl;
+const disallowedOrigin = 'https://example.com';
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
+describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+  afterAll(cleanup);
+
+  test('an allowed origin is echoed back on both the HTTP and tRPC routers', async () => {
+    const app = await importApp();
+
+    const expectedCode = 200;
+
+    const httpRes = await app.request('/api/test/hello', { headers: { Origin: allowedOrigin } });
+    const trpcRes = await app.request(
+      `/trpc/test.hello?input=${encodeURIComponent(JSON.stringify({}))}`,
+      { headers: { Origin: allowedOrigin } },
+    );
+
+    expect(httpRes.headers.get('access-control-allow-origin')).toBe(allowedOrigin);
+    expect(trpcRes.headers.get('access-control-allow-origin')).toBe(allowedOrigin);
+    expect(httpRes.status).toBe(expectedCode);
+    expect(trpcRes.status).toBe(expectedCode);
+  });
+
+  test('a disallowed origin gets no Access-Control-Allow-Origin header, but the request still succeeds', async () => {
+    const app = await importApp();
+
+    const expectedCode = 200;
+
+    const httpRes = await app.request('/api/test/hello', {
+      headers: { Origin: disallowedOrigin },
+    });
+    const trpcRes = await app.request(
+      `/trpc/test.hello?input=${encodeURIComponent(JSON.stringify({}))}`,
+      { headers: { Origin: disallowedOrigin } },
+    );
+
+    expect(httpRes.headers.get('access-control-allow-origin')).toBeNull();
+    expect(trpcRes.headers.get('access-control-allow-origin')).toBeNull();
+
+    expect(httpRes.status).toBe(expectedCode);
+    expect(trpcRes.status).toBe(expectedCode);
+    const httpBody: unknown = await httpRes.json();
+    expect(httpBody).toMatchObject({ success: true });
+  });
+
+  test('a preflight OPTIONS request only reflects the allowed origin', async () => {
+    const app = await importApp();
+
+    const expectedCode = 204;
+
+    const allowedPreflight = await app.request('/api/test/profile', {
+      headers: { 'Access-Control-Request-Method': 'POST', Origin: allowedOrigin },
+      method: 'OPTIONS',
+    });
+    const disallowedPreflight = await app.request('/api/test/profile', {
+      headers: { 'Access-Control-Request-Method': 'POST', Origin: disallowedOrigin },
+      method: 'OPTIONS',
+    });
+
+    expect(allowedPreflight.status).toBe(expectedCode);
+    expect(allowedPreflight.headers.get('access-control-allow-origin')).toBe(allowedOrigin);
+
+    expect(disallowedPreflight.status).toBe(expectedCode);
+    expect(disallowedPreflight.headers.get('access-control-allow-origin')).toBeNull();
+  });
+
+  test('a preflight lets the browser cache it for 10 minutes instead of re-sending it every call', async () => {
+    const app = await importApp();
+
+    const preflight = await app.request('/trpc/test.hello', {
+      headers: {
+        'Access-Control-Request-Headers': 'traceparent, x-request-id, x-client-id',
+        'Access-Control-Request-Method': 'GET',
+        Origin: allowedOrigin,
+      },
+      method: 'OPTIONS',
+    });
+
+    expect(preflight.headers.get('access-control-max-age')).toBe('600');
+  });
+
+  test('ADDITIONAL_CORS_ORIGINS extends the allowlist once the app module is freshly loaded', async () => {
+    const extraOrigin = 'https://extra.example.com';
+    const app = await importApp({ ADDITIONAL_CORS_ORIGINS: extraOrigin, ENV: 'local' });
+
+    const expectedCode = 200;
+
+    const res = await app.request('/api/test/hello', { headers: { Origin: extraOrigin } });
+
+    expect(res.headers.get('access-control-allow-origin')).toBe(extraOrigin);
+    expect(res.status).toBe(expectedCode);
+  });
+
+  test('ADDITIONAL_CORS_ORIGINS entries are trimmed and empty entries ignored', async () => {
+    const secondOrigin = 'https://second.example.com';
+    const app = await importApp({
+      ADDITIONAL_CORS_ORIGINS: ` https://first.example.com , ${secondOrigin} ,`,
+      ENV: 'local',
+    });
+
+    const res = await app.request('/api/test/hello', { headers: { Origin: secondOrigin } });
+
+    expect(res.headers.get('access-control-allow-origin')).toBe(secondOrigin);
+    expect(res.headers.get('access-control-expose-headers')).toBe('X-Request-Id');
+  });
+});

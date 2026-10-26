@@ -138,6 +138,8 @@ class FakeContainer extends Container {
   public readonly capturedServiceBindings = new Map<string, FakeContainer>();
   public isService = false;
   public readonly capturedEnvVariables = new Map<string, string>();
+
+  public readonly capturedSecretVariables: string[] = [];
   public readonly capturedCachePaths: string[] = [];
   public readonly capturedDirectoryPaths: string[] = [];
   public readonly capturedFilePaths: string[] = [];
@@ -226,7 +228,10 @@ class FakeContainer extends Container {
     return this;
   };
 
-  public override withSecretVariable = (_name: string, _secret: DaggerModule.Secret): this => this;
+  public override withSecretVariable = (name: string, _secret: DaggerModule.Secret): this => {
+    this.capturedSecretVariables.push(name);
+    return this;
+  };
 
   public override withUnixSocket = (
     _path: string,

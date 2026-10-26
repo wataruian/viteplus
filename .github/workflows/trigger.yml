@@ -19,11 +19,11 @@ on:
         default: all
         options:
           - all
-          - database
+          - datastore
           - design-system
           - frontend
           - backend
-          - workers
+          - tasks
       version:
         description: 'Git tag/ref to deploy (required for staging/production, ignored for pr)'
         required: false

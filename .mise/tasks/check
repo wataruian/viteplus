@@ -70,7 +70,8 @@ if [[ "${install}" == "true" ]]; then
 fi
 
 executeCommand vp run -r madge
-executeCommand vp run -r root --fix
+executeCommand vp run -r root:check --fix
+executeCommand vp run -r root:test:unit
 executeCommand vp run -r dagger:check --fix
 executeCommand vp run -r dagger:format --write
 executeCommand vp run -r dagger:lint --fix

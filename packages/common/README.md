@@ -2,8 +2,8 @@
 
 Shared foundation for the apps: logging and redaction, the typed environment, telemetry (Node,
 Workers and browser), endpoint configs, validators and small utilities. Apps (`backend`,
-`frontend`, `workers`) depend on it; other packages never do (a package takes what it needs as an
-option instead, e.g. `onNotice` in `packages/database`). This README is the canonical list of the
+`frontend`, `tasks`) depend on it; other packages never do (a package takes what it needs as an
+option instead, e.g. `onNotice` in `templates/datastore`). This README is the canonical list of the
 shared environment variables; the full pattern is in `AGENTS.md` → "Environment Management".
 
 ```ts
@@ -104,7 +104,7 @@ Every `src/<dir>/index.ts` is a subpath export (`./*` in `package.json`, `typesc
 ES modules, so the CJS build would break on it: `vite.config.ts` aliases `#import-meta-env` to
 `import-meta-env.node.ts` (always `undefined`) for the `cjs` format only. Both files are
 excluded as pack entries, so each format gets only its own variant. CJS consumers are Node, which
-reads `process.env` first anyway. `apps/workers` uses the same pattern for `#tsx-api`.
+reads `process.env` first anyway. `templates/tasks` uses the same pattern for `#tsx-api`.
 
 ## Testing
 

@@ -1491,3 +1491,79 @@ AGENTS.md reflect the current state.
   aliases it to `src/runtimes/tsx-api.cjs.ts`, which throws (CJS threads start from `.cjs` entries,
   so tsx is only reached from the ESM sources). `pack.outputOptions.exports: 'named'` silences
   `MIXED_EXPORTS` for `edge.ts`, whose default + `WorkerLoop` exports workerd requires.
+
+## 2026-10-25 — `tasks` / `datastore` Templates, `workers` / `database` Reserved
+
+- **Renamed to templates** (user decision): `apps/workers` → `apps/tasks` (`@lightproject/tasks`,
+  Workers `lightproject-tasks-<env>`, image `<REGISTRY_ADDRESS>/tasks`) and `packages/database` →
+  `packages/datastore` (`@lightproject/datastore`, migrator image `<REGISTRY_ADDRESS>/datastore`,
+  local D1 `lightproject-datastore-local`). CI jobs/workspace names follow (`tasks`, `datastore`).
+  `apps/workers` and `packages/database` are reserved for the future real apps, like
+  `apps/api`/`admin`/`site` for `backend`/`frontend`.
+- **Env prefixes, clashing variables only** (user decision): `TASKS_PORT`/`TASKS_INSPECTOR_PORT`
+  (2002/8232), `TASKS_CONCURRENCY`, `DATASTORE_POSTGRES_DB` (`lightproject_datastore`) and
+  `DATASTORE_POSTGRES_URL`. Reserved, unused: `WORKERS_PORT`/`WORKERS_INSPECTOR_PORT` (3003/9233),
+  `WORKERS_CONCURRENCY`, `DATABASE_POSTGRES_DB` (`lightproject`, compose's default database) and
+  `DATABASE_POSTGRES_URL`. Shared: `POSTGRES_HOST/PORT/USER/PASSWORD`, `DATABASE_DIALECT` (user:
+  one dialect for all), `DATABASE_MIGRATION_ENABLED`, `JOB_STORE`, `WORKER_*`/`JOB_*` tunables.
+- **Separate Postgres databases** (user decision): each database package has its own database and
+  migration history on the shared compose server; `configs/postgres/create-databases.sh` creates
+  `lightproject_datastore` on a fresh volume (existing volumes: one `CREATE DATABASE`).
+- **Dagger `migrate`** derives the secret's variable from the workspace (`postgresUrlVariable`:
+  `@lightproject/datastore` → `DATASTORE_POSTGRES_URL`), so the real package needs no Dagger change;
+  the CI secret is `DATASTORE_POSTGRES_URL`. The integration Postgres service exports
+  `DATASTORE_POSTGRES_URL`.
+- **Remote D1s**: the template moves to new `lightproject-datastore-<env>` D1s (user creates them);
+  `lightproject-database-<env>` stay for the real package. Old deployed `lightproject-workers-<env>`
+  Workers and `workers`/`database` images are left until the next redeploy (user).
+
+## 2026-10-25 — Scaffold Every Template, Renaming Its Own Names
+
+- **`mise run create --type=backend|frontend|tasks|datastore|library --name=<kebab>`** (user):
+  `.templates/scaffold.ts` copies the template to `apps/<name>`/`packages/<name>` and renames only
+  the template's own names (package, paths, `lightproject-<name>`, `lightproject_<name>`,
+  `<NAME>_` env prefix incl. `VITE_`, camelCase identifiers, own default ports). Other apps' names
+  stay (a frontend copy keeps `BACKEND_URL`).
+- **Ports** (user: next free): reserved names reuse their `.env.example` ports; new ones take the
+  next free from 3000+ (app), 9230+ (inspector), 3111+ (e2e). Missing keys are generated from the
+  template's own `.env.example` lines and inserted next to them.
+- **Own config is app-local** (user): the backend reads its own URL from `BACKEND_URL` in its
+  `src/env.ts` (`config.backendUrl`) instead of common's `backendBaseUrl`, so a copy needs only
+  text renaming; common keeps `backendBaseUrl` for frontends that call the backend.
+- **CI wiring is a printed checklist** (user), not generated YAML.
+- **Datastore copies**: own Postgres database (`.env.example` + compose; `create-databases.sh` now
+  creates every `*_POSTGRES_DB`, idempotently) and blank remote D1 ids; `migrateRemoteD1` accepts
+  fixture files so its tests no longer read the real ids.
+- **Verified end to end** (throwaway copy of the tree): frontend, backend, tasks, datastore and
+  library copies each pass `vp check` and their tests (frontend e2e on the allocated port) after
+  `vp install` + `vp check --fix`; the latter is required because renamed keys break `sort-keys`
+  and line wrapping, so `mise run create` runs both. `vp create` skips its own install for a
+  `packages/*` copy.
+- Root now has unit tests (`tests/unit/`, root `test` config + `test:unit` task, 100% coverage of
+  `.templates/scaffold.ts`); the root `tsconfig.json` includes `.templates/scaffold.ts` and the
+  bins (TypeScript's default `**/*` skips dot-folders).
+
+## 2026-10-25 — Templates Moved to `template/`, Scaffold Tooling to `scaffold/`
+
+- **Layout** (user): the five templates live in the `template/` workspace group (`template/*` in
+  `pnpm-workspace.yaml`): `template/backend`, `frontend`, `tasks`, `datastore`, `library`. Flat, so
+  they sit at the same depth as `apps/*`/`packages/*` and every `../../` path keeps working, in the
+  templates and in copies. `apps/` is empty until the real apps exist (`apps/.gitkeep`, because
+  Dagger lists the folder); `packages/` holds `common` and `design-system`.
+- **`.templates` → `scaffold/`** (user; `scaffold.ts`, the `vp create` bins, `plop/`). It is no longer
+  in Dagger's `SOURCE_IGNORE`, since the root tests and type-check import `scaffold/scaffold.ts`
+  (they would have failed in a Dagger `ready` under `.templates` too). Visible folder, so the root
+  `tsconfig.json` needs no `include` for it any more.
+- **Scaffold**: copies are read from `template/<type>`; the copy's `template/<type>` self-references
+  become `<apps|packages>/<name>`, while references to other templates (a frontend copy's
+  `template/backend`) stay and keep working.
+- **Workspace group lists** now include `template`: Dagger `WORKSPACE_GROUPS` (prune mounts,
+  build-artifact pruning, Sonar cleanup, image artifacts), the CI change filter in
+  `resolve-workspaces`, root task inputs (`!template/*`), madge, `clean:build`, `sonar.sources`.
+  Workspace names (`backend`, `datastore`, …) and CI jobs are unchanged.
+- **Renamed `template/` → `templates/`** (user, same day): `templates/*` workspace glob,
+  `WORKSPACE_GROUPS` entry `templates`, and every path reference follow.
+- **Root tasks renamed** (user): `root` → `root:check` (`vp check`) and the root `test:unit` → `root:test:unit`
+  (`vp test`, scaffold tests). Both run in `ready`, `mise run check` and the Dagger `root` function
+  (check, then test); the root no longer has a `test:unit`, so `vp run -r test:unit` covers only
+  the workspaces.

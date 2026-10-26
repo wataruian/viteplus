@@ -39,6 +39,9 @@ const shortWorkspaceName = (workspaceDir: string): string => {
   return name;
 };
 
+const postgresUrlVariable = (workspaceName: string): string =>
+  `${shortWorkspaceName(workspacePath(workspaceName)).toUpperCase().replaceAll('-', '_')}_POSTGRES_URL`;
+
 const outputDirectory = (taskName: string, content: string): Directory =>
   dag.directory().withNewFile(`${taskName}.output`, content);
 
@@ -142,7 +145,7 @@ const withoutProxy = (container: Container): Container =>
     .withEnvVariable('http_proxy', '')
     .withEnvVariable('https_proxy', '');
 
-const withPostgres = (container: Container): Container => {
+const withPostgres = (container: Container, workspaceNames: readonly string[]): Container => {
   const postgres = dag
     .container()
     .from(POSTGRES_IMAGE)
@@ -155,9 +158,10 @@ const withPostgres = (container: Container): Container => {
   const credential = POSTGRES_SERVICE_CREDENTIAL;
   const url = `postgres://${credential}:${credential}@${POSTGRES_SERVICE_HOST}:${POSTGRES_SERVICE_PORT}/${credential}`;
 
-  return container
-    .withServiceBinding(POSTGRES_SERVICE_HOST, postgres)
-    .withEnvVariable('POSTGRES_URL', url);
+  return workspaceNames.reduce(
+    (bound, name) => bound.withEnvVariable(postgresUrlVariable(name), url),
+    container.withServiceBinding(POSTGRES_SERVICE_HOST, postgres),
+  );
 };
 
 const withPlaywrightChromium = (container: Container, workspaceName: string): Container =>
@@ -188,6 +192,7 @@ export {
   installArgs,
   isFrontend,
   outputDirectory,
+  postgresUrlVariable,
   shortWorkspaceName,
   withBuildEnv,
   withInstallCaches,

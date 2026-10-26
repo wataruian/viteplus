@@ -20,17 +20,17 @@ const plopfile = (plop: NodePlopAPI) => {
     actions: [
       {
         path: componentPath,
-        templateFile: '.templates/plop/component.tsx.hbs',
+        templateFile: 'scaffold/plop/component.tsx.hbs',
         type: 'add',
       },
       {
         path: testPath,
-        templateFile: '.templates/plop/component.test.tsx.hbs',
+        templateFile: 'scaffold/plop/component.test.tsx.hbs',
         type: 'add',
       },
       {
         path: storiesPath,
-        templateFile: '.templates/plop/component.stories.tsx.hbs',
+        templateFile: 'scaffold/plop/component.stories.tsx.hbs',
         type: 'add',
       },
       {

@@ -89,9 +89,9 @@ describe('sonar', () => {
     seedMountFiles();
     world.execStdout = 'local scan output';
     world.execExitCode = 0;
-    world.dirs.set('/app/apps/backend/coverage', ['coverage-summary.json']);
+    world.dirs.set('/app/templates/backend/coverage', ['coverage-summary.json']);
     world.files.set(
-      '/app/apps/backend/coverage/coverage-summary.json',
+      '/app/templates/backend/coverage/coverage-summary.json',
       JSON.stringify({
         total: {
           branches: { pct: 90 },
@@ -258,7 +258,7 @@ describe('sonarCleanup', () => {
     for (const name of [
       'backend',
       'common',
-      'database',
+      'datastore',
       'design-system',
       'frontend',
       'library',

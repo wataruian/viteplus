@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'database design-system frontend backend workers'
+          all-workspaces: 'datastore design-system frontend backend tasks'
 
   design-system:
     needs: setup
@@ -57,29 +57,29 @@ jobs:
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
-  database:
+  datastore:
     needs: setup
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'database')
+      contains(fromJson(needs.setup.outputs.workspaces), 'datastore')
     permissions:
       contents: read
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
-      workspace: database
+      workspace: datastore
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
   backend:
-    needs: [setup, database]
+    needs: [setup, datastore]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
-      needs.database.result != 'failure' &&
-      needs.database.result != 'cancelled'
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/deploy-workspace.yml
@@ -89,31 +89,31 @@ jobs:
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
-  workers:
-    needs: [setup, database]
+  tasks:
+    needs: [setup, datastore]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'workers') &&
-      needs.database.result != 'failure' &&
-      needs.database.result != 'cancelled'
+      contains(fromJson(needs.setup.outputs.workspaces), 'tasks') &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
-      workspace: workers
+      workspace: tasks
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
   frontend:
-    needs: [setup, database, design-system, backend]
+    needs: [setup, datastore, design-system, backend]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
       contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
-      needs.database.result != 'failure' &&
-      needs.database.result != 'cancelled' &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled' &&
       needs.design-system.result != 'failure' &&
       needs.design-system.result != 'cancelled' &&
       needs.backend.result != 'failure' &&

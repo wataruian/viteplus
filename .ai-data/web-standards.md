@@ -5,7 +5,7 @@ Web Platform (WHATWG/Fetch/WinterCG) APIs versus Node.js-specific APIs, so futur
 "fix" things that are already correct — and knows where Node APIs are intentionally, legitimately
 used.
 
-## Backend (`apps/backend`) is Fetch-API-based
+## Backend (`templates/backend`) is Fetch-API-based
 
 - `src/app.ts` builds a [Hono](https://hono.dev/) app. Hono's entire contract is
   `fetch(Request) => Response | Promise<Response>` — the same signature the Fetch API, Service
@@ -34,7 +34,7 @@ called `process.exit()` directly, which threw on Workers (`globalThis.process` i
 without `nodejs_compat`) and was meaningless there anyway (no OS signals, no long-lived process).
 That's fixed: the module now only exposes `shutdownTelemetry()` (flushes/shuts down the
 providers, no `process` reference). The actual signal wiring lives in
-`apps/backend/src/runtimes/node.ts` (`registerShutdownSignals`), the one place `process` access
+`templates/backend/src/runtimes/node.ts` (`registerShutdownSignals`), the one place `process` access
 is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers already flushes via
 `c.executionCtx.waitUntil(flushTelemetry())` per-request in `app.ts`.
 
@@ -50,7 +50,7 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
 
 ## Where Node APIs are legitimately used (do not "fix" these)
 
-- `apps/backend/src/runtimes/node.ts` — local dev server entry (`@hono/node-server`). Also the
+- `templates/backend/src/runtimes/node.ts` — local dev server entry (`@hono/node-server`). Also the
   **only** place that registers `process` signal handlers (`SIGTERM`/`SIGINT`/`SIGHUP`) to call
   `shutdownTelemetry()` before `process.exit()` — see below.
 - `packages/common/src/node/directory.ts` — a filesystem toolkit (`fs`, `path`,
@@ -82,7 +82,7 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
     `node:url` imports are untouched, and this file was already excluded from the isomorphic
     barrel, so a normal browser/Workers build never resolves it in the first place). It only
     matters if something deep-imports `@lightproject/common/node/directory` into a bundle that
-    stubs those builtins to empty modules (as `apps/frontend`'s `package.json` `"browser"` field
+    stubs those builtins to empty modules (as `templates/frontend`'s `package.json` `"browser"` field
     has done for other Node builtins in the past) — without the guard, that surfaces as a
     cryptic `fs.existsSync is not a function` inside whichever function runs first; with it, the
     module throws one clear error the moment it's imported. Verified this doesn't change
@@ -90,19 +90,19 @@ is legitimate. `runtimes/edge.ts` doesn't need equivalent wiring — Workers alr
     unmodified-function check above and got identical results with the guard in place).
 - `packages/design-system` build/tooling scripts (`src/start.ts`, `src/utils/compile.ts`,
   `src/utils/update-stories.ts`, `vite.config.ts`) — build-time tooling, not runtime app code.
-- `apps/backend/src/runtimes/node.ts` is likewise the only place `@hono/node-server`'s `serve()`
+- `templates/backend/src/runtimes/node.ts` is likewise the only place `@hono/node-server`'s `serve()`
   wraps the shared `fetch` app in a real Node listener.
 
 ## `packages/common/src/testing/otel-collector.ts` mirrors the app/runtime split
 
-Updated 2026-09-06: this test-only helper (mocks an OTEL collector for `apps/backend` and
-`apps/frontend` tests) used to import `node:http`, `node:buffer`, and `node:zlib` directly. It's
-now written the same way as `apps/backend/src/app.ts` — a plain `fetch(request: Request):
+Updated 2026-09-06: this test-only helper (mocks an OTEL collector for `templates/backend` and
+`templates/frontend` tests) used to import `node:http`, `node:buffer`, and `node:zlib` directly. It's
+now written the same way as `templates/backend/src/app.ts` — a plain `fetch(request: Request):
 Promise<Response>` handler using only Web-standard APIs (`Request`/`Response`,
 `DecompressionStream` for gzip bodies, `URL`) — and delegates actually binding a listening port to
-`@hono/node-server`'s `serve()`, the same Node adapter `apps/backend/src/runtimes/node.ts` uses.
+`@hono/node-server`'s `serve()`, the same Node adapter `templates/backend/src/runtimes/node.ts` uses.
 `@hono/node-server` was added as a `dependency` (not `devDependency`) of `packages/common`, since
-`apps/frontend`'s tests import `@lightproject/common/testing` without declaring the package
+`templates/frontend`'s tests import `@lightproject/common/testing` without declaring the package
 themselves — pnpm resolves it transitively through `@lightproject/common`'s own dependency, so it
 must live in `dependencies` to be resolvable by every consumer, not just this workspace's own dev
 environment. Web platform globals (`Response`, `URL`, `DecompressionStream`) are referenced via
@@ -114,8 +114,8 @@ about running it outside Node.
 
 ## `packages/common`'s isomorphic-vs-Node split
 
-`packages/common` ships both to the browser (via `apps/frontend`) and to Node (via
-`apps/backend`), so its subpath layout enforces which parts are safe where:
+`packages/common` ships both to the browser (via `templates/frontend`) and to Node (via
+`templates/backend`), so its subpath layout enforces which parts are safe where:
 
 - `.` (root, `src/index.ts`) and `./utils`, `./environment`, `./logger`, `./configs`,
   `./typecast`, `./validators` are the **isomorphic surface** — no top-level Node-builtin
@@ -126,15 +126,15 @@ about running it outside Node.
   import — `logger/rotation.ts`, log-file rotation — was removed on this branch along with the
   rotation feature; `utils/base.ts` is the current example of the guard style.)
 - `./browser` is **browser-only** (Grafana Faro RUM — `initializeRum`, the Faro log sink). Only
-  `apps/frontend` imports it; it is not re-exported from the root barrel, so server bundles never
+  `templates/frontend` imports it; it is not re-exported from the root barrel, so server bundles never
   pull in the Faro SDK.
 - `./server` is **backend-only but runtime-agnostic**: OpenTelemetry SDK setup, `/metrics`,
   flush/shutdown. It runs on Node **and** in the Cloudflare Worker (`src/runtimes/edge.ts`, no
   `nodejs_compat`), so it must not statically import `node:*` either. Not re-exported from the root
-  barrel; `apps/frontend` never imports it.
+  barrel; `templates/frontend` never imports it.
 - `./node` is the only **Node-only** subpath (real filesystem I/O in `directory.ts`, static
   `node:fs`/`node:path`/`node:url`). Never imported by the Worker or the frontend.
-- There is **no** `package.json` `"browser"` stub map (in `packages/common` or `apps/frontend`) and
+- There is **no** `package.json` `"browser"` stub map (in `packages/common` or `templates/frontend`) and
   no Node-builtin `external` list in the frontend build: since `./server` and `./browser` were split
   out, the frontend builds without either (verified with a real `vp build`). If a build ever needs
   one again, the real fix is moving the offending module out of the isomorphic surface.
@@ -146,7 +146,7 @@ about running it outside Node.
 ## `packages/design-system`'s isomorphic-vs-Node split
 
 Same principle, same fix, applied to `packages/design-system` (also ships to the browser via
-`apps/frontend`):
+`templates/frontend`):
 
 - `src/utils/compile.ts` — glob-scans component source with `node:fs`/`node:path`/`node:util`
   to build the UnoCSS safelist at build time. Genuinely needed only by
@@ -160,10 +160,10 @@ Same principle, same fix, applied to `packages/design-system` (also ships to the
 - `package.json`'s `"browser"` field was removed entirely (previously stubbed
   `node:async_hooks`/`node:crypto`/`node:fs`/`node:path`/`node:url`/`node:util`) — none of it
   was protecting against anything real once the barrels above were fixed. Verified by removing
-  the field and rebuilding `apps/frontend` (browser target): no new externalized-module warnings.
+  the field and rebuilding `templates/frontend` (browser target): no new externalized-module warnings.
 - `src/start.ts` and `src/utils/update-stories.ts` (also Node-only: `child_process`, `fs`) were
   already correctly excluded from every barrel — they're standalone dev scripts, invoked
-  directly, same convention as `apps/backend/src/runtimes/node.ts`.
+  directly, same convention as `templates/backend/src/runtimes/node.ts`.
 
 ## History
 

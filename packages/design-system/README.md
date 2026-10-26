@@ -36,7 +36,7 @@ Commands run from `packages/design-system` unless noted.
    vp run dev   # preview app http://localhost:6007, Storybook http://localhost:6006
    ```
 
-Apps need no build of this package in dev: `apps/frontend` aliases it to `src/` and loads
+Apps need no build of this package in dev: `templates/frontend` aliases it to `src/` and loads
 `uno.config.ts` directly.
 
 ### Exports

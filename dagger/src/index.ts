@@ -33,11 +33,14 @@ import {
   SOURCE_IGNORE,
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_USER,
+  WORKSPACE_GROUPS,
+  WORKSPACE_NAMES,
 } from './helpers/constants';
 import {
   assertDeployEnvironment,
   isFrontend,
   outputDirectory,
+  postgresUrlVariable,
   shortWorkspaceName,
   withBuildEnv,
   withPlaywrightChromium,
@@ -67,7 +70,7 @@ export class Monorepo {
   public constructor(
     @argument({ defaultPath: '/', ignore: SOURCE_IGNORE }) source: Directory,
     @argument({ defaultPath: 'dagger' }) daggerSource: Directory,
-    @argument({ defaultPath: '.templates' }) templatesSource: Directory,
+    @argument({ defaultPath: 'scaffold' }) templatesSource: Directory,
     @argument({ defaultPath: 'commitlint.config.ts' }) commitlintConfig: File,
     @argument({ defaultPath: 'plopfile.ts' }) plopfile: File,
     @argument({ defaultPath: 'dagger.json' }) daggerJson: File,
@@ -75,7 +78,7 @@ export class Monorepo {
     this.source = source;
     this.rootSource = source
       .withDirectory('dagger', daggerSource)
-      .withDirectory('.templates', templatesSource)
+      .withDirectory('scaffold', templatesSource)
       .withFile('commitlint.config.ts', commitlintConfig)
       .withFile('plopfile.ts', plopfile)
       .withFile('dagger.json', daggerJson);
@@ -94,14 +97,16 @@ export class Monorepo {
   public async root(): Promise<Directory> {
     const container = withInstalledRootSource(this.rootSource);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'root']).stdout();
+    const checked = container.withExec(['vp', 'run', '-r', 'root:check']);
+    const tested = checked.withExec(['vp', 'run', '-r', 'root:test:unit']);
+    const stdout = `${await checked.stdout()}${await tested.stdout()}`;
 
     return outputDirectory('root', stdout);
   }
 
   @func()
   public async ready(): Promise<Directory> {
-    const container = withPostgres(withInstalledRootSource(this.rootSource));
+    const container = withPostgres(withInstalledRootSource(this.rootSource), WORKSPACE_NAMES);
 
     const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
 
@@ -181,7 +186,7 @@ export class Monorepo {
     const pruneArgs = BUILD_ARTIFACT_KEEP.map((name) => `! -name '${name}'`).join(' ');
     const script = [
       'set -eu',
-      'for group in apps packages; do',
+      `for group in ${WORKSPACE_GROUPS.join(' ')}; do`,
       '  [ -d "/app/$group" ] || continue',
       '  for pkg in "/app/$group"/*/; do',
       '    [ -d "$pkg" ] || continue',
@@ -247,7 +252,7 @@ export class Monorepo {
       throw new Error(`Workspace ${workspace} has no integration tests (tests/integration)`);
     }
 
-    const container = withPostgres(await this.build(workspace));
+    const container = withPostgres(await this.build(workspace), [workspace]);
     const testContainer = container.withExec(
       ['vp', 'run', '--filter', workspace, 'test:integration'],
       { expect: ReturnType.Any },
@@ -458,7 +463,7 @@ export class Monorepo {
     }
 
     const groupEntries = await Promise.all(
-      ['apps', 'packages'].map(async (group) => await this.source.directory(group).entries()),
+      WORKSPACE_GROUPS.map(async (group) => await this.source.directory(group).entries()),
     );
     const shortNames = [
       ...groupEntries
@@ -526,7 +531,7 @@ export class Monorepo {
     let container = install(this.source, pruned, 'prod');
 
     const rootEntries = await buildContainer.directory('/app').entries();
-    const groups = ['apps', 'packages'].filter((group) => rootEntries.includes(`${group}/`));
+    const groups = WORKSPACE_GROUPS.filter((group) => rootEntries.includes(`${group}/`));
 
     const groupEntries = await Promise.all(
       groups.map(async (group) => await buildContainer.directory(`/app/${group}`).entries()),
@@ -704,7 +709,10 @@ export class Monorepo {
         .withSecretVariable('CLOUDFLARE_ACCOUNT_ID', cloudflareAccountId);
     }
     if (postgresUrl !== undefined) {
-      migrateContainer = migrateContainer.withSecretVariable('POSTGRES_URL', postgresUrl);
+      migrateContainer = migrateContainer.withSecretVariable(
+        postgresUrlVariable(workspace),
+        postgresUrl,
+      );
     }
 
     return migrateContainer.withExec(workspaceImage(workspace).command).stdout();

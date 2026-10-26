@@ -62,9 +62,9 @@ describe('testUnit', () => {
     seedMountFiles();
     world.execStdout = 'all tests passed';
     world.execExitCode = 0;
-    world.dirs.set('/app/apps/backend/coverage', ['coverage-summary.json']);
+    world.dirs.set('/app/templates/backend/coverage', ['coverage-summary.json']);
     world.files.set(
-      '/app/apps/backend/coverage/coverage-summary.json',
+      '/app/templates/backend/coverage/coverage-summary.json',
       JSON.stringify({
         total: {
           branches: { pct: 100 },
@@ -138,11 +138,11 @@ describe('testUnit', () => {
 });
 
 describe('testEndToEnd', () => {
-  const e2eDir = '/app/apps/frontend/e2e-test-results';
+  const e2eDir = '/app/templates/frontend/e2e-test-results';
 
   test('runs test:e2e with Chromium installed and attaches the Playwright output and row', async () => {
     seedMountFiles();
-    world.dirs.set('apps/frontend', ['playwright.config.ts', 'package.json']);
+    world.dirs.set('templates/frontend', ['playwright.config.ts', 'package.json']);
     world.execStdout = '1 passed';
     world.execExitCode = 0;
     world.dirs.set(e2eDir, ['results.json', 'report/', 'results/']);
@@ -178,7 +178,7 @@ describe('testEndToEnd', () => {
 
   test('renders the placeholder row when Playwright produced no output', async () => {
     seedMountFiles();
-    world.dirs.set('apps/frontend', ['playwright.config.ts']);
+    world.dirs.set('templates/frontend', ['playwright.config.ts']);
     world.execStdout = 'web server failed to start';
     world.execExitCode = 1;
 
@@ -192,7 +192,7 @@ describe('testEndToEnd', () => {
 
   test('rejects a workspace without Playwright e2e tests', async () => {
     seedMountFiles();
-    world.dirs.set('packages/library', ['package.json', 'src/']);
+    world.dirs.set('templates/library', ['package.json', 'src/']);
 
     await expect(createMonorepo().testEndToEnd('@lightproject/library')).rejects.toThrow(
       'Workspace @lightproject/library has no Playwright e2e tests (playwright.config.ts)',
@@ -203,24 +203,25 @@ describe('testEndToEnd', () => {
 describe('testIntegration', () => {
   test('runs test:integration against a bound throwaway Postgres', async () => {
     seedMountFiles();
-    world.dirs.set('packages/database', ['package.json', 'tests/']);
-    world.dirs.set('packages/database/tests', ['integration/', 'unit/']);
+    world.dirs.set('templates/datastore', ['package.json', 'tests/']);
+    world.dirs.set('templates/datastore/tests', ['integration/', 'unit/']);
     world.execStdout = '5 passed';
 
-    const result = await createMonorepo().testIntegration('@lightproject/database');
+    const result = await createMonorepo().testIntegration('@lightproject/datastore');
 
     const container = getLastContainer();
     const postgres = container.capturedServiceBindings.get('postgres');
     expect(postgres?.capturedImage).toBe('postgres:17.6-alpine');
     expect(postgres?.capturedEnvVariables.get('POSTGRES_DB')).toBe('lightproject');
-    expect(container.capturedEnvVariables.get('POSTGRES_URL')).toBe(
+    expect(container.capturedEnvVariables.get('DATASTORE_POSTGRES_URL')).toBe(
       'postgres://lightproject:lightproject@postgres:5432/lightproject',
     );
+    expect(container.capturedEnvVariables.has('TASKS_POSTGRES_URL')).toBe(false);
     expect(container.capturedExecCalls).toContainEqual([
       'vp',
       'run',
       '--filter',
-      '@lightproject/database',
+      '@lightproject/datastore',
       'test:integration',
     ]);
     await expect(result.file('test-integration.exit-code').contents()).resolves.toBe('0');
@@ -229,11 +230,11 @@ describe('testIntegration', () => {
 
   test('records a failing exit code instead of throwing', async () => {
     seedMountFiles();
-    world.dirs.set('packages/database', ['tests/']);
-    world.dirs.set('packages/database/tests', ['integration/']);
+    world.dirs.set('templates/datastore', ['tests/']);
+    world.dirs.set('templates/datastore/tests', ['integration/']);
     world.execExitCode = 1;
 
-    const result = await createMonorepo().testIntegration('@lightproject/database');
+    const result = await createMonorepo().testIntegration('@lightproject/datastore');
 
     await expect(result.file('test-integration.exit-code').contents()).resolves.toBe('1');
   });
@@ -243,8 +244,8 @@ describe('testIntegration', () => {
     ['without tests/integration', ['package.json', 'tests/']],
   ])('rejects a workspace %s', async (_label, entries) => {
     seedMountFiles();
-    world.dirs.set('packages/library', entries);
-    world.dirs.set('packages/library/tests', ['unit/']);
+    world.dirs.set('templates/library', entries);
+    world.dirs.set('templates/library/tests', ['unit/']);
 
     await expect(createMonorepo().testIntegration('@lightproject/library')).rejects.toThrow(
       'Workspace @lightproject/library has no integration tests (tests/integration)',

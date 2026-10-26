@@ -3,7 +3,7 @@
 # monorepo_root = true
 
 # [monorepo]
-# config_roots = ["apps/*", "packages/*"]
+# config_roots = ["apps/*", "packages/*", "templates/*"]
 
 [settings]
 experimental = true

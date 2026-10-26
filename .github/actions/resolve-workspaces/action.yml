@@ -53,7 +53,7 @@ runs:
             runDaggerVerify="true"
           fi
 
-          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages|dagger)/' <<< "${changedFiles}"; then
+          if [[ -z "${changedFiles}" ]] || grep -qvE '^(apps|packages|templates|dagger)/' <<< "${changedFiles}"; then
             runDaggerVerify="true"
             list="${all}"
           else
