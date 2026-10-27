@@ -1,0 +1,54 @@
+{
+  "name": "@lightproject/datastore",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": [
+      {
+        "typescript": "./src/index.ts"
+      },
+      {
+        "types": {
+          "import": "./dist/index.d.mts",
+          "require": "./dist/index.d.cts"
+        }
+      },
+      {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    ],
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
+    "smol-toml": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "drizzle-kit": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:",
+    "wrangler": "catalog:"
+  },
+  "peerDependencies": {
+    "wrangler": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "wrangler": {
+      "optional": true
+    }
+  }
+}

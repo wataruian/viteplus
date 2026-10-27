@@ -4,7 +4,7 @@ import path from 'node:path';
 import { type UserConfig, defineConfig, loadEnv } from 'vite-plus';
 
 const ignorePatterns = [
-  '.templates/plop',
+  'scaffold/plop',
   'node_modules',
   'bak',
   'dist',
@@ -84,7 +84,15 @@ const getTaskCache = (
           '!.',
           '!../*',
         ]
-      : [{ auto: true } as const, '**', ...artifactExclusions, '!apps/*', '!packages/*', '!dagger'];
+      : [
+          { auto: true } as const,
+          '**',
+          ...artifactExclusions,
+          '!apps/*',
+          '!packages/*',
+          '!templates/*',
+          '!dagger',
+        ];
   return { env, input };
 };
 
@@ -284,7 +292,7 @@ const getPackageViteConfig = ({
               },
             ],
           },
-          command: 'tsc',
+          command: 'tsgo',
         },
         ...(!excludeDevCommand && devCommand
           ? {
@@ -319,17 +327,32 @@ const getRootViteConfig = (): UserConfig => {
         {
           description: 'New backend application',
           name: 'backend',
-          template: './.templates/backend',
+          template: './scaffold/backend',
         },
         {
           description: 'New frontend application',
           name: 'frontend',
-          template: './.templates/frontend',
+          template: './scaffold/frontend',
         },
         {
           description: 'New shared package or library',
           name: 'library',
-          template: './.templates/library',
+          template: './scaffold/library',
+        },
+        {
+          description: 'New background job workers application',
+          name: 'tasks',
+          template: './scaffold/tasks',
+        },
+        {
+          description: 'New scheduled / one-off script runner application',
+          name: 'scheduler',
+          template: './scaffold/scheduler',
+        },
+        {
+          description: 'New database package (schema, clients and migrations)',
+          name: 'datastore',
+          template: './scaffold/datastore',
         },
       ],
     },
@@ -371,6 +394,7 @@ const getRootViteConfig = (): UserConfig => {
         'max-params': 'off',
         'max-statements': 'off',
         'new-cap': 'off',
+        'no-await-in-loop': 'off',
         'no-continue': 'off',
         'no-control-regex': 'off',
         'no-empty-function': 'off',
@@ -447,25 +471,47 @@ const getRootViteConfig = (): UserConfig => {
         },
         'dagger:type-check': {
           ...commonTaskProps,
-          command: 'cd dagger && tsc',
+          command: 'cd dagger && tsgo',
         },
         madge: {
           ...commonTaskProps,
           command:
-            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp|e2e-test-results)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps",
+            "madge --circular --warning --exclude '(dist|out|storybook-static|.wrangler|.pruned|coverage|tmp|e2e-test-results)' --ts-config ./tsconfig.madge.json --extensions ts,tsx packages apps templates",
         },
         plop: {
           cache: false,
           command: 'plop',
         },
-        root: {
+        'root:check': {
           ...commonTaskProps,
           command: 'vp check',
+        },
+        'root:test:unit': {
+          ...commonTaskProps,
+          command: 'vp test',
         },
       },
     },
     staged: {
       '*': 'vp check --fix',
+    },
+    test: {
+      coverage: {
+        clean: true,
+        enabled: true,
+        include: ['scaffold/scaffold.ts'],
+        provider: 'v8',
+        reporter: ['text', 'json-summary', 'lcov'],
+        reportsDirectory: 'coverage',
+        thresholds: {
+          branches: 100,
+          functions: 100,
+          lines: 100,
+          statements: 100,
+        },
+      },
+      environment: 'node',
+      include: ['tests/unit/**/*.test.ts'],
     },
   };
 };

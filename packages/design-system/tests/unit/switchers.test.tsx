@@ -4,7 +4,7 @@ import { ModeSwitcher } from '../../src/components/mode-switcher';
 import { ThemeSwitcher } from '../../src/components/theme-switcher';
 import { ModeProvider } from '../../src/context/mode-provider';
 import { ThemeProvider } from '../../src/context/theme-provider';
-import { themes } from '../../src/utils/theme-generator';
+import { defaultThemes } from '../../src/tokens/themes';
 import { click, render, requireElement } from './helpers/render';
 
 describe('ModeSwitcher', () => {
@@ -42,7 +42,7 @@ describe('ModeSwitcher', () => {
 
 describe('ThemeSwitcher', () => {
   test('renders one button per theme and switches the active theme on click', () => {
-    const themeList = Object.keys(themes);
+    const themeList = Object.keys(defaultThemes);
     const { container, unmount } = render(
       <ThemeProvider>
         <ThemeSwitcher />
@@ -61,9 +61,32 @@ describe('ThemeSwitcher', () => {
       click(lastButton);
     }
 
-    expect(globalThis.document.documentElement.classList.contains(lastTheme ?? '')).toBe(
-      lastTheme !== 'default',
+    expect(globalThis.document.documentElement.classList.contains(lastTheme ?? '')).toBe(true);
+
+    unmount();
+  });
+
+  test("lists the app's themes instead of the defaults", () => {
+    const { container, unmount } = render(
+      <ThemeProvider
+        themes={{
+          brand: { accent: '#f59e0b', primary: '#0f766e' },
+          night: { accent: '#22d3ee', primary: '#1e3a8a' },
+        }}
+      >
+        <ThemeSwitcher />
+      </ThemeProvider>,
     );
+
+    const buttons = [...container.querySelectorAll('button')];
+    expect(buttons.map((button) => button.textContent)).toStrictEqual(['brand', 'night']);
+
+    const [brand, night] = buttons;
+    click(night);
+    expect(globalThis.document.documentElement.classList.contains('night')).toBe(true);
+    click(brand);
+    expect(globalThis.document.documentElement.classList.contains('night')).toBe(false);
+    expect(globalThis.document.documentElement.classList.contains('brand')).toBe(true);
 
     unmount();
   });

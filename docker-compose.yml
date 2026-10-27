@@ -126,9 +126,12 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-lightproject}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lightproject}
-      POSTGRES_DB: ${POSTGRES_DB:-lightproject}
+      POSTGRES_DB: ${DATABASE_POSTGRES_DB:-lightproject}
+      DATABASE_POSTGRES_DB: ${DATABASE_POSTGRES_DB:-lightproject}
+      DATASTORE_POSTGRES_DB: ${DATASTORE_POSTGRES_DB:-lightproject_datastore}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./configs/postgres/create-databases.sh:/docker-entrypoint-initdb.d/create-databases.sh:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 5s

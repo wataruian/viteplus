@@ -1,13 +1,13 @@
 import { describe, expect, test, vi } from 'vite-plus/test';
 
 import { Preview } from '../../src/components/preview';
-import { render } from './helpers/render';
+import { render, withProviders } from './helpers/render';
 
 describe('Preview', () => {
   test('renders the design system preview page with theme scales and component gallery', () => {
     const consoleErrorSpy = vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});
 
-    const { container, unmount } = render(<Preview />);
+    const { container, unmount } = render(withProviders(<Preview />));
 
     expect(container.textContent).toContain('Design System');
     expect(container.textContent).toContain('Theme Color Scales');
@@ -22,7 +22,7 @@ describe('Preview', () => {
   test('renders an extra "Default" group per component when showDefault is set', () => {
     const consoleErrorSpy = vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});
 
-    const { container, unmount } = render(<Preview showDefault />);
+    const { container, unmount } = render(withProviders(<Preview showDefault />));
 
     expect(container.textContent).toContain('Default');
 
@@ -33,7 +33,9 @@ describe('Preview', () => {
   test('passes className through directly when useDefault is false', () => {
     const consoleErrorSpy = vi.spyOn(globalThis.console, 'error').mockImplementation(() => {});
 
-    const { container, unmount } = render(<Preview className='bare-preview' useDefault={false} />);
+    const { container, unmount } = render(
+      withProviders(<Preview className='bare-preview' useDefault={false} />),
+    );
 
     const section = container.querySelector('section');
     expect(section?.className).toContain('bare-preview');

@@ -2,7 +2,7 @@ name: 'CodeQL Config'
 
 paths-ignore:
   - bak/**
-  - .templates/**
+  - scaffold/**
   - plopfile.ts
   - commitlint.config.ts
   - '**/.storybook/**'

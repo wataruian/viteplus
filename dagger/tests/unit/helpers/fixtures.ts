@@ -15,8 +15,17 @@ const seedMountFiles = (prunedFullEntries: string[] = []): void => {
 };
 
 const seedWorkspaceDirs = (): void => {
-  world.dirs.set('apps', ['backend/', 'frontend/', 'README.md']);
-  world.dirs.set('packages', ['common/', 'database/', 'design-system/', 'library/']);
+  world.dirs.set('apps', ['.gitkeep']);
+  world.dirs.set('packages', ['common/', 'design-system/']);
+  world.dirs.set('templates', [
+    'backend/',
+    'datastore/',
+    'frontend/',
+    'library/',
+    'scheduler/',
+    'tasks/',
+    'README.md',
+  ]);
 };
 
 export { seedMountFiles, seedPackageJsons, seedWorkspaceDirs };

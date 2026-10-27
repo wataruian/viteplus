@@ -31,7 +31,7 @@ describe('workspace', () => {
   test('resolves a known workspace entry', () => {
     expect(workspace('@lightproject/backend')).toStrictEqual({
       isFrontend: false,
-      path: 'apps/backend',
+      path: 'templates/backend',
     });
   });
 
@@ -44,14 +44,14 @@ describe('workspace', () => {
 
 describe('workspacePath', () => {
   test('returns the workspace directory', () => {
-    expect(workspacePath('@lightproject/frontend')).toBe('apps/frontend');
+    expect(workspacePath('@lightproject/frontend')).toBe('templates/frontend');
     expect(workspacePath('@lightproject/common')).toBe('packages/common');
   });
 });
 
 describe('shortWorkspaceName', () => {
   test('returns the last path segment', () => {
-    expect(shortWorkspaceName('apps/frontend')).toBe('frontend');
+    expect(shortWorkspaceName('templates/frontend')).toBe('frontend');
     expect(shortWorkspaceName('packages/design-system')).toBe('design-system');
   });
 });

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-#MISE description="Create standard backend, frontend, and library templates"
+#MISE description="Create an app or package from a template (backend, frontend, tasks, scheduler, datastore, library)"
 
 set -o errexit
 
 type="backend"
-name="sample"
+name=""
 
 while [[ "${#}" -gt 0 ]]; do
   case "$1" in
@@ -25,20 +25,38 @@ while [[ "${#}" -gt 0 ]]; do
       shift 2
       ;;
     *)
-      echo "Usage: mise run create [--type=backend|frontend|library] [--name=<name>]"
+      echo "Usage: mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>"
       exit 1
       ;;
   esac
 done
 
-if [[ "${type}" != "backend" && "${type}" != "frontend" && "${type}" != "library" ]]; then
-  echo "Invalid type: ${type}"
+case "${type}" in
+  backend | frontend | tasks | scheduler | datastore | library) ;;
+  *)
+    echo "Invalid type: ${type}"
+    exit 1
+    ;;
+esac
+
+if [[ -z "${name}" ]]; then
+  echo "Usage: mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>"
   exit 1
 fi
 
+case "${type}" in
+  backend | frontend | tasks | scheduler) dir="apps/${name}" ;;
+  *) dir="packages/${name}" ;;
+esac
+
 echo "Type: ${type}, Name: ${name}"
+echo "Target: ${dir} (fixed by type: backend/frontend/tasks/scheduler go to apps/, datastore/library to packages/)."
+echo "The directory prompt from 'vp create' below is ignored; pick any option."
 
 vp create "${type}" -- "${name}"
+
+vp install
+vp check --fix "${dir}"
 
 echo ""
 echo "✅ All good!"

@@ -42,7 +42,8 @@
         "require": "./dist/*/index.cjs"
       }
     ],
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./uno.config": "./uno.config.ts"
   },
   "dependencies": {
     "@iconify-json/logos": "catalog:",

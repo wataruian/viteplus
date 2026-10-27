@@ -110,15 +110,15 @@ describe('internalDependencyPaths', () => {
     const paths = await internalDependencyPaths(new FakeDirectory(world), '@lightproject/backend');
 
     expect(paths.toSorted()).toStrictEqual([
-      'apps/frontend',
       'packages/common',
       'packages/design-system',
+      'templates/frontend',
     ]);
   });
 
   test('treats a non-object package.json as having no dependencies', async () => {
     seedPackageJsons();
-    world.files.set('apps/backend/package.json', 'null');
+    world.files.set('templates/backend/package.json', 'null');
 
     const paths = await internalDependencyPaths(new FakeDirectory(world), '@lightproject/backend');
 
@@ -152,7 +152,7 @@ describe('prune', () => {
     expect(fake.capturedImage).toBe(VITE_PLUS_IMAGE);
     expect(fake.capturedDirectoryPaths).toStrictEqual([
       '/app',
-      '/app/apps/frontend',
+      '/app/templates/frontend',
       '/app/packages/design-system',
     ]);
     expect(fake.capturedExecCalls).toStrictEqual([

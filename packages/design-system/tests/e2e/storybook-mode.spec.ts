@@ -12,7 +12,10 @@ const previewFrame = async (page: Page): Promise<Frame> => {
 };
 
 const htmlMode = async (frame: Frame) =>
-  await frame.evaluate(() => globalThis.document.documentElement.className);
+  await frame.evaluate(() => {
+    const { classList } = globalThis.document.documentElement;
+    return ['dark', 'light'].filter((mode) => classList.contains(mode)).join(' ');
+  });
 
 const settleTimeoutMs = 30_000;
 const quietPeriodMs = 1000;

@@ -6,7 +6,7 @@ import { useMode } from '../../src/context/mode-context';
 import { ModeProvider } from '../../src/context/mode-provider';
 import { useTheme } from '../../src/context/theme-context';
 import { ThemeProvider } from '../../src/context/theme-provider';
-import { themes } from '../../src/utils/theme-generator';
+import { defaultThemes } from '../../src/tokens/themes';
 import { click, render, requireElement } from './helpers/render';
 
 const ModeConsumer = () => {
@@ -41,6 +41,11 @@ const ThemeConsumer = () => {
       </button>
     </div>
   );
+};
+
+const ThemeListConsumer = () => {
+  const { theme, themes } = useTheme();
+  return <span>{`${theme}:${themes.join(',')}`}</span>;
 };
 
 const BareThemeConsumer = () => {
@@ -125,7 +130,7 @@ describe('ModeProvider / useMode', () => {
 
 describe('ThemeProvider / useTheme', () => {
   test('defaults to the first theme in the registry', () => {
-    const [firstTheme] = Object.keys(themes);
+    const [firstTheme] = Object.keys(defaultThemes);
     const { container, unmount } = render(
       <ThemeProvider>
         <ThemeConsumer />
@@ -149,6 +154,44 @@ describe('ThemeProvider / useTheme', () => {
     expect(globalThis.document.documentElement.classList.contains('non-default-theme')).toBe(true);
 
     unmount();
+  });
+
+  test('starts on the first app theme, sets its class and lists only the app themes', () => {
+    const themes = {
+      brand: { accent: '#f59e0b', primary: '#0f766e' },
+      night: { accent: '#22d3ee', primary: '#1e3a8a' },
+    };
+    const { container, unmount } = render(
+      <ThemeProvider themes={themes}>
+        <ThemeListConsumer />
+      </ThemeProvider>,
+    );
+
+    expect(container.querySelector('span')?.textContent).toBe('brand:brand,night');
+    expect(globalThis.document.documentElement.classList.contains('brand')).toBe(true);
+    unmount();
+  });
+
+  test('starts on defaultTheme and puts its class on documentElement', () => {
+    const { container, unmount } = render(
+      <ThemeProvider defaultTheme='ocean'>
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+
+    expect(container.querySelector('span')?.textContent).toBe('ocean');
+    expect(globalThis.document.documentElement.classList.contains('ocean')).toBe(true);
+    unmount();
+  });
+
+  test('rejects a defaultTheme that is not one of the themes', () => {
+    expect(() => {
+      render(
+        <ThemeProvider defaultTheme='missing'>
+          <ThemeConsumer />
+        </ThemeProvider>,
+      );
+    }).toThrow('defaultTheme "missing" is not one of: default, emerald, ocean, sunset');
   });
 
   test('useTheme throws when used outside a ThemeProvider', () => {

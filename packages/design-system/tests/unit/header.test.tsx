@@ -1,19 +1,10 @@
-import type { ReactNode } from 'react';
 import { describe, expect, test } from 'vite-plus/test';
 
 import { Header } from '../../src/components/header';
-import { ModeProvider } from '../../src/context/mode-provider';
-import { ThemeProvider } from '../../src/context/theme-provider';
-import { themes } from '../../src/utils/theme-generator';
-import { render } from './helpers/render';
+import { defaultThemes } from '../../src/tokens/themes';
+import { render, withProviders } from './helpers/render';
 
-const withProviders = (children: ReactNode) => (
-  <ThemeProvider>
-    <ModeProvider>{children}</ModeProvider>
-  </ThemeProvider>
-);
-
-const expectedButtonCount = Object.keys(themes).length + 1;
+const expectedButtonCount = Object.keys(defaultThemes).length + 1;
 
 describe('Header', () => {
   test('renders a logo and both switchers by default', () => {

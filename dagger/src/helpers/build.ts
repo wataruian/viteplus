@@ -6,6 +6,7 @@ import {
   ROOT_FILES,
   VITE_PLUS_IMAGE,
   VITE_PLUS_USER,
+  WORKSPACE_GROUPS,
   WORKSPACE_NAMES,
 } from './constants';
 import { installArgs, withInstallCaches, withTaskCache, workspacePath } from './container';
@@ -118,7 +119,7 @@ const mountFiles = async (
   const fullEntries = await prunedFull.entries();
 
   let container = installContainer;
-  for (const dir of ['apps', 'packages']) {
+  for (const dir of WORKSPACE_GROUPS) {
     if (fullEntries.includes(`${dir}/`)) {
       container = container.withDirectory(`/app/${dir}`, prunedFull.directory(dir), {
         owner: VITE_PLUS_USER,

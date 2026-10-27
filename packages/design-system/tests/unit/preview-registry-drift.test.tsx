@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import type * as RegistryModule from '../../src/components/registry';
@@ -15,8 +15,19 @@ afterEach(() => {
 });
 
 const importPreview = async () => {
-  const { Preview } = await import('../../src/components/preview');
-  return Preview;
+  const [{ Preview }, { ModeProvider }, { ThemeProvider }] = await Promise.all([
+    import('../../src/components/preview'),
+    import('../../src/context/mode-provider'),
+    import('../../src/context/theme-provider'),
+  ]);
+  const ProvidedPreview = (props: ComponentProps<typeof Preview>) => (
+    <ThemeProvider>
+      <ModeProvider>
+        <Preview {...props} />
+      </ModeProvider>
+    </ThemeProvider>
+  );
+  return ProvidedPreview;
 };
 
 describe('Preview when the component registry drifts from its *Styles entries', () => {

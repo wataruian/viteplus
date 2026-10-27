@@ -19,10 +19,12 @@ on:
         default: all
         options:
           - all
-          - database
+          - datastore
           - design-system
           - frontend
           - backend
+          - tasks
+          - scheduler
       version:
         description: 'Git tag/ref to deploy (required for staging/production, ignored for pr)'
         required: false

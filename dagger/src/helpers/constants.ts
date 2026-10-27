@@ -54,7 +54,6 @@ const SOURCE_IGNORE: string[] = [
   '.mise',
   '.outputs',
   '**/.pruned',
-  '.templates',
   '**/.vite-hooks',
   '.vscode',
   '**/bak',
@@ -111,20 +110,41 @@ const MANIFEST_FILES: string[] = [
 
 const DAGGER_WORKSPACE = 'dagger';
 
+const WORKSPACE_GROUPS: readonly string[] = ['apps', 'packages', 'templates'];
+
 const DEPLOY_ENVIRONMENTS: ReadonlySet<string> = new Set(['develop', 'staging', 'production']);
 
-const MIGRATION_TASKS: Record<string, string | undefined> = {
-  d1: 'db:migrate:d1:remote',
-  postgres: 'db:migrate:postgres',
-};
+const DATABASE_DIALECTS: ReadonlySet<string> = new Set(['d1', 'postgres']);
 
-const WORKSPACES: Record<string, { isFrontend: boolean; path: string } | undefined> = {
-  '@lightproject/backend': { isFrontend: false, path: 'apps/backend' },
+interface WorkspaceImage {
+  command: string[];
+  files: string[];
+}
+
+interface WorkspaceEntry {
+  image?: WorkspaceImage;
+  isFrontend: boolean;
+  path: string;
+}
+
+const DEFAULT_WORKSPACE_IMAGE: WorkspaceImage = { command: ['node', 'dist/index.mjs'], files: [] };
+
+const WORKSPACES: Record<string, WorkspaceEntry | undefined> = {
+  '@lightproject/backend': { isFrontend: false, path: 'templates/backend' },
   '@lightproject/common': { isFrontend: false, path: 'packages/common' },
-  '@lightproject/database': { isFrontend: false, path: 'packages/database' },
+  '@lightproject/datastore': {
+    image: {
+      command: ['node', 'dist/scripts/migrate.mjs'],
+      files: ['migrations', 'wrangler.toml'],
+    },
+    isFrontend: false,
+    path: 'templates/datastore',
+  },
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
-  '@lightproject/frontend': { isFrontend: true, path: 'apps/frontend' },
-  '@lightproject/library': { isFrontend: false, path: 'packages/library' },
+  '@lightproject/frontend': { isFrontend: true, path: 'templates/frontend' },
+  '@lightproject/library': { isFrontend: false, path: 'templates/library' },
+  '@lightproject/scheduler': { isFrontend: false, path: 'templates/scheduler' },
+  '@lightproject/tasks': { isFrontend: false, path: 'templates/tasks' },
 };
 
 const WORKSPACE_NAMES = Object.keys(WORKSPACES);
@@ -143,10 +163,11 @@ export {
   BUILD_ARTIFACT_KEEP,
   CURL_IMAGE,
   DAGGER_WORKSPACE,
+  DATABASE_DIALECTS,
+  DEFAULT_WORKSPACE_IMAGE,
   DEPLOY_ENVIRONMENTS,
   DOCKER_CLI_IMAGE,
   MANIFEST_FILES,
-  MIGRATION_TASKS,
   NGINX_IMAGE,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
@@ -169,6 +190,8 @@ export {
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_PACKAGE_MANAGER_PATH,
   VITE_PLUS_USER,
+  WORKSPACE_GROUPS,
   WORKSPACE_NAMES,
   WORKSPACES,
 };
+export type { WorkspaceEntry, WorkspaceImage };

@@ -246,6 +246,36 @@ const initializeContextPropagation = () => {
   context.setGlobalContextManager(new StackContextManager().enable());
 };
 
+interface TelemetryStarterOptions {
+  serviceName: string;
+  serviceVersion: string;
+  skip: () => boolean;
+}
+
+const createTelemetryStarter = ({ serviceName, serviceVersion, skip }: TelemetryStarterOptions) => {
+  let started: Promise<void> | undefined = undefined;
+  const initialize = async () => {
+    if (!skip()) {
+      try {
+        await initializeTelemetry({ serviceName, serviceVersion });
+        return;
+      } catch (error) {
+        logger.error(
+          'Telemetry setup failed; telemetry is off or partial, context propagation stays on',
+          { error },
+        );
+      }
+    }
+    initializeContextPropagation();
+  };
+  return async () => {
+    started ??= initialize().catch((error: unknown) => {
+      logger.error('Telemetry setup failed; continuing without it', { error });
+    });
+    await started;
+  };
+};
+
 const resetTelemetryForTests = () => {
   context.disable();
   trace.disable();
@@ -258,6 +288,7 @@ const resetTelemetryForTests = () => {
 
 export {
   PullMetricReader,
+  createTelemetryStarter,
   flushTelemetry,
   initializeContextPropagation,
   initializeTelemetry,
@@ -266,4 +297,4 @@ export {
   resetTelemetryForTests,
   shutdownTelemetry,
 };
-export type { TelemetryOptions };
+export type { TelemetryOptions, TelemetryStarterOptions };

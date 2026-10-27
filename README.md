@@ -15,16 +15,65 @@ We adhere to **The Vite+ Way**, which emphasizes:
 
 ## 🏗 Monorepo Architecture & Structure
 
+Every app and package has its own `README.md` with the same sections: Setup, Environment variables, Development, Testing and Deployment. Start there for anything specific to one workspace; a new app or package gets its README when it is created.
+
 ### Applications (`apps/`)
 
-- **`frontend`**: Vite-powered Single Page Application (SPA).
-- **`backend`**: [Hono](https://hono.dev/) API — a Fetch-API/WinterCG-compatible framework, deployable to Node.js (`@hono/node-server`) or the edge (Cloudflare Workers via `wrangler`).
+None yet: the real apps (`api`, `admin`, `site`, `workers`) will be created here from the templates below.
 
 ### Shared Libraries (`packages/`)
 
-- **`common`**: Foundational library providing isomorphic environment management and structured logging.
-- **`design-system`**: Shared UI component library using UnoCSS and React.
-- **`library`**: General purpose shared library templates.
+| Workspace                                           | Description                                                                       |
+| :-------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| [`common`](packages/common/README.md)               | Foundation for the apps: typed environment, logging, telemetry, shared variables. |
+| [`design-system`](packages/design-system/README.md) | Shared UI component library using UnoCSS and React.                               |
+
+### Templates (`templates/`)
+
+Ordinary workspaces (verified and deployed like the others) that real apps and packages are created from (see "Creating an App or Package from a Template" below).
+
+| Workspace                                    | Description                                                                                                 |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
+| [`frontend`](templates/frontend/README.md)   | Vite-powered single-page application.                                                                       |
+| [`backend`](templates/backend/README.md)     | [Hono](https://hono.dev/) API (Fetch-API/WinterCG), on Node.js (`@hono/node-server`) or Cloudflare Workers. |
+| [`tasks`](templates/tasks/README.md)         | Always-running background job workers, on Node.js or Cloudflare Durable Objects.                            |
+| [`scheduler`](templates/scheduler/README.md) | Cron and one-off scripts that never overlap themselves, on Node.js (one-shot) or Cloudflare Cron Triggers.  |
+| [`datastore`](templates/datastore/README.md) | Drizzle schema, clients and migrations for Postgres and D1; owns every table.                               |
+| [`library`](templates/library/README.md)     | General purpose library.                                                                                    |
+
+Apps combine packages; a package never depends on another workspace package.
+
+### Templates and Reserved Names
+
+`backend`, `frontend`, `tasks`, `scheduler` and `datastore` are templates for the real workspaces to come. Each template and each real workspace owns an env prefix; the real ones' keys are already reserved in `.env.example` (unused until those workspaces exist).
+
+| Template    | Future real workspace(s)  | Env prefix                         | Local ports / database                             |
+| :---------- | :------------------------ | :--------------------------------- | :------------------------------------------------- |
+| `backend`   | `apps/api`                | `BACKEND_*` → `API_*`              | 2000/8230 → 3000/9230                              |
+| `frontend`  | `apps/admin`, `apps/site` | `FRONTEND_*` → `ADMIN_*`, `SITE_*` | 2001/8231/2111 → 3001/9231/3111, 3002/9232/3112    |
+| `tasks`     | `apps/workers`            | `TASKS_*` → `WORKERS_*`            | 2002/8232 → 3003/9233                              |
+| `scheduler` | `apps/dispatcher`         | `SCHEDULER_*` → `DISPATCHER_*`     | 2003/8233 → 3004/9234                              |
+| `datastore` | `packages/database`       | `DATASTORE_*` → `DATABASE_*`       | Postgres `lightproject_datastore` → `lightproject` |
+
+Only variables that would clash when two of them run side by side get the prefix (ports, URLs, `<APP>_CONCURRENCY`, `<APP>_RUN_TOKEN`, `<PKG>_POSTGRES_DB`/`_URL`); everything else, such as `POSTGRES_HOST`, `DATABASE_DIALECT` or `WORKER_LEASE_MS`, is shared.
+
+### Creating an App or Package from a Template
+
+```bash
+mise run create --type=frontend --name=website3   # backend | frontend | tasks | scheduler | datastore | library
+```
+
+This copies the template to `apps/<name>` (backend, frontend, tasks, scheduler) or `packages/<name>` (datastore, library) — fixed by type, whatever the `vp create` directory prompt says — then runs `vp install` and `vp check --fix` on it. In the copy, only the template's own names change; names of other apps it talks to (e.g. a frontend's `BACKEND_URL`) stay:
+
+| In the copy                                    | Becomes (`frontend` → `website3`)         |
+| :--------------------------------------------- | :---------------------------------------- |
+| `@lightproject/frontend`, `templates/frontend` | `@lightproject/website3`, `apps/website3` |
+| `lightproject-frontend-<env>` (Workers)        | `lightproject-website3-<env>`             |
+| `FRONTEND_*`, `VITE_FRONTEND_*` env keys       | `WEBSITE3_*`, `VITE_WEBSITE3_*`           |
+| `frontendPort` and other own identifiers       | `website3Port`                            |
+| Own default ports (2001/8231/2111)             | Next free ones: 3000+, 9230+, 3111+       |
+
+Missing keys are added to `.env.example` next to the template's own (a reserved name such as `admin` reuses its keys and ports). A `datastore` copy also gets its own Postgres database (`<NAME>_POSTGRES_DB` in `.env.example` and `docker-compose.yml`) and blank remote D1 ids. The command ends with a checklist of the CI wiring to add by hand (Dagger `WORKSPACES`, workflows, release, Sonar, madge). The logic is `scaffold/scaffold.ts`, tested in `tests/unit/scaffold.test.ts`.
 
 ### Archive (`bak/`)
 
@@ -46,9 +95,7 @@ We use a complete open-source telemetry stack configured via `docker-compose.yml
 - **Mimir**: Metrics storage (Ports 9009/9095).
 - **OpenTelemetry Collector**: Standardized ingestion of traces, metrics, and logs (Ports 4317/4318).
 
-Backend services are expected to emit telemetry to the OpenTelemetry Collector.
-
-Set `SKIP_OPENTELEMETRY=true` to run the backend without exporting telemetry (no collector needed); request context, such as the `requestId` in logs, keeps working. Unit tests default to it and never send telemetry to a real endpoint. The telemetry tests opt back in against a fake collector.
+Backend services are expected to emit telemetry to the OpenTelemetry Collector. Each workspace README lists its telemetry variables (e.g. `OTLP_ENDPOINT`, `SKIP_OPENTELEMETRY`).
 
 ### Querying Logs in Grafana (Loki)
 
@@ -114,12 +161,12 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 1.  **Node.js**: Ensure you are using `v24.15.0` (check `.tool-versions`).
 2.  **Mise**: Install globally for task execution.
 3.  **Vite+ CLI**: Install globally: `npm i -g vite-plus`.
-4.  **Install dependencies**: Run `vp install`.
+4.  **Install dependencies**: Run `vp install`, then `docker compose up -d postgres` (integration tests use it). On a Postgres volume created before `configs/postgres/create-databases.sh` existed, run it once: `docker compose exec postgres sh /docker-entrypoint-initdb.d/create-databases.sh` (creates every `*_POSTGRES_DB`, skips existing ones).
 5.  **Initialize**: Run `mise run init` to build, format, and test everything.
-6.  **Develop**: Run `mise run start dev` or `vp dev` to start the local development environment.
+6.  **Develop**: Run `mise run start dev` to start every app, or follow a workspace's README to run one.
 
 > [!TIP]
-> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test:unit` runs unit tests for all packages and apps (`vp run test:e2e` runs the Playwright browser tests).
+> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test:unit` runs unit tests for all packages and apps (the root's own files have `vp run root:check` and `vp run root:test:unit`) (`vp run test:e2e` runs the Playwright browser tests).
 
 ## 🛠 Development Workflow
 
@@ -132,7 +179,7 @@ We use `mise` as the primary task runner for high-level repository automation. T
 | `mise run check`                           | Run type checking, formatting, linting, building, and tests                                                                             |
 | `mise run clean`                           | Clean up build artifacts, tools, and AI caches                                                                                          |
 | `mise run fix`                             | Export all top-level declarations, then apply the editor's on-save code actions to all files (`--remove-comments` also strips comments) |
-| `mise run create`                          | Create standard backend, frontend, and library templates                                                                                |
+| `mise run create`                          | Create an app or package from a template (see above)                                                                                    |
 | `mise run init`                            | Initialize the workspace                                                                                                                |
 | `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action                                                                                     |
 | `mise run start`                           | Start the dev or prod server                                                                                                            |
@@ -149,19 +196,9 @@ We use `mise` as the primary task runner for high-level repository automation. T
 | **Maintain** | `vp cache clean` | Clear the task cache if behavior is inconsistent. |
 |              | `vp run ready`   | Full suite of checks (recommended before push).   |
 
-### App Specific Scripts
+### Workspace Tasks
 
-| Application                                   | Command                                              | Description                                                                                  |
-| :-------------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| **Frontend** (`/apps/frontend`)               | `vp dev`                                             | Start Vite development server.                                                               |
-|                                               | `vp build`                                           | Build production bundle.                                                                     |
-| **Backend** (`/apps/backend`)                 | `vp dev`                                             | Start Hono API.                                                                              |
-|                                               | `vp pack`                                            | Build optimized CJS/ESM library.                                                             |
-| **Common** (`/packages/common`)               | `vp pack`                                            | Build shared library modules.                                                                |
-| **Database** (`/packages/database`)           | `vp run db:generate [name]`                          | Generate the D1 schema from Postgres + both migrations (folders named `<timestamp>_<name>`). |
-|                                               | `vp run db:migrate:postgres` / `db:migrate:d1:local` | Apply them locally.                                                                          |
-|                                               | `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote` | Apply them to a remote D1.                                                                   |
-| **Design System** (`/packages/design-system`) | `vp pack`                                            | Build UI library components.                                                                 |
+Each workspace's tasks (dev servers, builds, `wrangler`, database generation and migration, …) are listed in its README's Development section. Run them from the workspace directory with `vp run <task>`, or from the root with `vp run --filter <package> <task>`. Remember that `vp dev` (built-in) and `vp run dev` (task) may differ; check the README.
 
 ### ⚓️ Git Hooks
 
@@ -177,16 +214,17 @@ Only code that passes these checks can be committed.
 
 CI runs entirely through a [Dagger](https://dagger.io/) module in `dagger/src/index.ts` (the `Monorepo` object), inside the official `ghcr.io/voidzero-dev/vite-plus` image — so CI runs the exact same containerized environment you can reproduce locally with the `dagger` CLI.
 
-| Function                                                     | Description                                                                                                                                                                                                                                                                                                                                                                             |
-| :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dagger call ready`                                          | Full suite (madge, root, check, format, lint, type-check, build, test) against the whole repo — what CI runs on every push/PR.                                                                                                                                                                                                                                                          |
-| `dagger call check --workspace=<pkg>`                        | Format, lint, and type checks for one workspace (e.g. `@lightproject/backend`).                                                                                                                                                                                                                                                                                                         |
-| `dagger call build --workspace=<pkg>`                        | Build one workspace and its internal dependencies.                                                                                                                                                                                                                                                                                                                                      |
-| `dagger call test --workspace=<pkg>`                         | Run tests (with coverage) for one workspace.                                                                                                                                                                                                                                                                                                                                            |
-| `dagger call vp --workspace=<pkg>`                           | Production-only container running the built Node.js app.                                                                                                                                                                                                                                                                                                                                |
-| `dagger call nginx --workspace=<pkg>`                        | Static/nginx container for frontend-type workspaces.                                                                                                                                                                                                                                                                                                                                    |
-| `dagger call publish` / `load`                               | Push or locally load a built container image.                                                                                                                                                                                                                                                                                                                                           |
-| `dagger call wrangler --workspace=<pkg> --environment=<env>` | Deploy one workspace to its Cloudflare Worker for `develop`/`staging`/`production`. Pass frontend build-time env with `--build-env=KEY=VALUE` and backend runtime Worker vars with `--worker-var=KEY=VALUE`; repeat either flag per variable (e.g. `--worker-var=VAR1=123 --worker-var=VAR2=456`). Cloudflare credentials come from `--cloudflare-api-token`/`--cloudflare-account-id`. |
+| Function                                                                                               | Description                                                                                                                                                                                                                                                                                                                                                                             |
+| :----------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dagger call ready`                                                                                    | Full suite (madge, root, check, format, lint, type-check, build, test) against the whole repo, like `vp run ready`.                                                                                                                                                                                                                                                                     |
+| `dagger call check --workspace=<pkg>`                                                                  | Format, lint, and type checks for one workspace (e.g. `@lightproject/backend`).                                                                                                                                                                                                                                                                                                         |
+| `dagger call build --workspace=<pkg>`                                                                  | Build one workspace and its internal dependencies.                                                                                                                                                                                                                                                                                                                                      |
+| `dagger call test-unit\|test-integration\|test-end-to-end --workspace=<pkg>`                           | Run one workspace's unit (with coverage), integration or browser tests.                                                                                                                                                                                                                                                                                                                 |
+| `dagger call vp --workspace=<pkg>`                                                                     | Production-only container running the built Node.js app.                                                                                                                                                                                                                                                                                                                                |
+| `dagger call nginx --workspace=<pkg>`                                                                  | Static/nginx container for frontend-type workspaces.                                                                                                                                                                                                                                                                                                                                    |
+| `dagger call publish` / `load`                                                                         | Push or locally load a built container image.                                                                                                                                                                                                                                                                                                                                           |
+| `dagger call migrate --workspace=@lightproject/datastore --environment=<env> --dialect=<d1\|postgres>` | Apply the database migrations to a deployed environment (see `templates/datastore`).                                                                                                                                                                                                                                                                                                    |
+| `dagger call wrangler --workspace=<pkg> --environment=<env>`                                           | Deploy one workspace to its Cloudflare Worker for `develop`/`staging`/`production`. Pass frontend build-time env with `--build-env=KEY=VALUE` and backend runtime Worker vars with `--worker-var=KEY=VALUE`; repeat either flag per variable (e.g. `--worker-var=VAR1=123 --worker-var=VAR2=456`). Cloudflare credentials come from `--cloudflare-api-token`/`--cloudflare-account-id`. |
 
 Run `dagger functions` to list everything available.
 
@@ -253,23 +291,13 @@ Coverage reports are generated in the `coverage/` directory of each individual p
 
 ### Browser (e2e) tests
 
-`packages/design-system` and `apps/frontend` also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce — the light/dark toggle updating in place on Storybook's docs and variant pages, the design-system preview app, and the frontend's `/preview` page, plus the frontend home page and its navigation to and from `/preview`.
+Workspaces with a UI (`templates/frontend`, `packages/design-system`) also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce. Their READMEs cover the one-time Chromium install, ports and what each suite tests.
 
 ```bash
-# One-time: download the Chromium build Playwright expects
-vp exec --filter @lightproject/design-system playwright install chromium
-
-# Run them (each starts its own servers on dedicated ports: design-system Storybook 6116 +
-# preview app 6117, frontend 2111)
-vp run -r test:e2e
+vp run -r test:e2e    # browser tests in every workspace that has them
+vp run -r test:unit   # unit tests
 ```
 
-Unit tests are `vp run -r test:unit`. Both are cached like the other tasks; a cache hit also restores the e2e output.
-
-Each run writes to `e2e-test-results/` in the workspace: a video of every test (`results/**/video.webm`), a JSON report (`results.json`), and an HTML report (`report/index.html`, which embeds the videos).
+Both are cached like the other tasks; a cache hit also restores the e2e output. Each run writes to `e2e-test-results/` in the workspace: a video of every test (`results/**/video.webm`), a JSON report (`results.json`), and an HTML report (`report/index.html`, which embeds the videos).
 
 In CI, `dagger call test-end-to-end --workspace=<pkg>` runs them in the `vite-plus` container (installing Chromium and its system libraries), and `verify-workspace.yml` uploads everything as the `e2e-<workspace>` artifact. On pull requests, an **E2E report** comment summarizes the results per workspace and links to those artifacts.
-
-### Share tags (`apps/frontend`)
-
-`og:url`, `og:image`, and `twitter:image` must be absolute, so the frontend build only emits them when its public URL is known: `FRONTEND_URL` (or `VITE_FRONTEND_URL`), the same variable `@lightproject/common/configs` uses for `frontendUrl` (see `.env.example`). Deploys derive it from the target environment's frontend Worker (`https://lightproject-frontend-<dev|staging|production>.wataru.workers.dev`), the same way they derive `VITE_BACKEND_URL`. The share image (`public/og-image.png`) and `public/apple-touch-icon.png` are generated from `favicon.svg`; replace them with brand assets any time.

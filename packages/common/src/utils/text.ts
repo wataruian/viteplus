@@ -99,9 +99,13 @@ const toPascalCase = (str: string): string =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
+const describeError = (error: unknown): string =>
+  error instanceof Error ? error.message : safeToString(error);
+
 export {
   BASE62_ALPHABET,
   decodeShortUuid,
+  describeError,
   escapeRegExp,
   generateShortUuid,
   generateUuid,

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
   decodeShortUuid,
+  describeError,
   escapeRegExp,
   generateShortUuid,
   generateUuid,
@@ -225,5 +226,13 @@ describe('toPascalCase', () => {
 
   test('handles a single word', () => {
     expect(toPascalCase('button')).toBe('Button');
+  });
+});
+
+describe('describeError', () => {
+  test("is an Error's message, or the value stringified", () => {
+    expect(describeError(new Error('boom'))).toBe('boom');
+    expect(describeError('plain')).toBe('plain');
+    expect(describeError(Object.assign(Object.create(null), { code: 7 }))).toBe('{"code":7}');
   });
 });

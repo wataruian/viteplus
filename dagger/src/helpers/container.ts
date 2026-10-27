@@ -1,6 +1,7 @@
 import { CacheSharingMode, type Container, type Directory, dag } from '@dagger.io/dagger';
 
 import {
+  DEFAULT_WORKSPACE_IMAGE,
   DEPLOY_ENVIRONMENTS,
   PLAYWRIGHT_BROWSERS_PATH,
   PNPM_STORE_PATH,
@@ -13,9 +14,11 @@ import {
   VITE_PLUS_PACKAGE_MANAGER_PATH,
   VITE_PLUS_USER,
   WORKSPACES,
+  type WorkspaceEntry,
+  type WorkspaceImage,
 } from './constants';
 
-const workspace = (workspaceName: string): { isFrontend: boolean; path: string } => {
+const workspace = (workspaceName: string): WorkspaceEntry => {
   const entry = WORKSPACES[workspaceName];
   if (!entry) {
     throw new Error(`Workspace ${workspaceName} is not supported`);
@@ -28,10 +31,16 @@ const workspacePath = (workspaceName: string): string => workspace(workspaceName
 
 const isFrontend = (workspaceName: string): boolean => workspace(workspaceName).isFrontend;
 
+const workspaceImage = (workspaceName: string): WorkspaceImage =>
+  workspace(workspaceName).image ?? DEFAULT_WORKSPACE_IMAGE;
+
 const shortWorkspaceName = (workspaceDir: string): string => {
   const [, name] = workspaceDir.split('/');
   return name;
 };
+
+const postgresUrlVariable = (workspaceName: string): string =>
+  `${shortWorkspaceName(workspacePath(workspaceName)).toUpperCase().replaceAll('-', '_')}_POSTGRES_URL`;
 
 const outputDirectory = (taskName: string, content: string): Directory =>
   dag.directory().withNewFile(`${taskName}.output`, content);
@@ -136,7 +145,7 @@ const withoutProxy = (container: Container): Container =>
     .withEnvVariable('http_proxy', '')
     .withEnvVariable('https_proxy', '');
 
-const withPostgres = (container: Container): Container => {
+const withPostgres = (container: Container, workspaceNames: readonly string[]): Container => {
   const postgres = dag
     .container()
     .from(POSTGRES_IMAGE)
@@ -149,9 +158,10 @@ const withPostgres = (container: Container): Container => {
   const credential = POSTGRES_SERVICE_CREDENTIAL;
   const url = `postgres://${credential}:${credential}@${POSTGRES_SERVICE_HOST}:${POSTGRES_SERVICE_PORT}/${credential}`;
 
-  return container
-    .withServiceBinding(POSTGRES_SERVICE_HOST, postgres)
-    .withEnvVariable('POSTGRES_URL', url);
+  return workspaceNames.reduce(
+    (bound, name) => bound.withEnvVariable(postgresUrlVariable(name), url),
+    container.withServiceBinding(POSTGRES_SERVICE_HOST, postgres),
+  );
 };
 
 const withPlaywrightChromium = (container: Container, workspaceName: string): Container =>
@@ -182,6 +192,7 @@ export {
   installArgs,
   isFrontend,
   outputDirectory,
+  postgresUrlVariable,
   shortWorkspaceName,
   withBuildEnv,
   withInstallCaches,
@@ -191,5 +202,6 @@ export {
   withoutProxy,
   workerVarArgs,
   workspace,
+  workspaceImage,
   workspacePath,
 };

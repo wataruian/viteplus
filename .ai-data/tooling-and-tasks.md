@@ -6,10 +6,16 @@
 
 Available automation commands:
 
+- `type-check` runs `tsgo` (TypeScript 7, the compiler behind `vp check`), not `tsc`. `vp check`
+  does not replace it: its tsgolint type check reports only semantic diagnostics, never the
+  declaration diagnostics that `declaration`/`composite` enable (e.g. TS2883, a non-portable
+  inferred type), and has no option to. `tsgo` reports exactly what `tsc` does (probe-verified).
+  `dagger:type-check` runs `tsgo` too (`cd dagger && tsgo`): like its former `tsc`, it resolves
+  from the root `node_modules/.bin`, so `dagger/package.json` needs no change.
 - `mise run check`: Runs the same steps as `vp run ready` (madge, root/dagger/workspace check, format, lint, type-check, build, unit tests) inline, using the fixing variants (`--fix` / `--write`) where they exist, then saves `.outputs/styles.json`. It is not a substitute for the final `vp run ready` (which only verifies).
 - `mise run clean`: Cleans up build artifacts, tools, and temporary AI caches (like `.ai-data/artifacts`).
 - `mise run fix`: With `--remove-comments` (off by default), first removes comments from every TS/JS, JSON(C), CSS, YAML, TOML, HTML/XML/SVG, shell (`.mise/tasks/*`, `.vite-hooks/*`, `*.sh`) and `#`-comment config file (`.gitignore`, `.env.example`, …), keeping only `NOSONAR`/`NO_SONAR` comments, comments that are the sole content of an empty `{}`, and tool-read directives (shebang, `#MISE`/`#USAGE`, `#:tombi`, `/// <reference>`, `@vitest-environment`, `@vite-ignore`, `#__PURE__`, `@jsx*`, the `# vX.Y.Z` after a SHA-pinned `uses:`). Markdown (`<!--VITE PLUS START-->` markers, template prompts), YAML block scalars and the excluded files (`tsconfig.reference.json`, `install.sh`, `mise.toml`, `.gitignore`, `.vscode/extensions.json`, `.vscode/settings.json`, `.github/workflows/scan.yml`) are left alone (`scripts/remove-comments.ts`). Next it exports every top-level function, class, enum, `const`, interface and type alias not yet exported (merged into a single `export { … }` followed directly by `export type { … }`, then a blank line and `export default`, at the end of the file; a default export that can't move without changing evaluation order keeps its place and the lists go right above it), even if nothing imports it yet. Skipped: `let`/`var` and `const` collections (`new Map()`, …) holding module state, `declare` statements, files without imports/exports, CommonJS, test files (`tests/`, `*.test.*`, `*.spec.*`), and value exports in `*.stories.*` (Storybook would treat them as stories). Then applies the `.vscode/settings.json` `editor.codeActionsOnSave` actions to every file in the repo — organize/sort imports (TypeScript), sort JSON (`vscode-json-languageservice`), organize Markdown link definitions (`vscode-markdown-languageservice`) via `scripts/code-actions.ts`, then `vp lint --fix` (`source.fixAll.oxc`) and `vp format --write`.
-- `mise run create`: Scaffolds standard backend, frontend, and library templates.
+- `mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>`: copies the template to `apps/<name>` or `packages/<name>` (fixed by type; the task says so before `vp create`'s directory prompt, which the scaffold ignores) (`scaffold/scaffold.ts`), renaming only its own names (package, paths, `lightproject-<name>` Workers/D1, `lightproject_<name>` database, `<NAME>_*` env keys incl. `VITE_*`, camelCase identifiers, own default ports → next free 3000+/9230+/3111+), adds missing keys to `.env.example` (and the database to `docker-compose.yml` for a datastore; remote D1 ids blanked), runs `vp install` + `vp check --fix` (renamed keys need re-sorting), and prints the CI checklist. README blocks between `<!-- template-only -->` markers are dropped from copies.
 - `mise run init`: Initializes the workspace, installs dependencies, and runs all checks.
 - `mise run start`: Starts the dev or production servers.
 
@@ -21,17 +27,23 @@ Available automation commands:
 - `vp build`: Builds apps for production.
 - `vp pack`: Packages libraries (like `design-system` and `common`) for ESM/CJS distribution.
 
-## Database tasks (`packages/database`)
+## Database tasks (`templates/datastore`)
 
-- `docker compose up -d postgres`: local Postgres (`lightproject`/`lightproject`, `POSTGRES_URL`).
-- `vp run db:generate [name]`: after editing `src/postgres/schema.ts`, regenerate `src/d1/schema.ts`
-  (formatted/linted) and write both migrations.
+- `docker compose up -d postgres`: local Postgres (`lightproject`/`lightproject`, `DATASTORE_POSTGRES_URL`).
+- `vp run db:generate [name]`: after editing anything in `src/postgres/` (`schema.ts`, `crud.ts`,
+  `tables.ts`, `worker-jobs.ts`, `script-locks.ts`), regenerate their `src/d1/` copies (formatted/linted) and write
+  both migrations (none when the schema did not change). Adding a table, step by step:
+  `architecture.md` → "Database" → "Adding a table".
   `name` (e.g. `add_sample`: lowercase, digits, `_`/`-`) names both migration folders
   `<timestamp>_<name>`; without it drizzle-kit picks random words.
-- `vp run db:migrate:postgres` / `vp run db:migrate:d1:local`: apply locally (D1 into the shared
-  `.wrangler/state` that apps' `wrangler dev --persist-to ../../.wrangler/state` reads).
-- `CLOUDFLARE_ENV=develop vp run db:migrate:d1:remote`: apply to the remote D1 of that `[env.*]` in
-  `packages/database/wrangler.toml` (credentials from the root `.env`; see architecture).
+- `DATABASE_DIALECT=postgres|d1 vp run db:migrate`: one task for every target, running the built
+  `dist/scripts/migrate.mjs` (from `src/scripts/migrate.ts`; run `vp run build` first, the
+  migrator image runs the same file). `postgres` → `DATASTORE_POSTGRES_URL`/`POSTGRES_*`; `d1` → the local D1
+  in the shared `.wrangler/state` that apps' `wrangler dev --persist-to ../../.wrangler/state`
+  reads, or with `CLOUDFLARE_ENV=develop|staging|production` that remote D1 in
+  `templates/datastore/wrangler.toml` (credentials from the root `.env`; see architecture).
+- `vp run test:integration` runs the database contract against `DATABASE_DIALECT` (default
+  `postgres`, needs the compose Postgres; `d1` uses a throwaway local D1).
 - `vp run db:check` (drizzle-kit migration consistency), `vp run db:studio` (Postgres).
   Studio's UI is the public site `https://local.drizzle.studio` talking to `localhost:4983`, which
   browsers treat as local-network access: use Chrome (allow "Local network access" when asked).
@@ -40,6 +52,35 @@ Available automation commands:
   both databases (local D1 = the `.sqlite` file under `.wrangler/state/v3/d1/`).
 - `vp run test:unit`: parity, drift, client tests and the contract on a local D1.
   `vp run test:integration`: the contract on real Postgres (not in `ready`/CI yet).
+
+## Workers tasks (`templates/tasks`)
+
+- Needs a migrated database (`DATABASE_DIALECT=postgres|d1 vp run db:migrate` in
+  `templates/datastore`) for `JOB_STORE=database`, the `.env.example` default.
+- `vp run dev` (Node, tsx) / `vp run start` (built `dist/index.mjs`, what the image runs).
+  `vp run` does not load `.env`; the mise-activated shell does (`mise.toml` `[env] _.file`, with
+  `${VAR}` expansion — Node's `--env-file` cannot expand it). Outside it, use `mise exec -- …`,
+  but signal the node process itself: `mise exec` does not forward SIGTERM.
+- `vp run enqueue <function> '<json>' [count]`: enqueue from the CLI (Postgres only: `memory` is
+  per process and D1 needs a Cloudflare binding).
+- `vp run wrangler:dev`: the Cloudflare runtime on the shared `../../.wrangler/state`; trigger the
+  watchdog with `curl "localhost:2002/__scheduled?cron=*+*+*+*+*"`. Follows `.env`'s
+  `DATABASE_DIALECT` (`.env` overrides `[vars]`).
+- `vp run test:unit`: core, memory store, and the job-store contract on both stores (local D1 from
+  `templates/datastore`'s `wrangler.toml` + migrations; build `templates/datastore` first, Vitest loads
+  workspace packages from `dist/`). `vp run test:integration`: worker threads (isolation, abort grace, idle-thread errors).
+
+## Scheduler tasks (`templates/scheduler`)
+
+- Needs a migrated database (every run takes its lock in `script_locks`): `DATABASE_DIALECT=postgres|d1 vp run db:migrate`
+  in `templates/datastore`; build `templates/datastore` before `vp test` (Vitest loads `dist/`).
+- `vp run script <name> [--input '<json>']` (or `vp run script <name> --scheduled`, which takes no input) / `vp run script --list` (tsx);
+  `vp run start <name> …` runs the built `dist/index.mjs` (what the image runs). Exit 3 = skipped
+  (lock held).
+- `vp run wrangler:dev`: the Cloudflare runtime on `SCHEDULER_PORT` (2003); fire a cron with
+  `curl "localhost:2003/__scheduled?cron=*/5+*+*+*+*"`, a one-off with `POST /run/<name>` and
+  `--var SCHEDULER_RUN_TOKEN:<32+ chars>`. Follows `.env`'s `DATABASE_DIALECT` (add
+  `--var DATABASE_DIALECT:d1` for the local D1).
 
 ## Dependency Management
 

@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/tes
 import type * as EnvModule from '../../src/environment/env';
 import {
   PullMetricReader,
+  createTelemetryStarter,
   flushTelemetry,
   initializeContextPropagation,
   initializeTelemetry,
@@ -478,5 +479,74 @@ describe('initializeContextPropagation', () => {
     expect(readScopedValue()).toBe('ctx-only-request');
     expect(registerMock).not.toHaveBeenCalled();
     expect(getTelemetryConfig()).toBeUndefined();
+  });
+});
+
+const propagates = () => {
+  const key = createContextKey('starter-test');
+  return context.with(context.active().setValue(key, 'value'), () =>
+    context.active().getValue(key),
+  );
+};
+
+describe('createTelemetryStarter', () => {
+  afterEach(() => {
+    resetTelemetryForTests();
+  });
+
+  test('initializes the SDK once with the service metadata', async () => {
+    const start = createTelemetryStarter({
+      serviceName: '@acme/jobs',
+      serviceVersion: '2.0.0',
+      skip: () => false,
+    });
+
+    await start();
+    await start();
+
+    expect(registerMock).toHaveBeenCalledOnce();
+    expect(resourceFromAttributesMock).toHaveBeenCalledWith(
+      expect.objectContaining({ 'service.name': '@acme/jobs', 'service.version': '2.0.0' }),
+    );
+  });
+
+  test('only propagates context when skipped', async () => {
+    expect(propagates()).toBeUndefined();
+
+    await createTelemetryStarter({ serviceName: 'x', serviceVersion: '1', skip: () => true })();
+
+    expect(registerMock).not.toHaveBeenCalled();
+    expect(getTelemetryConfig()).toBeUndefined();
+    expect(propagates()).toBe('value');
+  });
+
+  test('falls back to context propagation when the SDK setup fails', async () => {
+    resourceFromAttributesMock.mockImplementationOnce(() => {
+      throw new Error('bad resource');
+    });
+
+    await createTelemetryStarter({ serviceName: 'x', serviceVersion: '1', skip: () => false })();
+
+    expect(loggerErrorMock).toHaveBeenCalledOnce();
+    expect(loggerErrorMock.mock.calls[0]?.[0]).toBe(
+      'Telemetry setup failed; telemetry is off or partial, context propagation stays on',
+    );
+    expect(propagates()).toBe('value');
+  });
+
+  test('logs a setup failure once instead of throwing, and does not retry', async () => {
+    const skip = vi.fn<() => boolean>(() => {
+      throw new Error('exporter misconfigured');
+    });
+    const start = createTelemetryStarter({ serviceName: 'x', serviceVersion: '1', skip });
+
+    await expect(start()).resolves.toBeUndefined();
+    await expect(start()).resolves.toBeUndefined();
+
+    expect(skip).toHaveBeenCalledOnce();
+    expect(loggerErrorMock).toHaveBeenCalledOnce();
+    expect(loggerErrorMock.mock.calls[0]?.[0]).toBe(
+      'Telemetry setup failed; continuing without it',
+    );
   });
 });
