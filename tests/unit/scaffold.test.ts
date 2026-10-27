@@ -37,6 +37,10 @@ const envExample = [
   'API_PORT="3000"',
   'API_INSPECTOR_PORT="9230"',
   '',
+  'SCHEDULER_PORT="2003"',
+  `VITE_SCHEDULER_PORT="\${SCHEDULER_PORT}"`,
+  'SCHEDULER_INSPECTOR_PORT="8233"',
+  '',
   'POSTGRES_HOST="localhost"',
   'DATASTORE_POSTGRES_DB="lightproject_datastore"',
   `DATASTORE_POSTGRES_URL="postgres://\${POSTGRES_HOST}/\${DATASTORE_POSTGRES_DB}"`,
@@ -45,6 +49,7 @@ const envExample = [
   'JOB_STORE="database"',
   'TASKS_CONCURRENCY="ping=2"',
   'WORKERS_CONCURRENCY=""',
+  'SCHEDULER_RUN_TOKEN=""',
   '',
 ].join('\n');
 
@@ -102,6 +107,18 @@ const makeRepo = (): string => {
   write(
     'templates/datastore/src/variables.ts',
     "export const db = process.env.DATASTORE_POSTGRES_DB ?? 'lightproject_datastore';\n",
+  );
+  write(
+    'templates/scheduler/vite.config.ts',
+    "const port = Number(process.env['SCHEDULER_PORT'] ?? '2003'); // inspector 8233\n",
+  );
+  write(
+    'templates/scheduler/wrangler.toml',
+    'name = "lightproject-scheduler"\n[env.develop]\nname = "lightproject-scheduler-dev"\n',
+  );
+  write(
+    'templates/scheduler/src/runtimes/edge.ts',
+    'interface EdgeEnv { SCHEDULER_RUN_TOKEN?: string }\n',
   );
   return root;
 };
@@ -189,6 +206,24 @@ describe('renameText', () => {
         'VITE_WEBSITE3_URL WEBSITE3_PORT BACKEND_URL MYFRONTEND_X',
         'website3Port backendBaseUrl defaultFrontendPort frontend',
         'localhost:3004 20011 2001.5 2000',
+      ].join('\n'),
+    );
+  });
+
+  test('renames the image references of the template', () => {
+    const text = [
+      'image: <REGISTRY_ADDRESS>/frontend:<tag>',
+      'docker run --rm frontend:latest node dist/index.mjs',
+      'docker run --rm --name frontend frontend:latest',
+      'the frontend: a template; backend:latest; my-frontend:latest; <REGISTRY_ADDRESS>/backend:<tag>',
+    ].join('\n');
+
+    expect(renameText(text, from, to, ports, 'apps/website3')).toBe(
+      [
+        'image: <REGISTRY_ADDRESS>/website3:<tag>',
+        'docker run --rm website3:latest node dist/index.mjs',
+        'docker run --rm --name frontend website3:latest',
+        'the frontend: a template; backend:latest; my-frontend:latest; <REGISTRY_ADDRESS>/backend:<tag>',
       ].join('\n'),
     );
   });
@@ -418,6 +453,43 @@ describe('scaffold', () => {
       `LEDGER_POSTGRES_DB: \${LEDGER_POSTGRES_DB:-lightproject_ledger}`,
     );
     expect(output.join('')).toContain('GitHub secret `LEDGER_POSTGRES_URL`');
+  });
+
+  test('copies a scheduler as a new app with its own ports, Workers and run token', () => {
+    const root = makeRepo();
+    const output: string[] = [];
+
+    scaffold({
+      name: 'cron-jobs',
+      rootDir: root,
+      type: 'scheduler',
+      write: (text) => {
+        output.push(text);
+      },
+    });
+
+    const read = (file: string) => fs.readFileSync(path.join(root, file), 'utf8');
+    expect(read('apps/cron-jobs/vite.config.ts')).toBe(
+      "const port = Number(process.env['CRON_JOBS_PORT'] ?? '3002'); // inspector 9232\n",
+    );
+    expect(read('apps/cron-jobs/wrangler.toml')).toBe(
+      'name = "lightproject-cron-jobs"\n[env.develop]\nname = "lightproject-cron-jobs-dev"\n',
+    );
+    expect(read('apps/cron-jobs/src/runtimes/edge.ts')).toContain('CRON_JOBS_RUN_TOKEN');
+    expect(read('.env.example')).toContain(
+      [
+        'SCHEDULER_PORT="2003"',
+        `VITE_SCHEDULER_PORT="\${SCHEDULER_PORT}"`,
+        'SCHEDULER_INSPECTOR_PORT="8233"',
+        '',
+        'CRON_JOBS_PORT="3002"',
+      ].join('\n'),
+    );
+    expect(read('.env.example')).toContain('SCHEDULER_RUN_TOKEN=""\nCRON_JOBS_RUN_TOKEN=""\n');
+    const log = output.join('');
+    expect(log).toContain('Scaffolding scheduler as apps/cron-jobs');
+    expect(log).toContain('wrangler secret put CRON_JOBS_RUN_TOKEN');
+    expect(log).toContain('command `node dist/index.mjs <script> --scheduled`');
   });
 
   test('reports reserved keys that already exist', () => {

@@ -1,5 +1,6 @@
 import { createRepositories } from '../repositories/create';
 import { type AnyPostgresDatabase, createPostgresDatabase } from './client';
+import { createPostgresScriptLockStore } from './script-locks';
 import { createPostgresTables } from './tables';
 import { createPostgresWorkerJobQueue } from './worker-jobs';
 
@@ -7,6 +8,7 @@ const createPostgresRepositories = (db: AnyPostgresDatabase, close: () => Promis
   createRepositories({
     close,
     dialect: 'postgres',
+    scriptLockStore: createPostgresScriptLockStore(db),
     tables: createPostgresTables(db),
     workerJobQueue: createPostgresWorkerJobQueue(db),
   });

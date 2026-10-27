@@ -22,7 +22,7 @@ const runGenerate = async ({
   const generateMigrations = vi.fn(generate);
   const execFileSync = vi.fn(check);
   const written: string[] = [];
-  const targets = ['schema.ts', 'crud.ts', 'tables.ts', 'worker-jobs.ts'].map(
+  const targets = ['schema.ts', 'crud.ts', 'tables.ts', 'worker-jobs.ts', 'script-locks.ts'].map(
     (file) => `${globalThis.process.cwd()}/src/d1/${file}`,
   );
   const isTarget = (file: string) => targets.includes(file);
@@ -78,6 +78,7 @@ describe('db:generate', () => {
     expect(run.written[1]).toContain('const createD1Crud =');
     expect(run.written[2]).toContain('const createD1Tables = (db: D1Database): Tables');
     expect(run.written[3]).toContain('const createD1WorkerJobQueue = (db: D1Database)');
+    expect(run.written[4]).toContain('const createD1ScriptLockStore = (db: D1Database)');
     for (const target of run.targets) {
       expect(run.execFileSync).toHaveBeenCalledWith(
         run.outcome.paths?.vp,
@@ -90,6 +91,7 @@ describe('db:generate', () => {
       ['src/d1/crud.ts updated from src/postgres/crud.ts\n'],
       ['src/d1/tables.ts updated from src/postgres/tables.ts\n'],
       ['src/d1/worker-jobs.ts updated from src/postgres/worker-jobs.ts\n'],
+      ['src/d1/script-locks.ts updated from src/postgres/script-locks.ts\n'],
     ]);
     expect(run.generateMigrations).toHaveBeenCalledExactlyOnceWith('add_sample');
     expect(run.outcome.exitCode).toBeUndefined();

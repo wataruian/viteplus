@@ -38,7 +38,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'design-system frontend backend common datastore library tasks'
+          all-workspaces: 'design-system frontend backend common datastore library tasks scheduler'
 
       - name: Resolve workspaces with e2e tests
         id: e2e
@@ -185,10 +185,26 @@ jobs:
     with:
       workspace: tasks
 
+  scheduler:
+    # needs: [setup, dagger, datastore]
+    needs: [setup, datastore]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'scheduler')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: scheduler
+
   artifacts:
     name: Publish artifacts
-    # needs: [setup, common, datastore, design-system, library, backend, frontend, dagger, tasks]
-    needs: [setup, datastore, tasks]
+    # needs: [setup, common, datastore, design-system, library, backend, frontend, dagger, tasks, scheduler]
+    needs: [setup, datastore, tasks, scheduler]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&

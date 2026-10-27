@@ -1,8 +1,7 @@
 import { logger, requestContextStorage } from '@lightproject/common/logger';
 import {
+  createTelemetryStarter,
   flushTelemetry,
-  initializeContextPropagation,
-  initializeTelemetry,
   prometheusExporter,
 } from '@lightproject/common/server';
 import { generateShortUuid } from '@lightproject/common/utils';
@@ -22,6 +21,12 @@ import { httpRouter } from './routers/http';
 import { trpcOpenApiRouter, trpcRouter } from './routers/trpc';
 import type { AppEnv } from './schema';
 
+const startTelemetry = createTelemetryStarter({
+  serviceName: packageJson.name,
+  serviceVersion: packageJson.version,
+  skip: () => config.skipOpenTelemetry,
+});
+
 const getApp = async () => {
   const port = env.BACKEND_PORT;
   if (port === undefined) {
@@ -30,14 +35,7 @@ const getApp = async () => {
     logger.info(`BACKEND_PORT is set: ${port}`);
   }
 
-  if (config.skipOpenTelemetry) {
-    initializeContextPropagation();
-  } else {
-    await initializeTelemetry({
-      serviceName: packageJson.name,
-      serviceVersion: packageJson.version,
-    });
-  }
+  await startTelemetry();
 
   const app = new Hono<AppEnv>();
 
@@ -96,4 +94,4 @@ const server = {
   },
 };
 
-export { getApp, server };
+export { getApp, server, startTelemetry };

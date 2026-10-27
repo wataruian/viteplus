@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           case "${WORKSPACE}" in
-            backend | frontend | tasks) configs=("templates/${WORKSPACE}/wrangler.toml") ;;
+            backend | frontend | tasks | scheduler) configs=("templates/${WORKSPACE}/wrangler.toml") ;;
             design-system)
               configs=(
                 "packages/design-system/wrangler.design-system.toml"
@@ -60,7 +60,7 @@ jobs:
             fi
           done
 
-          if [[ "${WORKSPACE}" == "tasks" && -n "${DATABASE_DIALECT}" ]]; then
+          if [[ ("${WORKSPACE}" == "tasks" || "${WORKSPACE}" == "scheduler") && -n "${DATABASE_DIALECT}" ]]; then
             worker_dialect="$(awk -v section="[env.${ENVIRONMENT}.vars]" '
               { line = $0; gsub(/[[:space:]]/, "", line) }
               line == section { found = 1; next }
@@ -71,9 +71,9 @@ jobs:
                 gsub(/["\047]/, "", line)
                 print line
               }
-            ' templates/tasks/wrangler.toml)"
+            ' "templates/${WORKSPACE}/wrangler.toml")"
             if [[ "${worker_dialect}" != "${DATABASE_DIALECT}" ]]; then
-              echo "::error::templates/tasks/wrangler.toml sets DATABASE_DIALECT='${worker_dialect}' for ${ENVIRONMENT}, but the migrated database is '${DATABASE_DIALECT}'. Update [env.${ENVIRONMENT}] (and its database binding) to match."
+              echo "::error::templates/${WORKSPACE}/wrangler.toml sets DATABASE_DIALECT='${worker_dialect}' for ${ENVIRONMENT}, but the migrated database is '${DATABASE_DIALECT}'. Update [env.${ENVIRONMENT}] (and its database binding) to match."
               exit 1
             fi
           fi
@@ -202,7 +202,7 @@ jobs:
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
           fi
 
-          if [[ ("${WORKSPACE}" == "backend" || "${WORKSPACE}" == "tasks") && -n "${OTLP_ENDPOINT}" ]]; then
+          if [[ ("${WORKSPACE}" == "backend" || "${WORKSPACE}" == "tasks" || "${WORKSPACE}" == "scheduler") && -n "${OTLP_ENDPOINT}" ]]; then
             args+=("--worker-var=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
           fi
 
@@ -214,7 +214,7 @@ jobs:
             "${args[@]}"
 
       - name: Smoke test
-        if: inputs.workspace != 'datastore' && inputs.workspace != 'tasks'
+        if: inputs.workspace != 'datastore' && inputs.workspace != 'tasks' && inputs.workspace != 'scheduler'
         shell: bash
         run: |
           case "${WORKSPACE}" in

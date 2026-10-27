@@ -24,6 +24,7 @@ on:
           - frontend
           - backend
           - tasks
+          - scheduler
       version:
         description: 'Git tag/ref to deploy (required for staging/production, ignored for pr)'
         required: false

@@ -55,7 +55,7 @@ Commands run from `templates/datastore` unless noted.
 
 ### Reset local databases
 
-Stop any running `wrangler dev` (backend, tasks) first; it holds the local D1 files open. From
+Stop any running `wrangler dev` (backend, tasks, scheduler) first; it holds the local D1 files open. From
 the repo root:
 
 ```sh
@@ -99,8 +99,8 @@ Worker bindings (not variables) passed in `createDatabase(env)`:
 ## Development
 
 **Only edit `src/postgres/`** (plus the dialect-neutral `src/shared/`, `src/repositories/`,
-`src/types.ts`, `src/schemas.ts`). `src/d1/schema.ts`, `crud.ts`, `tables.ts` and
-`worker-jobs.ts` and everything under `migrations/` are generated; `client.ts` and
+`src/types.ts`, `src/schemas.ts`). `src/d1/schema.ts`, `crud.ts`, `tables.ts`,
+`worker-jobs.ts` and `script-locks.ts` and everything under `migrations/` are generated; `client.ts` and
 `repositories.ts` stay hand-written per dialect.
 
 | Task                        | What it does                                                                                |

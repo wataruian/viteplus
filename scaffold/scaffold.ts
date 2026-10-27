@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-type TemplateType = 'backend' | 'datastore' | 'frontend' | 'library' | 'tasks';
+type TemplateType = 'backend' | 'datastore' | 'frontend' | 'library' | 'scheduler' | 'tasks';
 
 interface TemplateSpec {
   checklist: string[];
@@ -66,6 +66,16 @@ const templates: Record<TemplateType, TemplateSpec> = {
     ports: { E2E_PORT: 2111, INSPECTOR_PORT: 8231, PORT: 2001 },
   },
   library: { checklist: [], group: 'packages', ports: {} },
+  scheduler: {
+    checklist: [
+      ...deployChecklist,
+      'Its Workers `lightproject-<name>-<env>` are created by the first deploy',
+      'One-off runs on Cloudflare: `vp exec wrangler secret put <NAME>_RUN_TOKEN --env <env>` (32+ characters)',
+      'Node: run the image as a CronJob per scheduled script (command `node dist/index.mjs <script> --scheduled`, not just its arguments; `timeZone: Etc/UTC`, `concurrencyPolicy: Forbid`)',
+    ],
+    group: 'apps',
+    ports: { INSPECTOR_PORT: 8233, PORT: 2003 },
+  },
   tasks: {
     checklist: [
       ...deployChecklist,
@@ -99,6 +109,7 @@ const reservedNames: ReadonlySet<string> = new Set([
   'design-system',
   'frontend',
   'library',
+  'scheduler',
   'tasks',
 ]);
 
@@ -169,6 +180,8 @@ const renameText = (
     )
     .replaceAll(new RegExp(`\\btemplates/${kebab}(?![a-z0-9-])`, 'gu'), targetDir)
     .replaceAll(new RegExp(`lightproject-${kebab}(?![a-z0-9])`, 'gu'), `lightproject-${to.kebab}`)
+    .replaceAll(new RegExp(`(?<=<REGISTRY_ADDRESS>/)${kebab}(?=:)`, 'gu'), to.kebab)
+    .replaceAll(new RegExp(`(?<![\\w/-])${kebab}(?=:(?:latest\\b|<tag>))`, 'gu'), to.kebab)
     .replaceAll(
       new RegExp(`lightproject_${from.snake}(?![a-z0-9])`, 'gu'),
       `lightproject_${to.snake}`,
@@ -208,6 +221,7 @@ const reservedAppNames: ReadonlySet<string> = new Set([
   'admin',
   'api',
   'database',
+  'dispatcher',
   'site',
   'workers',
 ]);

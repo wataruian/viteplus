@@ -8,7 +8,7 @@ import {
 
 import { logger } from '@lightproject/common/logger';
 import { shutdownTelemetry } from '@lightproject/common/server';
-import { getServiceInstanceId } from '@lightproject/common/utils';
+import { getServiceInstanceId, settleWithin } from '@lightproject/common/utils';
 
 import { resolveTsxApi } from '#tsx-api';
 
@@ -21,7 +21,6 @@ import {
   type Executor,
   JobAbortedError,
   JobNotStartedError,
-  settleWithin,
 } from '../core/runner';
 import { abortGraceMs as defaultAbortGraceMs, telemetryFlushMs } from '../core/timing';
 import { functions } from '../functions';

@@ -17,7 +17,7 @@ import {
   createInProcessExecutor,
   drain,
   processNext,
-  raceAbort,
+  raceJobAbort,
   runJob,
   startWorker,
 } from '../../../src/core/runner';
@@ -52,49 +52,21 @@ const claimNext = async ({ runner, store, time }: ReturnType<typeof setup>) => {
   return job;
 };
 
-describe('raceAbort', () => {
-  test('resolves with the promise when not aborted', async () => {
+describe('raceJobAbort', () => {
+  test('throws JobAbortedError once aborted', async () => {
     await expect(
-      raceAbort(Promise.resolve(1), new globalThis.AbortController().signal),
-    ).resolves.toBe(1);
-  });
-
-  test('rejects immediately when already aborted', async () => {
-    await expect(raceAbort(Promise.resolve(1), globalThis.AbortSignal.abort())).rejects.toThrow(
-      JobAbortedError,
-    );
-  });
-
-  test('rejects on abort and swallows a later rejection of the promise', async () => {
-    const controller = new globalThis.AbortController();
-    const { promise, reject } = Promise.withResolvers<number>();
-    const raced = raceAbort(promise, controller.signal);
-
-    controller.abort();
-    await expect(raced).rejects.toThrow('Job aborted');
-    reject(new Error('late'));
-    await sleep();
-  });
-});
-
-describe('raceAbort grace period', () => {
-  test('waits for an aborted handler that settles within the grace period', async () => {
-    const controller = new globalThis.AbortController();
-    let settled = false;
-    const handler = sleep(30).then(() => {
-      settled = true;
+      raceJobAbort(Promise.resolve(1), globalThis.AbortSignal.abort()),
+    ).rejects.toMatchObject({
+      handlerSettled: true,
+      message: 'Job aborted',
+      name: 'JobAbortedError',
     });
-    const raced = raceAbort(handler, controller.signal, 1000);
-
-    controller.abort();
-    await expect(raced).rejects.toMatchObject({ handlerSettled: true, name: 'JobAbortedError' });
-    expect(settled).toBe(true);
   });
 
-  test('gives up and warns when the handler ignores abort past the grace period', async () => {
+  test('marks a handler that outlives the grace and warns', async () => {
     const warn = vi.spyOn(logger, 'warn');
     const controller = new globalThis.AbortController();
-    const raced = raceAbort(Promise.withResolvers<undefined>().promise, controller.signal, 20);
+    const raced = raceJobAbort(Promise.withResolvers<undefined>().promise, controller.signal, 20);
 
     controller.abort();
     await expect(raced).rejects.toMatchObject({ handlerSettled: false, name: 'JobAbortedError' });

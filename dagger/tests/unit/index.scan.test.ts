@@ -262,6 +262,8 @@ describe('sonarCleanup', () => {
       'design-system',
       'frontend',
       'library',
+      'scheduler',
+      'tasks',
       'dagger',
     ]) {
       expect(script).toContain(`lightproject-viteplus-${name}-pr-42`);

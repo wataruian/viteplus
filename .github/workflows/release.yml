@@ -76,6 +76,7 @@ jobs:
             templates/backend/package.json \
             templates/frontend/package.json \
             templates/tasks/package.json \
+            templates/scheduler/package.json \
             packages/common/package.json \
             templates/datastore/package.json \
             packages/design-system/package.json \

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Create an app or package from a template (backend, frontend, tasks, datastore, library)"
+#MISE description="Create an app or package from a template (backend, frontend, tasks, scheduler, datastore, library)"
 
 set -o errexit
 
@@ -25,14 +25,14 @@ while [[ "${#}" -gt 0 ]]; do
       shift 2
       ;;
     *)
-      echo "Usage: mise run create --type=backend|frontend|tasks|datastore|library --name=<kebab-name>"
+      echo "Usage: mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>"
       exit 1
       ;;
   esac
 done
 
 case "${type}" in
-  backend | frontend | tasks | datastore | library) ;;
+  backend | frontend | tasks | scheduler | datastore | library) ;;
   *)
     echo "Invalid type: ${type}"
     exit 1
@@ -40,18 +40,20 @@ case "${type}" in
 esac
 
 if [[ -z "${name}" ]]; then
-  echo "Usage: mise run create --type=backend|frontend|tasks|datastore|library --name=<kebab-name>"
+  echo "Usage: mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>"
   exit 1
 fi
 
-echo "Type: ${type}, Name: ${name}"
-
-vp create "${type}" -- "${name}"
-
 case "${type}" in
-  backend | frontend | tasks) dir="apps/${name}" ;;
+  backend | frontend | tasks | scheduler) dir="apps/${name}" ;;
   *) dir="packages/${name}" ;;
 esac
+
+echo "Type: ${type}, Name: ${name}"
+echo "Target: ${dir} (fixed by type: backend/frontend/tasks/scheduler go to apps/, datastore/library to packages/)."
+echo "The directory prompt from 'vp create' below is ignored; pick any option."
+
+vp create "${type}" -- "${name}"
 
 vp install
 vp check --fix "${dir}"

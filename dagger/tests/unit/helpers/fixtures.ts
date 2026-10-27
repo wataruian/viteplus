@@ -22,6 +22,7 @@ const seedWorkspaceDirs = (): void => {
     'datastore/',
     'frontend/',
     'library/',
+    'scheduler/',
     'tasks/',
     'README.md',
   ]);

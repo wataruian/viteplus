@@ -68,4 +68,11 @@ const workerJobs = pgTable(
   ],
 );
 
-export { timestampColumn, timestamps, users, workerJobs };
+const scriptLocks = pgTable('script_locks', {
+  expiresAt: timestampColumn('expires_at').notNull(),
+  name: text('name').primaryKey(),
+  owner: text('owner').notNull(),
+  ...timestamps,
+});
+
+export { scriptLocks, timestampColumn, timestamps, users, workerJobs };

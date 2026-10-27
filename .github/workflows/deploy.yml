@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'datastore design-system frontend backend tasks'
+          all-workspaces: 'datastore design-system frontend backend tasks scheduler'
 
   design-system:
     needs: setup
@@ -103,6 +103,23 @@ jobs:
     secrets: inherit
     with:
       workspace: tasks
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
+
+  scheduler:
+    needs: [setup, datastore]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'scheduler') &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: scheduler
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 

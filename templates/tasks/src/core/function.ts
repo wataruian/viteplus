@@ -1,10 +1,10 @@
-import type { Logger } from '@lightproject/common/logger';
+import type { LevelLogger } from '@lightproject/common/logger';
 import type { z } from 'zod';
 
 import type { Job, JsonValue } from './job';
 import { maxTimerMs } from './timing';
 
-type JobLogger = Pick<Logger, 'debug' | 'info' | 'warn' | 'error'>;
+type JobLogger = LevelLogger;
 
 interface JobContext {
   attempt: number;

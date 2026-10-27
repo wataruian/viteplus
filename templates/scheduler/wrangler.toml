@@ -1,0 +1,58 @@
+name = "lightproject-scheduler"
+main = "src/runtimes/edge.ts"
+
+compatibility_date = "2026-08-26"
+compatibility_flags = ["enable_request_signal"]
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+persist = true
+
+[vars]
+ENV = "local"
+DATABASE_DIALECT = "d1"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lightproject-datastore-local"
+database_id = "lightproject-datastore-local"
+
+[env.develop]
+name = "lightproject-scheduler-dev"
+
+[env.develop.vars]
+ENV = "develop"
+DATABASE_DIALECT = "d1"
+
+[[env.develop.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-dev"
+database_id = "9f1bf2ea-f0d4-4a0a-941d-7020ee0557a0"
+
+[env.staging]
+name = "lightproject-scheduler-staging"
+
+[env.staging.vars]
+ENV = "staging"
+DATABASE_DIALECT = "d1"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-staging"
+database_id = "9aec85c6-8fdb-4d4e-8398-8fd6100ce5e6"
+
+[env.production]
+name = "lightproject-scheduler-production"
+
+[env.production.vars]
+ENV = "production"
+DATABASE_DIALECT = "d1"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "lightproject-database-production"
+database_id = "09adc8ae-43b3-4bd1-a517-7292fd83bb96"

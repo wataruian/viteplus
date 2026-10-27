@@ -26,9 +26,11 @@ The repository is structured as a **Vite+-powered Monorepo**.
   - **`frontend`**: Modern SPA built with React and Vite.
   - **`tasks`**: Always-running background job workers — see "Background Workers" below. Same
     split as the backend: a Web-API-only core, Node APIs only in `runtimes/node.ts`.
+  - **`scheduler`**: Cron and one-off scripts that never overlap themselves — see "Scheduled
+    Scripts" below. Same split: Node APIs only in `runtimes/node.ts`.
   - **`datastore`**: Shared Drizzle ORM schema, clients and migrations — see "Database" below.
   - **`library`**: General purpose shared library templates.
-- **Templates and reserved names**: `templates/backend`, `templates/frontend`, `templates/tasks` and `templates/datastore` are templates for future real workspaces: `apps/api` (from `backend`), `apps/admin` and `apps/site` (from `frontend`), `apps/workers` (from `tasks`) and `packages/database` (from `datastore`). Each owns an env prefix: templates `BACKEND_*`/`FRONTEND_*`/`TASKS_*`/`DATASTORE_*` (ports 2000+/8230+), real ones `API_*`/`ADMIN_*`/`SITE_*`/`WORKERS_*`/`DATABASE_*` (ports 3000+/9230+). The real ones' keys are reserved in `.env.example` and unused until those workspaces exist; do not remove or reuse them. Only variables that would clash when two of them run side by side get the prefix: ports and URLs, `<APP>_CONCURRENCY` (it names that app's job functions), and the Postgres database (`<PKG>_POSTGRES_DB`/`<PKG>_POSTGRES_URL`: each database package keeps its own database and migration history on the shared compose server, created by `configs/postgres/create-databases.sh`). Everything else stays shared and unprefixed: `POSTGRES_HOST`/`PORT`/`USER`/`PASSWORD`, `DATABASE_DIALECT` and `DATABASE_MIGRATION_ENABLED` (shared despite the prefix), `JOB_STORE`, the `WORKER_*`/`JOB_*` tunables, `ALLOWED_IPS`, … New apps/packages come from `mise run create --type=backend|frontend|tasks|datastore|library --name=<name>` (`scaffold/scaffold.ts`, tested in `tests/unit/scaffold.test.ts`), which renames only the template's own names in the copy and adds its missing keys to `.env.example`. So a template must read its **own** URL/port app-locally (its `src/env.ts`/`config.ts`, e.g. the backend's `BACKEND_URL`), never through a name-specific getter in `packages/common` (common keeps those only for other apps that call it), must not use its own camelCase name for anything else, must reach other workspaces through the repo root (`../../templates/backend/…`, never a sibling path like `../backend/…`, which breaks once the copy lives in `apps/`), and wraps template-only README text in `<!-- template-only -->` … `<!-- /template-only -->`.
+- **Templates and reserved names**: `templates/backend`, `templates/frontend`, `templates/tasks`, `templates/scheduler` and `templates/datastore` are templates for future real workspaces: `apps/api` (from `backend`), `apps/admin` and `apps/site` (from `frontend`), `apps/workers` (from `tasks`), `apps/dispatcher` (from `scheduler`) and `packages/database` (from `datastore`). Each owns an env prefix: templates `BACKEND_*`/`FRONTEND_*`/`TASKS_*`/`SCHEDULER_*`/`DATASTORE_*` (ports 2000+/8230+), real ones `API_*`/`ADMIN_*`/`SITE_*`/`WORKERS_*`/`DISPATCHER_*`/`DATABASE_*` (ports 3000+/9230+). The real ones' keys are reserved in `.env.example` and unused until those workspaces exist; do not remove or reuse them. Only variables that would clash when two of them run side by side get the prefix: ports and URLs, `<APP>_CONCURRENCY` (it names that app's job functions), `<APP>_RUN_TOKEN` (a scheduler app's one-off run secret), and the Postgres database (`<PKG>_POSTGRES_DB`/`<PKG>_POSTGRES_URL`: each database package keeps its own database and migration history on the shared compose server, created by `configs/postgres/create-databases.sh`). Everything else stays shared and unprefixed: `POSTGRES_HOST`/`PORT`/`USER`/`PASSWORD`, `DATABASE_DIALECT` and `DATABASE_MIGRATION_ENABLED` (shared despite the prefix), `JOB_STORE`, the `WORKER_*`/`JOB_*` tunables, `ALLOWED_IPS`, … New apps/packages come from `mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<name>` (the target folder is fixed by type: `apps/` or `packages/`; the `vp create` directory prompt is ignored) (`scaffold/scaffold.ts`, tested in `tests/unit/scaffold.test.ts`), which renames only the template's own names in the copy and adds its missing keys to `.env.example`. So a template must read its **own** URL/port app-locally (its `src/env.ts`/`config.ts`, e.g. the backend's `BACKEND_URL`), never through a name-specific getter in `packages/common` (common keeps those only for other apps that call it), must not use its own camelCase name for anything else, must reach other workspaces through the repo root (`../../templates/backend/…`, never a sibling path like `../backend/…`, which breaks once the copy lives in `apps/`), and wraps template-only README text in `<!-- template-only -->` … `<!-- /template-only -->`.
 - **`bak/`**: Intentionally tracked archive of earlier app/library setups, kept for future reuse.
   Not a workspace member; excluded from lint/format, Sonar, and CodeQL. Not a cleanup/TODO item —
   do not propose removing it from Git.
@@ -43,7 +45,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
   (`src/d1`). Neither is a public subpath: `package.json` exports only `.`, and
   `createDatabase` loads the selected dialect with a dynamic `import()`.
 - **Postgres is the source of truth; D1 is generated.** Only `src/postgres/` is edited: the
-  schema and the modules `crud.ts`, `tables.ts` and `worker-jobs.ts` are rendered into `src/d1/`;
+  schema and the modules `crud.ts`, `tables.ts`, `worker-jobs.ts` and `script-locks.ts` are rendered into `src/d1/`;
   `client.ts`/`repositories.ts` are hand-written per dialect (connect/close only).
 - **Query modules** (`src/scripts/render-d1-queries.ts`): Drizzle's Pg and SQLite builders share
   their API but not their types, so one module cannot serve both without `any`; instead the D1
@@ -69,7 +71,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
 - **Apps query through one import**: `db.createDatabase(env)` (`import { db } from
   '@lightproject/datastore'`; namespaced like the other packages' roots) picks the
   dialect from `env.DATABASE_DIALECT` (else `process.env`) and returns repositories
-  (`db.users.findById/findByEmail/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries) with the
+  (`db.users.findById/findByEmail/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries, `db.scriptLocks.acquire/renew/release/findByName` for `templates/scheduler`) with the
   same row types on both. D1 needs the binding as `env.DB`; Postgres uses
   `env.HYPERDRIVE.connectionString`, then `env.DATASTORE_POSTGRES_URL`, then the `POSTGRES_*` env. Each
   dialect is loaded with a dynamic `import()`, so the root entry imports neither driver.
@@ -362,7 +364,9 @@ methods change).
   it counts as aborted even if the handler then returns normally: a handler that returns early on
   `signal` cannot be told apart from one that finished, so the retry (made safe by idempotency)
   is preferred over silently dropping work. Telemetry setup never blocks processing: a failure is
-  logged once and that process/isolate runs without telemetry (`initializeTelemetry` in
+  logged once and that process/isolate runs with context propagation only (no export, but trace
+  ids and child spans still work), through `createTelemetryStarter` in `@lightproject/common/server`,
+  which `backend`, `tasks` and `scheduler` all use (`initializeTelemetry` in
   `packages/common` marks itself initialized before the steps that can fail, so it cannot be
   retried in place; its steps only build exporters and providers, so a failure is a configuration
   error, and export failures are retried by the SDK itself). Recording the outcome
@@ -633,6 +637,294 @@ written, linted, tested and run on Node before being documented).
 7. **Run it**: nothing to wire. Node (`vp run dev`) starts `concurrency` worker threads for it; on
    Cloudflare the next cron tick starts one `WorkerLoop` per slot (`send-welcome-email#1`, `#2`),
    and loops above a lowered concurrency stop on their own.
+
+## Scheduled Scripts (`templates/scheduler`)
+
+- **Model**: a script (`defineScript` in `src/scripts/`, registered in `scripts/index.ts`) has a
+  kebab-case `name` (a CLI argument and a URL path), an `input` zod schema (`noInput` for none), an
+  optional 5-field cron `schedule` and a `timeoutMs` (default 10 min, at most 24 h; it covers the
+  whole run, from opening the database and taking the lock, which are abandoned on a stop or the
+  timeout and cleaned up if they finish late: a late database is closed, a late lock released,
+  and the run waits up to the abort grace plus the 5 s release timeout for that cleanup before
+  closing its database; an abandoned acquire that comes back `false` needs no release). Definitions
+  fail at module load on a bad name, timeout or schedule, a duplicate name, or a scheduled script
+  whose schema rejects `{}` (scheduled runs pass `{}`). `run(input, context)` gets `context.db`
+  (the `templates/datastore` repositories, opened for the run and closed after it), `logger`
+  (bound to the run's `script.run` span), `signal` (timeout or stop), `trigger`
+  (`schedule`/`manual`), `scheduledTime` and `withTrace(fn)`.
+- **Portable cron subset** (`src/core/schedule.ts`): the same expression must mean the same on
+  Cloudflare Cron Triggers and Kubernetes CronJobs (both UTC here), so it takes exactly 5 fields
+  of `*`, numbers, ranges, lists and `/step`; day of week only as names (`MON-FRI`: Kubernetes
+  counts 0–6 from Sunday, Cloudflare 1–7), and not both day of month and day of week restricted;
+  no `@daily`, `L`, `W`, `#` or `?`.
+- **Runtimes** (decision 2026-10-26): **Node** is one-shot — `node dist/index.mjs <script>
+  [--input '<json>'] | <script> --scheduled | --list`, exit `0` succeeded, `1` failed/timed
+  out/stopped, `2` usage/unknown script/invalid input, `3` skipped (lock held), `4` lock lost (renewals failed or taken over); the schedule lives
+  in the orchestrator (one CronJob per scheduled script, `--scheduled`). SIGTERM aborts the run and
+  gives it 5 s; a second signal exits at once. **Cloudflare**: `[triggers] crons` in
+  `wrangler.toml` (inherited by every `[env.*]`; `wrangler-crons.test.ts` requires it to equal the
+  set of schedules in code) calls `scheduled`, which runs every script whose `schedule` is
+  `controller.cron` and throws if one failed (Cloudflare records the invocation as failed; `noRetry()` first, so a retry never reruns the scripts that succeeded, the same as `backoffLimit: 0` on Kubernetes);
+  one-off runs are `POST /run/<script>` with `Authorization: Bearer <SCHEDULER_RUN_TOKEN>` (a
+  wrangler secret, 32+ characters; unset → 404, shorter → 503 and an error log; compared as SHA-256
+  digests), body = JSON input or empty for `{}`. The request awaits the run, which is also handed to
+  `waitUntil` (see "Cloudflare limits": a client disconnect aborts it, and the cleanup and
+  telemetry flush run inside `waitUntil`'s 30 s), and answers `{ script, outcome, durationMs }`
+  with 200/400/409/500/503/504 (503 for `aborted` and `lock-lost`); error details are logged, not returned, except for invalid input;
+  a too-short token is logged once per isolate. The Worker entry
+  exports only the default handler (module-level code may run, e.g. the cron-cap warnings). The token comes from the handler's `env` argument, not
+  `src/env.ts`, so it is never read on Node.
+- **No overlap** (decision 2026-10-26, user request): a run takes the script's lock before it
+  starts — `db.scriptLocks.acquire({ name, owner, leaseMs })` on the `script_locks` table, one
+  `INSERT … ON CONFLICT (name) DO UPDATE … WHERE expires_at <= <db now>`, so only a free or expired
+  lock is taken, atomically on both dialects, on the database clock — and releases it after
+  (`release` deletes only its own row). A run that finds the lock held does not run: outcome
+  `skipped` (cron: a warning; HTTP 409; Node exit 3). This covers every trigger and instance that
+  shares the database (Cloudflare invocations, CronJob pods, `docker run`, Node and Worker side by
+  side). The lease is short (60 s, `defaultLease`) and renewed every 15 s while the script runs
+  (`db.scriptLocks.renew`, owner-checked, on the database clock) by the same
+  `startLeaseHeartbeat` (`@lightproject/common/utils`) that renews `tasks`' job leases: a run
+  killed from outside (OOM, `SIGKILL`, Cloudflare CPU limit) frees the lock within one lease,
+  whatever its `timeoutMs`. Each heartbeat tick first checks the clock (timed from when the
+  acquire or renewal was sent) and aborts the run once the lease left could no longer cover one
+  more interval plus the 5 s abort grace and a 5 s margin (25 s), so one failed renewal is ridden
+  out (the next one, 15 s later, still has time) and a run whose renewals fail twice is aborted at 45 s
+  (15 s before its lease could lapse) and has stopped by 50 s at the latest (after the 5 s grace); a renewal that finds another owner (`false`) aborts the run at
+  once. Either way the outcome is `lock-lost` (Node exit 4, HTTP 503), whatever the script did
+  after (as `tasks` reports `lease-lost`), so lock or database trouble is told apart from a routine
+  stop or a script failure; the lock is still released (owner-checked, a no-op once taken over; every release makes up to
+  3 attempts (2 retries, 250/500 ms apart, `withRetry`), and given up after its own 5 s timeout (`releaseLock`; not the abort
+  grace), so a stalled connection cannot hold the run; a retry that finds nothing to delete counts
+  as unknown, not lost, since an earlier attempt may have deleted it before its reply was lost; an
+  acquire that throws is followed by a release too, in case it committed; an unreleased lock frees
+  itself when its lease ends). A
+  release that finds the lock gone also means `lock-lost`, with an error log: the heartbeat shares
+  the event loop with the script on both runtimes, so a script that blocks it for ~20 s or more
+  (synchronous work, e.g. a huge `JSON.parse` loop) cannot renew and may have overlapped with
+  another run (the heartbeat times the lease from the last confirmed renewal, and an overdue
+  tick runs before the pending renewal's reply is handled, so ~20 s is the worst case); scripts must
+  yield (`await`) at least every ~15 s (running them in worker threads,
+  as `tasks` does, would lift this). `runScript` refuses (`failed`) a lease too short for its
+  renewal interval and abort grace (`checkLease`). An acquisition that took longer than one renewal interval (a cold or stalled database) is
+  followed by an immediate renewal, so the heartbeat times the lease from that renewal instead of
+  giving a healthy run up. A release it cannot confirm is logged with every attempt's error and
+  whether it timed out. `runner.test.ts` pins these margins; a renewal that settles after the
+  heartbeat stopped is ignored. A script that ignores its abort past the 5 s grace keeps the lock
+  until its lease ends (it may still be running, so the runner neither releases the lock nor
+  closes its database); if it had lost the lock, the runner logs an error instead, since another
+  run may now overlap with it. Verified live on Postgres: a 70 s
+  run still blocked a second run at 65 s; a `SIGKILL`ed run freed its lock after the lease. A stop
+  that arrives before the script starts (during the database open or the lock) means it never
+  starts; it is reported `aborted` (Node exit 1, HTTP 503), not `skipped`. Lock names are `<package name>/<script>`, so two apps on one
+  database never block each other. Invalid input is rejected before the database is opened.
+- **Cloudflare limits**: a scheduled invocation has a 15 min wall-clock limit (Cloudflare's
+  limits page; HTTP invocations have none while the client stays connected). On the Worker, cron
+  runs are capped at `cronMaxRunMs` (14 min, `src/core/cloudflare.ts`) through `runScript`'s
+  `maxRunMs`, so the runner aborts the run and releases its lock before Cloudflare kills the
+  invocation (a killed one would hold it until the lease ends); the Worker logs a warning at startup for
+  every scheduled script whose `timeoutMs` the cap shortens (Node keeps the full `timeoutMs`). CPU
+  limits are separate (Paid: 30 s for crons under an hour, 15 min for longer intervals, 5 min max
+  for HTTP via `limits.cpu_ms`); CPU-heavy or long scripts belong on Node. A one-off over HTTP
+  runs with `request.signal` as its stop signal (`compatibility_flags = ["enable_request_signal"]`,
+  inherited by every `[env.*]`; Cloudflare aborts it when the client disconnects) and is passed to
+  `ctx.waitUntil`, so a disconnect aborts the run, which then settles within the 5 s grace and
+  releases its lock inside the 30 s `waitUntil` allows (`edge.test.ts` drives this through the real
+  handler). Local `wrangler dev` does not forward a client disconnect (its proxy keeps the request
+  open), so there the run finishes normally; verified only through the test, not yet on a deployed
+  Worker.
+- **Telemetry**: span `script.run` (`script.name`, `script.trigger`, `script.outcome`), counter
+  `script_runs` and histogram `script_duration` (by `script`, `trigger`, `outcome`). On Workers
+  `durationMs` is coarse (the clock only advances on I/O).
+- **CI/CD**: verified on PRs like `tasks`; deployed after `datastore` (needs its migrations):
+  `dagger publish` (Node image, default command `node dist/index.mjs`, so a CronJob passes the
+  whole command) + `dagger wrangler` (Worker with the crons, `OTLP_ENDPOINT` as a worker var); the
+  same `DATABASE_DIALECT` deploy check as `tasks`. No smoke test (nothing is served without a
+  token).
+
+### Adding a script
+
+Every edit is in `templates/scheduler`; both runtimes pick the script up from the registry, so
+`runtimes/` never changes. Example: `check-admin`, hourly and also runnable on demand (this
+exact code was written, linted, tested and run on Node against Postgres and on the local Worker
+against D1 before being documented; the outputs below are from those runs).
+
+1. **Define it** in `src/scripts/check-admin.ts` with `defineScript`. `input`, `name` and `run`
+   are required; `schedule` is optional (leave it out for a one-off-only script) and `timeoutMs`
+   defaults to 10 min (at most 24 h). A scheduled script's schema must accept `{}` (that is what a
+   cron passes), hence the `.default(…)`:
+
+   ```ts
+   import { z } from 'zod';
+
+   import { defineScript } from '../core/script';
+
+   const checkAdmin = defineScript({
+     input: z.object({ email: z.email().default('admin@example.com') }),
+     name: 'check-admin',
+     run: async ({ email }, { db, logger, signal }) => {
+       signal.throwIfAborted();
+       const admin = await db.users.findByEmail(email);
+       if (admin === undefined) {
+         logger.warn(`check-admin: no user ${email}`);
+         return;
+       }
+       logger.info(`check-admin: ${email} is ${admin.name}`, { userId: admin.id });
+     },
+     schedule: '0 * * * *',
+     timeoutMs: 60_000,
+   });
+
+   export { checkAdmin };
+   ```
+
+   `context.db` is opened for the run and closed after it; `context.signal` fires on the timeout
+   or SIGTERM (5 s grace, then the run is reported `timed-out`/`aborted`). A run that dies keeps
+   the script's lock only until its lease ends (at most 60 s), and the next trigger starts over,
+   so make the work safe to repeat. Keep the event loop free: the lock is renewed on the same
+   thread, so `await` at least every ~15 s during long synchronous work (otherwise the run ends
+   as `lock-lost`).
+
+2. **Register it** in `src/scripts/index.ts` (duplicate names fail at module load):
+
+   ```ts
+   import { registerScripts } from '../core/script';
+   import { checkAdmin } from './check-admin';
+   import { ping } from './ping';
+
+   const scripts = registerScripts([ping, checkAdmin]);
+   export { checkAdmin } from './check-admin';
+   export { ping } from './ping';
+
+   export { scripts };
+   ```
+
+3. **Schedule it on Cloudflare**: add its cron to `[triggers]` in `wrangler.toml` (one entry per
+   distinct schedule; scripts that share a cron run together; every `[env.*]` inherits it):
+
+   ```toml
+   [triggers]
+   crons = ["*/5 * * * *", "0 * * * *"]
+   ```
+
+   Until code and `wrangler.toml` agree, `vp test` fails in `wrangler-crons.test.ts` ("(top level)
+   fires exactly the schedules the scripts declare"). A one-off-only script needs no entry.
+
+4. **Test it** in `tests/unit/scripts/check-admin.test.ts`. `useLocalDatabase()` starts a
+   throwaway, migrated local D1 for the file; `context(database, overrides)` builds a
+   `ScriptContext` around it:
+
+   ```ts
+   import { logger } from '@lightproject/common/logger';
+   import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
+
+   import { checkAdmin, scripts } from '../../../src/scripts';
+   import { useLocalDatabase } from '../helpers/database';
+   import { context, runDirectly } from '../helpers/scripts';
+
+   const { openDatabase } = useLocalDatabase();
+
+   afterEach(() => {
+     vi.restoreAllMocks();
+   });
+
+   describe('check-admin', () => {
+     test('is registered hourly', () => {
+       expect(scripts).toContain(checkAdmin);
+       expect(checkAdmin.schedule).toBe('0 * * * *');
+     });
+
+     test('finds the admin by email', async () => {
+       const database = await openDatabase();
+       const admin = await database.users.insert({ email: 'ada@example.com', name: 'Ada' });
+       const info = vi.spyOn(logger, 'info');
+
+       await runDirectly(checkAdmin, { email: 'ada@example.com' }, context(database));
+
+       expect(info).toHaveBeenCalledWith('check-admin: ada@example.com is Ada', {
+         userId: admin.id,
+       });
+     });
+
+     test('warns when the admin is missing (the scheduled default)', async () => {
+       const warn = vi.spyOn(logger, 'warn');
+
+       await runDirectly(checkAdmin, {}, context(await openDatabase(), { trigger: 'schedule' }));
+
+       expect(warn).toHaveBeenCalledWith('check-admin: no user admin@example.com');
+     });
+   });
+   ```
+
+   ```sh
+   vp check --fix . && vp test   # build templates/datastore first (Vitest loads its dist/)
+   ```
+
+5. **Run it on Node** (needs the migrated database; `vp run start …` is the same from `dist/`):
+
+   ```sh
+   vp run script --list
+   vp run script check-admin --input '{"email":"ada@example.com"}'
+   vp run script check-admin --scheduled
+   vp run script check-admin --input '{"email":"nope"}'; echo $?
+   ```
+
+   ```text
+   ping         */5 * * * *
+   check-admin  0 * * * *
+   INFO : check-admin: ada@example.com is Ada
+   INFO : Script check-admin succeeded
+   WARN : check-admin: no user admin@example.com
+   INFO : Script check-admin succeeded
+   ERROR: Script check-admin invalid-input   ("✖ Invalid email address → at email"), exit 2
+   ```
+
+6. **Run it on the local Worker**:
+
+   ```sh
+   vp run wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
+   # another terminal
+   curl "http://localhost:2003/__scheduled?cron=0+*+*+*+*"
+   curl -X POST -H "Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123456789" \
+     -d '{"email":"ada@example.com"}' http://localhost:2003/run/check-admin
+   ```
+
+   ```text
+   WARN : check-admin: no user admin@example.com      (the cron, default input)
+   INFO : Script check-admin succeeded
+   {"durationMs":4,"outcome":"succeeded","script":"check-admin"}   (200)
+   ```
+
+7. **Schedule it on Node in production**: one CronJob per scheduled script, same cron, UTC. The
+   image's `node dist/index.mjs` is a default command (no entrypoint), so give the whole command:
+
+   ```yaml
+   apiVersion: batch/v1
+   kind: CronJob
+   metadata:
+     name: check-admin
+   spec:
+     schedule: '0 * * * *'
+     timeZone: Etc/UTC
+     concurrencyPolicy: Forbid
+     jobTemplate:
+       spec:
+         backoffLimit: 0 # exit 3 = skipped (lock held); not worth a retry
+         template:
+           spec:
+             restartPolicy: Never
+             terminationGracePeriodSeconds: 30
+             containers:
+               - name: check-admin
+                 image: <REGISTRY_ADDRESS>/scheduler:<tag>
+                 command: ['node', 'dist/index.mjs', 'check-admin', '--scheduled']
+                 env:
+                   - name: DATABASE_DIALECT
+                     value: postgres
+                   - name: DATASTORE_POSTGRES_URL
+                     valueFrom: { secretKeyRef: { name: datastore, key: url } }
+   ```
+
+   Deploying the Worker (CI's `dagger wrangler`) picks up the new cron by itself.
 
 ## Observability Stack
 

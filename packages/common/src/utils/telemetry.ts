@@ -39,6 +39,7 @@ export {
   metrics,
   propagation,
   trace,
+  type Context,
   type Counter,
   type Span,
   type SpanStatus,

@@ -345,6 +345,11 @@ const getRootViteConfig = (): UserConfig => {
           template: './scaffold/tasks',
         },
         {
+          description: 'New scheduled / one-off script runner application',
+          name: 'scheduler',
+          template: './scaffold/scheduler',
+        },
+        {
           description: 'New database package (schema, clients and migrations)',
           name: 'datastore',
           template: './scaffold/datastore',

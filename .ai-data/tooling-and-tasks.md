@@ -15,7 +15,7 @@ Available automation commands:
 - `mise run check`: Runs the same steps as `vp run ready` (madge, root/dagger/workspace check, format, lint, type-check, build, unit tests) inline, using the fixing variants (`--fix` / `--write`) where they exist, then saves `.outputs/styles.json`. It is not a substitute for the final `vp run ready` (which only verifies).
 - `mise run clean`: Cleans up build artifacts, tools, and temporary AI caches (like `.ai-data/artifacts`).
 - `mise run fix`: With `--remove-comments` (off by default), first removes comments from every TS/JS, JSON(C), CSS, YAML, TOML, HTML/XML/SVG, shell (`.mise/tasks/*`, `.vite-hooks/*`, `*.sh`) and `#`-comment config file (`.gitignore`, `.env.example`, …), keeping only `NOSONAR`/`NO_SONAR` comments, comments that are the sole content of an empty `{}`, and tool-read directives (shebang, `#MISE`/`#USAGE`, `#:tombi`, `/// <reference>`, `@vitest-environment`, `@vite-ignore`, `#__PURE__`, `@jsx*`, the `# vX.Y.Z` after a SHA-pinned `uses:`). Markdown (`<!--VITE PLUS START-->` markers, template prompts), YAML block scalars and the excluded files (`tsconfig.reference.json`, `install.sh`, `mise.toml`, `.gitignore`, `.vscode/extensions.json`, `.vscode/settings.json`, `.github/workflows/scan.yml`) are left alone (`scripts/remove-comments.ts`). Next it exports every top-level function, class, enum, `const`, interface and type alias not yet exported (merged into a single `export { … }` followed directly by `export type { … }`, then a blank line and `export default`, at the end of the file; a default export that can't move without changing evaluation order keeps its place and the lists go right above it), even if nothing imports it yet. Skipped: `let`/`var` and `const` collections (`new Map()`, …) holding module state, `declare` statements, files without imports/exports, CommonJS, test files (`tests/`, `*.test.*`, `*.spec.*`), and value exports in `*.stories.*` (Storybook would treat them as stories). Then applies the `.vscode/settings.json` `editor.codeActionsOnSave` actions to every file in the repo — organize/sort imports (TypeScript), sort JSON (`vscode-json-languageservice`), organize Markdown link definitions (`vscode-markdown-languageservice`) via `scripts/code-actions.ts`, then `vp lint --fix` (`source.fixAll.oxc`) and `vp format --write`.
-- `mise run create --type=backend|frontend|tasks|datastore|library --name=<kebab-name>`: copies the template to `apps/<name>` or `packages/<name>` (`scaffold/scaffold.ts`), renaming only its own names (package, paths, `lightproject-<name>` Workers/D1, `lightproject_<name>` database, `<NAME>_*` env keys incl. `VITE_*`, camelCase identifiers, own default ports → next free 3000+/9230+/3111+), adds missing keys to `.env.example` (and the database to `docker-compose.yml` for a datastore; remote D1 ids blanked), runs `vp install` + `vp check --fix` (renamed keys need re-sorting), and prints the CI checklist. README blocks between `<!-- template-only -->` markers are dropped from copies.
+- `mise run create --type=backend|frontend|tasks|scheduler|datastore|library --name=<kebab-name>`: copies the template to `apps/<name>` or `packages/<name>` (fixed by type; the task says so before `vp create`'s directory prompt, which the scaffold ignores) (`scaffold/scaffold.ts`), renaming only its own names (package, paths, `lightproject-<name>` Workers/D1, `lightproject_<name>` database, `<NAME>_*` env keys incl. `VITE_*`, camelCase identifiers, own default ports → next free 3000+/9230+/3111+), adds missing keys to `.env.example` (and the database to `docker-compose.yml` for a datastore; remote D1 ids blanked), runs `vp install` + `vp check --fix` (renamed keys need re-sorting), and prints the CI checklist. README blocks between `<!-- template-only -->` markers are dropped from copies.
 - `mise run init`: Initializes the workspace, installs dependencies, and runs all checks.
 - `mise run start`: Starts the dev or production servers.
 
@@ -31,7 +31,7 @@ Available automation commands:
 
 - `docker compose up -d postgres`: local Postgres (`lightproject`/`lightproject`, `DATASTORE_POSTGRES_URL`).
 - `vp run db:generate [name]`: after editing anything in `src/postgres/` (`schema.ts`, `crud.ts`,
-  `tables.ts`, `worker-jobs.ts`), regenerate their `src/d1/` copies (formatted/linted) and write
+  `tables.ts`, `worker-jobs.ts`, `script-locks.ts`), regenerate their `src/d1/` copies (formatted/linted) and write
   both migrations (none when the schema did not change). Adding a table, step by step:
   `architecture.md` → "Database" → "Adding a table".
   `name` (e.g. `add_sample`: lowercase, digits, `_`/`-`) names both migration folders
@@ -69,6 +69,18 @@ Available automation commands:
 - `vp run test:unit`: core, memory store, and the job-store contract on both stores (local D1 from
   `templates/datastore`'s `wrangler.toml` + migrations; build `templates/datastore` first, Vitest loads
   workspace packages from `dist/`). `vp run test:integration`: worker threads (isolation, abort grace, idle-thread errors).
+
+## Scheduler tasks (`templates/scheduler`)
+
+- Needs a migrated database (every run takes its lock in `script_locks`): `DATABASE_DIALECT=postgres|d1 vp run db:migrate`
+  in `templates/datastore`; build `templates/datastore` before `vp test` (Vitest loads `dist/`).
+- `vp run script <name> [--input '<json>']` (or `vp run script <name> --scheduled`, which takes no input) / `vp run script --list` (tsx);
+  `vp run start <name> …` runs the built `dist/index.mjs` (what the image runs). Exit 3 = skipped
+  (lock held).
+- `vp run wrangler:dev`: the Cloudflare runtime on `SCHEDULER_PORT` (2003); fire a cron with
+  `curl "localhost:2003/__scheduled?cron=*/5+*+*+*+*"`, a one-off with `POST /run/<name>` and
+  `--var SCHEDULER_RUN_TOKEN:<32+ chars>`. Follows `.env`'s `DATABASE_DIALECT` (add
+  `--var DATABASE_DIALECT:d1` for the local D1).
 
 ## Dependency Management
 

@@ -53,6 +53,15 @@
     and the Worker (verified only against the local Grafana stack).
   - `mise run docker` does not include `tasks` yet (no port; needs a database to be useful).
   - Drop the old workers stashes once this is committed.
+- **`templates/scheduler` follow-ups** (2026-10-26):
+  - First real deploy: confirm the crons fire on develop (`[triggers]` inherited by `[env.*]`, checked
+    only with wrangler's config reader), set `SCHEDULER_RUN_TOKEN` per env and try `POST /run/ping`.
+  - Confirm `script.run` telemetry from a deployed Worker and from the container.
+  - On a deployed Worker, confirm a one-off whose client disconnects is aborted and releases its lock
+    (`request.signal` with `enable_request_signal`; local `wrangler dev` does not forward the
+    disconnect, so it is covered only by `edge.test.ts`).
+  - Kubernetes CronJob manifests are documented (README → Deployment), not generated or tested.
+  - `mise run docker` does not include `scheduler` (one-shot; needs a database).
 
 Not a TODO: `bak/` is intentionally tracked (see `architecture.md`).
 

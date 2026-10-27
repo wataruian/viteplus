@@ -2,7 +2,7 @@
 
 Shared foundation for the apps: logging and redaction, the typed environment, telemetry (Node,
 Workers and browser), endpoint configs, validators and small utilities. Apps (`backend`,
-`frontend`, `tasks`) depend on it; other packages never do (a package takes what it needs as an
+`frontend`, `tasks`, `scheduler`) depend on it; other packages never do (a package takes what it needs as an
 option instead, e.g. `onNotice` in `templates/datastore`). This README is the canonical list of the
 shared environment variables; the full pattern is in `AGENTS.md` → "Environment Management".
 
@@ -77,18 +77,18 @@ Every `src/<dir>/index.ts` is a subpath export (`./*` in `package.json`, `typesc
 `src/`, otherwise `dist/`). The root entry re-exports the runtime-neutral ones as namespaces
 (`configs`, `environment`, `logger`, `typecast`, `utils`, `validators`).
 
-| Subpath       | Provides                                                                                                                    |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `environment` | `commonEnv`, getters and `is*()` helpers, `getEnv`, `createEnv` options (`serverEnvOptions`, `appEnvOptions`), `strictFlag` |
-| `logger`      | `logger`/`Logger`, `redact`/`redactUrl` (fail-closed), request context (`runWithRequestContext`, request/client ids)        |
-| `configs`     | Endpoint paths and URLs (`backendUrl`, `backendTrpcUrl`, `/docs`, …), default OTLP/Faro endpoints                           |
-| `server`      | Server telemetry: `initializeTelemetry`, `flushTelemetry`, `shutdownTelemetry`, request-context span processor              |
-| `browser`     | Browser RUM: `initializeRum` (Faro + OTel fetch tracing and metrics), `flushRum`, Faro log sink                             |
-| `utils`       | OTel re-exports and `tracer`/`runWithSpan`, `fitExemplarLabels`, `generateShortUuid`, dates, colors, `sleep`/`withRetry`    |
-| `validators`  | Runtime guards for untyped boundaries (`isRecord`, `isPlainObject`, `isErrorLike`, …)                                       |
-| `typecast`    | `assertType`, `createTypeGuard`, `deepMerge`                                                                                |
-| `node`        | Node-only filesystem helpers (`getProjectRoot`, `readFile`, `copyPath`, …)                                                  |
-| `testing`     | `startFakeOtelCollector()` for apps' tests                                                                                  |
+| Subpath       | Provides                                                                                                                                                                                                                                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `environment` | `commonEnv`, getters and `is*()` helpers, `getEnv`, `createEnv` options (`serverEnvOptions`, `appEnvOptions`), `strictFlag`                                                                                                                                                                                 |
+| `logger`      | `logger`/`Logger`, `redact`/`redactUrl` (fail-closed), request context (`runWithRequestContext`, request/client ids), `bindLogger(context)` (logs inside a span's context; `LevelLogger` type)                                                                                                              |
+| `configs`     | Endpoint paths and URLs (`backendUrl`, `backendTrpcUrl`, `/docs`, …), default OTLP/Faro endpoints                                                                                                                                                                                                           |
+| `server`      | Server telemetry: `createTelemetryStarter` (once-only setup apps use; falls back to context propagation on failure), `initializeTelemetry`, `flushTelemetry`, `shutdownTelemetry`, request-context span processor                                                                                           |
+| `browser`     | Browser RUM: `initializeRum` (Faro + OTel fetch tracing and metrics), `flushRum`, Faro log sink                                                                                                                                                                                                             |
+| `utils`       | OTel re-exports and `tracer`/`runWithSpan`, `fitExemplarLabels`, `generateShortUuid`, dates, colors, `sleep`/`withRetry`, `raceAbort`/`settleWithin` (abort with a grace; used by `tasks` and `scheduler`), `startLeaseHeartbeat`/`leaseReserveMs` (renew a lease, abort before it lapses), `describeError` |
+| `validators`  | Runtime guards for untyped boundaries (`isRecord`, `isPlainObject`, `isErrorLike`, …)                                                                                                                                                                                                                       |
+| `typecast`    | `assertType`, `createTypeGuard`, `deepMerge`                                                                                                                                                                                                                                                                |
+| `node`        | Node-only filesystem helpers (`getProjectRoot`, `readFile`, `copyPath`, …)                                                                                                                                                                                                                                  |
+| `testing`     | `startFakeOtelCollector()` for apps' tests                                                                                                                                                                                                                                                                  |
 
 | Task                | What it does                                            |
 | ------------------- | ------------------------------------------------------- |

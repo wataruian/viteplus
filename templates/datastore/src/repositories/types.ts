@@ -1,9 +1,10 @@
 import type { DatabaseDialect } from '../environment/dialect';
 import type { JobStatus } from '../shared';
-import type { NewUser, NewWorkerJob, User, WorkerJob } from '../types';
+import type { NewScriptLock, NewUser, NewWorkerJob, ScriptLock, User, WorkerJob } from '../types';
 import type { TableRepository } from './table';
 
 interface Tables {
+  scriptLocks: TableRepository<ScriptLock, NewScriptLock>;
   users: TableRepository<User, NewUser>;
   workerJobs: TableRepository<WorkerJob, NewWorkerJob>;
 }
@@ -64,9 +65,37 @@ interface WorkerJobsRepository extends WorkerJobQueue {
   insert: (job: NewWorkerJob) => Promise<WorkerJob>;
 }
 
+interface AcquireScriptLock {
+  name: string;
+  owner: string;
+  leaseMs: number;
+  now?: Date | undefined;
+}
+
+interface HeldScriptLock {
+  name: string;
+  owner: string;
+}
+
+interface RenewScriptLock extends HeldScriptLock {
+  leaseMs: number;
+  now?: Date | undefined;
+}
+
+interface ScriptLockStore {
+  acquire: (lock: AcquireScriptLock) => Promise<boolean>;
+  release: (held: HeldScriptLock) => Promise<boolean>;
+  renew: (renew: RenewScriptLock) => Promise<boolean>;
+}
+
+interface ScriptLocksRepository extends ScriptLockStore {
+  findByName: (name: string) => Promise<ScriptLock | undefined>;
+}
+
 interface Database {
   close: () => Promise<void>;
   dialect: DatabaseDialect;
+  scriptLocks: ScriptLocksRepository;
   users: UsersRepository;
   workerJobs: WorkerJobsRepository;
 }
@@ -74,13 +103,18 @@ interface Database {
 export type { TableRepository } from './table';
 
 export type {
+  AcquireScriptLock,
   ClaimWorkerJob,
   Database,
   FailWorkerJob,
   FinishedJobStatus,
+  HeldScriptLock,
   HeldWorkerJob,
   PurgeWorkerJobs,
+  RenewScriptLock,
   RenewWorkerJob,
+  ScriptLocksRepository,
+  ScriptLockStore,
   Tables,
   UserChanges,
   UsersRepository,

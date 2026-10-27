@@ -1,7 +1,8 @@
+import { describeError } from '@lightproject/common/utils';
 import { z } from 'zod';
 
 import { type JobFunction, UnrecoverableJobError } from '../core/function';
-import { JobAbortedError, createInProcessExecutor, describeError } from '../core/runner';
+import { JobAbortedError, createInProcessExecutor } from '../core/runner';
 import { type ThreadReady, type ThreadResponse, threadRequestSchema } from './thread-protocol';
 
 const invalidRunSchema = z.object({ job: z.object({ id: z.string() }), type: z.literal('run') });

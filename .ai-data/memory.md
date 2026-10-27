@@ -1567,3 +1567,87 @@ AGENTS.md reflect the current state.
   (`vp test`, scaffold tests). Both run in `ready`, `mise run check` and the Dagger `root` function
   (check, then test); the root no longer has a `test:unit`, so `vp run -r test:unit` covers only
   the workspaces.
+
+## 2026-10-26: `templates/scheduler` (cron + one-off scripts) → future `apps/dispatcher`
+
+- **Decision**: a fifth app template, `templates/scheduler` (`SCHEDULER_*`, ports 2003/8233), for
+  scheduled and one-off scripts — not a job queue (that stays `templates/tasks`). Its real app
+  will be `apps/dispatcher` (`DISPATCHER_*`, 3004/9234, reserved in `.env.example`; `dispatcher`
+  is in the scaffold's `reservedAppNames`). `mise run create --type=scheduler`.
+- **Runtimes**: Node one-shot CLI (the orchestrator owns the schedule: one CronJob per script) and
+  Cloudflare (`[triggers] crons` + `POST /run/<script>` behind a `SCHEDULER_RUN_TOKEN` secret). Each
+  script declares its cron in code; a test keeps `wrangler.toml` in step. Cron expressions are
+  limited to the subset both schedulers read the same way (day-of-week names only).
+- **No overlap** (user request): first planned stateless, then changed the same day to a lease lock
+  in `templates/datastore` (`script_locks`, `db.scriptLocks.acquire/release`, rendered for D1 like
+  the job queue). A run that finds its lock held is skipped (cron warning, HTTP 409, exit 3);
+  lease = timeout + 5 s + 30 s, so no heartbeat. Lock names are scoped by package name.
+- **Datastore**: migration `add_script_locks` on both dialects; `Database` gained `scriptLocks`.
+- Verified live: Node and Worker against the compose Postgres and the local D1 (held lock →
+  skipped/409/exit 3; released → runs; no rows left behind).
+
+## 2026-10-26: Final review fixes for `templates/scheduler`; shared abort helpers
+
+- **Lock safety**: a script that ignores its abort past the grace keeps its lock and database (the
+  lease frees them); a stop before the script starts skips it; `InvalidInputError` maps to
+  `invalid-input`; input is parsed once (`Script.prepare`); the bearer scheme is case-insensitive.
+- **Shared helpers** (no copies between apps): `raceAbort` (options `abortError(settled)`,
+  `graceMs`, `onUnsettled`), `settleWithin` and `describeError` in `@lightproject/common/utils`,
+  `bindLogger`/`LevelLogger` in `@lightproject/common/logger`. `tasks` binds them as
+  `raceJobAbort` (`JobAbortedError`); `JobLogger`/`ScriptLogger` are `LevelLogger`.
+- **Cloudflare cron cap**: cron runs on the Worker stop at 14 min (`cronMaxRunMs`, Cloudflare's
+  15 min scheduled wall limit minus a minute) via `runScript`'s `maxRunMs`; the lease uses the
+  capped time, and the Worker warns at startup for scheduled scripts it shortens.
+
+## 2026-10-27: `templates/scheduler` review fixes, round 2
+
+- `ping`'s `pause` honours an already-aborted signal and detaches its listener; a stop is told from
+  a timeout by the timeout's own abort reason; cron steps only after `*` or a range; a lock takeover
+  resets `created_at`; `Script.execute` dropped (tests use `prepare`, `runDirectly` helper).
+- Shared once-only telemetry setup: `createTelemetryStarter` in `@lightproject/common/server`
+  (`tasks` and `scheduler` use it); `describeError` lives in `utils/text.ts`.
+- HTTP one-offs run with `request.signal` (`enable_request_signal`) and `ctx.waitUntil`, so a client
+  disconnect aborts the run and releases its lock. `wrangler dev` does not forward disconnects;
+  proven by `edge.test.ts` through the real handler, pending a deployed check (TODO).
+- Review round 3: `runScript` never rejects (a throwing input schema → `failed`/`invalid-input`);
+  the Worker chains the telemetry flush onto the HTTP run inside `waitUntil` (a disconnect cancels
+  the handler's own `finally`) and settles every due cron script (`allSettled`);
+  `createTelemetryStarter` falls back to context propagation when the SDK setup fails, and the
+  backend uses it too (a telemetry failure no longer stops the API from starting).
+- Review round 4: the script lock is a 60 s lease renewed every 20 s while the script runs
+  (`db.scriptLocks.renew`, D1 rendered), replacing the "lease = timeout + 35 s, no heartbeat" design:
+  a crashed run blocks later runs for at most a minute instead of its whole timeout. Failing
+  renewals abort the run before the lease lapses; a takeover aborts it at once. Timeout aborts use
+  a `DOMException('TimeoutError')`; a short run token is logged once per isolate; the Node CLI
+  installs its signal handler before telemetry starts.
+- Review round 5: one `startLeaseHeartbeat` in `@lightproject/common/utils` (ignores renewals that
+  settle after it stopped) serves `tasks` and `scheduler`; the scheduler renews every 15 s (20 s
+  aborted on a single failed renewal); a lost lock ends the run as `lock-lost` (exit 4, HTTP 503),
+  with an error log if the script then ignores its abort; README P11 waits for the lock before
+  `kill -9` (a fixed `sleep 3` raced the run's startup).
+- Review round 6: a release that finds the lock gone, or any run whose lock was lost, ends as
+  `lock-lost` (a blocked event loop can no longer lose the lock silently; scripts must yield every
+  ~45 s); `checkLease` refuses leases too short for their interval; one telemetry flush per HTTP
+  request.
+- Review round 7: the block tolerance is ~20 s, not 45 s (docs said "await every ~45 s"; now
+  ~15 s); `timeoutMs` and the stop signal now cover opening the database and taking the lock
+  (`abandonOnAbort` closes a late database / releases a late lock); `checkLease` requires positive
+  integer intervals; the Worker's per-run flush also runs if the run rejects.
+- Review round 8: the Worker entry exports only its default handler again (`mise run fix` had
+  exported a module-level flush helper; now inlined); a lock acquired after the run was abandoned
+  is released before the database closes (`pendingCleanups`, bounded by the abort grace).
+- Review round 9: lock releases are retried (`withRetry`, 3 attempts) and bounded by the abort
+  grace (`releaseLock`), so a stalled connection cannot hang a run; `pendingCleanups` is passed only
+  to `attemptLocked`.
+- Review round 10: `releaseLock` has its own 5 s timeout (overridable via `releaseTimeoutMs`) and
+  stops retrying once it gives up; a retried release that finds nothing is "unknown", not
+  `lock-lost`; a failed acquire is followed by a best-effort release; a run already stopped on entry
+  never opens the database.
+- Review round 11: an abandoned acquire is released unless it came back `false` (also when it later
+  fails); `releaseLock` uses `withRetry` and stops after its `AbortSignal.timeout`.
+- Review round 12: every release failure (also after an abandoned or failed acquire) is logged with
+  its cause by `releaseLock`; a failing close of a late-opened database is logged.
+- Review round 14: docs gave a CLI form the parser rejects (`--scheduled` alone / with `--input`) —
+  fixed in AGENTS.md and tooling-and-tasks.md; the scaffold now renames image references
+  (`<REGISTRY_ADDRESS>/<name>`, `<name>:latest`, `<name>:<tag>`) in copied READMEs; a slow lock
+  acquisition is followed by an immediate renewal; release warnings list every attempt's error.

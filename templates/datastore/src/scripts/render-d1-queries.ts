@@ -1,4 +1,4 @@
-const d1RenderedModules = ['crud.ts', 'tables.ts', 'worker-jobs.ts'] as const;
+const d1RenderedModules = ['crud.ts', 'tables.ts', 'worker-jobs.ts', 'script-locks.ts'] as const;
 
 type D1RenderedModule = (typeof d1RenderedModules)[number];
 

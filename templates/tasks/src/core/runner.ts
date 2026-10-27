@@ -1,18 +1,21 @@
-import { logger } from '@lightproject/common/logger';
+import { bindLogger, logger } from '@lightproject/common/logger';
 import {
   type Span,
   SpanStatusCode,
   context,
+  describeError,
   getMeter,
+  leaseReserveMs,
   propagation,
+  raceAbort,
   runWithSpan,
-  safeToString,
+  startLeaseHeartbeat,
   trace,
   tracer,
   withRetry,
 } from '@lightproject/common/utils';
 
-import { type JobFunction, type JobLogger, UnrecoverableJobError } from './function';
+import { type JobFunction, UnrecoverableJobError } from './function';
 import type { Job } from './job';
 import { createIdleBackoff, startLoop } from './loop';
 import type { Clock, JobStore } from './store';
@@ -105,62 +108,14 @@ class JobAbortedError extends Error {
   }
 }
 
-const settleWithin = async <T>(promise: Promise<T>, graceMs: number) => {
-  let timer: ReturnType<typeof globalThis.setTimeout> | undefined = undefined;
-  const settled = await Promise.race([
-    promise.then(
-      () => true,
-      () => true,
-    ),
-    new Promise<false>((resolve) => {
-      timer = globalThis.setTimeout(() => {
-        resolve(false);
-      }, graceMs);
-    }),
-  ]);
-  globalThis.clearTimeout(timer);
-  return settled;
-};
-
-const raceAbort = async <T>(promise: Promise<T>, signal: AbortSignal, graceMs = 0): Promise<T> => {
-  promise.catch(() => {});
-  const { promise: aborted, reject } = Promise.withResolvers<never>();
-  const onAbort = () => {
-    reject(new JobAbortedError());
-  };
-  signal.addEventListener('abort', onAbort, { once: true });
-  try {
-    if (signal.aborted) {
-      throw new JobAbortedError();
-    }
-    return await Promise.race([promise, aborted]);
-  } catch (error) {
-    if (error instanceof JobAbortedError) {
-      const settled = await settleWithin(promise, graceMs);
-      if (!settled) {
-        logger.warn(`Job handler ignored abort and is still running after ${graceMs}ms`);
-      }
-      throw new JobAbortedError(settled);
-    }
-    throw error;
-  } finally {
-    signal.removeEventListener('abort', onAbort);
-  }
-};
-
-const describeError = (error: unknown) =>
-  error instanceof Error ? error.message : safeToString(error);
-
-const bindLogger = (active: ReturnType<typeof context.active>): JobLogger => {
-  const at =
-    (level: keyof JobLogger): JobLogger[keyof JobLogger] =>
-    (message, metadata) => {
-      context.with(active, () => {
-        logger[level](message, metadata);
-      });
-    };
-  return { debug: at('debug'), error: at('error'), info: at('info'), warn: at('warn') };
-};
+const raceJobAbort = async <T>(promise: Promise<T>, signal: AbortSignal, graceMs = 0) =>
+  await raceAbort(promise, signal, {
+    abortError: (settled) => new JobAbortedError(settled),
+    graceMs,
+    onUnsettled: (ms) => {
+      logger.warn(`Job handler ignored abort and is still running after ${ms}ms`);
+    },
+  });
 
 const endWithOutcome = (span: Span, handling: Promise<void>) => {
   handling.then(
@@ -212,7 +167,7 @@ const createInProcessExecutor =
       withTrace: (fn) => context.with(active, fn),
     });
     endWithOutcome(span, handling);
-    await raceAbort(handling, signal, abortGraceMs);
+    await raceJobAbort(handling, signal, abortGraceMs);
     return result;
   };
 
@@ -233,55 +188,33 @@ const startHeartbeat = (
     clock = Date.now,
   } = options;
   const intervalMs = Math.max(1, Math.floor(leaseMs / 4));
-  const reserveMs = intervalMs + abortGraceMs + Math.min(abortMarginMs, intervalMs / 2);
-  let heldUntil = claimedAt + leaseMs;
-  let inFlight = false;
-  let timer: ReturnType<typeof globalThis.setInterval> | undefined = undefined;
-  const stop = () => {
-    globalThis.clearInterval(timer);
-  };
-  const lose = () => {
-    stop();
-    onLost();
-  };
-  timer = globalThis.setInterval(() => {
-    const now = clock();
-    if (now + reserveMs >= heldUntil) {
-      logger.warn('Job lease expires before a heartbeat can renew it; aborting the attempt', {
-        jobId: job.id,
-        workerId,
-      });
-      lose();
-      return;
-    }
-    if (inFlight) {
-      return;
-    }
-    inFlight = true;
-    store
-      .heartbeat({
+  return startLeaseHeartbeat({
+    clock,
+    heldSince: claimedAt,
+    intervalMs,
+    leaseMs,
+    onLost: (reason) => {
+      if (reason === 'expiring') {
+        logger.warn('Job lease expires before a heartbeat can renew it; aborting the attempt', {
+          jobId: job.id,
+          workerId,
+        });
+      }
+      onLost();
+    },
+    onRenewError: (error) => {
+      logger.warn('Job heartbeat failed', { error, jobId: job.id, workerId });
+    },
+    renew: async () =>
+      await store.heartbeat({
         attempt: job.attempts,
         id: job.id,
         leaseMs,
         leaseOwner: workerId,
         ...storeTime(options),
-      })
-      .then(
-        (held) => {
-          inFlight = false;
-          if (held) {
-            heldUntil = Math.max(heldUntil, now + leaseMs);
-          } else {
-            lose();
-          }
-        },
-        (error: unknown) => {
-          inFlight = false;
-          logger.warn('Job heartbeat failed', { error, jobId: job.id, workerId });
-        },
-      );
-  }, intervalMs);
-  return stop;
+      }),
+    reserveMs: leaseReserveMs(intervalMs, abortGraceMs, abortMarginMs),
+  });
 };
 
 const writeWithRetry = async <T>(
@@ -513,21 +446,18 @@ export {
   JobAbortedError,
   JobNotStartedError,
   attemptJob,
-  bindLogger,
   createInProcessExecutor,
   createJobMetrics,
-  describeError,
   drain,
   endWithOutcome,
   getJobMetrics,
   nowOf,
   processNext,
-  raceAbort,
+  raceJobAbort,
   release,
   retryDelay,
   runJob,
   settleFailure,
-  settleWithin,
   startHeartbeat,
   startWorker,
   storeTime,

@@ -22,6 +22,14 @@ const newJob = (overrides: Partial<types.NewWorkerJob> = {}): types.NewWorkerJob
   ...overrides,
 });
 
+const pause = async (ms: number) => {
+  await new Promise((resolve) => {
+    globalThis.setTimeout(resolve, ms);
+  });
+};
+
+const newLockName = () => `script-${globalThis.crypto.randomUUID()}`;
+
 const describeDatabase = (name: string, open: () => Promise<ContractTarget>) => {
   describe(`${name} database contract`, () => {
     const opened = open();
@@ -120,6 +128,147 @@ const describeDatabase = (name: string, open: () => Promise<ContractTarget>) => 
         ).rejects.toThrow();
       },
     );
+
+    describe('script locks', () => {
+      const start = Date.parse('2026-01-01T00:00:00.000Z');
+      const at = (ms: number) => new Date(start + ms);
+
+      targetTest('acquire takes a free lock once until it is released', async (target) => {
+        const { scriptLocks } = target.database;
+        const lock = newLockName();
+
+        await expect(scriptLocks.acquire({ leaseMs: 1000, name: lock, owner: 'a' })).resolves.toBe(
+          true,
+        );
+        await expect(scriptLocks.acquire({ leaseMs: 1000, name: lock, owner: 'b' })).resolves.toBe(
+          false,
+        );
+        await expect(scriptLocks.findByName(lock)).resolves.toMatchObject({
+          name: lock,
+          owner: 'a',
+        });
+        await expect(scriptLocks.release({ name: lock, owner: 'b' })).resolves.toBe(false);
+        await expect(scriptLocks.release({ name: lock, owner: 'a' })).resolves.toBe(true);
+        await expect(scriptLocks.findByName(lock)).resolves.toBeUndefined();
+        await expect(scriptLocks.acquire({ leaseMs: 1000, name: lock, owner: 'b' })).resolves.toBe(
+          true,
+        );
+      });
+
+      targetTest('acquire takes over an expired lease, and only that', async (target) => {
+        const { scriptLocks } = target.database;
+        const lock = newLockName();
+
+        await expect(
+          scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(0), owner: 'crashed' }),
+        ).resolves.toBe(true);
+        await expect(
+          scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(999), owner: 'early' }),
+        ).resolves.toBe(false);
+        await expect(
+          scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(1000), owner: 'next' }),
+        ).resolves.toBe(true);
+        await expect(scriptLocks.findByName(lock)).resolves.toMatchObject({
+          createdAt: at(1000),
+          expiresAt: at(2000),
+          owner: 'next',
+        });
+        await expect(scriptLocks.release({ name: lock, owner: 'crashed' })).resolves.toBe(false);
+      });
+
+      targetTest(
+        'on the database clock, a live lease holds and an expired one is taken over',
+        async (target) => {
+          const { scriptLocks } = target.database;
+          const live = newLockName();
+          const short = newLockName();
+
+          await expect(
+            scriptLocks.acquire({ leaseMs: 60_000, name: live, owner: 'a' }),
+          ).resolves.toBe(true);
+          await expect(
+            scriptLocks.acquire({ leaseMs: 60_000, name: live, owner: 'b' }),
+          ).resolves.toBe(false);
+          await expect(
+            scriptLocks.acquire({ leaseMs: 1000, name: short, owner: 'a' }),
+          ).resolves.toBe(true);
+          await expect(
+            scriptLocks.acquire({ leaseMs: 60_000, name: short, owner: 'b' }),
+          ).resolves.toBe(false);
+          await pause(1500);
+          await expect(
+            scriptLocks.acquire({ leaseMs: 60_000, name: short, owner: 'b' }),
+          ).resolves.toBe(true);
+          await expect(scriptLocks.findByName(short)).resolves.toMatchObject({ owner: 'b' });
+          await expect(scriptLocks.findByName(live)).resolves.toMatchObject({ owner: 'a' });
+        },
+      );
+
+      targetTest(
+        'renew extends only its own lease, until another owner took it over',
+        async (target) => {
+          const { scriptLocks } = target.database;
+          const lock = newLockName();
+
+          await expect(
+            scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(0), owner: 'a' }),
+          ).resolves.toBe(true);
+          await expect(
+            scriptLocks.renew({ leaseMs: 1000, name: lock, now: at(800), owner: 'a' }),
+          ).resolves.toBe(true);
+          await expect(scriptLocks.findByName(lock)).resolves.toMatchObject({
+            expiresAt: at(1800),
+            owner: 'a',
+          });
+          await expect(
+            scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(1500), owner: 'b' }),
+          ).resolves.toBe(false);
+          await expect(
+            scriptLocks.renew({ leaseMs: 1000, name: lock, now: at(1500), owner: 'b' }),
+          ).resolves.toBe(false);
+          await expect(
+            scriptLocks.acquire({ leaseMs: 1000, name: lock, now: at(1800), owner: 'b' }),
+          ).resolves.toBe(true);
+          await expect(
+            scriptLocks.renew({ leaseMs: 1000, name: lock, now: at(1900), owner: 'a' }),
+          ).resolves.toBe(false);
+          await expect(scriptLocks.findByName(lock)).resolves.toMatchObject({
+            expiresAt: at(2800),
+            owner: 'b',
+          });
+        },
+      );
+
+      targetTest('renew on the database clock keeps a short lease alive', async (target) => {
+        const { scriptLocks } = target.database;
+        const lock = newLockName();
+
+        await expect(scriptLocks.acquire({ leaseMs: 1000, name: lock, owner: 'a' })).resolves.toBe(
+          true,
+        );
+        await pause(600);
+        await expect(scriptLocks.renew({ leaseMs: 1000, name: lock, owner: 'a' })).resolves.toBe(
+          true,
+        );
+        await pause(600);
+        await expect(scriptLocks.acquire({ leaseMs: 1000, name: lock, owner: 'b' })).resolves.toBe(
+          false,
+        );
+      });
+
+      targetTest('concurrent acquires of one name let exactly one through', async (target) => {
+        const { scriptLocks } = target.database;
+        const lock = newLockName();
+
+        const results = await Promise.all(
+          ['a', 'b', 'c', 'd'].map(
+            async (owner) => await scriptLocks.acquire({ leaseMs: 60_000, name: lock, owner }),
+          ),
+        );
+
+        expect(results.filter(Boolean)).toHaveLength(1);
+      });
+    });
 
     describe('worker job queue', () => {
       const start = Date.parse('2026-01-01T00:00:00.000Z');

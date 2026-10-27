@@ -37,6 +37,7 @@ Ordinary workspaces (verified and deployed like the others) that real apps and p
 | [`frontend`](templates/frontend/README.md)   | Vite-powered single-page application.                                                                       |
 | [`backend`](templates/backend/README.md)     | [Hono](https://hono.dev/) API (Fetch-API/WinterCG), on Node.js (`@hono/node-server`) or Cloudflare Workers. |
 | [`tasks`](templates/tasks/README.md)         | Always-running background job workers, on Node.js or Cloudflare Durable Objects.                            |
+| [`scheduler`](templates/scheduler/README.md) | Cron and one-off scripts that never overlap themselves, on Node.js (one-shot) or Cloudflare Cron Triggers.  |
 | [`datastore`](templates/datastore/README.md) | Drizzle schema, clients and migrations for Postgres and D1; owns every table.                               |
 | [`library`](templates/library/README.md)     | General purpose library.                                                                                    |
 
@@ -44,24 +45,25 @@ Apps combine packages; a package never depends on another workspace package.
 
 ### Templates and Reserved Names
 
-`backend`, `frontend`, `tasks` and `datastore` are templates for the real workspaces to come. Each template and each real workspace owns an env prefix; the real ones' keys are already reserved in `.env.example` (unused until those workspaces exist).
+`backend`, `frontend`, `tasks`, `scheduler` and `datastore` are templates for the real workspaces to come. Each template and each real workspace owns an env prefix; the real ones' keys are already reserved in `.env.example` (unused until those workspaces exist).
 
 | Template    | Future real workspace(s)  | Env prefix                         | Local ports / database                             |
 | :---------- | :------------------------ | :--------------------------------- | :------------------------------------------------- |
 | `backend`   | `apps/api`                | `BACKEND_*` → `API_*`              | 2000/8230 → 3000/9230                              |
 | `frontend`  | `apps/admin`, `apps/site` | `FRONTEND_*` → `ADMIN_*`, `SITE_*` | 2001/8231/2111 → 3001/9231/3111, 3002/9232/3112    |
 | `tasks`     | `apps/workers`            | `TASKS_*` → `WORKERS_*`            | 2002/8232 → 3003/9233                              |
+| `scheduler` | `apps/dispatcher`         | `SCHEDULER_*` → `DISPATCHER_*`     | 2003/8233 → 3004/9234                              |
 | `datastore` | `packages/database`       | `DATASTORE_*` → `DATABASE_*`       | Postgres `lightproject_datastore` → `lightproject` |
 
-Only variables that would clash when two of them run side by side get the prefix (ports, URLs, `<APP>_CONCURRENCY`, `<PKG>_POSTGRES_DB`/`_URL`); everything else, such as `POSTGRES_HOST`, `DATABASE_DIALECT` or `WORKER_LEASE_MS`, is shared.
+Only variables that would clash when two of them run side by side get the prefix (ports, URLs, `<APP>_CONCURRENCY`, `<APP>_RUN_TOKEN`, `<PKG>_POSTGRES_DB`/`_URL`); everything else, such as `POSTGRES_HOST`, `DATABASE_DIALECT` or `WORKER_LEASE_MS`, is shared.
 
 ### Creating an App or Package from a Template
 
 ```bash
-mise run create --type=frontend --name=website3   # backend | frontend | tasks | datastore | library
+mise run create --type=frontend --name=website3   # backend | frontend | tasks | scheduler | datastore | library
 ```
 
-This copies the template to `apps/<name>` (backend, frontend, tasks) or `packages/<name>` (datastore, library), then runs `vp install` and `vp check --fix` on it. In the copy, only the template's own names change; names of other apps it talks to (e.g. a frontend's `BACKEND_URL`) stay:
+This copies the template to `apps/<name>` (backend, frontend, tasks, scheduler) or `packages/<name>` (datastore, library) — fixed by type, whatever the `vp create` directory prompt says — then runs `vp install` and `vp check --fix` on it. In the copy, only the template's own names change; names of other apps it talks to (e.g. a frontend's `BACKEND_URL`) stay:
 
 | In the copy                                    | Becomes (`frontend` → `website3`)         |
 | :--------------------------------------------- | :---------------------------------------- |

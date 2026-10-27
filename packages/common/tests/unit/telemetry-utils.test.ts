@@ -1,35 +1,13 @@
-import { AsyncLocalStorage } from 'node:async_hooks';
-
-import {
-  type Context,
-  type ContextManager,
-  ROOT_CONTEXT,
-  context,
-  trace,
-} from '@opentelemetry/api';
+import { context, trace } from '@opentelemetry/api';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vite-plus/test';
 
 import type * as TelemetryUtilsModule from '../../src/utils/telemetry';
+import { createAsyncHooksContextManager } from './helpers/context-manager';
 
 const importFresh = async (serviceName?: string): Promise<typeof TelemetryUtilsModule> => {
   vi.resetModules();
   vi.stubEnv('OTEL_SERVICE_NAME', serviceName);
   return await import('../../src/utils/telemetry');
-};
-
-const createAsyncHooksContextManager = (): ContextManager => {
-  const storage = new AsyncLocalStorage<Context>();
-
-  const manager: ContextManager = {
-    active: () => storage.getStore() ?? ROOT_CONTEXT,
-    bind: (_activeContext, target) => target,
-    disable: () => manager,
-    enable: () => manager,
-    with: (activeContext, fn, thisArg, ...args) =>
-      storage.run(activeContext, () => fn.call(thisArg, ...args)),
-  };
-
-  return manager;
 };
 
 afterEach(() => {

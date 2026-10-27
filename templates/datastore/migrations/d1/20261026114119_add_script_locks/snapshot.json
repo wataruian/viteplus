@@ -1,0 +1,357 @@
+{
+  "ddl": [
+    {
+      "entityType": "tables",
+      "name": "script_locks"
+    },
+    {
+      "entityType": "tables",
+      "name": "users"
+    },
+    {
+      "entityType": "tables",
+      "name": "worker_jobs"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "created_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "expires_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "name",
+      "notNull": false,
+      "table": "script_locks",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "owner",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "updated_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "created_at",
+      "notNull": true,
+      "table": "users",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "email",
+      "notNull": true,
+      "table": "users",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "id",
+      "notNull": false,
+      "table": "users",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "name",
+      "notNull": true,
+      "table": "users",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "updated_at",
+      "notNull": true,
+      "table": "users",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": "0",
+      "entityType": "columns",
+      "generated": null,
+      "name": "attempts",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "created_at",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "dedupe_key",
+      "notNull": false,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "function_name",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "id",
+      "notNull": false,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "last_error",
+      "notNull": false,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "lease_expires_at",
+      "notNull": false,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "lease_owner",
+      "notNull": false,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "max_attempts",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "payload",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "run_at",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "status",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "updated_at",
+      "notNull": true,
+      "table": "worker_jobs",
+      "type": "integer"
+    },
+    {
+      "columns": ["name"],
+      "entityType": "pks",
+      "name": "script_locks_pk",
+      "nameExplicit": false,
+      "table": "script_locks"
+    },
+    {
+      "columns": ["id"],
+      "entityType": "pks",
+      "name": "users_pk",
+      "nameExplicit": false,
+      "table": "users"
+    },
+    {
+      "columns": ["id"],
+      "entityType": "pks",
+      "name": "worker_jobs_pk",
+      "nameExplicit": false,
+      "table": "worker_jobs"
+    },
+    {
+      "columns": [
+        {
+          "isExpression": false,
+          "value": "function_name"
+        },
+        {
+          "isExpression": false,
+          "value": "dedupe_key"
+        }
+      ],
+      "entityType": "indexes",
+      "isUnique": true,
+      "name": "worker_jobs_dedupe_idx",
+      "origin": "manual",
+      "table": "worker_jobs",
+      "where": "dedupe_key IS NOT NULL"
+    },
+    {
+      "columns": [
+        {
+          "isExpression": false,
+          "value": "function_name"
+        },
+        {
+          "isExpression": false,
+          "value": "run_at"
+        }
+      ],
+      "entityType": "indexes",
+      "isUnique": false,
+      "name": "worker_jobs_pending_idx",
+      "origin": "manual",
+      "table": "worker_jobs",
+      "where": "status = 'pending'"
+    },
+    {
+      "columns": [
+        {
+          "isExpression": false,
+          "value": "function_name"
+        },
+        {
+          "isExpression": false,
+          "value": "lease_expires_at"
+        }
+      ],
+      "entityType": "indexes",
+      "isUnique": false,
+      "name": "worker_jobs_running_idx",
+      "origin": "manual",
+      "table": "worker_jobs",
+      "where": "status = 'running'"
+    },
+    {
+      "columns": [
+        {
+          "isExpression": false,
+          "value": "status"
+        },
+        {
+          "isExpression": false,
+          "value": "updated_at"
+        }
+      ],
+      "entityType": "indexes",
+      "isUnique": false,
+      "name": "worker_jobs_finished_idx",
+      "origin": "manual",
+      "table": "worker_jobs",
+      "where": "status IN ('succeeded', 'dead')"
+    },
+    {
+      "columns": ["email"],
+      "entityType": "uniques",
+      "name": "users_email_unique",
+      "nameExplicit": false,
+      "table": "users"
+    },
+    {
+      "entityType": "checks",
+      "name": "worker_jobs_status_check",
+      "table": "worker_jobs",
+      "value": "status IN ('pending', 'running', 'succeeded', 'dead')"
+    }
+  ],
+  "dialect": "sqlite",
+  "id": "37368215-e39c-425d-b3dc-f2130df57ad7",
+  "prevIds": ["f46e0a55-def2-45a3-86c8-c1421ceee1fb"],
+  "renames": [],
+  "version": "7"
+}

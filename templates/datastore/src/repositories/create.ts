@@ -1,6 +1,6 @@
 import type { DatabaseDialect } from '../environment/dialect';
 import { now } from '../shared';
-import type { Database, Tables, WorkerJobQueue } from './types';
+import type { Database, ScriptLockStore, Tables, WorkerJobQueue } from './types';
 
 interface Timestamped {
   createdAt?: Date | undefined;
@@ -17,6 +17,7 @@ const stamped = <Row extends Timestamped>(
 interface RepositoriesOptions {
   close: () => Promise<void>;
   dialect: DatabaseDialect;
+  scriptLockStore: ScriptLockStore;
   tables: Tables;
   workerJobQueue: WorkerJobQueue;
 }
@@ -24,11 +25,16 @@ interface RepositoriesOptions {
 const createRepositories = ({
   close,
   dialect,
-  tables: { users, workerJobs },
+  scriptLockStore,
+  tables: { scriptLocks, users, workerJobs },
   workerJobQueue,
 }: RepositoriesOptions): Database => ({
   close,
   dialect,
+  scriptLocks: {
+    ...scriptLockStore,
+    findByName: async (name) => await scriptLocks.findBy('name', name),
+  },
   users: {
     findByEmail: async (email) => await users.findBy('email', email),
     findById: async (id) => await users.findBy('id', id),

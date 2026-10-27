@@ -4,6 +4,17 @@ import { check, index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-o
 import type * as postgres from '../postgres/schema';
 import { jobStatuses, newId, now } from '../shared';
 
+const scriptLocks = sqliteTable('script_locks', {
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(now),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  name: text('name').primaryKey(),
+  owner: text('owner').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    .notNull()
+    .$defaultFn(now)
+    .$onUpdateFn(now),
+});
+
 const users = sqliteTable('users', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(now),
   email: text('email').notNull().unique(),
@@ -57,4 +68,4 @@ const workerJobs = sqliteTable(
   ],
 );
 
-export { users, workerJobs };
+export { scriptLocks, users, workerJobs };

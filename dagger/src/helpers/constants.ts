@@ -143,6 +143,7 @@ const WORKSPACES: Record<string, WorkspaceEntry | undefined> = {
   '@lightproject/design-system': { isFrontend: true, path: 'packages/design-system' },
   '@lightproject/frontend': { isFrontend: true, path: 'templates/frontend' },
   '@lightproject/library': { isFrontend: false, path: 'templates/library' },
+  '@lightproject/scheduler': { isFrontend: false, path: 'templates/scheduler' },
   '@lightproject/tasks': { isFrontend: false, path: 'templates/tasks' },
 };
 
