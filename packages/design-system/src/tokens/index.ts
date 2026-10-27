@@ -4,4 +4,5 @@ export * from './breakpoints';
 export * from './effects';
 export * from './icons';
 export * from './spacing';
+export * from './themes';
 export * from './typography';

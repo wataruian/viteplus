@@ -1651,3 +1651,34 @@ AGENTS.md reflect the current state.
   fixed in AGENTS.md and tooling-and-tasks.md; the scaffold now renames image references
   (`<REGISTRY_ADDRESS>/<name>`, `<name>:latest`, `<name>:<tag>`) in copied READMEs; a slow lock
   acquisition is followed by an immediate renewal; release warnings list every attempt's error.
+
+## 2026-10-27: App-defined themes for `packages/design-system`
+
+- Decision: an app may define its own theme colors; with none, the design system's defaults
+  (`defaultThemes`) apply. App themes **replace** the defaults (not merged). Rejected: making the
+  design system a template (a copy would fork the components; themes are the only per-app part).
+- The frontend template keeps the defaults (no `themes` passed); the how-to lives in the
+  design-system README ("Custom themes"), verified by building the frontend with two custom themes.
+- Mechanics: seeds moved to `src/tokens/themes.ts` (no `culori`); `getCSS(themes = defaultThemes)`
+  validates them (`checkThemes`: at least one, kebab-case, not `light`/`dark`); `createUnoConfig`
+  builds the CSS once, so bad themes fail the config load. The base preflight is
+  `() => getCSS()`: UnoCSS calls a preflight with its context, which a bare `getCSS` would take as
+  the theme set. The first theme is the base on `:root` (was: the theme named `default`).
+  `ThemeProvider` takes `themes`/`defaultTheme` and exposes the names in `useTheme().themes`, which
+  `ThemeSwitcher` lists.
+- An app's `uno.config.ts` imports `@lightproject/design-system/uno.config` (export → source
+  `uno.config.ts`). Tried and rejected: a relative `../../packages/design-system/src/…` import
+  (builds, but `vp check` fails with TS6307 under `composite`), the `…/configs` export (UnoCSS's
+  config loader resolves it to `dist/`, so dev would need a build), and a tsconfig project
+  reference (the type checker reports "Invalid tsconfig").
+- Tried live with sample themes (frontend `brand`/`night`, preview app `summer`/`autumn`), then
+  reverted: both apps use the defaults again. Lesson: the page background is `primary-100`/`-900`
+  (fixed lightness), so two themes only look different if their `primary` **hues** differ
+  (`#f97316` and `#b45309` are both ~48° and looked the same).
+- Base theme by key order clashed with the global `sort-keys` lint fix (it reordered `summer`,
+  `autumn` alphabetically, making `autumn` the base). Now `defaultTheme` (passed to both
+  `createUnoConfig` and `ThemeProvider`) picks the start theme, which is emitted as
+  `:root, .<name>`; every theme has a class and `ThemeProvider` always sets the active one, so
+  switching back to the start theme works whatever the order.
+- `Preview` no longer creates its own `ThemeProvider`/`ModeProvider` (they shadowed the app's, so
+  `/preview` on 2001 listed the default themes); the design-system app wraps it instead.

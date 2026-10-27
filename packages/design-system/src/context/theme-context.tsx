@@ -3,6 +3,7 @@ import { createRequiredContext } from '../utils/create-required-context';
 interface ThemeContextValue {
   setTheme: (theme: string) => void;
   theme: string;
+  themes: readonly string[];
 }
 
 const [ThemeContext, useTheme] = createRequiredContext<ThemeContextValue>(

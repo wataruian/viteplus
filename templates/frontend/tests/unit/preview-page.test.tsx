@@ -1,8 +1,22 @@
+import { ModeProvider, ThemeProvider } from '@lightproject/design-system/context';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, test, vi } from 'vite-plus/test';
 
 import PreviewPage from '../../src/preview-page';
+
+const themes = {
+  brand: { accent: '#f59e0b', primary: '#0f766e' },
+  night: { accent: '#22d3ee', primary: '#1e3a8a' },
+};
+
+const page = (
+  <ThemeProvider themes={themes}>
+    <ModeProvider>
+      <PreviewPage />
+    </ModeProvider>
+  </ThemeProvider>
+);
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
@@ -15,7 +29,7 @@ describe('PreviewPage', () => {
     const root = createRoot(container);
 
     act(() => {
-      root.render(<PreviewPage />);
+      root.render(page);
     });
 
     try {
@@ -25,6 +39,12 @@ describe('PreviewPage', () => {
       expect(container.querySelector('.i-ph-house-bold')).not.toBeNull();
 
       expect(container.textContent).toContain('Design System');
+      const buttons = [...container.querySelectorAll('button')].map(
+        ({ textContent }) => textContent,
+      );
+      expect(buttons).toContain('brand');
+      expect(buttons).toContain('night');
+      expect(buttons).not.toContain('emerald');
     } finally {
       act(() => {
         root.unmount();
@@ -43,7 +63,7 @@ describe('PreviewPage', () => {
     const html = globalThis.document.documentElement;
 
     act(() => {
-      root.render(<PreviewPage />);
+      root.render(page);
     });
 
     const clickSwitcher = (label: string) => {

@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vite-plus/test';
 
+import { defaultThemes } from '../../src/tokens/themes';
 import {
+  checkThemes,
   generateColorScale,
   generateThemeCss,
   getCSS,
@@ -10,12 +12,11 @@ import {
   makeOklch,
   oklchToRgbTuple,
   parseToOklch,
-  themes,
 } from '../../src/utils/theme-generator';
 
 describe('themes', () => {
   test('every theme has at least a primary and accent color', () => {
-    for (const [name, colors] of Object.entries(themes)) {
+    for (const [name, colors] of Object.entries(defaultThemes)) {
       expect(colors.primary, `${name}.primary`).toMatch(/^#[\da-f]{6}$/iu);
       expect(colors.accent, `${name}.accent`).toMatch(/^#[\da-f]{6}$/iu);
     }
@@ -136,5 +137,70 @@ describe('getThemes / generateThemeCss / getCSS', () => {
     });
 
     expect(withOverrides).not.toBe(withDefaults);
+  });
+});
+
+describe('getCSS with app themes', () => {
+  const appThemes = {
+    brand: { accent: '#f59e0b', primary: '#0f766e' },
+    night: { accent: '#22d3ee', primary: '#1e3a8a' },
+  };
+
+  test('puts the first theme on :root and every theme on its class', () => {
+    const css = getCSS(appThemes);
+
+    expect(css).toContain(generateThemeCss(':root, .brand', appThemes.brand));
+    expect(css).toContain(generateThemeCss('.night', appThemes.night));
+    expect(css).not.toContain('.emerald');
+  });
+
+  test('puts defaultTheme on :root whatever the key order, before the other classes', () => {
+    const css = getCSS(appThemes, 'night');
+
+    expect(css).toContain(generateThemeCss(':root, .night', appThemes.night));
+    expect(css).toContain(generateThemeCss('.brand', appThemes.brand));
+    expect(css.indexOf(':root, .night')).toBeLessThan(css.indexOf('.brand {'));
+  });
+
+  test('rejects a defaultTheme that is not one of the themes', () => {
+    expect(() => getCSS(appThemes, 'missing')).toThrow(
+      'defaultTheme "missing" is not one of: brand, night',
+    );
+  });
+
+  test('uses the default themes when none are passed', () => {
+    expect(getCSS()).toBe(getCSS(defaultThemes));
+    expect(getCSS()).toContain(generateThemeCss(':root, .default', defaultThemes.default));
+    expect(getCSS()).toContain(generateThemeCss('.sunset', defaultThemes.sunset));
+  });
+});
+
+describe('checkThemes', () => {
+  test('returns the themes in order', () => {
+    expect(checkThemes(defaultThemes).map(([name]) => name)).toStrictEqual([
+      'default',
+      'emerald',
+      'ocean',
+      'sunset',
+    ]);
+  });
+
+  test('rejects an empty theme set', () => {
+    expect(() => checkThemes({})).toThrow('Define at least one theme');
+  });
+
+  test.each(['Brand', 'brand_x', 'brand-', '1brand', 'light', 'dark'])(
+    'rejects the theme name %s',
+    (name) => {
+      expect(() => checkThemes({ [name]: { accent: '#000000', primary: '#ffffff' } })).toThrow(
+        `Theme name "${name}" must be kebab-case`,
+      );
+    },
+  );
+
+  test('fails on a color it cannot parse', () => {
+    expect(() => getCSS({ brand: { accent: '#000000', primary: 'not-a-color' } })).toThrow(
+      'Cannot parse color: "not-a-color"',
+    );
   });
 });

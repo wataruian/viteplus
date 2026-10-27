@@ -1,8 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import { type ComponentType, type HTMLAttributes, type ReactNode, forwardRef } from 'react';
 
-import { ModeProvider } from '../context/mode-provider';
-import { ThemeProvider } from '../context/theme-provider';
 import { baseStyles } from '../tokens/base';
 import { classPrefix } from '../utils/helpers';
 import type { BaseComponentProps } from './base';
@@ -242,186 +240,169 @@ const Preview = forwardRef<HTMLElement, PreviewProps>(
       .toSorted((a, b) => a.name.localeCompare(b.name));
 
     return (
-      <ThemeProvider>
-        <ModeProvider>
-          <ErrorBoundary>
-            <Section {...props} ref={ref} className={finalClass}>
-              <Container>
-                <div className={previewStyles.slots.content}>
-                  <div className={previewStyles.slots.header}>
-                    <div className={previewStyles.slots.headerInfo}>
-                      <Typography as='h1' type='display'>
-                        Design System
-                      </Typography>
-                      <Typography type='body' className={previewStyles.slots.description}>
-                        A collection of curated components, tokens, and utilities for building
-                        high-performance web applications. This system is designed to be expressive,
-                        accessible, and easily customizable.
-                      </Typography>
-                    </div>
+      <ErrorBoundary>
+        <Section {...props} ref={ref} className={finalClass}>
+          <Container>
+            <div className={previewStyles.slots.content}>
+              <div className={previewStyles.slots.header}>
+                <div className={previewStyles.slots.headerInfo}>
+                  <Typography as='h1' type='display'>
+                    Design System
+                  </Typography>
+                  <Typography type='body' className={previewStyles.slots.description}>
+                    A collection of curated components, tokens, and utilities for building
+                    high-performance web applications. This system is designed to be expressive,
+                    accessible, and easily customizable.
+                  </Typography>
+                </div>
 
-                    <div className={previewStyles.slots.actions}>
-                      <div className={previewStyles.slots.controls}>
-                        <ThemeSwitcher plain />
-                        <div className={previewStyles.slots.divider} />
-                        <ModeSwitcher />
-                      </div>
-                    </div>
+                <div className={previewStyles.slots.actions}>
+                  <div className={previewStyles.slots.controls}>
+                    <ThemeSwitcher plain />
+                    <div className={previewStyles.slots.divider} />
+                    <ModeSwitcher />
                   </div>
+                </div>
+              </div>
 
-                  <div className={previewStyles.slots.themesContainer}>
-                    <div className={previewStyles.slots.themesSection}>
-                      <Typography
-                        as='h2'
-                        type='display'
-                        className={previewStyles.slots.themesTitle}
-                      >
-                        Theme Color Scales
-                      </Typography>
-                      <div className={previewStyles.slots.themesGrid}>
-                        <ScaleRow name='primary' title='Primary Scale' />
-                        <ScaleRow name='accent' title='Accent Scale' />
-                        <ScaleRow name='surface' title='Surface Scale' />
-                        <ScaleRow name='success' title='Success Scale' />
-                        <ScaleRow name='warning' title='Warning Scale' />
-                        <ScaleRow name='danger' title='Danger Scale' />
-                        <ScaleRow name='info' title='Info Scale' />
-                      </div>
-                    </div>
+              <div className={previewStyles.slots.themesContainer}>
+                <div className={previewStyles.slots.themesSection}>
+                  <Typography as='h2' type='display' className={previewStyles.slots.themesTitle}>
+                    Theme Color Scales
+                  </Typography>
+                  <div className={previewStyles.slots.themesGrid}>
+                    <ScaleRow name='primary' title='Primary Scale' />
+                    <ScaleRow name='accent' title='Accent Scale' />
+                    <ScaleRow name='surface' title='Surface Scale' />
+                    <ScaleRow name='success' title='Success Scale' />
+                    <ScaleRow name='warning' title='Warning Scale' />
+                    <ScaleRow name='danger' title='Danger Scale' />
+                    <ScaleRow name='info' title='Info Scale' />
+                  </div>
+                </div>
 
-                    <div className={previewStyles.slots.themesSection}>
-                      <Typography
-                        as='h2'
-                        type='display'
-                        className={previewStyles.slots.themesTitle}
-                      >
-                        Components
-                      </Typography>
-                      <div className={previewStyles.slots.componentGrid}>
-                        {displayableComponents.map(({ Component, styleObj, name }) => {
-                          const variants = isRecord(styleObj) ? styleObj.variants : undefined;
-                          const layoutType = isBlockComponent(name) ? 'block' : 'inline';
-                          const widthType = isWideComponent(name) ? 'wide' : 'standard';
+                <div className={previewStyles.slots.themesSection}>
+                  <Typography as='h2' type='display' className={previewStyles.slots.themesTitle}>
+                    Components
+                  </Typography>
+                  <div className={previewStyles.slots.componentGrid}>
+                    {displayableComponents.map(({ Component, styleObj, name }) => {
+                      const variants = isRecord(styleObj) ? styleObj.variants : undefined;
+                      const layoutType = isBlockComponent(name) ? 'block' : 'inline';
+                      const widthType = isWideComponent(name) ? 'wide' : 'standard';
 
-                          return (
-                            <div
-                              key={name}
-                              className={`${previewStyles.slots.componentWrapper} ${previewVariants({ wrapperWidth: widthType })}`}
-                            >
-                              <Typography
-                                as='h2'
-                                type='display'
-                                className={previewStyles.slots.componentTitle}
-                              >
-                                {name}
-                              </Typography>
-                              <registry.Card
-                                intent='outline'
-                                className={`${previewStyles.slots.componentCard} ${previewVariants({ cardAlignment: layoutType })}`}
-                              >
-                                <div className={previewStyles.slots.componentCardInner}>
-                                  {showDefault ? (
-                                    <div className={previewStyles.slots.groupWrapper}>
+                      return (
+                        <div
+                          key={name}
+                          className={`${previewStyles.slots.componentWrapper} ${previewVariants({ wrapperWidth: widthType })}`}
+                        >
+                          <Typography
+                            as='h2'
+                            type='display'
+                            className={previewStyles.slots.componentTitle}
+                          >
+                            {name}
+                          </Typography>
+                          <registry.Card
+                            intent='outline'
+                            className={`${previewStyles.slots.componentCard} ${previewVariants({ cardAlignment: layoutType })}`}
+                          >
+                            <div className={previewStyles.slots.componentCardInner}>
+                              {showDefault ? (
+                                <div className={previewStyles.slots.groupWrapper}>
+                                  <Typography
+                                    as='span'
+                                    type='caption'
+                                    className={previewStyles.slots.groupLabel}
+                                  >
+                                    {(() => {
+                                      const defObj = isRecord(styleObj) ? styleObj.default : null;
+                                      const defs = isRecord(defObj)
+                                        ? Object.entries(defObj)
+                                            .map(([k, v]) => `${k}: ${v}`)
+                                            .join(', ')
+                                        : '';
+                                      const suffix = defs ? ` (${defs})` : '';
+                                      return `Default${suffix}`;
+                                    })()}
+                                  </Typography>
+                                  <div className={previewVariants({ variantList: layoutType })}>
+                                    <Component {...getExtraProps(name)}>
+                                      {renderChildren(name, 'Default')}
+                                    </Component>
+                                  </div>
+                                </div>
+                              ) : null}
+
+                              {isRecord(variants) &&
+                                Object.keys(variants).map((group) => {
+                                  const groupVariants = (variants as Record<string, unknown>)[
+                                    group
+                                  ];
+
+                                  return (
+                                    <div key={group} className={previewStyles.slots.groupWrapper}>
                                       <Typography
                                         as='span'
                                         type='caption'
                                         className={previewStyles.slots.groupLabel}
                                       >
-                                        {(() => {
-                                          const defObj = isRecord(styleObj)
-                                            ? styleObj.default
-                                            : null;
-                                          const defs = isRecord(defObj)
-                                            ? Object.entries(defObj)
-                                                .map(([k, v]) => `${k}: ${v}`)
-                                                .join(', ')
-                                            : '';
-                                          const suffix = defs ? ` (${defs})` : '';
-                                          return `Default${suffix}`;
-                                        })()}
+                                        {group}
                                       </Typography>
-                                      <div className={previewVariants({ variantList: layoutType })}>
-                                        <Component {...getExtraProps(name)}>
-                                          {renderChildren(name, 'Default')}
-                                        </Component>
+                                      <div
+                                        className={previewVariants({
+                                          variantList: layoutType,
+                                        })}
+                                      >
+                                        {isRecord(groupVariants) &&
+                                          Object.keys(groupVariants)
+                                            .filter((v): v is string =>
+                                              Object.hasOwn(groupVariants, v),
+                                            )
+                                            .map((variant) => (
+                                              <div
+                                                key={variant}
+                                                className={previewVariants({
+                                                  variantItem: layoutType,
+                                                })}
+                                              >
+                                                <Component
+                                                  {...{ [group]: variant }}
+                                                  className={
+                                                    name === 'Card'
+                                                      ? previewStyles.slots.cardPreview
+                                                      : undefined
+                                                  }
+                                                  {...getExtraProps(name, variant, group)}
+                                                >
+                                                  {renderChildren(name, variant)}
+                                                </Component>
+                                                {name === 'Icon' && (
+                                                  <Typography
+                                                    type='caption'
+                                                    className={previewStyles.slots.iconLabel}
+                                                  >
+                                                    {variant}
+                                                  </Typography>
+                                                )}
+                                              </div>
+                                            ))}
                                       </div>
                                     </div>
-                                  ) : null}
-
-                                  {isRecord(variants) &&
-                                    Object.keys(variants).map((group) => {
-                                      const groupVariants = (variants as Record<string, unknown>)[
-                                        group
-                                      ];
-
-                                      return (
-                                        <div
-                                          key={group}
-                                          className={previewStyles.slots.groupWrapper}
-                                        >
-                                          <Typography
-                                            as='span'
-                                            type='caption'
-                                            className={previewStyles.slots.groupLabel}
-                                          >
-                                            {group}
-                                          </Typography>
-                                          <div
-                                            className={previewVariants({
-                                              variantList: layoutType,
-                                            })}
-                                          >
-                                            {isRecord(groupVariants) &&
-                                              Object.keys(groupVariants)
-                                                .filter((v): v is string =>
-                                                  Object.hasOwn(groupVariants, v),
-                                                )
-                                                .map((variant) => (
-                                                  <div
-                                                    key={variant}
-                                                    className={previewVariants({
-                                                      variantItem: layoutType,
-                                                    })}
-                                                  >
-                                                    <Component
-                                                      {...{ [group]: variant }}
-                                                      className={
-                                                        name === 'Card'
-                                                          ? previewStyles.slots.cardPreview
-                                                          : undefined
-                                                      }
-                                                      {...getExtraProps(name, variant, group)}
-                                                    >
-                                                      {renderChildren(name, variant)}
-                                                    </Component>
-                                                    {name === 'Icon' && (
-                                                      <Typography
-                                                        type='caption'
-                                                        className={previewStyles.slots.iconLabel}
-                                                      >
-                                                        {variant}
-                                                      </Typography>
-                                                    )}
-                                                  </div>
-                                                ))}
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                </div>
-                              </registry.Card>
+                                  );
+                                })}
                             </div>
-                          );
-                        })}
-                      </div>
-                    </div>
+                          </registry.Card>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              </Container>
-            </Section>
-          </ErrorBoundary>
-        </ModeProvider>
-      </ThemeProvider>
+              </div>
+            </div>
+          </Container>
+        </Section>
+      </ErrorBoundary>
     );
   },
 );

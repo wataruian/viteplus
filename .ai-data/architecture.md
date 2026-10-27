@@ -15,7 +15,13 @@ The repository is structured as a **Vite+-powered Monorepo**.
     `node` (Node-only fs helpers), and isomorphic `utils`, `logger`, `environment`, `configs`,
     `validators`, `typecast`. Browser code must not import `server`/`node`, and server code must
     not import `browser`.
-  - **`design-system`**: Shared UI component library using UnoCSS and React.
+  - **`design-system`**: Shared UI component library using UnoCSS and React. Themes are color
+    seeds (`ThemeColors`: `primary` + `accent`, optional `surface`/`success`/`warning`/`danger`/
+    `info`) that `getCSS(themes)` expands into `--ds-*` scales at build time; the start theme (`defaultTheme`, else the first key) is
+    also on `:root`; every theme is a class on `<html>`, kept on the active one by `ThemeProvider`. Apps get
+    `defaultThemes` unless they pass their own to `createUnoConfig({ themes })` (their own
+    `uno.config.ts`, importing `@lightproject/design-system/uno.config`) and `<ThemeProvider themes>`; app themes replace the defaults
+    (`packages/design-system/README.md` → "Custom themes").
 - **`templates/`**: Workspace templates (`templates/*` in `pnpm-workspace.yaml`, verified and
   deployed like the others) that real apps and packages are created from with `mise run create`.
   - **`backend`**: Hono API — a Fetch-API/WinterCG-compatible framework (`app.fetch`). The

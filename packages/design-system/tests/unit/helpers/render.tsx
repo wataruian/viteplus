@@ -1,5 +1,8 @@
-import { type ReactElement, act } from 'react';
+import { type ReactElement, type ReactNode, act } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ModeProvider } from '../../../src/context/mode-provider';
+import { ThemeProvider } from '../../../src/context/theme-provider';
 
 declare global {
   var IS_REACT_ACT_ENVIRONMENT: boolean | undefined;
@@ -32,6 +35,12 @@ const render = (element: ReactElement) => {
   };
 };
 
+const withProviders = (children: ReactNode) => (
+  <ThemeProvider>
+    <ModeProvider>{children}</ModeProvider>
+  </ThemeProvider>
+);
+
 const click = (element: Element) => {
   act(() => {
     element.dispatchEvent(new globalThis.MouseEvent('click', { bubbles: true, cancelable: true }));
@@ -46,4 +55,4 @@ const requireElement = (container: ParentNode, selector: string): Element => {
   return element;
 };
 
-export { click, render, requireElement };
+export { click, render, requireElement, withProviders };

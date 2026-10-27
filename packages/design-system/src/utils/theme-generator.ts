@@ -1,16 +1,7 @@
 import { type Color, type Oklch, type Rgb, clampChroma, converter, parse } from 'culori';
 
+import { type ThemeColors, type Themes, defaultThemes, themeNamePattern } from '../tokens/themes';
 import { classPrefix } from './helpers';
-
-interface ThemeColors {
-  accent: string;
-  danger?: string | undefined;
-  info?: string | undefined;
-  primary: string;
-  success?: string | undefined;
-  surface?: string | undefined;
-  warning?: string | undefined;
-}
 
 type ColorScale = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
@@ -19,25 +10,6 @@ const info = '#3b82f6';
 const success = '#10b981';
 const surface = '#000000';
 const warning = '#f59e0b';
-
-const themes: Record<string, ThemeColors> = {
-  default: {
-    accent: '#10b981',
-    primary: '#8b5cf6',
-  },
-  emerald: {
-    accent: '#3b82f6',
-    primary: '#10b981',
-  },
-  ocean: {
-    accent: '#8b5cf6',
-    primary: '#0ea5e9',
-  },
-  sunset: {
-    accent: '#f59e0b',
-    primary: '#f43f5e',
-  },
-};
 
 const lightnessStops: Record<ColorScale, number> = {
   100: 0.94,
@@ -143,7 +115,7 @@ const getThemes = () => ({
   },
 });
 
-const generateThemeCss = (className: string, colors: ThemeColors): string => {
+const generateThemeCss = (selector: string, colors: ThemeColors): string => {
   const primaryHex = colors.primary;
 
   if (!primaryHex) {
@@ -194,8 +166,6 @@ const generateThemeCss = (className: string, colors: ThemeColors): string => {
   const infoScale = generateColorScale(infoHex, 'info');
   const surfaceScale = generateColorScale(surfaceHex, 'surface', true);
 
-  const selector = className === 'default' ? ':root' : `.${className}`;
-
   const css = `
 ${selector} {
   --${classPrefix}-primary-base: ${primaryRgb};
@@ -217,9 +187,38 @@ ${surfaceScale}
   return css;
 };
 
-const getCSS = (): string => {
-  const themeBlocks = Object.entries(themes)
-    .map(([name, colors]) => generateThemeCss(name, colors))
+const reservedThemeNames: ReadonlySet<string> = new Set(['dark', 'light']);
+
+const checkThemes = (themes: Themes, defaultTheme?: string): [string, ThemeColors][] => {
+  const entries = Object.entries(themes);
+  if (entries.length === 0) {
+    throw new Error('Define at least one theme');
+  }
+  for (const [name] of entries) {
+    if (!themeNamePattern.test(name) || reservedThemeNames.has(name)) {
+      throw new Error(
+        `Theme name "${name}" must be kebab-case and not light or dark (it becomes a class on <html>)`,
+      );
+    }
+  }
+  if (defaultTheme !== undefined && !(defaultTheme in themes)) {
+    throw new Error(
+      `defaultTheme "${defaultTheme}" is not one of: ${entries.map(([name]) => name).join(', ')}`,
+    );
+  }
+  return entries;
+};
+
+const getCSS = (themes: Themes = defaultThemes, defaultTheme?: string): string => {
+  const entries = checkThemes(themes, defaultTheme);
+  const base = defaultTheme ?? entries[0][0];
+  const themeBlocks = [
+    ...entries.filter(([name]) => name === base),
+    ...entries.filter(([name]) => name !== base),
+  ]
+    .map(([name, colors]) =>
+      generateThemeCss(name === base ? `:root, .${name}` : `.${name}`, colors),
+    )
     .join('\n');
 
   const css = `
@@ -284,6 +283,7 @@ ${themeBlocks}
 };
 
 export {
+  checkThemes,
   danger,
   generateColorScale,
   generateThemeCss,
@@ -296,11 +296,11 @@ export {
   makeOklch,
   oklchToRgbTuple,
   parseToOklch,
+  reservedThemeNames,
   success,
   surface,
-  themes,
   toOklch,
   toRgb,
   warning,
 };
-export type { ColorScale, ThemeColors };
+export type { ColorScale };

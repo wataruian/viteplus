@@ -19,6 +19,10 @@ import { ModeProvider, ThemeProvider } from '@lightproject/design-system/context
 </ThemeProvider>;
 ```
 
+Wrap the app once in `ThemeProvider` and `ModeProvider`. Components that contain a switcher
+(`Header`, `ThemeSwitcher`, `ModeSwitcher`, `Preview`) use those providers and throw without them;
+none of them brings its own.
+
 Commands run from `packages/design-system` unless noted.
 
 ## Setup
@@ -44,14 +48,15 @@ Apps need no build of this package in dev: `templates/frontend` aliases it to `s
 `package.json` `exports` maps `.` to `src/index.ts` and `./*` to `src/*/index.ts` (the
 `typescript` condition, used in dev and tests), or to `dist/` once packed:
 
-| Import path                   | Contents                                                                                                                |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `@lightproject/design-system` | Namespaces `components`, `context`, `tokens`, `utils`                                                                   |
-| `…/components`                | `Badge`, `Button`, `Card`, `ErrorBoundary`, `Header`, `Icon`, `Input`, `Layout`, `Logo`, `Marquee`, …, `Preview`        |
-| `…/context`                   | `ThemeProvider`, `ModeProvider`, `ClientIdProvider` and their contexts and hooks (`useTheme`, `useMode`, `useClientId`) |
-| `…/tokens`                    | `animation`, `base` (`baseStyles`, `intentSolid`, …), `breakpoints`, `effects`, `icons`, `spacing`, `typography`        |
-| `…/utils`                     | `shortcuts`, theme generator (`getCSS`, `getThemes`, `themes`), helpers                                                 |
-| `…/configs`                   | `unoCssConfig` (also the default export of `uno.config.ts`)                                                             |
+| Import path                   | Contents                                                                                                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@lightproject/design-system` | Namespaces `components`, `context`, `tokens`, `utils`                                                                                                                 |
+| `…/components`                | `Badge`, `Button`, `Card`, `ErrorBoundary`, `Header`, `Icon`, `Input`, `Layout`, `Logo`, `Marquee`, …, `Preview`                                                      |
+| `…/context`                   | `ThemeProvider` (`themes`, `defaultTheme`), `ModeProvider`, `ClientIdProvider` and their contexts and hooks (`useTheme`, `useMode`, `useClientId`)                    |
+| `…/tokens`                    | `animation`, `base` (`baseStyles`, `intentSolid`, …), `breakpoints`, `effects`, `icons`, `spacing`, `themes` (`defaultThemes`, `Themes`, `ThemeColors`), `typography` |
+| `…/utils`                     | `shortcuts`, theme generator (`getCSS(themes?)`, `checkThemes`, `getThemes`), helpers                                                                                 |
+| `…/configs`                   | `createUnoConfig({ themes? })`, `unoCssConfig` (`createUnoConfig()`, also the default export of `uno.config.ts`)                                                      |
+| `…/uno.config`                | `uno.config.ts` itself (source, no build needed): default export `unoCssConfig`, plus `createUnoConfig` for an app's own config                                       |
 
 ## Environment variables
 
@@ -106,7 +111,8 @@ in parallel. To add a component (component, test, story, registry export), run `
   with `text-inverse-<color>` (the opposite), e.g. `bg-adaptive-surface text-inverse-surface`. There
   is no bare `bg-adaptive` / `text-adaptive` / `bg-inverse`; they generate no CSS and leave the
   element transparent over the primary-tinted `:root` background. Use `surface` for neutral
-  backgrounds; the other colors tint with the theme (`default`, `emerald`, `ocean`, `sunset`).
+  backgrounds; the other colors tint with the theme (by default `default`, `emerald`, `ocean`,
+  `sunset`; an app can define its own, see "Custom themes").
 - **Shortcuts**: `src/utils/shortcuts.ts` is the place for UnoCSS shortcuts. It is currently
   empty, so `btn-primary`, `btn-ghost` and `glass-nav` produce no CSS yet; use the component
   variants (`<Button intent='primary'>`, `<Header>`) or add the shortcut there first.
@@ -115,6 +121,93 @@ in parallel. To add a component (component, test, story, registry export), run `
 - **Keyframes**: raw keyframe strings (`src/tokens/animation.ts`) need a semicolon after every
   property (`{from{transform:translateX(0);}to{…;}}`); a missing one fails production builds with
   `CssSyntaxError [postcss]`.
+
+### Custom themes
+
+An app that sets no themes gets the defaults (`defaultThemes` in `src/tokens/themes.ts`:
+`default`, `emerald`, `ocean`, `sunset`). To use its own colors, the app passes its themes in
+**two** places from one file: to the UnoCSS config (which writes the CSS variables at build time)
+and to `ThemeProvider` (which switches the theme class on `<html>` and lists the themes for
+`ThemeSwitcher`). The app's themes **replace** the defaults; components need no change, since they
+only use the semantic tokens.
+
+1. **Define the themes** in the app (`src/themes.ts`). Each theme needs `primary` and `accent`;
+   `surface`, `success`, `warning`, `danger` and `info` are optional and fall back to the defaults
+   (`#000000`, `#10b981`, `#f59e0b`, `#ef4444`, `#3b82f6`). Any CSS color works; the `50`–`950`
+   scales and the light/dark `adaptive-*`/`inverse-*` pairs are generated from it.
+
+   ```ts
+   // apps/<app>/src/themes.ts
+   import type { Themes } from '@lightproject/design-system/tokens';
+
+   const themes = {
+     brand: { accent: '#f59e0b', primary: '#0f766e' },
+     night: { accent: '#22d3ee', primary: '#1e3a8a', surface: '#0b1020' },
+   } satisfies Themes;
+
+   export { themes };
+   ```
+
+2. **Give the app its own UnoCSS config** (`uno.config.ts`, next to `vite.config.ts`). Import
+   `createUnoConfig` from `@lightproject/design-system/uno.config`: that export points at the
+   source `uno.config.ts`, so it loads without building this package and type-checks (a relative
+   `../../packages/design-system/src/…` import builds but fails `vp check` with TS6307, and
+   `…/configs` resolves to `dist/` when UnoCSS loads the config). Keep the `Themes` import in
+   `src/themes.ts` type-only, since this config loads that file too:
+
+   ```ts
+   // apps/<app>/uno.config.ts
+   import { createUnoConfig } from '@lightproject/design-system/uno.config';
+
+   import { themes } from './src/themes';
+
+   export default createUnoConfig({ themes });
+   ```
+
+   To start on another theme, add `defaultTheme: 'night'` here **and** in step 4. Do not rely on
+   key order: the lint fix sorts the keys alphabetically, so the "first" theme is the
+   alphabetically first one.
+
+3. **Point the UnoCSS plugin at it** in `vite.config.ts` (keep `configDeps` as is):
+
+   ```diff
+    unoCss({
+      configDeps: …,
+   -  configFile: path.resolve(dir, '../../packages/design-system/uno.config.ts'),
+   +  configFile: path.resolve(dir, 'uno.config.ts'),
+    }),
+   ```
+
+4. **Pass the same themes to `ThemeProvider`** (`src/main.tsx`):
+
+   ```tsx
+   import { themes } from './themes';
+
+   <ThemeProvider themes={themes}>
+     <ModeProvider>…</ModeProvider>
+   </ThemeProvider>;
+   ```
+
+   Add the same `defaultTheme='night'` as in step 2 if you set one there. With one theme, hide
+   the switcher (`<Header showThemeSwitcher={false} />`).
+
+Checked when the config is created, so a mistake fails `vp dev`/`vp build`, not the page:
+
+- At least one theme; a color that cannot be parsed fails with `Cannot parse color: "…"`.
+- Names are kebab-case and not `light` or `dark` (those are the mode classes).
+- `defaultTheme` must be one of the themes (`ThemeProvider` checks it too).
+
+How it behaves:
+
+- The start theme (`defaultTheme`, else the first key, which is the alphabetically first since the
+  lint fix sorts keys) is also on `:root`, so the page has colors before React runs. Every theme
+  has its class (`.brand`, `.night`), and `ThemeProvider` keeps the active one on `<html>`.
+- The page background is `primary-100` (light) / `primary-900` (dark), whose lightness is fixed,
+  so two themes only look different if their `primary` **hues** differ (e.g. `#f97316` and
+  `#b45309` are both orange at ~48° and give the same background).
+
+To go back to the defaults, delete `src/themes.ts` and `uno.config.ts`, point `configFile` at
+`packages/design-system/uno.config.ts` again and drop the `themes` prop.
 
 ## Testing
 

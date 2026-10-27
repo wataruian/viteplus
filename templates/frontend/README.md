@@ -87,8 +87,9 @@ From the repo root, `mise run start dev` (or `wrangler`) starts every app in par
   `X-Request-Id`/`X-Client-Id` with every call.
 - In dev, `@lightproject/backend`, `@lightproject/common` and `@lightproject/design-system` resolve
   to their sources (`resolve.alias`), so no package build is needed. UnoCSS uses
-  `packages/design-system/uno.config.ts`; components and tokens belong in the design system, not
-  here.
+  `packages/design-system/uno.config.ts`, so the app gets the default themes; to use its own
+  colors, see `packages/design-system/README.md` → "Custom themes". Components and tokens belong
+  in the design system, not here.
 - Never use `XMLHttpRequest` or XHR-based clients (lint-banned); tracing is built on `fetch`.
 
 ### Share tags

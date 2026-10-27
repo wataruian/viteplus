@@ -3,7 +3,6 @@ import { forwardRef } from 'react';
 
 import { useTheme } from '../context/theme-context';
 import { baseStyles } from '../tokens/base';
-import { themes } from '../utils/theme-generator';
 import type { BaseComponentProps } from './base';
 import { Button } from './button';
 
@@ -45,8 +44,7 @@ interface ThemeSwitcherProps extends BaseComponentProps, ThemeSwitcherVariants {
 
 const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
   ({ className = '', plain, props, size, useDefault = true }, ref) => {
-    const themeList = Object.keys(themes);
-    const { setTheme, theme } = useTheme();
+    const { setTheme, theme, themes } = useTheme();
 
     const finalClass = useDefault
       ? themeSwitcherVariants({
@@ -61,7 +59,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, ThemeSwitcherProps>(
 
     return (
       <div {...props} ref={ref} className={finalClass}>
-        {themeList.map((t) => (
+        {themes.map((t) => (
           <Button
             key={t}
             intent={theme === t ? lookStyles.activeIntent : lookStyles.inactiveIntent}
