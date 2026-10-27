@@ -2,6 +2,7 @@ import { afterAll, describe, expect, test } from 'vite-plus/test';
 
 import { DefaultService } from '../../src/services/default';
 import { TestService } from '../../src/services/test';
+import { createFakeDatabase, createFakeServiceContext } from './helpers/database';
 import { errorEnvelope, httpEnvelope, runtimes, trpcEnvelope } from './helpers/utils';
 
 const successCode = 200;
@@ -142,5 +143,43 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
       expect(httpParsed.error.code).toBe('HTTP_EXCEPTION');
       expect(trpcParsed.error.code).toBe('HTTP_EXCEPTION');
     });
+  });
+});
+
+describe('TestService.enqueuePing', () => {
+  test('enqueues a ping job through the tasks job client', async () => {
+    const database = createFakeDatabase();
+    const result = await TestService.enqueuePing(
+      { message: 'Hi' },
+      createFakeServiceContext(database),
+    );
+
+    expect(result).toMatchObject({ functionName: 'ping', status: 'pending' });
+    expect(database.workerJobs.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ functionName: 'ping', id: result.id, payload: { message: 'Hi' } }),
+    );
+  });
+
+  test('uses a default message when none is given', async () => {
+    const database = createFakeDatabase();
+    await TestService.enqueuePing({}, createFakeServiceContext(database));
+
+    expect(database.workerJobs.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ payload: { message: 'Hello from the backend' } }),
+    );
+  });
+});
+
+describe('TestService.createUser', () => {
+  test('inserts a user with a random name and a matching unique email', async () => {
+    const database = createFakeDatabase();
+    const context = createFakeServiceContext(database);
+    const first = await TestService.createUser({}, context);
+    const second = await TestService.createUser({}, context);
+
+    expect(first.name).toMatch(/^User \w{8}$/u);
+    expect(first.email).toMatch(/^user-\w+@example\.com$/u);
+    expect(second.email).not.toBe(first.email);
+    expect(database.users.insert).toHaveBeenCalledWith({ email: first.email, name: first.name });
   });
 });

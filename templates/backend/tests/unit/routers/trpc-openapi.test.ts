@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion, trpcEndpoint } from '@lightproject/common/configs';
-import { afterAll, describe, expect, test } from 'vite-plus/test';
+import { afterAll, describe, expect, test, vi } from 'vite-plus/test';
 
 import { config } from '../../../src/config';
 import { appRouter } from '../../../src/routers/trpc';
@@ -13,7 +13,22 @@ import {
 } from '../../../src/routers/utils';
 import { DefaultService } from '../../../src/services/default';
 import { TestService } from '../../../src/services/test';
+import { createFakeServiceContext } from '../helpers/database';
 import { runtimes, trpcEnvelope } from '../helpers/utils';
+
+vi.mock(import('@lightproject/datastore'), async (importOriginal) => {
+  const actual = await importOriginal();
+  const { createFakeDatabase } = await import('../helpers/database');
+  return {
+    ...actual,
+    db: {
+      ...actual.db,
+      createDatabase: vi
+        .fn<typeof actual.db.createDatabase>()
+        .mockResolvedValue(createFakeDatabase()),
+    },
+  };
+});
 
 const openApiDocShape = z.object({
   components: z.object({ schemas: z.record(z.string(), z.unknown()) }),
@@ -25,6 +40,8 @@ const openApiDocShape = z.object({
 
 const trpcSampleInputs: Record<string, unknown> = {
   '/default.root': undefined,
+  '/test.createUser': {},
+  '/test.enqueuePing': { message: 'Sample' },
   '/test.hello': { name: 'Sample' },
   '/test.profile': {
     age: 42,
@@ -33,6 +50,8 @@ const trpcSampleInputs: Record<string, unknown> = {
     tags: ['sample'],
   },
 };
+
+const databaseProcedures: ReadonlySet<string> = new Set(['/test.createUser', '/test.enqueuePing']);
 
 const successCode = 200;
 
@@ -106,7 +125,10 @@ test('a procedure built without route metadata throws instead of silently vanish
 });
 
 test('query and mutation envelopes echo the requestId from the tRPC context', async () => {
-  const caller = t.createCallerFactory(appRouter)({ requestId: 'ctx-request-id' });
+  const caller = t.createCallerFactory(appRouter)({
+    requestId: 'ctx-request-id',
+    services: createFakeServiceContext(),
+  });
 
   const queryResult = await caller.default.root();
   expect(queryResult.requestId).toBe('ctx-request-id');
@@ -120,7 +142,7 @@ test('query and mutation envelopes echo the requestId from the tRPC context', as
   expect(mutationResult.requestId).toBe('ctx-request-id');
 });
 
-describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
   afterAll(cleanup);
 
   test('the generated tRPC OpenAPI document is served at /docs/openapi-trpc.json and documents every procedure', async () => {
@@ -135,15 +157,29 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     expect(doc.servers[0]?.url).toBe('/trpc');
 
     const pathKeys = Object.keys(doc.paths);
-    for (const path of ['/default.root', '/test.hello', '/test.profile']) {
+    for (const path of [
+      '/default.root',
+      '/test.createUser',
+      '/test.enqueuePing',
+      '/test.hello',
+      '/test.profile',
+    ]) {
       expect(pathKeys).toContain(path);
     }
     expect(Object.keys(doc.paths['/default.root'] ?? {})).toContain('get');
     expect(Object.keys(doc.paths['/test.hello'] ?? {})).toContain('get');
     expect(Object.keys(doc.paths['/test.profile'] ?? {})).toContain('post');
+    expect(Object.keys(doc.paths['/test.createUser'] ?? {})).toContain('post');
+    expect(Object.keys(doc.paths['/test.enqueuePing'] ?? {})).toContain('post');
 
     const schemaNames = Object.keys(doc.components.schemas);
-    for (const name of ['RootResponse', 'HelloResponse', 'CreateProfileResponse']) {
+    for (const name of [
+      'RootResponse',
+      'HelloResponse',
+      'CreateProfileResponse',
+      'EnqueuePingResponse',
+      'CreateUserResponse',
+    ]) {
       expect(schemaNames).toContain(name);
     }
   });
@@ -185,8 +221,12 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
 
     const app = await importApp();
 
+    const sampled = routes.filter(
+      ({ path }) => runtime === 'node' || !databaseProcedures.has(path),
+    );
+
     await Promise.all(
-      routes.map(async (route) => {
+      sampled.map(async (route) => {
         const sample = trpcSampleInputs[route.path];
         const procedurePath = route.path.slice(1);
 

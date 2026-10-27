@@ -32,6 +32,9 @@ const config = {
   get skipOpenTelemetry() {
     return env.SKIP_OPENTELEMETRY;
   },
+  get testRoutesEnabled() {
+    return !env.DISABLE_TEST_ROUTES;
+  },
   get trustedProxies() {
     return env.TRUSTED_PROXIES;
   },

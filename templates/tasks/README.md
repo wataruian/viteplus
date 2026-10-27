@@ -23,6 +23,10 @@ const client = createJobClient(await createJobStore('database', env));
 await client.enqueue(ping, { message: 'hello' }, { delayMs: 5000 });
 ```
 
+An app that already has a `@lightproject/datastore` database open passes it to
+`createDatabaseStore(database)` instead, so the job client shares its connection (as
+`templates/backend`'s `TestService.enqueuePing` does).
+
 Commands run from `templates/tasks` unless noted.
 
 ## Setup

@@ -47,7 +47,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'wrangler:dev': {
             cache: false,
-            command: `wrangler dev --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
+            command: `wrangler dev --persist-to ../../.wrangler/state --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
           },
         },
       },

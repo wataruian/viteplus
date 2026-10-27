@@ -326,6 +326,7 @@ const renderAppWithMocks = async (options: {
   configModule: {
     config: { backendUrl: string | undefined };
   };
+  trpcMutate?: (method: string, input: unknown) => unknown;
   trpcQuery: () => unknown;
 }) => {
   vi.resetModules();
@@ -344,9 +345,12 @@ const renderAppWithMocks = async (options: {
     config: options.configModule.config,
   }));
 
+  const mutate = options.trpcMutate ?? (() => successfulTrpcResult);
   vi.doMock('../../src/providers/trpc-provider', () => ({
     trpcClient: {
       test: {
+        createUser: { mutate: (input: unknown) => mutate('test.createUser', input) },
+        enqueuePing: { mutate: (input: unknown) => mutate('test.enqueuePing', input) },
         hello: {
           query: options.trpcQuery,
         },
@@ -631,5 +635,104 @@ describe('App error handling', () => {
     vi.doUnmock('../../src/config');
     vi.doUnmock('@lightproject/common/logger');
     vi.doUnmock('@lightproject/common/configs');
+  });
+});
+
+const buttonById = (container: HTMLDivElement, id: string): HTMLButtonElement => {
+  const button = container.querySelector(`button#${id}`);
+  if (!(button instanceof globalThis.HTMLButtonElement)) {
+    throw new TypeError(`expected the #${id} button to render`);
+  }
+  return button;
+};
+
+describe.each([
+  {
+    id: 'trpc-create-user',
+    input: {},
+    label: 'Add random user',
+    method: 'test.createUser',
+    pendingLabel: 'Adding user…',
+    resultMessage: 'Created a random user',
+  },
+  {
+    id: 'trpc-enqueue-ping',
+    input: { message: 'Hello from the frontend' },
+    label: 'Enqueue ping job',
+    method: 'test.enqueuePing',
+    pendingLabel: 'Enqueuing ping…',
+    resultMessage: 'Enqueued a ping job',
+  },
+])('the $label button', ({ id, input, label, method, pendingLabel, resultMessage }) => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  test(`calls ${method}, shows its pending label and logs the result`, async () => {
+    const calls: [string, unknown][] = [];
+    const { promise: response, resolve } = Promise.withResolvers<unknown>();
+    const { cleanup, container, logSpy } = await renderAppWithMocks({
+      configModule: { config: { backendUrl: undefined } },
+      trpcMutate: async (calledMethod, calledInput) => {
+        calls.push([calledMethod, calledInput]);
+        return await response;
+      },
+      trpcQuery: () => successfulTrpcResult,
+    });
+
+    try {
+      const button = buttonById(container, id);
+      expect(button.textContent).toBe(label);
+
+      act(() => {
+        button.click();
+      });
+      expect(button.disabled).toBe(true);
+      expect(button.textContent).toBe(pendingLabel);
+
+      resolve(successfulTrpcResult);
+      await settleInsideAct(() =>
+        parseLogEntries(logSpy.mock.calls).some((entry) => entry.message === resultMessage),
+      );
+
+      expect(calls).toStrictEqual([[method, input]]);
+      expect(button.disabled).toBe(false);
+      expect(button.textContent).toBe(label);
+      const entry = findEntry(parseLogEntries(logSpy.mock.calls), resultMessage);
+      expect(entry.level).toBe('info');
+      expect(entry.requestId).toMatch(shortUuidPattern);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('logs an error with the method and re-enables itself when the call rejects', async () => {
+    const { cleanup, container, logSpy } = await renderAppWithMocks({
+      configModule: { config: { backendUrl: undefined } },
+      trpcMutate: () => {
+        throw new Error('tRPC boom');
+      },
+      trpcQuery: () => successfulTrpcResult,
+    });
+
+    try {
+      const button = buttonById(container, id);
+      act(() => {
+        button.click();
+      });
+
+      await settleInsideAct(() =>
+        parseLogEntries(logSpy.mock.calls).some(
+          (entry) =>
+            entry.message.includes('Failed to call tRPC server') &&
+            entry.context?.['method'] === method,
+        ),
+      );
+      expect(button.disabled).toBe(false);
+    } finally {
+      cleanup();
+    }
   });
 });

@@ -13,6 +13,8 @@ import { type Context, Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { ClientErrorStatusCode, ServerErrorStatusCode } from 'hono/utils/http-status';
 
+import { config } from '../../config';
+import { withServiceContext } from '../../database';
 import { ReportedHttpException } from '../../errors';
 import { getLogUrl } from '../../log-url';
 import { getRequestStore } from '../../request-context';
@@ -69,11 +71,15 @@ const appRouter = t.router({
   test: testRouter,
 });
 
+const servedRouter: AnyTRPCRouter = config.testRoutesEnabled
+  ? appRouter
+  : t.router({ default: defaultRouter });
+
 const trpcRouter = new Hono<AppEnv>();
 const trpcOpenApiRouter = new Hono();
 
 if (isLocal()) {
-  const trpcOpenApiRoutes = collectTrpcOpenApiRoutes(appRouter);
+  const trpcOpenApiRoutes = collectTrpcOpenApiRoutes(servedRouter);
 
   trpcOpenApiRouter.get(openApiTrpcJsonEndpoint, (c) =>
     c.json(getOpenApiDocument(trpcOpenApiRoutes, trpcEndpoint)),
@@ -100,17 +106,22 @@ const handleTrpcRequest = async (c: Context<AppEnv>, router: AnyTRPCRouter): Pro
   const reqToPass =
     c.req.method === 'GET' ? normalizeTrpcGetQuery(c.req.raw, c.req.query()) : c.req.raw;
 
-  const response = await fetchRequestHandler({
-    createContext: () => ({
-      requestId: c.get('requestId'),
-    }),
-    endpoint: trpcEndpoint,
-    onError: ({ error, path }) => {
-      logTrpcServerError(c, error, path);
-    },
-    req: reqToPass,
-    router,
-  });
+  const response = await withServiceContext(
+    c.env,
+    async (services) =>
+      await fetchRequestHandler({
+        createContext: () => ({
+          requestId: c.get('requestId'),
+          services,
+        }),
+        endpoint: trpcEndpoint,
+        onError: ({ error, path }) => {
+          logTrpcServerError(c, error, path);
+        },
+        req: reqToPass,
+        router,
+      }),
+  );
 
   if (!response.ok) {
     const result: unknown = await response.clone().json();
@@ -139,7 +150,7 @@ const handleTrpcRequest = async (c: Context<AppEnv>, router: AnyTRPCRouter): Pro
   return response;
 };
 
-trpcRouter.all('/*', async (c) => await handleTrpcRequest(c, appRouter));
+trpcRouter.all('/*', async (c) => await handleTrpcRequest(c, servedRouter));
 
 type AppRouter = typeof appRouter;
 
@@ -149,6 +160,7 @@ export {
   isErrorStatusCode,
   isTRPCErrorResponse,
   logTrpcServerError,
+  servedRouter,
   trpcOpenApiRouter,
   trpcRouter,
 };

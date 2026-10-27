@@ -12,6 +12,7 @@ import { padEmoji } from '@lightproject/common/utils';
 
 import { getApp } from '../app';
 import { config } from '../config';
+import { closeSharedDatabase } from '../database';
 
 const registerShutdownSignals = () => {
   const signals = ['SIGTERM', 'SIGINT', 'SIGHUP'] as const;
@@ -19,7 +20,7 @@ const registerShutdownSignals = () => {
   for (const signal of signals) {
     if (globalThis.process.listenerCount(signal) === 0) {
       globalThis.process.once(signal, () => {
-        shutdownTelemetry()
+        Promise.allSettled([closeSharedDatabase(), shutdownTelemetry()])
           .catch(() => {})
           .finally(() => {
             globalThis.process.exit(0);

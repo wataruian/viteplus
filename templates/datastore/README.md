@@ -194,8 +194,8 @@ On deploy, the `datastore` job runs before `backend` and always publishes the mi
 `<REGISTRY_ADDRESS>/datastore` (command `node dist/scripts/migrate.mjs`). CI applies migrations
 only when the GitHub variable `DATABASE_MIGRATION_ENABLED` is `true` (default off), using the
 `DATABASE_DIALECT` variable and the `CLOUDFLARE_*` / `DATASTORE_POSTGRES_URL` secrets; enabled with no
-dialect fails the job. The `tasks` deploy fails if `DATABASE_DIALECT` differs from the dialect in
-`templates/tasks/wrangler.toml`'s `[env.<env>.vars]`.
+dialect fails the job. The `backend`, `tasks` and `scheduler` deploys fail if `DATABASE_DIALECT`
+differs from the dialect in their `wrangler.toml`'s `[env.<env>.vars]`.
 
 ### Manually
 

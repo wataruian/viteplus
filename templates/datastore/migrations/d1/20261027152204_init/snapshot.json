@@ -2,11 +2,65 @@
   "ddl": [
     {
       "entityType": "tables",
+      "name": "script_locks"
+    },
+    {
+      "entityType": "tables",
       "name": "users"
     },
     {
       "entityType": "tables",
       "name": "worker_jobs"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "created_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "expires_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "name",
+      "notNull": false,
+      "table": "script_locks",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "owner",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "text"
+    },
+    {
+      "autoincrement": false,
+      "default": null,
+      "entityType": "columns",
+      "generated": null,
+      "name": "updated_at",
+      "notNull": true,
+      "table": "script_locks",
+      "type": "integer"
     },
     {
       "autoincrement": false,
@@ -189,6 +243,13 @@
       "type": "integer"
     },
     {
+      "columns": ["name"],
+      "entityType": "pks",
+      "name": "script_locks_pk",
+      "nameExplicit": false,
+      "table": "script_locks"
+    },
+    {
       "columns": ["id"],
       "entityType": "pks",
       "name": "users_pk",
@@ -289,7 +350,7 @@
     }
   ],
   "dialect": "sqlite",
-  "id": "f46e0a55-def2-45a3-86c8-c1421ceee1fb",
+  "id": "aadb3e94-51de-463d-ac03-e96e5c20fe80",
   "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "renames": [],
   "version": "7"

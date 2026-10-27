@@ -1,7 +1,7 @@
 import { z } from '@hono/zod-openapi';
 import { openApiVersion } from '@lightproject/common/configs';
 import { Hono } from 'hono';
-import { afterAll, describe, expect, test } from 'vite-plus/test';
+import { afterAll, describe, expect, test, vi } from 'vite-plus/test';
 
 import { apiRouter } from '../../../src/routers/http';
 import {
@@ -13,7 +13,22 @@ import {
 import type { AppEnv } from '../../../src/schema';
 import { DefaultService } from '../../../src/services/default';
 import { TestService } from '../../../src/services/test';
+import { createFakeServiceContext } from '../helpers/database';
 import { httpEnvelope, runtimes } from '../helpers/utils';
+
+vi.mock(import('@lightproject/datastore'), async (importOriginal) => {
+  const actual = await importOriginal();
+  const { createFakeDatabase } = await import('../helpers/database');
+  return {
+    ...actual,
+    db: {
+      ...actual.db,
+      createDatabase: vi
+        .fn<typeof actual.db.createDatabase>()
+        .mockResolvedValue(createFakeDatabase()),
+    },
+  };
+});
 
 const openApiDocShape = z.object({
   components: z.object({ schemas: z.record(z.string(), z.unknown()) }),
@@ -58,12 +73,15 @@ test('defineHttpRoute falls back to the handler request schema for parsing when 
 
   expect(route.schema.request).toBeUndefined();
 
-  const result = await route.handle({
-    age: 42,
-    name: 'Sample User',
-    preferences: { notifications: false, theme: 'light' },
-    tags: ['sample'],
-  });
+  const result = await route.handle(
+    {
+      age: 42,
+      name: 'Sample User',
+      preferences: { notifications: false, theme: 'light' },
+      tags: ['sample'],
+    },
+    createFakeServiceContext(),
+  );
 
   expect(result).toMatchObject({ id: 'profile_sample-user' });
 });
@@ -92,7 +110,7 @@ test('createHttpRouter builds a requestless route when a route has no request sc
   expect(httpEnvelope(responseSchema).parse(body).data).toStrictEqual({ ping: 'pong' });
 });
 
-describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
+describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
   afterAll(cleanup);
 
   test('the generated HTTP OpenAPI document is served at /docs/openapi-http.json and documents every route', async () => {
@@ -106,15 +124,29 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     expect(doc.info.title).toBe('HTTP OpenAPI');
 
     const pathKeys = Object.keys(doc.paths);
-    for (const path of ['/api', '/api/test/hello', '/api/test/profile']) {
+    for (const path of [
+      '/api',
+      '/api/test/hello',
+      '/api/test/ping',
+      '/api/test/profile',
+      '/api/test/users',
+    ]) {
       expect(pathKeys).toContain(path);
     }
     expect(Object.keys(doc.paths['/api'] ?? {})).toContain('get');
     expect(Object.keys(doc.paths['/api/test/hello'] ?? {})).toContain('get');
     expect(Object.keys(doc.paths['/api/test/profile'] ?? {})).toContain('post');
+    expect(Object.keys(doc.paths['/api/test/ping'] ?? {})).toContain('post');
+    expect(Object.keys(doc.paths['/api/test/users'] ?? {})).toContain('post');
 
     const schemaNames = Object.keys(doc.components.schemas);
-    for (const name of ['RootResponse', 'HelloResponse', 'CreateProfileResponse']) {
+    for (const name of [
+      'RootResponse',
+      'HelloResponse',
+      'CreateProfileResponse',
+      'EnqueuePingResponse',
+      'CreateUserResponse',
+    ]) {
       expect(schemaNames).toContain(name);
     }
   });
@@ -132,6 +164,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
     {
       url: string;
       init?: { body?: string; headers?: Record<string, string>; method?: string };
+      usesDatabase?: boolean;
       validate: (data: unknown) => void;
     }
   > = {
@@ -145,6 +178,18 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
       url: '/api/test/hello?name=Sample',
       validate: (data) => {
         httpEnvelope(TestService.hello.schema.response).parse(data);
+      },
+    },
+    'POST /api/test/ping': {
+      init: {
+        body: JSON.stringify({ message: 'Sample' }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      },
+      url: '/api/test/ping',
+      usesDatabase: true,
+      validate: (data) => {
+        httpEnvelope(TestService.enqueuePing.schema.response).parse(data);
       },
     },
     'POST /api/test/profile': {
@@ -163,6 +208,18 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
         httpEnvelope(TestService.profile.schema.response).parse(data);
       },
     },
+    'POST /api/test/users': {
+      init: {
+        body: JSON.stringify({}),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      },
+      url: '/api/test/users',
+      usesDatabase: true,
+      validate: (data) => {
+        httpEnvelope(TestService.createUser.schema.response).parse(data);
+      },
+    },
   };
 
   test('every registered HTTP route has a working sample request that matches its documented response schema', async () => {
@@ -171,8 +228,12 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp }) => {
 
     const app = await importApp();
 
+    const samples = Object.entries(httpSampleRequests).filter(
+      ([, sample]) => runtime === 'node' || sample.usesDatabase !== true,
+    );
+
     await Promise.all(
-      Object.entries(httpSampleRequests).map(async ([key, sample]) => {
+      samples.map(async ([key, sample]) => {
         const res = await app.request(sample.url, sample.init);
         expect(res.status, `expected ${key} to succeed`).toBe(successCode);
         const body: unknown = await res.json();

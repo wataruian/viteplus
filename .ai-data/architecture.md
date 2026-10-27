@@ -472,7 +472,9 @@ methods change).
   the first tick of each such interval, with the same settings. Raise the cap if more finish than that (verified live: the cap
   holds, the next sweep continues, recent jobs stay).
 - **Enqueue API**: `@lightproject/tasks` exports `createJobClient(store).enqueue(fn, payload,
-  { delayMs | runAt, dedupeKey, maxAttempts })` (`delayMs` and `runAt` are mutually exclusive
+  { delayMs | runAt, dedupeKey, maxAttempts })` (store from `createJobStore(kind, env)`, or
+  `createDatabaseStore(database)` to reuse an open `@lightproject/datastore` database, as the
+  backend's sample `test.enqueuePing` route does) (`delayMs` and `runAt` are mutually exclusive
   in the type); payloads are validated by the function's schema
   and JSON round-tripped exactly as the database stores them, then re-parsed, so a schema the stored
   JSON no longer satisfies (`z.date()`, `.transform()`) fails at enqueue, not on every attempt.

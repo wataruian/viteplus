@@ -31,8 +31,16 @@ Commands run from `templates/backend` unless noted.
    docker compose up -d
    ```
 
-The backend does not use `@lightproject/datastore` (no tables, no bindings), so there is nothing
-to migrate for it.
+3. For the sample database routes (see "Test routes"), start Postgres (`docker compose up -d`
+   above) and migrate it once, from `templates/datastore`:
+
+   ```sh
+   vp run build && vp run db:migrate
+   ```
+
+   The backend keeps no tables or migrations of its own: it queries `@lightproject/datastore`
+   and enqueues jobs through `@lightproject/tasks`, whose worker (`vp run dev` in
+   `templates/tasks`) runs them.
 
 ## Environment variables
 
@@ -52,6 +60,7 @@ exactly `true` or `false`; empty means unset.
 | `BLOCK_ALL_IPS`           | IP filter                  | `true` denies every request with 403, including the `/` health check (default `false`); wins over all the above                                                                                                                                               |
 | `TRUSTED_PROXIES`         | IP filter (Node)           | Comma-separated proxy IPs whose `X-Forwarded-For` is trusted. Workers use `cf-connecting-ip` instead                                                                                                                                                          |
 | `ENABLE_ERROR_STACK`      | Error responses            | Return 5xx messages and stacks to clients (default: on when `ENV=local`); always off in `production`                                                                                                                                                          |
+| `DISABLE_TEST_ROUTES`     | Routers                    | `true` stops serving the sample `/api/test/*` routes and `test.*` tRPC procedures (404) and drops them from the docs (default `false`). Set it in real apps                                                                                                   |
 | `SKIP_OPENTELEMETRY`      | `src/app.ts`               | `true` skips the OTel SDK; request ids in logs keep working (default `false`; `true` in unit tests)                                                                                                                                                           |
 
 Shared variables read through `@lightproject/common` (full list in `packages/common/README.md`):
@@ -68,7 +77,17 @@ Shared variables read through `@lightproject/common` (full list in `packages/com
 | `LOG_FORMAT`        | `pretty` (default) or `json`; only honoured when `ENV=local`, everything else logs JSON                                                              |
 | `CHALK_LEVEL`       | Log color depth `0`–`3` (default `3`)                                                                                                                |
 
-There are no Worker bindings (no D1, Hyperdrive or KV) in `wrangler.toml`.
+Database variables, read by `@lightproject/datastore` (`templates/datastore/README.md`):
+
+| Variable                 | Purpose                                                                                                        |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_DIALECT`       | `postgres` or `d1` (required once a route opens the database). `d1` in every `wrangler.toml` block             |
+| `DATASTORE_POSTGRES_URL` | Node's Postgres URL (default: built from `POSTGRES_HOST`/`PORT`/`USER`/`PASSWORD` and `DATASTORE_POSTGRES_DB`) |
+
+`wrangler.toml` binds the shared D1 database as `DB` in every block, the same databases
+`templates/tasks` and `templates/scheduler` use; `wrangler:dev` keeps local state in the repo root's
+`.wrangler/state` alongside theirs. Node opens one database for the process (closed on shutdown).
+A Worker opens one per request that asks for it and closes it afterwards (`src/database.ts`).
 
 ## Development
 
@@ -100,7 +119,23 @@ Put the logic in `src/services/` as a function with a zod `request`/`response` s
 (`attachSchema` in `src/schema.ts`), then register it in `src/routers/http/` (`defineHttpRoute`)
 and/or `src/routers/trpc/` (`defineTrpcRoute`) and merge the router in that folder's `index.ts`.
 Locally, an HTTP route without OpenAPI docs throws at start (`assertHttpRoutesDocumented`). Use
-`src/services/test.ts` and its routers as the example.
+`src/services/test.ts` and its routers as the example. A service gets a second argument,
+`{ getDatabase }`, which opens the database on first use (`src/database.ts`).
+
+### Test routes
+
+`src/services/test.ts` is a sample, served at `/api/test/*` and `test.*` in tRPC unless
+`DISABLE_TEST_ROUTES=true`:
+
+| HTTP                     | tRPC                      | What it does                                                                     |
+| ------------------------ | ------------------------- | -------------------------------------------------------------------------------- |
+| `GET /api/test/hello`    | `test.hello` (query)      | Echoes a greeting                                                                |
+| `POST /api/test/profile` | `test.profile` (mutation) | Builds a profile from the input                                                  |
+| `POST /api/test/ping`    | `test.enqueuePing`        | Enqueues a `ping` job (`@lightproject/tasks`); the tasks worker logs its message |
+| `POST /api/test/users`   | `test.createUser`         | Inserts a user with a random name into `users` (`@lightproject/datastore`)       |
+
+The `AppRouter` type keeps the `test` procedures either way, so clients still compile; turning
+them off only makes the server answer 404.
 
 ## Testing
 
@@ -112,6 +147,8 @@ vp test   # unit tests in tests/unit (no services needed); same as vp run test:u
   excluded).
 - Env is read once, so tests stub first and then re-import (`vi.resetModules()` + `await
   import(...)`); see `tests/unit/helpers/utils.ts`.
+- Routes that use the database run against a fake one (`tests/unit/helpers/database.ts`) on
+  Node; the `wrangler` runtime's throwaway D1 has no migrations, so it skips them.
 - Unit tests set `SKIP_OPENTELEMETRY=true`; `tests/unit/telemetry.test.ts` opts back in against a
   fake collector, so no real endpoint is ever hit.
 

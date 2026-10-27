@@ -11,5 +11,7 @@ type JobStoreKind = (typeof jobStoreKinds)[number];
 const createJobStore = async (kind: JobStoreKind, env: db.DatabaseEnv = {}): Promise<JobStore> =>
   kind === 'memory' ? createMemoryStore() : createDatabaseStore(await db.createDatabase(env));
 
+export { createDatabaseStore } from './database';
+
 export { createJobStore, jobStoreKinds };
 export type { JobStoreKind };

@@ -28,6 +28,12 @@ Commands run from `templates/frontend` unless noted.
    docker compose up -d   # Grafana LGTM + OTel collector; without it telemetry exports just fail
    ```
 
+   The home page has three tRPC buttons, all calling the backend's sample `test` procedures:
+   "Call tRPC sample" (`test.hello`), "Enqueue ping job" (`test.enqueuePing`, which needs the
+   tasks worker, `vp run --filter @lightproject/tasks dev`, to run the job) and "Add random user"
+   (`test.createUser`). The last two need the migrated database (`templates/backend/README.md` →
+   Setup). Each logs its result, or `Failed to call tRPC server` with the method.
+
 3. Start the frontend:
 
    ```sh
@@ -110,7 +116,7 @@ vp run test:e2e    # Playwright, Chromium, its own dev server on FRONTEND_E2E_PO
 - Unit tests live in `tests/unit/`; coverage must stay at 100% for `src/` and `social-meta.ts`.
   `tests/unit/helpers/global-setup.ts` starts the backend Worker (`templates/backend/wrangler.toml`)
   once; `setup.ts` hides `import.meta.env`, so `.env` values never leak into tests.
-- E2E tests in `tests/e2e/` cover the home page (counter, tRPC sample, navigation to and from
+- E2E tests in `tests/e2e/` cover the home page (counter, the tRPC buttons, navigation to and from
   `/preview`) and the light/dark toggle on `/preview`. Each run writes `e2e-test-results/`: a video
   per test (`results/**/video.webm`), `results.json`, and an HTML report (`report/index.html`).
 - One-time Chromium download: `vp exec playwright install chromium`.

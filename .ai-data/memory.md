@@ -1682,3 +1682,30 @@ AGENTS.md reflect the current state.
   switching back to the start theme works whatever the order.
 - `Preview` no longer creates its own `ThemeProvider`/`ModeProvider` (they shadowed the app's, so
   `/preview` on 2001 listed the default themes); the design-system app wraps it instead.
+
+## 2026-10-27: Backend showcases datastore + tasks (sample test routes)
+
+- `templates/backend` depends on `@lightproject/datastore` and `@lightproject/tasks` (both apps
+  combining workspaces, so the "packages never depend on workspace packages" rule is unaffected).
+  `TestService.enqueuePing` (`POST /api/test/ping`, `test.enqueuePing`) enqueues a `ping` job through
+  `createJobClient(createDatabaseStore(database))` (`createDatabaseStore` is newly exported from
+  tasks); `TestService.createUser` (`POST /api/test/users`, `test.createUser`) inserts a random user.
+- Services take a second argument, `ServiceContext` (`{ getDatabase }`), built by
+  `withServiceContext(c.env, …)` in `src/database.ts` for both the HTTP handler and the tRPC
+  context. Node shares one database per process (closed on shutdown); when the Worker has a `DB`
+  or `HYPERDRIVE` binding, one database per request, closed after it (Hyperdrive I/O must not cross
+  requests). `wrangler.toml` now binds the shared D1 `DB` in every block, like tasks/scheduler.
+- `DISABLE_TEST_ROUTES` (default `false`, user decision: on by default, real apps set `true`)
+  drops the `test` routers from serving and docs. `AppRouter` keeps `test` so clients still compile;
+  the server routes through `servedRouter` instead.
+- Verified live on Node + compose Postgres: all four endpoints 200, rows in `users`/`worker_jobs`,
+  the tasks worker ran both pings (`succeeded`). Gotcha: a non-mise shell has no `.env` vars
+  (`DATABASE_DIALECT` empty); run `mise exec -- vp run dev` there.
+- Squashed the datastore migrations (`init` + `add_script_locks`, both dialects) into one
+  `20261027152204_init` per dialect (`vp run db:generate init` after deleting the old folders; same
+  tables and indexes, snapshots formatted). Safe only for databases that never ran the old ones; a
+  database that did must be emptied or have its migration history reset first.
+- The deploy guard in `deploy-workspace.yml` (GitHub `DATABASE_DIALECT` must match the Worker's
+  `[env.<env>.vars]`) now covers `backend` too, since it reads the database.
+- Final review: a failed per-request open on a Worker no longer also logs "Failed to close the
+  request database".

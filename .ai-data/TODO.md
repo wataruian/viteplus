@@ -33,6 +33,10 @@
   traces exposed).
 - **`ALLOW_ALL_IPS = "true"` in every backend environment** (hardcoded in `templates/backend/wrangler.toml`)
   makes the API public; revisit (per-environment `ALLOWED_IPS`, or auth) before it serves real data.
+  `DISABLE_TEST_ROUTES` is unset there too (user decision, 2026-10-27), so every deployed backend
+  serves the sample `test` routes, including the DB-writing `test/users` and `test/ping`
+  (`test.createUser`/`test.enqueuePing`) to anyone; set it to `"true"` per `[env.*.vars]` when that
+  should stop.
 - **`templates/datastore` follow-ups** (added 2026-10-18):
   - To migrate from CI, set `DATABASE_MIGRATION_ENABLED=true` plus the `DATABASE_DIALECT`
     variable (`d1`/`postgres`; repository level, or per GitHub Environment to override) and the

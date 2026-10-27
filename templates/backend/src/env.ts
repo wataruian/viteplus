@@ -13,6 +13,7 @@ const server = {
   BACKEND_PORT: z.coerce.number().int().positive().optional(),
   BACKEND_URL: z.url().optional(),
   BLOCK_ALL_IPS: flag.default(false),
+  DISABLE_TEST_ROUTES: flag.default(false),
   ENABLE_ERROR_STACK: flag.optional(),
   SKIP_OPENTELEMETRY: flag.default(false),
   TRUSTED_PROXIES: z.string().optional(),

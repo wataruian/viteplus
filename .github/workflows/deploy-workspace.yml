@@ -60,7 +60,7 @@ jobs:
             fi
           done
 
-          if [[ ("${WORKSPACE}" == "tasks" || "${WORKSPACE}" == "scheduler") && -n "${DATABASE_DIALECT}" ]]; then
+          if [[ ("${WORKSPACE}" == "backend" || "${WORKSPACE}" == "tasks" || "${WORKSPACE}" == "scheduler") && -n "${DATABASE_DIALECT}" ]]; then
             worker_dialect="$(awk -v section="[env.${ENVIRONMENT}.vars]" '
               { line = $0; gsub(/[[:space:]]/, "", line) }
               line == section { found = 1; next }

@@ -5,8 +5,9 @@ import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 import packageJson from '../../package.json' with { type: 'json' };
+import { withServiceContext } from '../database';
 import { toClientErrorMessage, toClientErrorStack } from '../errors';
-import type { AppEnv, ServiceFn } from '../schema';
+import type { AppEnv, ServiceContext, ServiceFn } from '../schema';
 
 type RouteMethod = 'get' | 'post' | 'put' | 'delete';
 
@@ -33,7 +34,10 @@ interface TrpcProcedureTree {
 }
 
 interface HttpRoute {
-  handle: (input: unknown) => Record<string, unknown> | Promise<Record<string, unknown>>;
+  handle: (
+    input: unknown,
+    context: ServiceContext,
+  ) => Record<string, unknown> | Promise<Record<string, unknown>>;
   method: RouteMethod;
   path: `/${string}`;
   schema: { request?: z.ZodObject<z.ZodRawShape>; response: z.ZodType };
@@ -48,7 +52,7 @@ type OpenApiRegistryDefinition = OpenAPIHono['openAPIRegistry']['definitions'][n
 const trpcRouteMethods: ReadonlySet<string> = new Set(['get', 'post', 'put', 'delete']);
 
 const t = initTRPC
-  .context<{ requestId: string }>()
+  .context<{ requestId: string; services: ServiceContext }>()
   .meta<TrpcRouteMeta>()
   .create({
     errorFormatter: ({ shape }) => {
@@ -82,7 +86,8 @@ const parseAndInvoke = <S extends z.ZodRawShape, O extends Record<string, unknow
   handlerFn: ServiceFn<S, O>,
   requestSchema: z.ZodObject<S>,
   rawInput: unknown,
-): O | Promise<O> => handlerFn(requestSchema.parse(rawInput));
+  context: ServiceContext,
+): O | Promise<O> => handlerFn(requestSchema.parse(rawInput), context);
 
 const defineHttpRoute = <S extends z.ZodRawShape, O extends Record<string, unknown>>(
   definition: RouteDefinition<S, O>,
@@ -90,8 +95,8 @@ const defineHttpRoute = <S extends z.ZodRawShape, O extends Record<string, unkno
   const { handlerFn, method, path, schema: schemaOverride } = definition;
   const schema = schemaOverride ?? handlerFn.schema;
   const requestSchema = schema.request ?? handlerFn.schema.request;
-  const handle = (input: unknown): O | Promise<O> =>
-    parseAndInvoke(handlerFn, requestSchema, input);
+  const handle = (input: unknown, context: ServiceContext): O | Promise<O> =>
+    parseAndInvoke(handlerFn, requestSchema, input, context);
 
   return {
     handle,
@@ -168,7 +173,12 @@ const createQuery = <S extends z.ZodRawShape, O extends Record<string, unknown>>
 ) => {
   const { handlerFn } = definition;
   return createProcedure(definition).query(async ({ input, ctx }) => {
-    const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input ?? {});
+    const result = await parseAndInvoke(
+      handlerFn,
+      handlerFn.schema.request,
+      input ?? {},
+      ctx.services,
+    );
     return successEnvelope(result, ctx.requestId);
   });
 };
@@ -178,7 +188,7 @@ const createMutation = <S extends z.ZodRawShape, O extends Record<string, unknow
 ) => {
   const { handlerFn } = definition;
   return createProcedure(definition).mutation(async ({ input, ctx }) => {
-    const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input);
+    const result = await parseAndInvoke(handlerFn, handlerFn.schema.request, input, ctx.services);
     return successEnvelope(result, ctx.requestId);
   });
 };
@@ -253,7 +263,11 @@ const createHttpRouter = (routesList: HttpRoute[]) => {
         : createRoute({ ...base, request: buildRequestConfig(method, schema.request) });
 
     const handler = async (c: Context<AppEnv>) => {
-      const result = await handle(method === 'get' ? c.req.query() : await c.req.json());
+      const input: unknown = method === 'get' ? c.req.query() : await c.req.json();
+      const result = await withServiceContext(
+        c.env,
+        async (context) => await handle(input, context),
+      );
       return c.json(successEnvelope(result, c.get('requestId')), 200);
     };
 

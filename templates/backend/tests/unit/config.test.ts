@@ -97,3 +97,18 @@ describe('config.skipOpenTelemetry', () => {
     expect(config.skipOpenTelemetry).toBe(true);
   });
 });
+
+describe('config.testRoutesEnabled', () => {
+  test('is true when DISABLE_TEST_ROUTES is not set', async () => {
+    vi.stubEnv('DISABLE_TEST_ROUTES', undefined);
+    vi.stubEnv('VITE_DISABLE_TEST_ROUTES', undefined);
+    const config = await importConfig();
+    expect(config.testRoutesEnabled).toBe(true);
+  });
+
+  test('is false when DISABLE_TEST_ROUTES is true', async () => {
+    vi.stubEnv('DISABLE_TEST_ROUTES', 'true');
+    const config = await importConfig();
+    expect(config.testRoutesEnabled).toBe(false);
+  });
+});

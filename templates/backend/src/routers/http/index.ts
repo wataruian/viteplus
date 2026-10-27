@@ -10,6 +10,7 @@ import {
 import { isLocal } from '@lightproject/common/environment';
 
 import packageJson from '../../../package.json' with { type: 'json' };
+import { config } from '../../config';
 import { assertHttpRoutesDocumented, mergeHttpRouters } from '../utils';
 import { defaultRouter } from './default';
 import { testRouter } from './test';
@@ -18,7 +19,7 @@ const httpRouter = new OpenAPIHono();
 
 const apiRouter = mergeHttpRouters({
   default: defaultRouter,
-  test: testRouter,
+  ...(config.testRoutesEnabled ? { test: testRouter } : {}),
 });
 
 httpRouter.route(httpEndpoint, apiRouter);

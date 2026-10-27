@@ -15,20 +15,45 @@ import './style.css';
 
 type RequestScope = ReturnType<typeof startRequestScope>;
 
-const callTrpcSample = async (scope: RequestScope): Promise<void> => {
+interface TrpcCall {
+  call: () => Promise<unknown>;
+  method: string;
+  resultMessage: string;
+}
+
+const trpcCalls = {
+  createUser: {
+    call: async () => await trpcClient.test.createUser.mutate({}),
+    method: 'test.createUser',
+    resultMessage: 'Created a random user',
+  },
+  enqueuePing: {
+    call: async () =>
+      await trpcClient.test.enqueuePing.mutate({ message: 'Hello from the frontend' }),
+    method: 'test.enqueuePing',
+    resultMessage: 'Enqueued a ping job',
+  },
+  sample: {
+    call: async () => await trpcClient.test.hello.query({ name: 'Test' }),
+    method: 'test.hello',
+    resultMessage: 'tRPC Sample Result',
+  },
+} satisfies Record<string, TrpcCall>;
+
+const callTrpc = async (scope: RequestScope, { call, method, resultMessage }: TrpcCall) => {
   const { span } = scope;
   const trpcCallStart = globalThis.performance.now();
   let trpcCallSucceeded = true;
 
   try {
-    span.addEvent('Executing tRPC test mutation');
+    span.addEvent(`Executing tRPC ${method}`);
 
-    const result = await scope.run(async () => await trpcClient.test.hello.query({ name: 'Test' }));
+    const result = await scope.run(call);
 
     span.setAttribute('trpc.test.success', true);
 
     scope.run(() => {
-      logger.info('tRPC Sample Result', {
+      logger.info(resultMessage, {
         result,
       });
     });
@@ -40,13 +65,14 @@ const callTrpcSample = async (scope: RequestScope): Promise<void> => {
     scope.run(() => {
       logger.error('Failed to call tRPC server', {
         error,
+        method,
       });
     });
   }
 
   scope.run(() => {
     recordGaugeWithExemplar({
-      attributes: { 'rpc.method': 'test.hello', 'rpc.success': trpcCallSucceeded },
+      attributes: { 'rpc.method': method, 'rpc.success': trpcCallSucceeded },
       description: 'Duration of the most recently completed tRPC client call',
       name: 'http_client_duration_seconds',
       unit: 's',
@@ -57,30 +83,50 @@ const callTrpcSample = async (scope: RequestScope): Promise<void> => {
   });
 };
 
-const runTrpcSample = async (): Promise<void> => {
-  const scope = startRequestScope('trpc.sample', { root: true });
+const callTrpcSample = async (scope: RequestScope): Promise<void> => {
+  await callTrpc(scope, trpcCalls.sample);
+};
+
+const runTrpcCall = async (spanName: string, trpcCall: TrpcCall): Promise<void> => {
+  const scope = startRequestScope(spanName, { root: true });
   try {
-    await callTrpcSample(scope);
+    await callTrpc(scope, trpcCall);
   } finally {
     scope.span.end();
   }
 };
 
-const App = () => {
-  const { clientId } = useClientId();
-  const [isTrpcSamplePending, setIsTrpcSamplePending] = useState(false);
+const runTrpcSample = async (): Promise<void> => {
+  await runTrpcCall('trpc.sample', trpcCalls.sample);
+};
 
-  const handleTrpcSampleClick = (): void => {
-    setIsTrpcSamplePending(true);
+const usePendingAction = (run: () => Promise<void>): [boolean, () => void] => {
+  const [isPending, setIsPending] = useState(false);
 
-    runTrpcSample()
+  const start = (): void => {
+    setIsPending(true);
+
+    run()
       .catch(() => {
         // Errors already logged and recorded in span
       })
       .finally(() => {
-        setIsTrpcSamplePending(false);
+        setIsPending(false);
       });
   };
+
+  return [isPending, start];
+};
+
+const App = () => {
+  const { clientId } = useClientId();
+  const [isTrpcSamplePending, handleTrpcSampleClick] = usePendingAction(runTrpcSample);
+  const [isEnqueuePingPending, handleEnqueuePingClick] = usePendingAction(async () => {
+    await runTrpcCall('trpc.enqueue_ping', trpcCalls.enqueuePing);
+  });
+  const [isCreateUserPending, handleCreateUserClick] = usePendingAction(async () => {
+    await runTrpcCall('trpc.create_user', trpcCalls.createUser);
+  });
 
   useEffect(() => {
     setClientId(clientId);
@@ -152,6 +198,24 @@ const App = () => {
           onClick={handleTrpcSampleClick}
         >
           {isTrpcSamplePending ? 'Calling tRPC…' : 'Call tRPC sample'}
+        </button>
+        <button
+          id='trpc-enqueue-ping'
+          type='button'
+          className='counter'
+          disabled={isEnqueuePingPending}
+          onClick={handleEnqueuePingClick}
+        >
+          {isEnqueuePingPending ? 'Enqueuing ping…' : 'Enqueue ping job'}
+        </button>
+        <button
+          id='trpc-create-user'
+          type='button'
+          className='counter'
+          disabled={isCreateUserPending}
+          onClick={handleCreateUserClick}
+        >
+          {isCreateUserPending ? 'Adding user…' : 'Add random user'}
         </button>
         <a href='/preview' className='preview-link'>
           Preview Design System
@@ -229,7 +293,7 @@ const App = () => {
   );
 };
 
-export { callTrpcSample, runTrpcSample };
-export type { RequestScope };
+export { callTrpc, callTrpcSample, runTrpcCall, runTrpcSample, trpcCalls, usePendingAction };
+export type { RequestScope, TrpcCall };
 
 export default App;

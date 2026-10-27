@@ -46,6 +46,22 @@ test('the tRPC sample button re-runs the call and becomes clickable again', asyn
   expect(pageErrors).toStrictEqual([]);
 });
 
+for (const name of ['Enqueue ping job', 'Add random user']) {
+  test(`the "${name}" button sends its call and becomes clickable again`, async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+
+    await page.goto('/');
+
+    const button = page.getByRole('button', { name });
+    await expect(button).toBeEnabled();
+    await button.click();
+    await expect(button).toBeEnabled();
+    await expect(button).toHaveText(name);
+
+    expect(pageErrors).toStrictEqual([]);
+  });
+}
+
 test('the counter keeps its value when the tRPC sample button is clicked', async ({ page }) => {
   const pageErrors = collectPageErrors(page);
 

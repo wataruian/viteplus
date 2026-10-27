@@ -3,6 +3,12 @@
     {
       "entityType": "tables",
       "isRlsEnabled": false,
+      "name": "script_locks",
+      "schema": "public"
+    },
+    {
+      "entityType": "tables",
+      "isRlsEnabled": false,
       "name": "users",
       "schema": "public"
     },
@@ -11,6 +17,71 @@
       "isRlsEnabled": false,
       "name": "worker_jobs",
       "schema": "public"
+    },
+    {
+      "default": null,
+      "dimensions": 0,
+      "entityType": "columns",
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "notNull": true,
+      "schema": "public",
+      "table": "script_locks",
+      "type": "timestamp with time zone",
+      "typeSchema": null
+    },
+    {
+      "default": null,
+      "dimensions": 0,
+      "entityType": "columns",
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "notNull": true,
+      "schema": "public",
+      "table": "script_locks",
+      "type": "text",
+      "typeSchema": null
+    },
+    {
+      "default": null,
+      "dimensions": 0,
+      "entityType": "columns",
+      "generated": null,
+      "identity": null,
+      "name": "owner",
+      "notNull": true,
+      "schema": "public",
+      "table": "script_locks",
+      "type": "text",
+      "typeSchema": null
+    },
+    {
+      "default": null,
+      "dimensions": 0,
+      "entityType": "columns",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "notNull": true,
+      "schema": "public",
+      "table": "script_locks",
+      "type": "timestamp with time zone",
+      "typeSchema": null
+    },
+    {
+      "default": null,
+      "dimensions": 0,
+      "entityType": "columns",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "notNull": true,
+      "schema": "public",
+      "table": "script_locks",
+      "type": "timestamp with time zone",
+      "typeSchema": null
     },
     {
       "default": null,
@@ -359,6 +430,14 @@
       "with": ""
     },
     {
+      "columns": ["name"],
+      "entityType": "pks",
+      "name": "script_locks_pkey",
+      "nameExplicit": false,
+      "schema": "public",
+      "table": "script_locks"
+    },
+    {
       "columns": ["id"],
       "entityType": "pks",
       "name": "users_pkey",
@@ -392,7 +471,7 @@
     }
   ],
   "dialect": "postgres",
-  "id": "8a491dde-1808-4ac4-a604-4e14873c6a6b",
+  "id": "5375f432-a14a-4a2b-9ab8-f18b63674907",
   "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "renames": [],
   "version": "8"
