@@ -104,7 +104,7 @@ Every `src/<dir>/index.ts` is a subpath export (`./*` in `package.json`, `typesc
 ES modules, so the CJS build would break on it: `vite.config.ts` aliases `#import-meta-env` to
 `import-meta-env.node.ts` (always `undefined`) for the `cjs` format only. Both files are
 excluded as pack entries, so each format gets only its own variant. CJS consumers are Node, which
-reads `process.env` first anyway. `templates/tasks` uses the same pattern for `#tsx-api`.
+reads `process.env` first anyway.
 
 ## Testing
 

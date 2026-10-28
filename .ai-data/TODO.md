@@ -24,8 +24,16 @@
 - **braces GHSA-vfj7-8cjw-p6xm (high, dev-only)** — via `commitizen › find-node-modules ›
   findup-sync › micromatch`. The advisory's fix (≥3.0.4) isn't published yet (latest 3.0.3); add an
   override once it is.
-- **esbuild GHSA-g7r4-m6w7-qqqr (low)** — only via `tsx` (`esbuild ~0.27`); the advisory is the
-  Windows dev-server file read, which `tsx` doesn't use. Resolves when `tsx` moves to esbuild ≥0.28.1.
+- **esbuild GHSA-g7r4-m6w7-qqqr (low)** — only via `tsx` (`esbuild ~0.27`), which the repo no longer
+  uses (scripts run with `vpx`) but `@voidzero-dev/vite-plus-core` still depends on; the advisory is
+  the Windows dev-server file read, which `tsx` doesn't use. Resolves when vite-plus-core drops `tsx`
+  or `tsx` moves to esbuild ≥0.28.1.
+- **Re-enable `fsModuleCache` in `templates/frontend`** (`test.fsModuleCache: false` there) once
+  Vite+ fixes the 1.4.0 regression: with the module cache on, a cached module's `meta.code` is a
+  `Uint8Array`, and vite-plus-core's `Error.prepareStackTrace` (`extractInlineSourceMap`) calls
+  `code.charCodeAt` on it. Wrangler's `require('domain')` in the `globalSetup` builds a stack trace,
+  so `vp test` aborts with "Startup Error: code.charCodeAt is not a function" (and "No test files
+  found"). Only main-process modules (`globalSetup`) hit it; test-file failures print fine.
 - **Delete the old unsuffixed Workers** (`lightproject-backend`, `-frontend`, `-design-system`,
   `-storybook`) in the Cloudflare dashboard (or `wrangler delete --name <name>`) once the
   `-dev`/`-staging`/`-production` Workers are deployed and verified — nothing deploys to them anymore

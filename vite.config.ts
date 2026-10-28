@@ -202,7 +202,7 @@ const getPackageViteConfig = ({
   dir = import.meta.dirname,
   mode = 'development',
   buildType = 'pack',
-  devCommand = 'tsx watch --conditions=typescript src/index.ts',
+  devCommand = 'vpx --watch --conditions=typescript src/index.ts',
   buildCommand = '',
   startCommand = 'node dist/index.mjs',
   excludeDevCommand = true,

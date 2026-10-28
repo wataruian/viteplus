@@ -38,7 +38,7 @@ export default defineConfig(({ mode }): UserConfig => {
         tasks: {
           script: {
             cache: false,
-            command: 'tsx --conditions=typescript src/index.ts',
+            command: 'vpx --conditions=typescript src/index.ts',
           },
           'wrangler:delete': {
             cache: false,

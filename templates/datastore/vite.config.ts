@@ -30,7 +30,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'db:generate': {
             cache: false,
-            command: 'tsx --conditions=typescript src/scripts/generate.ts',
+            command: 'vpx --conditions=typescript src/scripts/generate.ts',
           },
           'db:migrate': {
             cache: false,

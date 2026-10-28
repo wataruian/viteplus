@@ -37,27 +37,13 @@ export default defineConfig(({ mode }): UserConfig => {
     }),
     {
       pack: {
-        entry: ['!src/**/tsx-api.ts', '!src/**/tsx-api.cjs.ts'],
-        inputOptions: (options, format) => ({
-          ...options,
-          resolve: {
-            ...options.resolve,
-            alias:
-              format === 'cjs'
-                ? {
-                    ...options.resolve?.alias,
-                    '#tsx-api': path.resolve(dir, 'src/runtimes/tsx-api.cjs.ts'),
-                  }
-                : (options.resolve?.alias ?? {}),
-          },
-        }),
         outputOptions: { exports: 'named' },
       },
       run: {
         tasks: {
           enqueue: {
             cache: false,
-            command: 'tsx --conditions=typescript scripts/enqueue.ts',
+            command: 'vpx --conditions=typescript scripts/enqueue.ts',
           },
           'test:integration': {
             cache: {

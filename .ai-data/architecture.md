@@ -439,8 +439,8 @@ methods change).
     thread was terminated, so a retry never overlaps it (a thread whose own grace ran out replies
     `handlerRunning: true`, and the main thread then terminates it rather than reuse it; a thread
     that exits during the grace settles the abort at once). Each thread keeps `error`/`exit` listeners for its whole life, so an
-    error thrown while it is idle retires it instead of crashing the process. Jobs cross into threads validated by `schemas.workerJob`. Under `tsx`
-    a thread registers tsx itself (Node 24 doesn't pass tsx's loader to threads).
+    error thrown while it is idle retires it instead of crashing the process. Jobs cross into threads validated by `schemas.workerJob`. Under `vpx`
+    a `.ts` thread entry needs no setup: threads inherit its `--require`/`--import` loader preloads.
   - `edge.ts` (the `wrangler.toml` entry) + `worker-loop.ts`: one `WorkerLoop` Durable Object per
     worker (`<function>#<n>`) runs continuously on alarms — each alarm drains for up to 30 s, then
     re-arms immediately (budget spent), after the poll interval (jobs ran), or after the backoff

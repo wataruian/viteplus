@@ -39,7 +39,6 @@
     "@typescript/native-preview": "catalog:",
     "drizzle-orm": "catalog:",
     "smol-toml": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:",
     "wrangler": "catalog:"

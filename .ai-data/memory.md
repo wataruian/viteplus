@@ -1709,3 +1709,36 @@ AGENTS.md reflect the current state.
   `[env.<env>.vars]`) now covers `backend` too, since it reads the database.
 - Final review: a failed per-request open on a Worker no longer also logs "Failed to close the
   request database".
+
+## 2026-10-28: Vite+ 1.4.0; `vpx` Replaces tsx
+
+- **Vite+ 1.3.0 → 1.4.0** (released 2026-10-23; vite 8.3.5, rolldown 1.2.15, oxlint 1.89.0, oxfmt
+  0.74.0; vitest stays 5.0.5): catalog `vite-plus`/`vite`, `minimumReleaseAgeExclude`, Dagger
+  `VITE_PLUS_IMAGE`, setup-toolchain `vp-version`, `install.sh` `VP_VERSION`, mise.toml's comment.
+  `vp config` (the `prepare` script) refreshed the managed block in `AGENTS.md` ("Running Scripts").
+- **`vpx <file>` / `vpx --watch <file>` replace `tsx` / `tsx watch`** in every task command
+  (root `devCommand`, design-system, datastore `db:generate`, scheduler `script`, tasks `enqueue`)
+  and in the `scaffold/*/index.ts` shebangs (`#!/usr/bin/env vpx`). `--conditions=typescript`
+  passes through to Node. `tsx` is gone from the catalog and every `package.json` (vite-plus-core
+  still depends on it, so it stays in the lockfile).
+- **tasks threads**: `vpx` preloads its loader with `--require`/`--import`, which worker threads
+  inherit through `execArgv`, so `.ts` thread entries just work. Removed `spawnThread`, the
+  `#tsx-api` subpath import (`tsx-api.ts`/`tsx-api.cjs.ts`) and its pack alias. Verified live:
+  `vp run dev` on compose Postgres ran two enqueued `ping` jobs in threads, reran on a file change,
+  and shut down through the SIGTERM handler.
+- **Thread test uses vite-plus internals (user decision)**: `threads.test.ts` runs `.ts` threads
+  under Vitest, where no `vpx` loader is active, and vite-plus exports none. Its `execArgv` preloads
+  vite-plus's unexported `dist/script-preload.cjs` (`--require`) and `dist/script-register.js`
+  (`--import`), the same flags `vpx` passes. Re-check them on **every** Vite+ upgrade (noted in
+  `renovate.json`'s toolchain rule); if they move, "Worker thread failed to start (Cannot find
+  module …)" is the symptom.
+- **`vp exec` stays for package binaries (user decision)**: `vpx` is only for running `.ts`/`.js`
+  files. Every binary call (`package.json` scripts, hooks, mise tasks, CI, docs) keeps `vp exec`,
+  so it always runs the installed version and never falls back to a remote download (the global
+  `vpx` downloads a missing package via `vp dlx`; only the project's own `vpx` bin refuses).
+- **oxlint 1.89 `sort-keys`** now orders computed keys: `[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]` moved
+  first in the OTel resources (`common` server telemetry + browser RUM). No autofix.
+- **Regression workaround**: `templates/frontend` sets `test.fsModuleCache: false`. With the module
+  cache on, vite-plus-core 1.4.0's `prepareStackTrace` crashes on a cached module's `Uint8Array`
+  code while wrangler loads in the `globalSetup` ("code.charCodeAt is not a function", "No test
+  files found"). Tracked in `TODO.md`.
