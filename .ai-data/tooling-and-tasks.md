@@ -57,7 +57,7 @@ Available automation commands:
 
 - Needs a migrated database (`DATABASE_DIALECT=postgres|d1 vp run db:migrate` in
   `templates/datastore`) for `JOB_STORE=database`, the `.env.example` default.
-- `vp run dev` (Node, tsx) / `vp run start` (built `dist/index.mjs`, what the image runs).
+- `vp run dev` (Node, `vpx --watch`) / `vp run start` (built `dist/index.mjs`, what the image runs).
   `vp run` does not load `.env`; the mise-activated shell does (`mise.toml` `[env] _.file`, with
   `${VAR}` expansion — Node's `--env-file` cannot expand it). Outside it, use `mise exec -- …`,
   but signal the node process itself: `mise exec` does not forward SIGTERM.
@@ -74,7 +74,7 @@ Available automation commands:
 
 - Needs a migrated database (every run takes its lock in `script_locks`): `DATABASE_DIALECT=postgres|d1 vp run db:migrate`
   in `templates/datastore`; build `templates/datastore` before `vp test` (Vitest loads `dist/`).
-- `vp run script <name> [--input '<json>']` (or `vp run script <name> --scheduled`, which takes no input) / `vp run script --list` (tsx);
+- `vp run script <name> [--input '<json>']` (or `vp run script <name> --scheduled`, which takes no input) / `vp run script --list` (`vpx`);
   `vp run start <name> …` runs the built `dist/index.mjs` (what the image runs). Exit 3 = skipped
   (lock held).
 - `vp run wrangler:dev`: the Cloudflare runtime on `SCHEDULER_PORT` (2003); fire a cron with

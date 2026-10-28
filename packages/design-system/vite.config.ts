@@ -17,14 +17,14 @@ export default defineConfig(({ mode }): UserConfig => {
   return mergeConfig(
     getPackageViteConfig({
       buildCommand:
-        'tsx --conditions=typescript ./src/utils/update-stories.ts && tsx --conditions=typescript ./src/utils/compile.ts && vp pack && vp build && storybook build',
+        'vpx --conditions=typescript ./src/utils/update-stories.ts && vpx --conditions=typescript ./src/utils/compile.ts && vp pack && vp build && storybook build',
       buildType: 'custom',
-      devCommand: 'tsx watch --conditions=typescript ./src/start.ts false false',
+      devCommand: 'vpx --watch --conditions=typescript ./src/start.ts false false',
       dir,
       excludeDevCommand: false,
       excludeStartCommand: false,
       mode,
-      startCommand: 'tsx watch --conditions=typescript ./src/start.ts true false',
+      startCommand: 'vpx --watch --conditions=typescript ./src/start.ts true false',
     }),
     {
       build: {
@@ -82,7 +82,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'wrangler:dev': {
             cache: false,
-            command: 'tsx watch --conditions=typescript ./src/start.ts false true',
+            command: 'vpx --watch --conditions=typescript ./src/start.ts false true',
           },
         },
       },

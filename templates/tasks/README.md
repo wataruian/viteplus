@@ -85,7 +85,7 @@ entry `src/runtimes/edge.ts` may export only the default handler and `WorkerLoop
 
 | Task                                   | What it does                                                                             |
 | -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `vp run dev`                           | Node workers under `tsx watch` (not plain `vp dev`)                                      |
+| `vp run dev`                           | Node workers under `vpx --watch` (not plain `vp dev`)                                    |
 | `vp run build`                         | Builds `dist/` (`dist/index.mjs`, the client entry)                                      |
 | `vp run start`                         | Runs the built `node dist/index.mjs` (what the container image runs)                     |
 | `vp run enqueue <fn> '<json>' [count]` | Enqueues `count` (default 1) jobs into the `JOB_STORE=database` store (refuses `memory`) |

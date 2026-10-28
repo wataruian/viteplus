@@ -144,9 +144,9 @@ const initializeTelemetry = async (options: TelemetryOptions = {}) => {
   setTelemetryConfig({ environment, otlpEndpoint, serviceName, serviceVersion });
 
   const resource = resourceFromAttributes({
+    [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: environment,
     [ATTR_SERVICE_NAME]: serviceName,
     [ATTR_SERVICE_VERSION]: serviceVersion,
-    [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: environment,
     'deployment.environment': environment,
     'service.instance.id': getServiceInstanceId(),
   });

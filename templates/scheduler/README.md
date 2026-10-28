@@ -79,7 +79,7 @@ export only the default handler.
 
 | Task                                      | What it does                                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------------------- |
-| `vp run script <name> [--input '<json>']` | Runs a script once from source (tsx); `--scheduled` runs it as its cron would       |
+| `vp run script <name> [--input '<json>']` | Runs a script once from source (`vpx`); `--scheduled` runs it as its cron would     |
 | `vp run script --list`                    | Lists the scripts and their schedules                                               |
 | `vp run build`                            | Builds `dist/` (`dist/index.mjs`, the client entry)                                 |
 | `vp run start <name> …`                   | Same as `script`, from the built `node dist/index.mjs` (what the image runs)        |

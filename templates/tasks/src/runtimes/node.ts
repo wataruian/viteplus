@@ -10,8 +10,6 @@ import { logger } from '@lightproject/common/logger';
 import { shutdownTelemetry } from '@lightproject/common/server';
 import { getServiceInstanceId, settleWithin } from '@lightproject/common/utils';
 
-import { resolveTsxApi } from '#tsx-api';
-
 import { config } from '../config';
 import { UnrecoverableJobError } from '../core/function';
 import { startPool } from '../core/pool';
@@ -38,15 +36,6 @@ interface ThreadExecutor {
   execute: Executor;
   close: () => Promise<void>;
 }
-
-const spawnThread = (entry: URL, options: WorkerOptions) => {
-  if (!entry.pathname.endsWith('.ts')) {
-    return new Worker(entry, options);
-  }
-  const tsx = JSON.stringify(resolveTsxApi());
-  const script = `import(${tsx}).then(({ register }) => { register(); return import(${JSON.stringify(entry.href)}); });`;
-  return new Worker(script, { ...options, eval: true });
-};
 
 const maxStartFailures = 3;
 
@@ -96,7 +85,7 @@ const createThreadExecutor = (
   };
 
   const spawn = () => {
-    const worker = spawnThread(entry, workerOptions);
+    const worker = new Worker(entry, workerOptions);
     worker.on('message', (data: unknown) => {
       if (threadReadySchema.safeParse(data).success) {
         readyThreads.add(worker);
@@ -351,7 +340,6 @@ export {
   parseResponse,
   registerShutdown,
   serveWorkerThread,
-  spawnThread,
   start,
 };
 export type { ThreadExecutor };

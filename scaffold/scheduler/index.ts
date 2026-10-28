@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env vpx
 
 import { runCli } from '../scaffold.ts';
 

@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import { generateUuid, sleep } from '@lightproject/common/utils';
 import { afterEach, describe, expect, test } from 'vite-plus/test';
 
@@ -8,7 +10,14 @@ import { type ThreadExecutor, createThreadExecutor } from '../../src/runtimes/no
 import { threadTest } from './fixtures/thread-functions';
 
 const entry = new globalThis.URL('fixtures/thread-entry.ts', import.meta.url);
-const execArgv = ['--conditions=typescript'];
+const vitePlusDist = new globalThis.URL('dist/', import.meta.resolve('vite-plus/package.json'));
+const execArgv = [
+  '--require',
+  fileURLToPath(new globalThis.URL('script-preload.cjs', vitePlusDist)),
+  '--import',
+  new globalThis.URL('script-register.js', vitePlusDist).href,
+  '--conditions=typescript',
+];
 
 const executors: ThreadExecutor[] = [];
 

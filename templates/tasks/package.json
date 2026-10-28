@@ -9,9 +9,6 @@
   "main": "./dist/client.cjs",
   "module": "./dist/client.mjs",
   "types": "./dist/client.d.mts",
-  "imports": {
-    "#tsx-api": "./src/runtimes/tsx-api.ts"
-  },
   "exports": {
     ".": [
       {
@@ -41,7 +38,6 @@
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "drizzle-orm": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite-plus": "catalog:",
     "wrangler": "catalog:"

@@ -94,6 +94,7 @@ export default defineConfig(({ mode }): UserConfig => {
         },
         env: { SKIP_OPENTELEMETRY: 'true' },
         environment: 'jsdom',
+        fsModuleCache: false,
         globalSetup: ['tests/unit/helpers/global-setup.ts'],
         isolate: true,
         setupFiles: ['tests/unit/helpers/setup.ts'],

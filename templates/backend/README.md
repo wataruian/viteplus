@@ -95,7 +95,7 @@ Use `vp run dev`, not `vp dev`: the built-in `vp dev` starts a Vite dev server, 
 
 | Task                     | What it does                                                                                         |
 | ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `vp run dev`             | `tsx watch` on `src/index.ts` (Node, `@hono/node-server`) at `http://localhost:2000`                 |
+| `vp run dev`             | `vpx --watch` on `src/index.ts` (Node, `@hono/node-server`) at `http://localhost:2000`               |
 | `vp run wrangler:dev`    | The Worker runtime locally (`wrangler dev`) on `BACKEND_PORT`, inspector on `BACKEND_INSPECTOR_PORT` |
 | `vp run build`           | `vp pack`: ESM + CJS into `dist/` (`dist/index.mjs` is the Node entry, `dist/client.*` the library)  |
 | `vp run start`           | `node dist/index.mjs`; build first with `vp run -t build` (also builds `@lightproject/common`)       |
