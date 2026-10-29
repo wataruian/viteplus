@@ -23,12 +23,12 @@ Commands run from `packages/common` unless noted.
 2. Build `dist/`:
 
    ```sh
-   vp run build
+   vpr build
    ```
 
    Apps resolve `@lightproject/common` from `dist/` at runtime (Node, `wrangler`, and the apps'
    own tests), so **rebuild after every change** here, or a stale build is used. From the repo
-   root: `vp run --filter @lightproject/common build`; `vp run ready` builds before testing.
+   root: `vpr --filter @lightproject/common build`; `vpr ready` builds before testing.
 
 ## Environment variables
 
@@ -90,12 +90,12 @@ Every `src/<dir>/index.ts` is a subpath export (`./*` in `package.json`, `typesc
 | `node`        | Node-only filesystem helpers (`getProjectRoot`, `readFile`, `copyPath`, …)                                                                                                                                                                                                                                  |
 | `testing`     | `startFakeOtelCollector()` for apps' tests                                                                                                                                                                                                                                                                  |
 
-| Task                | What it does                                            |
-| ------------------- | ------------------------------------------------------- |
-| `vp run build`      | `vp pack`: ESM + CJS and `.d.mts`/`.d.cts` into `dist/` |
-| `vp run check`      | `vp check` (format, lint, type check)                   |
-| `vp run type-check` | `tsgo`                                                  |
-| `vp run test:unit`  | `vp test`, cached                                       |
+| Task             | What it does                                            |
+| ---------------- | ------------------------------------------------------- |
+| `vpr build`      | `vp pack`: ESM + CJS and `.d.mts`/`.d.cts` into `dist/` |
+| `vpr check`      | `vp check` (format, lint, type check)                   |
+| `vpr type-check` | `tsgo`                                                  |
+| `vpr test:unit`  | `vp test`, cached                                       |
 
 ### `#import-meta-env`
 
@@ -118,7 +118,7 @@ vp test   # unit only, no services needed; 100% coverage thresholds
   after the import has no effect. When asserting an unset variable, also clear its `VITE_` mirror
   (Vitest copies `VITE_*` from `.env` into `process.env`).
 
-Before finishing, run `vp run ready` from the repo root (it rebuilds common before the apps'
+Before finishing, run `vpr ready` from the repo root (it rebuilds common before the apps'
 tests). To reproduce CI: `dagger call test-unit --workspace=@lightproject/common`.
 
 ## Deployment

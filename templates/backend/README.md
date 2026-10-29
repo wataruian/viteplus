@@ -35,11 +35,11 @@ Commands run from `templates/backend` unless noted.
    above) and migrate it once, from `templates/datastore`:
 
    ```sh
-   vp run build && vp run db:migrate
+   vpr build && vpr db:migrate
    ```
 
    The backend keeps no tables or migrations of its own: it queries `@lightproject/datastore`
-   and enqueues jobs through `@lightproject/tasks`, whose worker (`vp run dev` in
+   and enqueues jobs through `@lightproject/tasks`, whose worker (`vpr dev` in
    `templates/tasks`) runs them.
 
 ## Environment variables
@@ -91,18 +91,18 @@ A Worker opens one per request that asks for it and closes it afterwards (`src/d
 
 ## Development
 
-Use `vp run dev`, not `vp dev`: the built-in `vp dev` starts a Vite dev server, never the API.
+Use `vpr dev`, not `vp dev`: the built-in `vp dev` starts a Vite dev server, never the API.
 
-| Task                     | What it does                                                                                         |
-| ------------------------ | ---------------------------------------------------------------------------------------------------- |
-| `vp run dev`             | `vpx --watch` on `src/index.ts` (Node, `@hono/node-server`) at `http://localhost:2000`               |
-| `vp run wrangler:dev`    | The Worker runtime locally (`wrangler dev`) on `BACKEND_PORT`, inspector on `BACKEND_INSPECTOR_PORT` |
-| `vp run build`           | `vp pack`: ESM + CJS into `dist/` (`dist/index.mjs` is the Node entry, `dist/client.*` the library)  |
-| `vp run start`           | `node dist/index.mjs`; build first with `vp run -t build` (also builds `@lightproject/common`)       |
-| `vp run check`           | `vp check` (format, lint, type check)                                                                |
-| `vp run type-check`      | `tsgo`                                                                                               |
-| `vp run wrangler:deploy` | `wrangler deploy`; set `CLOUDFLARE_ENV` to pick the `[env.*]` Worker (see Deployment)                |
-| `vp run wrangler:delete` | `wrangler delete` of the selected Worker                                                             |
+| Task                  | What it does                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| `vpr dev`             | `vpx --watch` on `src/index.ts` (Node, `@hono/node-server`) at `http://localhost:2000`               |
+| `vpr wrangler:dev`    | The Worker runtime locally (`wrangler dev`) on `BACKEND_PORT`, inspector on `BACKEND_INSPECTOR_PORT` |
+| `vpr build`           | `vp pack`: ESM + CJS into `dist/` (`dist/index.mjs` is the Node entry, `dist/client.*` the library)  |
+| `vpr start`           | `node dist/index.mjs`; build first with `vpr -t build` (also builds `@lightproject/common`)          |
+| `vpr check`           | `vp check` (format, lint, type check)                                                                |
+| `vpr type-check`      | `tsgo`                                                                                               |
+| `vpr wrangler:deploy` | `wrangler deploy`; set `CLOUDFLARE_ENV` to pick the `[env.*]` Worker (see Deployment)                |
+| `vpr wrangler:delete` | `wrangler delete` of the selected Worker                                                             |
 
 From the repo root, `mise run start dev|prod|wrangler` runs `dev`/`start`/`wrangler:dev` in every
 app at once.
@@ -140,7 +140,7 @@ them off only makes the server answer 404.
 ## Testing
 
 ```sh
-vp test   # unit tests in tests/unit (no services needed); same as vp run test:unit
+vp test   # unit tests in tests/unit (no services needed); same as vpr test:unit
 ```
 
 - Coverage thresholds are 100% (`src/runtimes/**`, `src/client.ts` and `index.ts` files are
@@ -152,17 +152,17 @@ vp test   # unit tests in tests/unit (no services needed); same as vp run test:u
 - Unit tests set `SKIP_OPENTELEMETRY=true`; `tests/unit/telemetry.test.ts` opts back in against a
   fake collector, so no real endpoint is ever hit.
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI:
+Before finishing, run `vpr ready` from the repo root. To reproduce CI:
 `dagger call test-unit --workspace=@lightproject/backend`.
 
 ## Deployment
 
 Two artifacts per version, both built by Dagger:
 
-| Target                                                              | How                                                                                  |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Container image `<REGISTRY_ADDRESS>/backend:<tag>` (+ `latest`)     | `dagger call publish`: production install + `dist/`, command `node dist/index.mjs`   |
-| Cloudflare Worker `lightproject-backend-<dev\|staging\|production>` | `dagger call wrangler`: `vp run wrangler:deploy` with `CLOUDFLARE_ENV=<environment>` |
+| Target                                                              | How                                                                                |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Container image `<REGISTRY_ADDRESS>/backend:<tag>` (+ `latest`)     | `dagger call publish`: production install + `dist/`, command `node dist/index.mjs` |
+| Cloudflare Worker `lightproject-backend-<dev\|staging\|production>` | `dagger call wrangler`: `vpr wrangler:deploy` with `CLOUDFLARE_ENV=<environment>`  |
 
 `CLOUDFLARE_ENV` selects the `[env.develop|staging|production]` block of `wrangler.toml`. Vars
 are not inherited by `[env.*]` blocks, so each lists its own `ENV`, `ALLOW_ALL_IPS` and
@@ -186,7 +186,7 @@ dagger call wrangler --workspace=@lightproject/backend --environment=develop \
   --worker-var=OTLP_ENDPOINT=https://…
 
 # Or directly with wrangler (from templates/backend)
-CLOUDFLARE_ENV=develop vp run wrangler:deploy
+CLOUDFLARE_ENV=develop vpr wrangler:deploy
 
 # Container image, on any container runtime
 docker run --rm -p 2000:2000 -e ENV=develop -e ALLOW_ALL_IPS=true -e OTLP_ENDPOINT=https://… \

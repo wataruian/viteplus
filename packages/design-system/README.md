@@ -37,7 +37,7 @@ Commands run from `packages/design-system` unless noted.
 2. Start the preview app and Storybook:
 
    ```sh
-   vp run dev   # preview app http://localhost:6007, Storybook http://localhost:6006
+   vpr dev   # preview app http://localhost:6007, Storybook http://localhost:6006
    ```
 
 Apps need no build of this package in dev: `templates/frontend` aliases it to `src/` and loads
@@ -81,20 +81,20 @@ of the task cache key, so changing any of them reruns cached tasks. In CI the de
 
 ## Development
 
-| Task                     | What it does                                                                                                                                                                |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp run dev`             | Preview app (`vp dev`, `DESIGN_SYSTEM_PORT`) + Storybook dev (`STORYBOOK_PORT`), via `src/start.ts`                                                                         |
-| `vp run build`           | Regenerates variant stories, compiles the styles registry, then `vp pack` (`dist/`), `vp build` (preview app, `out/`), `storybook build` (`storybook-static/`); task-cached |
-| `vp run start`           | `vp preview` of `out/` and `storybook-static/` on the same ports (build first)                                                                                              |
-| `vp run wrangler:dev`    | Serves `out/` and `storybook-static/` through both Workers locally (build first)                                                                                            |
-| `vp run wrangler:deploy` | `wrangler deploy` of both configs (`CLOUDFLARE_ENV` picks the `[env.*]`; see Deployment)                                                                                    |
-| `vp run wrangler:delete` | `wrangler delete` of both Workers                                                                                                                                           |
-| `vp run check`           | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks                                                                                            |
-| `vp run test:unit`       | `vp test` with coverage (task-cached)                                                                                                                                       |
-| `vp run test:e2e`        | Playwright browser tests (task-cached, restores `e2e-test-results/` on a cache hit)                                                                                         |
+| Task                  | What it does                                                                                                                                                                |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vpr dev`             | Preview app (`vp dev`, `DESIGN_SYSTEM_PORT`) + Storybook dev (`STORYBOOK_PORT`), via `src/start.ts`                                                                         |
+| `vpr build`           | Regenerates variant stories, compiles the styles registry, then `vp pack` (`dist/`), `vp build` (preview app, `out/`), `storybook build` (`storybook-static/`); task-cached |
+| `vpr start`           | `vp preview` of `out/` and `storybook-static/` on the same ports (build first)                                                                                              |
+| `vpr wrangler:dev`    | Serves `out/` and `storybook-static/` through both Workers locally (build first)                                                                                            |
+| `vpr wrangler:deploy` | `wrangler deploy` of both configs (`CLOUDFLARE_ENV` picks the `[env.*]`; see Deployment)                                                                                    |
+| `vpr wrangler:delete` | `wrangler delete` of both Workers                                                                                                                                           |
+| `vpr check`           | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks                                                                                            |
+| `vpr test:unit`       | `vp test` with coverage (task-cached)                                                                                                                                       |
+| `vpr test:e2e`        | Playwright browser tests (task-cached, restores `e2e-test-results/` on a cache hit)                                                                                         |
 
 From the repo root, `mise run start dev` (or `prod`, `wrangler`) starts every app and this package
-in parallel. To add a component (component, test, story, registry export), run `vp run plop` from the repo root.
+in parallel. To add a component (component, test, story, registry export), run `vpr plop` from the repo root.
 
 - **Components**: each `src/components/<name>.tsx` defines a `<name>Styles` object (`base`,
   `default`, `variants`) fed to `cva`, and is exported from `src/components/registry.ts`. Variants
@@ -213,7 +213,7 @@ To go back to the defaults, delete `src/themes.ts` and `uno.config.ts`, point `c
 
 ```sh
 vp test            # unit (jsdom), 100% coverage of src/ and the .storybook mode files
-vp run test:e2e    # Playwright, Chromium: Storybook on 6116 + preview app on 6117
+vpr test:e2e    # Playwright, Chromium: Storybook on 6116 + preview app on 6117
 ```
 
 - Unit tests live in `tests/unit/`; `preview-registry-drift.test.tsx` fails when the registry and
@@ -221,10 +221,10 @@ vp run test:e2e    # Playwright, Chromium: Storybook on 6116 + preview app on 61
 - E2E tests in `tests/e2e/` cover what jsdom cannot: the light/dark toggle updating in place (and
   persisting) on Storybook's docs and variant pages, and on the preview app. Playwright starts its
   own `storybook dev` and `vp dev` on `STORYBOOK_E2E_PORT`/`DESIGN_SYSTEM_E2E_PORT`, so they do not
-  clash with `vp run dev`. Each run writes `e2e-test-results/`: a video per test
+  clash with `vpr dev`. Each run writes `e2e-test-results/`: a video per test
   (`results/**/video.webm`), `results.json`, and an HTML report (`report/index.html`).
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI (from the repo root):
+Before finishing, run `vpr ready` from the repo root. To reproduce CI (from the repo root):
 `dagger call test-unit --workspace=@lightproject/design-system` and
 `dagger call test-end-to-end --workspace=@lightproject/design-system` (installs Chromium and its
 system libraries in the container). The `design-system` job in `verify.yml` is currently commented
@@ -249,7 +249,7 @@ URLs are `https://<worker>.wataru.workers.dev`.
 and `--build-env=VITE_BACKEND_URL=https://lightproject-backend-<dev|staging|production>.wataru.workers.dev`.
 It publishes the nginx image `<REGISTRY_ADDRESS>/design-system` via Dagger `publish` (`nginx.conf`:
 the preview app from `out/` on port 80, Storybook from `storybook-static/` on port 81), deploys both
-Workers via Dagger `wrangler` (`vp run wrangler:deploy` with `CLOUDFLARE_ENV` and the
+Workers via Dagger `wrangler` (`vpr wrangler:deploy` with `CLOUDFLARE_ENV` and the
 `CLOUDFLARE_*` secrets), and smoke-tests both Worker URLs for HTTP 200. Promotion to
 `staging`/`production` and the workflow chain: root `AGENTS.md` → "CI Pipeline (Dagger)".
 
@@ -257,8 +257,8 @@ Workers via Dagger `wrangler` (`vp run wrangler:deploy` with `CLOUDFLARE_ENV` an
 
 ```sh
 # Workers (credentials from the environment or the root .env)
-vp run build
-CLOUDFLARE_ENV=develop vp run wrangler:deploy
+vpr build
+CLOUDFLARE_ENV=develop vpr wrangler:deploy
 
 # Same path CI takes (from the repo root)
 dagger call wrangler --workspace=@lightproject/design-system --environment=develop \

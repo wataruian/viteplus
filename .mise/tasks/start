@@ -11,4 +11,4 @@ if [[ "${mode}" != "dev" && "${mode}" != "prod" && "${mode}" != "wrangler" ]]; t
 fi
 
 echo "Mode: ${mode}"
-vp run "serve:${mode}"
+vpr "serve:${mode}"

@@ -166,7 +166,7 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 6.  **Develop**: Run `mise run start dev` to start every app, or follow a workspace's README to run one.
 
 > [!TIP]
-> Use `vp run <command>` at the root to execute tasks recursively. For example, `vp run test:unit` runs unit tests for all packages and apps (the root's own files have `vp run root:check` and `vp run root:test:unit`) (`vp run test:e2e` runs the Playwright browser tests).
+> Use `vpr <command>` at the root to execute tasks recursively. For example, `vpr test:unit` runs unit tests for all packages and apps (the root's own files have `vpr root:check` and `vpr root:test:unit`) (`vpr test:e2e` runs the Playwright browser tests).
 
 ## 🛠 Development Workflow
 
@@ -189,16 +189,16 @@ We use `mise` as the primary task runner for high-level repository automation. T
 | Category     | Command          | Description                                       |
 | :----------- | :--------------- | :------------------------------------------------ |
 | **Start**    | `vp install`     | Install dependencies and setup hooks.             |
-| **Develop**  | `vp run dev`     | Start the development server for all apps.        |
+| **Develop**  | `vpr dev`        | Start the development server for all apps.        |
 |              | `vp check`       | Run format, lint, and type checks.                |
 |              | `vp test`        | Run all tests in the workspace recursively.       |
-| **Build**    | `vp run build`   | Build all apps and packages for production.       |
+| **Build**    | `vpr build`      | Build all apps and packages for production.       |
 | **Maintain** | `vp cache clean` | Clear the task cache if behavior is inconsistent. |
-|              | `vp run ready`   | Full suite of checks (recommended before push).   |
+|              | `vpr ready`      | Full suite of checks (recommended before push).   |
 
 ### Workspace Tasks
 
-Each workspace's tasks (dev servers, builds, `wrangler`, database generation and migration, …) are listed in its README's Development section. Run them from the workspace directory with `vp run <task>`, or from the root with `vp run --filter <package> <task>`. Remember that `vp dev` (built-in) and `vp run dev` (task) may differ; check the README.
+Each workspace's tasks (dev servers, builds, `wrangler`, database generation and migration, …) are listed in its README's Development section. Run them from the workspace directory with `vpr <task>`, or from the root with `vpr --filter <package> <task>`. Remember that `vp dev` (built-in) and `vpr dev` (task) may differ; check the README.
 
 ### ⚓️ Git Hooks
 
@@ -216,7 +216,7 @@ CI runs entirely through a [Dagger](https://dagger.io/) module in `dagger/src/in
 
 | Function                                                                                               | Description                                                                                                                                                                                                                                                                                                                                                                             |
 | :----------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dagger call ready`                                                                                    | Full suite (madge, root, check, format, lint, type-check, build, test) against the whole repo, like `vp run ready`.                                                                                                                                                                                                                                                                     |
+| `dagger call ready`                                                                                    | Full suite (madge, root, check, format, lint, type-check, build, test) against the whole repo, like `vpr ready`.                                                                                                                                                                                                                                                                        |
 | `dagger call check --workspace=<pkg>`                                                                  | Format, lint, and type checks for one workspace (e.g. `@lightproject/backend`).                                                                                                                                                                                                                                                                                                         |
 | `dagger call build --workspace=<pkg>`                                                                  | Build one workspace and its internal dependencies.                                                                                                                                                                                                                                                                                                                                      |
 | `dagger call test-unit\|test-integration\|test-end-to-end --workspace=<pkg>`                           | Run one workspace's unit (with coverage), integration or browser tests.                                                                                                                                                                                                                                                                                                                 |
@@ -294,8 +294,8 @@ Coverage reports are generated in the `coverage/` directory of each individual p
 Workspaces with a UI (`templates/frontend`, `packages/design-system`) also have Playwright tests in `tests/e2e/` that drive a real Chromium, for behavior jsdom can't reproduce. Their READMEs cover the one-time Chromium install, ports and what each suite tests.
 
 ```bash
-vp run -r test:e2e    # browser tests in every workspace that has them
-vp run -r test:unit   # unit tests
+vpr -r test:e2e    # browser tests in every workspace that has them
+vpr -r test:unit   # unit tests
 ```
 
 Both are cached like the other tasks; a cache hit also restores the e2e output. Each run writes to `e2e-test-results/` in the workspace: a video of every test (`results/**/video.webm`), a JSON report (`results.json`), and an HTML report (`report/index.html`, which embeds the videos).

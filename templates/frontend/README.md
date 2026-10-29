@@ -24,13 +24,13 @@ Commands run from `templates/frontend` unless noted.
    repo root):
 
    ```sh
-   vp run --filter @lightproject/backend dev
+   vpr --filter @lightproject/backend dev
    docker compose up -d   # Grafana LGTM + OTel collector; without it telemetry exports just fail
    ```
 
    The home page has three tRPC buttons, all calling the backend's sample `test` procedures:
    "Call tRPC sample" (`test.hello`), "Enqueue ping job" (`test.enqueuePing`, which needs the
-   tasks worker, `vp run --filter @lightproject/tasks dev`, to run the job) and "Add random user"
+   tasks worker, `vpr --filter @lightproject/tasks dev`, to run the job) and "Add random user"
    (`test.createUser`). The last two need the migrated database (`templates/backend/README.md` →
    Setup). Each logs its result, or `Failed to call tRPC server` with the method.
 
@@ -73,17 +73,17 @@ Shared, from `commonEnv` (full list in `packages/common/README.md`). The ones th
 
 ## Development
 
-| Task                     | What it does                                                                        |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| `vp dev` / `vp run dev`  | Vite dev server on `FRONTEND_PORT` with HMR                                         |
-| `vp run build`           | Production bundle in `dist/` (`vp build`, task-cached)                              |
-| `vp run start`           | `vp preview` of `dist/` on `FRONTEND_PORT`                                          |
-| `vp run wrangler:dev`    | Serves `dist/` through the Worker locally (build first)                             |
-| `vp run wrangler:deploy` | `wrangler deploy` of `dist/` (`CLOUDFLARE_ENV` picks the `[env.*]`; see Deployment) |
-| `vp run wrangler:delete` | `wrangler delete` of the Worker                                                     |
-| `vp run check`           | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks    |
-| `vp run test:unit`       | `vp test` with coverage (task-cached)                                               |
-| `vp run test:e2e`        | Playwright browser tests (task-cached, restores `e2e-test-results/` on a cache hit) |
+| Task                  | What it does                                                                        |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| `vp dev` / `vpr dev`  | Vite dev server on `FRONTEND_PORT` with HMR                                         |
+| `vpr build`           | Production bundle in `dist/` (`vp build`, task-cached)                              |
+| `vpr start`           | `vp preview` of `dist/` on `FRONTEND_PORT`                                          |
+| `vpr wrangler:dev`    | Serves `dist/` through the Worker locally (build first)                             |
+| `vpr wrangler:deploy` | `wrangler deploy` of `dist/` (`CLOUDFLARE_ENV` picks the `[env.*]`; see Deployment) |
+| `vpr wrangler:delete` | `wrangler delete` of the Worker                                                     |
+| `vpr check`           | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks    |
+| `vpr test:unit`       | `vp test` with coverage (task-cached)                                               |
+| `vpr test:e2e`        | Playwright browser tests (task-cached, restores `e2e-test-results/` on a cache hit) |
 
 From the repo root, `mise run start dev` (or `wrangler`) starts every app in parallel.
 
@@ -110,7 +110,7 @@ time.
 
 ```sh
 vp test            # unit (jsdom), against the backend in Node and in a local wrangler Worker
-vp run test:e2e    # Playwright, Chromium, its own dev server on FRONTEND_E2E_PORT (2111)
+vpr test:e2e    # Playwright, Chromium, its own dev server on FRONTEND_E2E_PORT (2111)
 ```
 
 - Unit tests live in `tests/unit/`; coverage must stay at 100% for `src/` and `social-meta.ts`.
@@ -121,7 +121,7 @@ vp run test:e2e    # Playwright, Chromium, its own dev server on FRONTEND_E2E_PO
   per test (`results/**/video.webm`), `results.json`, and an HTML report (`report/index.html`).
 - One-time Chromium download: `vp exec playwright install chromium`.
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI (from the repo root):
+Before finishing, run `vpr ready` from the repo root. To reproduce CI (from the repo root):
 `dagger call test-unit --workspace=@lightproject/frontend` and
 `dagger call test-end-to-end --workspace=@lightproject/frontend`; `verify-workspace.yml` uploads
 the e2e output as the `e2e-frontend` artifact.
@@ -152,7 +152,7 @@ frontend-type workspaces):
 
 It then publishes the nginx image `<REGISTRY_ADDRESS>/frontend` (`nginx.conf`, `dist/` in
 `/usr/share/nginx/html/vite`, port 80) via Dagger `publish`, deploys the Worker via Dagger
-`wrangler` (`vp run wrangler:deploy` with `CLOUDFLARE_ENV` and the `CLOUDFLARE_*` secrets), and
+`wrangler` (`vpr wrangler:deploy` with `CLOUDFLARE_ENV` and the `CLOUDFLARE_*` secrets), and
 smoke-tests the Worker URL for HTTP 200. Promotion to `staging`/`production` and the workflow
 chain: root `AGENTS.md` → "CI Pipeline (Dagger)".
 
@@ -161,8 +161,8 @@ chain: root `AGENTS.md` → "CI Pipeline (Dagger)".
 ```sh
 # Worker (credentials from the environment or the root .env)
 VITE_ENV=develop VITE_BACKEND_URL=https://lightproject-backend-dev.wataru.workers.dev \
-  VITE_FRONTEND_URL=https://lightproject-frontend-dev.wataru.workers.dev vp run build
-CLOUDFLARE_ENV=develop vp run wrangler:deploy
+  VITE_FRONTEND_URL=https://lightproject-frontend-dev.wataru.workers.dev vpr build
+CLOUDFLARE_ENV=develop vpr wrangler:deploy
 
 # Same path CI takes (from the repo root)
 dagger call wrangler --workspace=@lightproject/frontend --environment=develop \

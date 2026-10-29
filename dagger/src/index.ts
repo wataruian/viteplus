@@ -88,7 +88,7 @@ export class Monorepo {
   public async madge(): Promise<Directory> {
     const container = withInstalledRootSource(this.rootSource);
 
-    const stdout = await container.withExec(['vp', 'run', '-r', 'madge']).stdout();
+    const stdout = await container.withExec(['vpr', '-r', 'madge']).stdout();
 
     return outputDirectory('madge', stdout);
   }
@@ -97,8 +97,8 @@ export class Monorepo {
   public async root(): Promise<Directory> {
     const container = withInstalledRootSource(this.rootSource);
 
-    const checked = container.withExec(['vp', 'run', '-r', 'root:check']);
-    const tested = checked.withExec(['vp', 'run', '-r', 'root:test:unit']);
+    const checked = container.withExec(['vpr', '-r', 'root:check']);
+    const tested = checked.withExec(['vpr', '-r', 'root:test:unit']);
     const stdout = `${await checked.stdout()}${await tested.stdout()}`;
 
     return outputDirectory('root', stdout);
@@ -108,7 +108,7 @@ export class Monorepo {
   public async ready(): Promise<Directory> {
     const container = withPostgres(withInstalledRootSource(this.rootSource), WORKSPACE_NAMES);
 
-    const stdout = await container.withExec(['vp', 'run', 'ready']).stdout();
+    const stdout = await container.withExec(['vpr', 'ready']).stdout();
 
     return outputDirectory('ready', stdout);
   }
@@ -125,9 +125,7 @@ export class Monorepo {
     const container = await this.mountWorkspaceFiles(workspace);
 
     const execArgs =
-      workspace === DAGGER_WORKSPACE
-        ? ['vp', 'run', '-r', 'dagger:check']
-        : ['vp', 'run', '-r', 'check'];
+      workspace === DAGGER_WORKSPACE ? ['vpr', '-r', 'dagger:check'] : ['vpr', '-r', 'check'];
     const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('check', stdout);
@@ -138,9 +136,7 @@ export class Monorepo {
     const container = await this.mountWorkspaceFiles(workspace);
 
     const execArgs =
-      workspace === DAGGER_WORKSPACE
-        ? ['vp', 'run', '-r', 'dagger:format']
-        : ['vp', 'run', '-r', 'format'];
+      workspace === DAGGER_WORKSPACE ? ['vpr', '-r', 'dagger:format'] : ['vpr', '-r', 'format'];
     const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('format', stdout);
@@ -151,9 +147,7 @@ export class Monorepo {
     const container = await this.mountWorkspaceFiles(workspace);
 
     const execArgs =
-      workspace === DAGGER_WORKSPACE
-        ? ['vp', 'run', '-r', 'dagger:lint']
-        : ['vp', 'run', '-r', 'lint'];
+      workspace === DAGGER_WORKSPACE ? ['vpr', '-r', 'dagger:lint'] : ['vpr', '-r', 'lint'];
     const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('lint', stdout);
@@ -165,8 +159,8 @@ export class Monorepo {
 
     const execArgs =
       workspace === DAGGER_WORKSPACE
-        ? ['vp', 'run', '-r', 'dagger:type-check']
-        : ['vp', 'run', '-r', 'type-check'];
+        ? ['vpr', '-r', 'dagger:type-check']
+        : ['vpr', '-r', 'type-check'];
     const stdout = await container.withExec(execArgs).stdout();
 
     return outputDirectory('type-check', stdout);
@@ -176,7 +170,7 @@ export class Monorepo {
   public async build(workspace: string, buildEnv?: string[]): Promise<Container> {
     const container = await mountFiles(this.source, workspace);
 
-    return withBuildEnv(container, workspace, buildEnv).withExec(['vp', 'run', '-r', 'build']);
+    return withBuildEnv(container, workspace, buildEnv).withExec(['vpr', '-r', 'build']);
   }
 
   @func()
@@ -210,8 +204,8 @@ export class Monorepo {
       : await this.build(workspace, buildEnv);
 
     const testExecArgs = isDagger
-      ? ['vp', 'run', '-r', 'dagger:test:unit']
-      : ['vp', 'run', '--filter', workspace, 'test:unit'];
+      ? ['vpr', '-r', 'dagger:test:unit']
+      : ['vpr', '--filter', workspace, 'test:unit'];
     const testContainer = container.withExec(testExecArgs, { expect: ReturnType.Any });
 
     const [exitCode, stdout] = await Promise.all([
@@ -253,10 +247,9 @@ export class Monorepo {
     }
 
     const container = withPostgres(await this.build(workspace), [workspace]);
-    const testContainer = container.withExec(
-      ['vp', 'run', '--filter', workspace, 'test:integration'],
-      { expect: ReturnType.Any },
-    );
+    const testContainer = container.withExec(['vpr', '--filter', workspace, 'test:integration'], {
+      expect: ReturnType.Any,
+    });
 
     const [exitCode, stdout] = await Promise.all([
       testContainer.exitCode(),
@@ -278,7 +271,7 @@ export class Monorepo {
     }
 
     const container = withPlaywrightChromium(await mountFiles(this.source, workspace), workspace);
-    const e2eContainer = container.withExec(['vp', 'run', '--filter', workspace, 'test:e2e'], {
+    const e2eContainer = container.withExec(['vpr', '--filter', workspace, 'test:e2e'], {
       expect: ReturnType.Any,
     });
 
@@ -666,7 +659,7 @@ export class Monorepo {
       .withEnvVariable('DEPLOY_REQUESTED_AT', new Date().toISOString());
 
     return withBuildEnv(deployContainer, workspace, buildEnv)
-      .withExec(['vp', 'run', '--filter', workspace, 'wrangler:deploy', ...varArgs])
+      .withExec(['vpr', '--filter', workspace, 'wrangler:deploy', ...varArgs])
       .stdout();
   }
 

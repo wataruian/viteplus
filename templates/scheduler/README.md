@@ -77,15 +77,15 @@ cron to `[triggers] crons` in `wrangler.toml` too (`wrangler-crons.test.ts` fail
 match). Node APIs only in `src/runtimes/node.ts`; the Worker entry `src/runtimes/edge.ts` may
 export only the default handler.
 
-| Task                                      | What it does                                                                        |
-| ----------------------------------------- | ----------------------------------------------------------------------------------- |
-| `vp run script <name> [--input '<json>']` | Runs a script once from source (`vpx`); `--scheduled` runs it as its cron would     |
-| `vp run script --list`                    | Lists the scripts and their schedules                                               |
-| `vp run build`                            | Builds `dist/` (`dist/index.mjs`, the client entry)                                 |
-| `vp run start <name> …`                   | Same as `script`, from the built `node dist/index.mjs` (what the image runs)        |
-| `vp run wrangler:dev`                     | Local Worker on `SCHEDULER_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled` |
-| `vp run wrangler:deploy`                  | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                       |
-| `vp run wrangler:delete`                  | `wrangler delete`                                                                   |
+| Task                                   | What it does                                                                        |
+| -------------------------------------- | ----------------------------------------------------------------------------------- |
+| `vpr script <name> [--input '<json>']` | Runs a script once from source (`vpx`); `--scheduled` runs it as its cron would     |
+| `vpr script --list`                    | Lists the scripts and their schedules                                               |
+| `vpr build`                            | Builds `dist/` (`dist/index.mjs`, the client entry)                                 |
+| `vpr start <name> …`                   | Same as `script`, from the built `node dist/index.mjs` (what the image runs)        |
+| `vpr wrangler:dev`                     | Local Worker on `SCHEDULER_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled` |
+| `vpr wrangler:deploy`                  | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                       |
+| `vpr wrangler:delete`                  | `wrangler delete`                                                                   |
 
 Exit codes (Node): `0` succeeded, `1` failed, timed out or stopped, `2` usage error, unknown
 script or invalid input, `3` skipped because a previous run still holds the lock, `4` the run
@@ -166,9 +166,9 @@ complete CronJob are in `.ai-data/architecture.md` → "Adding a script".
 5. **Run it**:
 
    ```sh
-   vp run script check-admin --input '{"email":"ada@example.com"}'   # INFO : check-admin: ada@example.com is Ada
-   vp run script check-admin --scheduled                             # WARN : check-admin: no user admin@example.com
-   vp run script check-admin --input '{"email":"nope"}'              # invalid-input, exit 2
+   vpr script check-admin --input '{"email":"ada@example.com"}'   # INFO : check-admin: ada@example.com is Ada
+   vpr script check-admin --scheduled                             # WARN : check-admin: no user admin@example.com
+   vpr script check-admin --input '{"email":"nope"}'              # invalid-input, exit 2
    ```
 
    On the local Worker (see "Run on Cloudflare" below): the cron
@@ -182,7 +182,7 @@ complete CronJob are in `.ai-data/architecture.md` → "Adding a script".
 ### Run on Node
 
 ```sh
-vp run script ping --input '{"message":"hello"}'
+vpr script ping --input '{"message":"hello"}'
 ```
 
 Expected: `ping: hello`, then `Script ping succeeded`.
@@ -190,7 +190,7 @@ Expected: `ping: hello`, then `Script ping succeeded`.
 ### Run on Cloudflare (local)
 
 ```sh
-vp run wrangler:dev --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
+vpr wrangler:dev --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
 # another terminal
 curl "http://localhost:2003/__scheduled?cron=*/5+*+*+*+*"
 curl -X POST -H "Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123456789" \
@@ -214,7 +214,7 @@ vp test   # unit: core, HTTP handler, CLI, cron/wrangler.toml drift; locks on a 
   PGlite and, in `test:integration`, the real Postgres).
 - Coverage is 100% (runtimes and entry files excluded).
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI:
+Before finishing, run `vpr ready` from the repo root. To reproduce CI:
 `dagger call test-unit --workspace=@lightproject/scheduler`.
 
 ### Local testing
@@ -226,15 +226,15 @@ abort), then logs `ping: <message>`. Postgres runs on Node, the local D1 on the 
 (`wrangler dev`): Node has no D1 binding.
 
 **Environment**: the commands need the root `.env` in the shell (mise does this when activated).
-`vp run` passes the exit code through, but not signals: signal cases use `node dist/index.mjs`.
+`vpr` passes the exit code through, but not signals: signal cases use `node dist/index.mjs`.
 
 **Prerequisites** (once):
 
 ```sh
 docker compose up -d postgres   # repo root
-cd ../../templates/datastore && vp run build \
-  && DATABASE_DIALECT=postgres vp run db:migrate && DATABASE_DIALECT=d1 vp run db:migrate
-cd ../../templates/scheduler && vp run build
+cd ../../templates/datastore && vpr build \
+  && DATABASE_DIALECT=postgres vpr db:migrate && DATABASE_DIALECT=d1 vpr db:migrate
+cd ../../templates/scheduler && vpr build
 ```
 
 **Query helpers**:
@@ -246,19 +246,19 @@ d1() { vp exec wrangler d1 execute DB --local --persist-to ../../.wrangler/state
 
 #### Postgres (Node runtime)
 
-| Case                         | Commands                                                  | Expected                                                                                                                       |
-| ---------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| P1. One-off with input       | `vp run script ping --input '{"message":"hello"}'`        | `INFO : ping: hello`, `INFO : Script ping succeeded`, exit 0                                                                   |
-| P2. As its cron would        | `vp run script ping --scheduled`                          | `INFO : ping: pong` (default input, `trigger: schedule`), succeeded                                                            |
-| P3. Invalid input            | `vp run script ping --input '{"message":5}'; echo $?`     | `ERROR: Script ping invalid-input` (`expected string, received number → at message`), exit 2                                   |
-| P4. Unknown script           | `vp run script nope; echo $?`                             | `ERROR: Unknown script "nope" (--list shows the registered ones)`, exit 2                                                      |
-| P5. List                     | `vp run script --list`                                    | `ping	*/5 * * * *`                                                                                                            |
-| P6. **Overlap** (real runs)  | the P6 block below                                        | 2nd run: `WARN : Script ping skipped: a previous run still holds its lock`, exit 3; 1st: `ping: first`, exit 0; 3rd: succeeded |
-| P7. Lock held by hand        | the P7 block below                                        | `WARN : Script ping skipped: …`, exit 3; after the `DELETE` the next run succeeds                                              |
-| P8. SIGTERM mid-run          | the P8 block below                                        | `Received SIGTERM; aborting the script`, `ERROR: Script ping aborted`, exit 1, no lock row left                                |
-| P9. Timeout                  | `vp run script ping --input '{"delayMs":45000}'; echo $?` | `ping: waiting 45000ms`, after 30 s (`timeoutMs`) `ERROR: Script ping timed-out`, exit 1                                       |
-| P10. Built output            | `vp run start ping --input '{"message":"from dist"}'`     | Same as P1, from `dist/index.mjs`                                                                                              |
-| P11. Crashed run (`SIGKILL`) | the P11 block below                                       | Right after: ~58 s left on the lease, next run skipped (exit 3); after the 60 s lease the next run succeeds, no lock row left  |
+| Case                         | Commands                                               | Expected                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| P1. One-off with input       | `vpr script ping --input '{"message":"hello"}'`        | `INFO : ping: hello`, `INFO : Script ping succeeded`, exit 0                                                                   |
+| P2. As its cron would        | `vpr script ping --scheduled`                          | `INFO : ping: pong` (default input, `trigger: schedule`), succeeded                                                            |
+| P3. Invalid input            | `vpr script ping --input '{"message":5}'; echo $?`     | `ERROR: Script ping invalid-input` (`expected string, received number → at message`), exit 2                                   |
+| P4. Unknown script           | `vpr script nope; echo $?`                             | `ERROR: Unknown script "nope" (--list shows the registered ones)`, exit 2                                                      |
+| P5. List                     | `vpr script --list`                                    | `ping	*/5 * * * *`                                                                                                            |
+| P6. **Overlap** (real runs)  | the P6 block below                                     | 2nd run: `WARN : Script ping skipped: a previous run still holds its lock`, exit 3; 1st: `ping: first`, exit 0; 3rd: succeeded |
+| P7. Lock held by hand        | the P7 block below                                     | `WARN : Script ping skipped: …`, exit 3; after the `DELETE` the next run succeeds                                              |
+| P8. SIGTERM mid-run          | the P8 block below                                     | `Received SIGTERM; aborting the script`, `ERROR: Script ping aborted`, exit 1, no lock row left                                |
+| P9. Timeout                  | `vpr script ping --input '{"delayMs":45000}'; echo $?` | `ping: waiting 45000ms`, after 30 s (`timeoutMs`) `ERROR: Script ping timed-out`, exit 1                                       |
+| P10. Built output            | `vpr start ping --input '{"message":"from dist"}'`     | Same as P1, from `dist/index.mjs`                                                                                              |
+| P11. Crashed run (`SIGKILL`) | the P11 block below                                    | Right after: ~58 s left on the lease, next run skipped (exit 3); after the 60 s lease the next run succeeds, no lock row left  |
 
 ```sh
 # P6: a second run while the first is still running
@@ -268,9 +268,9 @@ wait; node dist/index.mjs ping --input '{"message":"third"}'                  # 
 
 # P7: hold ping's lock by hand for 10 minutes, then release it
 pgq "INSERT INTO script_locks VALUES (now() + interval '10 minutes', '@lightproject/scheduler/ping', 'by-hand', now(), now());"
-vp run script ping; echo $?          # skipped, 3
+vpr script ping; echo $?          # skipped, 3
 pgq "DELETE FROM script_locks;"
-vp run script ping                   # succeeded
+vpr script ping                   # succeeded
 
 # P8: stop a run in the middle
 node dist/index.mjs ping --input '{"delayMs":60000}' & sleep 2
@@ -289,11 +289,11 @@ sleep 60; node dist/index.mjs ping; echo $?                                     
 
 #### D1 (Cloudflare runtime)
 
-Extra flags after `vp run wrangler:dev` reach `wrangler dev`, and `--var KEY:value` overrides
+Extra flags after `vpr wrangler:dev` reach `wrangler dev`, and `--var KEY:value` overrides
 `.env`, so `.env` can stay on `postgres`. Stop with Ctrl+C.
 
 ```sh
-vp run wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
+vpr wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
 # another terminal
 U=http://localhost:2003; H="Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123456789"
 ```
@@ -395,7 +395,7 @@ The `scheduler` deploy runs after `datastore` (it needs its migrations) and does
 
 ```sh
 # Worker, per env (credentials from the environment or the root .env)
-CLOUDFLARE_ENV=develop vp run wrangler:deploy
+CLOUDFLARE_ENV=develop vpr wrangler:deploy
 
 # A one-off run on a deployed Worker
 curl -X POST -H "Authorization: Bearer $SCHEDULER_RUN_TOKEN" -d '{}' \

@@ -31,7 +31,7 @@ function executeCommand() {
 
   local isBuildCommand="false"
   case "${commandName}" in
-    "vp run -r build"*)
+    "vpr -r build"*)
       isBuildCommand="true"
       ;;
   esac
@@ -69,22 +69,22 @@ if [[ "${install}" == "true" ]]; then
   vp install --frozen-lockfile
 fi
 
-executeCommand vp run -r madge
-executeCommand vp run -r root:check --fix
-executeCommand vp run -r root:test:unit
-executeCommand vp run -r dagger:check --fix
-executeCommand vp run -r dagger:format --write
-executeCommand vp run -r dagger:lint --fix
-executeCommand vp run -r dagger:type-check
-executeCommand vp run -r dagger:test:unit
-executeCommand vp run -r check --fix
-executeCommand vp run -r format --write
-executeCommand vp run -r lint --fix
-executeCommand vp run -r type-check
-executeCommand vp run -r build
-executeCommand vp run -r test:unit
-executeCommand vp run -r test:integration
-executeCommand vp run -r test:e2e
+executeCommand vpr -r madge
+executeCommand vpr -r root:check --fix
+executeCommand vpr -r root:test:unit
+executeCommand vpr -r dagger:check --fix
+executeCommand vpr -r dagger:format --write
+executeCommand vpr -r dagger:lint --fix
+executeCommand vpr -r dagger:type-check
+executeCommand vpr -r dagger:test:unit
+executeCommand vpr -r check --fix
+executeCommand vpr -r format --write
+executeCommand vpr -r lint --fix
+executeCommand vpr -r type-check
+executeCommand vpr -r build
+executeCommand vpr -r test:unit
+executeCommand vpr -r test:integration
+executeCommand vpr -r test:e2e
 
 echo ""
 echo "✅ Commands executed successfully"

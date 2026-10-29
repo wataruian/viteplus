@@ -6,9 +6,9 @@
 
 - [ ] Ran `vp install` after pulling remote changes.
 - [ ] Ran `vp check` and `vp test` to format, lint, type-check, and test changes.
-- [ ] Ran `vp run <script>` for any `vite.config.ts` tasks or `package.json` scripts relevant
+- [ ] Ran `vpr <script>` for any `vite.config.ts` tasks or `package.json` scripts relevant
       to this change.
-- [ ] `vp run ready` passes locally.
+- [ ] `vpr ready` passes locally.
 
 ## Notes for Reviewers
 

@@ -3,7 +3,7 @@
 
 set -o errexit
 
-vp run --no-cache init
+vpr --no-cache init
 
 echo ""
 echo "✅ All good!"

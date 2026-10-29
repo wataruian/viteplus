@@ -76,7 +76,7 @@ describe('schema parity (postgres vs d1)', () => {
   test.each(postgresTables)('%s has the same columns, constraints and indexes', (name, pg) => {
     const sqlite = d1Tables.get(name);
     if (!sqlite) {
-      throw new Error(`d1 schema has no "${name}": run \`vp run db:generate\``);
+      throw new Error(`d1 schema has no "${name}": run \`vpr db:generate\``);
     }
     expect(shapeOf(getPostgresTableConfig(pg))).toStrictEqual(
       shapeOf(getSqliteTableConfig(sqlite)),

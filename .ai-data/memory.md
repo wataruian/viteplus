@@ -74,7 +74,7 @@ AGENTS.md reflect the current state.
 - **Reasoning**: Keeps the isomorphic surface (`.`, `./utils`, `./environment`, `./logger`,
   etc.) genuinely free of Node-builtin imports, so it no longer relies on a `"browser"`-field
   workaround for something that should never have been reachable from the browser bundle.
-- **Impact**: Verified with a real `apps/frontend` build (browser target) and `vp run -r test`
+- **Impact**: Verified with a real `apps/frontend` build (browser target) and `vpr -r test`
   (all 141 tests) — no regressions. See `.ai-data/web-standards.md` for the full isomorphic-vs-
   Node subpath convention this establishes for `packages/common`.
 
@@ -183,7 +183,7 @@ AGENTS.md reflect the current state.
 - **Decision**: Added `alt=''` to `heroImg` (decorative, consistent with how the icon images
   elsewhere in the same file already use empty alt for decoration next to text). Changed
   `element.innerHTML` to `element.textContent` in `counter.ts`.
-- **Verification**: `vp check` (203 files clean), `vp run -r test` (141 tests), and a real
+- **Verification**: `vp check` (203 files clean), `vpr -r test` (141 tests), and a real
   `apps/frontend` production build — all clean, no regressions.
 - **Not touched**: `packages/design-system`'s `Icon`/`Logo` components render decorative
   `<span>`/CSS-icon content with no built-in `aria-hidden` — left alone since both spread
@@ -196,7 +196,7 @@ AGENTS.md reflect the current state.
 - **Decision**: Added a TypeScript Dagger module at `dagger/` (`dagger init --sdk=typescript`)
   that wraps `pnpm install` + the `vp` task runner in a hermetic container. GitHub Actions
   (`.github/workflows/ci.yml`) now runs `dagger/dagger-for-github@v8` calling `dagger call ready`
-  instead of `voidzero-dev/setup-vp@v1.20.0` + `vp run ready` directly on the runner — the exact same
+  instead of `voidzero-dev/setup-vp@v1.20.0` + `vpr ready` directly on the runner — the exact same
   containerized pipeline now runs on a laptop (`dagger -m dagger call ready`, or `mise run ci`)
   and in CI, closing the "works on my machine" gap.
 - **Why a container at all**: `dagger` was already added to `mise.toml`'s `[tools]` (see
@@ -218,7 +218,7 @@ AGENTS.md reflect the current state.
 - **Gotcha found while validating**: a standalone `test()` call failed with
   `Cannot find package '@lightproject/common/configs'` — workspace packages' `exports` map
   resolves subpath imports to `dist/*` at runtime (see `packages/common/package.json`), so tests
-  can't import them until the package is built. `vp run ready`'s script order already builds
+  can't import them until the package is built. `vpr ready`'s script order already builds
   before testing; the Dagger module's `test()` function now does the same (`build` then `test`)
   so it's safe to call standalone, matching what `ready()` does implicitly. `check()` (format/
   lint/type-check) doesn't have this issue — it's static analysis, not runtime imports.
@@ -350,14 +350,14 @@ AGENTS.md reflect the current state.
 
 - **Tests**: jsdom unit tests (`packages/design-system/tests/unit/storybook-*.test.ts(x)`,
   `apps/frontend/tests/unit/preview-page.test.tsx`) plus Playwright e2e (`tests/e2e/` +
-  `playwright.config.ts` in both workspaces, `vp run -r test:e2e`). Each was mutation-checked: re-introducing
+  `playwright.config.ts` in both workspaces, `vpr -r test:e2e`). Each was mutation-checked: re-introducing
   `themes.normal`, JSX in `.storybook/manager.ts`, or a remount-on-toggle (`key={mode}`) makes them
   fail. Probes must sit _inside_ the `ModeProvider` being toggled — `Preview` owns its own provider,
   so the frontend Home link (outside it) could not detect a remount.
 - **Test-environment gotchas**: emulate a _dark_ OS (`colorScheme: 'dark'` / a `matchMedia` stub)
   or `themes.normal` looks correct by accident; `:root` has a 0.5s background transition, so disable
   transitions before comparing colors; the page background lives on `<html>`, not `<body>`.
-- **Not in `ready` yet**: Dagger's `ready` runs root `vp run ready` in the browser-less `vite-plus`
+- **Not in `ready` yet**: Dagger's `ready` runs root `vpr ready` in the browser-less `vite-plus`
   container, so e2e stays a separate task until CI installs Chromium (see `TODO.md`).
 - **Share tags**: `apps/frontend/social-meta.ts` injects absolute `og:url`/`og:image`/`twitter:image`
   only when the frontend's public URL `ADMIN_URL`/`VITE_ADMIN_URL` is set (same precedence as
@@ -383,7 +383,7 @@ AGENTS.md reflect the current state.
   showed as "Skipped". Fixed like the existing `vite-plus/test` entries: `@storybook/*` and
   `storybook/*` map to `package.json` in `tsconfig.madge.json` (external deps don't matter for
   circular-dependency detection).
-- **Cause of artifact cache misses** (verified with `vp run --last-details`): automatic tracking
+- **Cause of artifact cache misses** (verified with `vpr --last-details`): automatic tracking
   fingerprints _directory listings_, and `input` `!` globs exclude paths but NOT entries inside a
   tracked listing. So creating/deleting `coverage/`, `tsconfig.tsbuildinfo`, `.wrangler/`, … changed
   the listing of the folder holding them. (`dist/` was already fine: Vite+ reports `build.outDir`.)
@@ -400,7 +400,7 @@ AGENTS.md reflect the current state.
   declaration landed in the repo root. Fixed at the source with per-package `tsconfig.pack.json`
   (`include: src/**`) via `pack.dts.tsconfig`; published declarations verified byte-identical.
   (The `tsc` generator also avoids it, but prints types differently; tsgo was kept by choice.)
-- **Result**: deleting every artifact (20 paths, incl. both `.wrangler/`) then `vp run ready` →
+- **Result**: deleting every artifact (20 paths, incl. both `.wrangler/`) then `vpr ready` →
   41/41 cache hits. The last gap (`apps/frontend#test` missing when `apps/backend/.wrangler`
   changed — its tests start the backend worker, which lists `apps/backend`) is closed by `'!../*'`
   in the package scope (drops same-group sibling folder listings). Verified: backend source edits
@@ -507,7 +507,7 @@ AGENTS.md reflect the current state.
   `tsconfig.base.json` `customConditions` is now just `["typescript"]` (forcing `require` resolved
   culori's CJS types for ESM imports); compose ports bound to `127.0.0.1`; undici audit overrides;
   `ready` no longer re-runs `format`/`lint` (covered by `vp check`), and `mise run check` = fixes +
-  `vp run ready`.
+  `vpr ready`.
 - **Not a bug**: the AI instruction files (`.github/copilot-instructions.md`, `.cursor/…`,
   `.aiassistant/…`) were already symlinks to AGENTS.md (git mode 120000).
 
@@ -534,7 +534,7 @@ AGENTS.md reflect the current state.
   `setSessionId()` is synced immediately. The backend Worker bundle now has zero Faro references.
 - **Gotcha**: wrangler (esbuild) resolves `@lightproject/common` via its `dist/` (no `typescript`
   condition), so wrangler-runtime tests and dry-run bundles use a stale `common` until
-  `vp run --filter @lightproject/common build` — `vp run ready` builds before testing.
+  `vpr --filter @lightproject/common build` — `vpr ready` builds before testing.
 
 ## 2026-10-09: One `requestId` Everywhere; Faro Keeps Its Own Session
 
@@ -566,7 +566,7 @@ AGENTS.md reflect the current state.
 
 - **Verified bug**: `wrangler:deploy` (and `:delete`/`:dev`) were cached Vite Tasks. Cached tasks
   run in a filtered env (only `cache.env`/`untrackedEnv` + a small default set), so
-  `CLOUDFLARE_ENV` never reached wrangler — `CLOUDFLARE_ENV=staging vp run --filter
+  `CLOUDFLARE_ENV` never reached wrangler — `CLOUDFLARE_ENV=staging vpr --filter
   @lightproject/backend wrangler:deploy --dry-run` resolved the top-level `ENV=production`, i.e.
   the old unsuffixed Worker — and a second run replayed from cache without deploying. All
   `wrangler:*` tasks are now `cache: false` (full env, always runs); re-verified the dry-run shows
@@ -617,7 +617,7 @@ AGENTS.md reflect the current state.
 - **Advisory follow-up**: overrides pin `brace-expansion` (1.1.21 / 5.0.12), `handlebars` 4.7.10,
   `sharp` 0.35.5 (miniflare pins 0.35.4 exactly) and `source-map-js` 1.2.2 — all patch releases
   > 24h old. `vp pm audit` is down to `esbuild` (low, via tsx) and `braces` (no fixed version
-  > published). Verified with `vp run ready` and plop/commitizen smoke checks.
+  > published). Verified with `vpr ready` and plop/commitizen smoke checks.
 
 ## 2026-10-09: Vite+ 1.1.0; Fourth Review Fixes
 
@@ -741,7 +741,7 @@ AGENTS.md reflect the current state.
   across `await`). Do NOT enable `nodejs_compat` or add non-web-standard deps (e.g.
   `@opentelemetry/context-async-hooks`) to fix it.
 - Note: a standalone `vp test` in apps/backend can resolve `@lightproject/common` from a stale
-  `dist/` — rebuild common (`vp run --filter @lightproject/common build`) or use `vp run ready`.
+  `dist/` — rebuild common (`vpr --filter @lightproject/common build`) or use `vpr ready`.
 
 ## 2026-10-10: Eleventh Review — Redaction Hardening, Collector-Level URL Redaction
 
@@ -794,7 +794,7 @@ AGENTS.md reflect the current state.
   `SKIP_OPENTELEMETRY: 'true'`; the backend wrangler test helper forwards it as a var; the frontend
   `globalSetup` (main process, no test.env) passes it to `unstable_dev` explicitly. Telemetry tests
   opt back in (`SKIP_OPENTELEMETRY: 'false'`) against `startFakeOtelCollector`.
-- Verified with a listener on 4318/12347 (IPv4+IPv6) during `vp run --no-cache -r test:unit`:
+- Verified with a listener on 4318/12347 (IPv4+IPv6) during `vpr --no-cache -r test:unit`:
   0 requests (was 411).
 - `.ai-data/web-standards.md` common-subpath section corrected: `./server` is backend-only but
   runs on Workers too (no `node:*`), `./browser` is frontend-only, `./node` is the only Node-only
@@ -916,7 +916,7 @@ AGENTS.md reflect the current state.
   `VITE_OTLP_ENDPOINT` / `VITE_FARO_ENDPOINT` build env (both the publish and the
   wrangler step, so image and Worker match). Backend: runtime Worker var via the new Dagger
   `wrangler --worker-var=KEY=VALUE` (repeatable) → `wrangler deploy --var KEY:VALUE` (forwarded by
-  `vp run … wrangler:deploy <args>`; verified with `--dry-run` that it binds next to
+  `vpr … wrangler:deploy <args>`; verified with `--dry-run` that it binds next to
   `[env.<env>.vars]`). Unset = unchanged deploy.
 - **`--worker-var` is backend-only** (runtime-validated: UPPER_SNAKE_CASE key, non-empty value with no
   whitespace, rejected before building): frontend Workers are static assets, and design-system's
@@ -1027,7 +1027,7 @@ AGENTS.md reflect the current state.
 
 - **Decision (user, after a recommendation)**: one-way Postgres → D1 generation instead of
   two-way sync (two-way overwrites hand edits, conflicts when both change, and SQLite → Postgres
-  loses precision silently). `vp run db:sync` = generate `src/d1/schema.ts` + `vp check --fix` +
+  loses precision silently). `vpr db:sync` = generate `src/d1/schema.ts` + `vp check --fix` +
   `drizzle-kit generate` for both dialects. The parity test discovers tables itself (no script
   edits a test file); its type-level check is a mapped type over all exported tables.
 - **Verified facts**: Drizzle exposes everything needed at runtime (`columnType`, `dimensions`,
@@ -1038,14 +1038,14 @@ AGENTS.md reflect the current state.
   `no-use-before-define` rejects even lazy `.references(() => t.id)` to a later const, so tables
   are ordered by FK dependency. Regenerating changed D1 column order (alphabetical) without a
   new migration. Mutation-checked: a hand edit to the generated file fails both tsc and parity.
-- **Follow-up (user)**: `db:sync` was folded into `vp run db:generate [name]`, the single command
+- **Follow-up (user)**: `db:sync` was folded into `vpr db:generate [name]`, the single command
   for schema changes (regenerate D1 schema + write both migrations, optional folder name).
 
 ## 2026-10-18: Remote D1 Migrations (`packages/database`)
 
 - **Decision (user)**: `packages/database/wrangler.toml` holds the local `DB` binding plus
   `[env.develop|staging|production]` D1 blocks; `CLOUDFLARE_ENV` picks one for remote D1
-  migrations (now `DATABASE_DIALECT=d1 vp run db:migrate`). develop temporarily uses the throwaway `lightproject-migrate-test`.
+  migrations (now `DATABASE_DIALECT=d1 vpr db:migrate`). develop temporarily uses the throwaway `lightproject-migrate-test`.
 - **Verified facts**: wrangler's published `.d.ts` imports packages it doesn't ship, so
   `unstable_readConfig` is error-typed under lint; `wrangler.toml` is read with `smol-toml` + zod
   instead. drizzle-kit `migrate` with `d1-http` (1.0.0-rc.4, latest) fails on every run after
@@ -1058,7 +1058,7 @@ AGENTS.md reflect the current state.
 ## 2026-10-19: `packages/database` in CI
 
 - **Decision (user)**: verify `database` on PRs (incl. integration tests), apply migrations at
-  deploy, and run `test:integration` in `vp run ready` / `mise run check`. Where deploys migrate
+  deploy, and run `test:integration` in `vpr ready` / `mise run check`. Where deploys migrate
   is chosen per environment by a GitHub variable (`d1`/`postgres`; now `DATABASE_DIALECT`, see
   "migrator image" below).
 - Dagger: `testIntegration` binds a throwaway Postgres (`withPostgres`, also used by `ready`);
@@ -1129,8 +1129,8 @@ AGENTS.md reflect the current state.
   against a drizzle-kit-migrated database); `wrangler` is also an optional
   `peerDependency`, because tsdown bundles devDependencies (it pulled wrangler/workerd into `dist`,
   101 MB, and broke local D1 migrations). Built scripts resolve paths from `process.cwd()` (the package dir),
-  not `import.meta.dirname`, and avoid top-level await (the CJS build rejects it). `vp run
-  db:migrate` runs the same built file, so `vp run build` must run first.
+  not `import.meta.dirname`, and avoid top-level await (the CJS build rejects it). `vpr
+  db:migrate` runs the same built file, so `vpr build` must run first.
 - **Dagger `vp` images bake Node in**: the vite-plus image's `node` is a shim that downloads Node
   into `VITE_PLUS_JS_RUNTIME_PATH`, a cache volume that published images do not carry, so offline
   containers failed to start (verified: `docker run --network none … node --version` errors).
@@ -1171,7 +1171,7 @@ AGENTS.md reflect the current state.
   old once-a-minute cron drain, not Containers); the cron is only a watchdog.
 - **Decision (user)**: follow the backend: Node APIs only in `runtimes/node.ts`; the Node image is
   published on deploy like the backend's (containers can run it), the Worker via wrangler.
-- **Decision (user)**: `vp run wrangler:dev` follows `.env` (`wrangler dev` loads it and it
+- **Decision (user)**: `vpr wrangler:dev` follows `.env` (`wrangler dev` loads it and it
   overrides `[vars]`), so with `DATABASE_DIALECT="postgres"` local Cloudflare dev uses Postgres.
 - **Verified facts**: in local workerd without `nodejs_compat`, the core + database store ran on
   D1 and on Postgres (postgres.js over `cloudflare:sockets`), and `globalThis.process.env` holds
@@ -1242,9 +1242,9 @@ AGENTS.md reflect the current state.
 - **Second review round**: thread executor now reports an abort only after the handler settled or
   the thread was terminated (it rejected at once before, so a retry could overlap the old attempt);
   enqueue validates `maxAttempts`/`delayMs`/`runAt`; `WORKER_CONCURRENCY` entries are parsed strictly
-  (`=3`, `ping=2=8`, `ping=0x4` rejected); a failed graceful shutdown exits 1; `vp run enqueue`
+  (`=3`, `ping=2=8`, `ping=0x4` rejected); a failed graceful shutdown exits 1; `vpr enqueue`
   validates its count; madge maps `@lightproject/workers` to `src/client.ts` (the package entry).
-- **Local runs need mise's env**: `vp run` does not load `.env`; `mise.toml` (`[env] _.file`) does,
+- **Local runs need mise's env**: `vpr` does not load `.env`; `mise.toml` (`[env] _.file`) does,
   with `${VAR}` expansion (Node's `--env-file` does not expand, so it breaks the URL keys). Verified
   end to end with `mise exec`: Node and edge each processed `ping` jobs against local Postgres.
 
@@ -1428,7 +1428,7 @@ AGENTS.md reflect the current state.
 - **Fixed**: timer settings capped at 2^31-1 ms (`maxTimerMs`); a `delayMs` that overflows the
   date is rejected; idle backoff never polls faster than the poll interval; an invalid run request
   gets an unrecoverable error instead of crashing the thread (unit test with a fake port);
-  `vp run enqueue` validates the payload once (in `enqueue`).
+  `vpr enqueue` validates the payload once (in `enqueue`).
 - **To decide (TODO.md)**: shutdown deadline vs orchestrator kill timeout; thread start failures
   burning attempts; database clock vs replica clocks for lease expiry.
 - **Recorded/inherent**: terminated threads lose telemetry. **Settled**: `no-await-in-loop` off.
@@ -1565,7 +1565,7 @@ AGENTS.md reflect the current state.
   `WORKSPACE_GROUPS` entry `templates`, and every path reference follow.
 - **Root tasks renamed** (user): `root` → `root:check` (`vp check`) and the root `test:unit` → `root:test:unit`
   (`vp test`, scaffold tests). Both run in `ready`, `mise run check` and the Dagger `root` function
-  (check, then test); the root no longer has a `test:unit`, so `vp run -r test:unit` covers only
+  (check, then test); the root no longer has a `test:unit`, so `vpr -r test:unit` covers only
   the workspaces.
 
 ## 2026-10-26: `templates/scheduler` (cron + one-off scripts) → future `apps/dispatcher`
@@ -1700,9 +1700,9 @@ AGENTS.md reflect the current state.
   the server routes through `servedRouter` instead.
 - Verified live on Node + compose Postgres: all four endpoints 200, rows in `users`/`worker_jobs`,
   the tasks worker ran both pings (`succeeded`). Gotcha: a non-mise shell has no `.env` vars
-  (`DATABASE_DIALECT` empty); run `mise exec -- vp run dev` there.
+  (`DATABASE_DIALECT` empty); run `mise exec -- vpr dev` there.
 - Squashed the datastore migrations (`init` + `add_script_locks`, both dialects) into one
-  `20261027152204_init` per dialect (`vp run db:generate init` after deleting the old folders; same
+  `20261027152204_init` per dialect (`vpr db:generate init` after deleting the old folders; same
   tables and indexes, snapshots formatted). Safe only for databases that never ran the old ones; a
   database that did must be emptied or have its migration history reset first.
 - The deploy guard in `deploy-workspace.yml` (GitHub `DATABASE_DIALECT` must match the Worker's
@@ -1724,7 +1724,7 @@ AGENTS.md reflect the current state.
 - **tasks threads**: `vpx` preloads its loader with `--require`/`--import`, which worker threads
   inherit through `execArgv`, so `.ts` thread entries just work. Removed `spawnThread`, the
   `#tsx-api` subpath import (`tsx-api.ts`/`tsx-api.cjs.ts`) and its pack alias. Verified live:
-  `vp run dev` on compose Postgres ran two enqueued `ping` jobs in threads, reran on a file change,
+  `vpr dev` on compose Postgres ran two enqueued `ping` jobs in threads, reran on a file change,
   and shut down through the SIGTERM handler.
 - **Thread test uses vite-plus internals (user decision)**: `threads.test.ts` runs `.ts` threads
   under Vitest, where no `vpx` loader is active, and vite-plus exports none. Its `execArgv` preloads

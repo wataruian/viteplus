@@ -30,19 +30,19 @@ for arg in "${@}"; do
 done
 
 if [[ "${tools}" == "true" ]]; then
-  vp run --no-cache clean:tools
+  vpr --no-cache clean:tools
 fi
 
 if [[ "${ai}" == "true" ]]; then
-  vp run --no-cache clean:ai
+  vpr --no-cache clean:ai
 fi
 
 dagger core engine local-cache prune || true
 
-vp run --no-cache clean:build
+vpr --no-cache clean:build
 
 if [[ "${modules}" == "true" ]]; then
-  vp run --no-cache clean:modules
+  vpr --no-cache clean:modules
 fi
 
 if [[ "${install}" == "true" ]]; then

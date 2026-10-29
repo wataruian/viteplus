@@ -48,9 +48,9 @@ Commands run from `templates/datastore` unless noted.
    `dist/scripts/migrate.mjs`, so build first):
 
    ```sh
-   vp run build
-   DATABASE_DIALECT=postgres vp run db:migrate
-   DATABASE_DIALECT=d1 vp run db:migrate
+   vpr build
+   DATABASE_DIALECT=postgres vpr db:migrate
+   DATABASE_DIALECT=d1 vpr db:migrate
    ```
 
 ### Reset local databases
@@ -87,7 +87,7 @@ Cloudflare, `createDatabase(env)` takes the Worker's `env` instead: its `DATABAS
 | `CLOUDFLARE_ENV`         | migrate (`d1`)            | Unset: local D1. `develop`/`staging`/`production`: the remote D1 of that `[env.*]` in `wrangler.toml` |
 | `CLOUDFLARE_ACCOUNT_ID`  | migrate (remote D1)       | Account of the remote D1 (environment, else the root `.env`)                                          |
 | `CLOUDFLARE_API_TOKEN`   | migrate (remote D1)       | API token with D1 edit access (environment, else the root `.env`)                                     |
-| `TEST_SUITE`             | `vite.config.ts`          | `integration` switches `vp test` to `tests/integration` (set by `vp run test:integration`)            |
+| `TEST_SUITE`             | `vite.config.ts`          | `integration` switches `vp test` to `tests/integration` (set by `vpr test:integration`)               |
 
 Worker bindings (not variables) passed in `createDatabase(env)`:
 
@@ -103,12 +103,12 @@ Worker bindings (not variables) passed in `createDatabase(env)`:
 `worker-jobs.ts` and `script-locks.ts` and everything under `migrations/` are generated; `client.ts` and
 `repositories.ts` stay hand-written per dialect.
 
-| Task                        | What it does                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `vp run db:generate <name>` | Regenerates the D1 files from Postgres, formats/lints them, writes both migrations `<name>` |
-| `vp run db:migrate`         | Applies migrations to the `DATABASE_DIALECT` target (needs `vp run build` first)            |
-| `vp run db:check`           | `drizzle-kit check` on both migration folders                                               |
-| `vp run db:studio`          | Drizzle Studio on Postgres                                                                  |
+| Task                     | What it does                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| `vpr db:generate <name>` | Regenerates the D1 files from Postgres, formats/lints them, writes both migrations `<name>` |
+| `vpr db:migrate`         | Applies migrations to the `DATABASE_DIALECT` target (needs `vpr build` first)               |
+| `vpr db:check`           | `drizzle-kit check` on both migration folders                                               |
+| `vpr db:studio`          | Drizzle Studio on Postgres                                                                  |
 
 ### Schema change → generate → migrate
 
@@ -128,7 +128,7 @@ Worker bindings (not variables) passed in `createDatabase(env)`:
 2. Generate the D1 side and both migrations:
 
    ```sh
-   vp run db:generate add_samples
+   vpr db:generate add_samples
    ```
 
    Expected: `src/d1/schema.ts updated`, plus `migrations/postgres/<ts>_add_samples/` and
@@ -139,9 +139,9 @@ Worker bindings (not variables) passed in `createDatabase(env)`:
 3. Apply to both databases:
 
    ```sh
-   vp run build
-   DATABASE_DIALECT=postgres vp run db:migrate
-   DATABASE_DIALECT=d1 vp run db:migrate
+   vpr build
+   DATABASE_DIALECT=postgres vpr db:migrate
+   DATABASE_DIALECT=d1 vpr db:migrate
    ```
 
 4. For apps to query the table, also add its types, repository, `tables.ts` wiring and a contract
@@ -156,7 +156,7 @@ folders, so a leftover one is invisible in `git status` but still counted by the
 
 ```sh
 vp test                   # unit: PGlite + generated-file parity/drift, no services needed
-vp run test:integration   # shared contract on docker-compose Postgres, then a throwaway local D1
+vpr test:integration   # shared contract on docker-compose Postgres, then a throwaway local D1
 ```
 
 - `tests/shared/database-contract.ts` is the one contract both dialects run.
@@ -175,7 +175,7 @@ vp exec wrangler d1 execute DB --local --persist-to ../../.wrangler/state \
   --command "SELECT name FROM sqlite_master WHERE type='table';"
 ```
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI:
+Before finishing, run `vpr ready` from the repo root. To reproduce CI:
 `dagger call test-integration --workspace=@lightproject/datastore`.
 
 ## Deployment
@@ -201,8 +201,8 @@ differs from the dialect in their `wrangler.toml`'s `[env.<env>.vars]`.
 
 ```sh
 # Remote D1 (credentials from the environment or the root .env)
-vp run build
-CLOUDFLARE_ENV=develop DATABASE_DIALECT=d1 vp run db:migrate
+vpr build
+CLOUDFLARE_ENV=develop DATABASE_DIALECT=d1 vpr db:migrate
 
 # Postgres, via the published image (Kubernetes Job/initContainer, or any container runtime)
 docker run --rm -e DATABASE_DIALECT=postgres -e DATASTORE_POSTGRES_URL="postgres://…" \
