@@ -26,7 +26,7 @@ Commands run from `templates/library` unless noted.
 2. Build and test:
 
    ```sh
-   vp run build   # dist/: index.mjs, index.cjs, *.d.mts, *.d.cts per entry
+   vpr build   # dist/: index.mjs, index.cjs, *.d.mts, *.d.cts per entry
    vp test
    ```
 
@@ -59,11 +59,11 @@ tasks. Tests run with `LOG_LEVEL=silent`.
 
 ## Development
 
-| Task               | What it does                                                                     |
-| ------------------ | -------------------------------------------------------------------------------- |
-| `vp run build`     | `vp pack` to `dist/` (ESM + CJS, declarations via `tsconfig.pack.json`)          |
-| `vp run check`     | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks |
-| `vp run test:unit` | `vp test` with coverage (task-cached)                                            |
+| Task            | What it does                                                                     |
+| --------------- | -------------------------------------------------------------------------------- |
+| `vpr build`     | `vp pack` to `dist/` (ESM + CJS, declarations via `tsconfig.pack.json`)          |
+| `vpr check`     | `vp check` (format, lint, type check); also `format`, `lint`, `type-check` tasks |
+| `vpr test:unit` | `vp test` with coverage (task-cached)                                            |
 
 Every file under `src/` except `*.stories.ts(x)` is a pack entry. There is no `dev` or `start`
 task; pass `devCommand`/`startCommand` (and `excludeDevCommand: false`/`excludeStartCommand:
@@ -75,7 +75,7 @@ false`) to `getPackageViteConfig` in `vite.config.ts` to add them.
 vp test   # unit (Node), tests/unit/**/*.test.ts, 100% coverage of src/ (index.ts files excluded)
 ```
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI (from the repo root):
+Before finishing, run `vpr ready` from the repo root. To reproduce CI (from the repo root):
 `dagger call test-unit --workspace=@lightproject/library`. The `library` job in `verify.yml` is
 currently commented out, so pull requests do not verify this package in CI.
 

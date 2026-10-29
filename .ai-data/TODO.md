@@ -11,11 +11,11 @@
   collaborators", as defense in depth for the fork guard in `on-pull-request.yml`.
 - **Two design-system tests are timeout-prone under load** — `preview-registry-drift.test.tsx`
   (~3s locally) and the `ph` icon-loader test in `tokens.test.ts` hit the 30s timeout in a
-  `dagger ready` that overlapped with a local `vp run ready` (2026-09-28); the same run passes when
+  `dagger ready` that overlapped with a local `vpr ready` (2026-09-28); the same run passes when
   the machine is idle. Consider speeding them up (the drift test re-imports `Preview` after
   `vi.resetModules()` per case) before the shared self-hosted runner gets busy.
 - **`generateShortUuid` 1M-ids test is timeout-prone too** — `packages/common/tests/unit/text.test.ts`
-  ("does not repeat across 1M ids") hit the 30s timeout in a local `vp run ready` (2026-10-18)
+  ("does not repeat across 1M ids") hit the 30s timeout in a local `vpr ready` (2026-10-18)
   but passes alone in ~9s and on the next `ready`. It is CPU-bound (1M ids into a `Set`); consider
   fewer ids (collision odds at 122 bits are negligible either way) or an explicit per-test timeout.
 - **Drop the `sharp` / `undici` 7.x / `source-map-js` overrides** in `pnpm-workspace.yaml` once
@@ -102,7 +102,7 @@ Not a TODO: `bak/` is intentionally tracked (see `architecture.md`).
   4. **Remote D1s**: create `lightproject-datastore-dev`, `-staging`, `-production`
      (`vp exec wrangler d1 create <name>` in `templates/datastore`), put their ids in `[env.*]` of
      `templates/datastore/wrangler.toml` and `templates/tasks/wrangler.toml`, then migrate them
-     (`CLOUDFLARE_ENV=<env> DATABASE_DIALECT=d1 vp run db:migrate`, or CI). Until then the template
+     (`CLOUDFLARE_ENV=<env> DATABASE_DIALECT=d1 vpr db:migrate`, or CI). Until then the template
      still uses the `lightproject-database-<env>` D1s, which belong to the future real
      `packages/database`.
   5. **Local cleanup** (each developer): in `.env`, drop or rename the stale `POSTGRES_URL`,

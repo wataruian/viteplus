@@ -49,7 +49,7 @@ const resolveRemoteD1 = (
   const cloudflareEnv = env['CLOUDFLARE_ENV'];
   if (cloudflareEnv === undefined || cloudflareEnv === '') {
     throw new Error(
-      'Set CLOUDFLARE_ENV to the D1 environment to migrate, e.g. `DATABASE_DIALECT=d1 CLOUDFLARE_ENV=develop vp run db:migrate`',
+      'Set CLOUDFLARE_ENV to the D1 environment to migrate, e.g. `DATABASE_DIALECT=d1 CLOUDFLARE_ENV=develop vpr db:migrate`',
     );
   }
 

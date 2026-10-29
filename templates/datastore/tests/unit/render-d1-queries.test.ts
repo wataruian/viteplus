@@ -50,7 +50,7 @@ describe('renderD1Query', () => {
 });
 
 describe('committed D1 query modules match their Postgres source', () => {
-  test.each(d1RenderedModules)('src/d1/%s (run `vp run db:generate` if this fails)', (file) => {
+  test.each(d1RenderedModules)('src/d1/%s (run `vpr db:generate` if this fails)', (file) => {
     const target = `src/d1/${file}`;
     const formatted = execFileSync(vp, ['fmt', `--stdin-filepath=${target}`], {
       cwd: packageDir,

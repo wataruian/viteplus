@@ -60,7 +60,7 @@ bad keys. On Cloudflare they come from `wrangler.toml`'s `[vars]` / `[env.<env>.
 | `SKIP_OPENTELEMETRY`         | `true` skips the OTel SDK (context propagation only); `true`/`false` only (default `false`)                                    |
 | `TASKS_PORT`                 | `vite.config.ts`: `wrangler dev` port (default `2002`)                                                                         |
 | `TASKS_INSPECTOR_PORT`       | `vite.config.ts`: `wrangler dev` inspector port (default `8232`)                                                               |
-| `TEST_SUITE`                 | `integration` switches `vp test` to `tests/integration` (set by `vp run test:integration`)                                     |
+| `TEST_SUITE`                 | `integration` switches `vp test` to `tests/integration` (set by `vpr test:integration`)                                        |
 
 Shared variables, defined in `packages/common/README.md` and `templates/datastore/README.md`:
 
@@ -83,22 +83,22 @@ Add job functions in `src/functions/` and register them in `src/functions/index.
 pick them up; see "Adding a job function"). Node APIs only in `src/runtimes/node.ts`; the Worker
 entry `src/runtimes/edge.ts` may export only the default handler and `WorkerLoop`.
 
-| Task                                   | What it does                                                                             |
-| -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `vp run dev`                           | Node workers under `vpx --watch` (not plain `vp dev`)                                    |
-| `vp run build`                         | Builds `dist/` (`dist/index.mjs`, the client entry)                                      |
-| `vp run start`                         | Runs the built `node dist/index.mjs` (what the container image runs)                     |
-| `vp run enqueue <fn> '<json>' [count]` | Enqueues `count` (default 1) jobs into the `JOB_STORE=database` store (refuses `memory`) |
-| `vp run wrangler:dev`                  | Local Worker on `TASKS_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled`          |
-| `vp run wrangler:deploy`               | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                            |
-| `vp run wrangler:delete`               | `wrangler delete`                                                                        |
+| Task                                | What it does                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------------- |
+| `vpr dev`                           | Node workers under `vpx --watch` (not plain `vp dev`)                                    |
+| `vpr build`                         | Builds `dist/` (`dist/index.mjs`, the client entry)                                      |
+| `vpr start`                         | Runs the built `node dist/index.mjs` (what the container image runs)                     |
+| `vpr enqueue <fn> '<json>' [count]` | Enqueues `count` (default 1) jobs into the `JOB_STORE=database` store (refuses `memory`) |
+| `vpr wrangler:dev`                  | Local Worker on `TASKS_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled`          |
+| `vpr wrangler:deploy`               | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                            |
+| `vpr wrangler:delete`               | `wrangler delete`                                                                        |
 
 ### Run on Node
 
 ```sh
-vp run dev
+vpr dev
 # another terminal
-vp run enqueue ping '{"message":"hello"}' 3
+vpr enqueue ping '{"message":"hello"}' 3
 ```
 
 Expected: the dev process logs `ping: hello` three times. `enqueue` writes through `.env`'s
@@ -107,7 +107,7 @@ Expected: the dev process logs `ping: hello` three times. `enqueue` writes throu
 ### Run on Cloudflare (local)
 
 ```sh
-vp run wrangler:dev
+vpr wrangler:dev
 # another terminal: fire the watchdog cron, which starts every WorkerLoop
 curl "http://localhost:2002/__scheduled?cron=*+*+*+*+*"
 ```
@@ -119,21 +119,21 @@ each `JOB_PURGE_INTERVAL_MS`.
 
 ```sh
 vp test                   # unit (JOB_STORE=memory); store contract also runs on a throwaway local D1
-vp run test:integration   # Node worker threads (timeouts, aborts, start failures), files run serially
+vpr test:integration   # Node worker threads (timeouts, aborts, start failures), files run serially
 ```
 
 - `tests/unit/helpers/job-store-contract.ts` pins the same semantics on the memory and database
   stores.
 - Coverage is 100% (runtimes and entry files excluded).
 
-Before finishing, run `vp run ready` from the repo root. To reproduce CI:
+Before finishing, run `vpr ready` from the repo root. To reproduce CI:
 `dagger call test-integration --workspace=@lightproject/tasks`.
 
 ### Local testing
 
 Manual end-to-end checks against a real database. Postgres runs on the Node runtime; local D1 only
-on the Cloudflare runtime (`wrangler dev`): Node has no D1 binding, so `vp run dev` and
-`vp run enqueue` refuse `DATABASE_DIALECT=d1`.
+on the Cloudflare runtime (`wrangler dev`): Node has no D1 binding, so `vpr dev` and
+`vpr enqueue` refuse `DATABASE_DIALECT=d1`.
 
 **Environment**: the commands need the root `.env` in the shell (mise does this when activated).
 Without mise activation, run them through `mise x -- env KEY=value … <command>`: put overrides
@@ -143,8 +143,8 @@ Without mise activation, run them through `mise x -- env KEY=value … <command>
 
 ```sh
 docker compose up -d postgres   # repo root
-cd ../../templates/datastore && vp run build \
-  && DATABASE_DIALECT=postgres vp run db:migrate && DATABASE_DIALECT=d1 vp run db:migrate
+cd ../../templates/datastore && vpr build \
+  && DATABASE_DIALECT=postgres vpr db:migrate && DATABASE_DIALECT=d1 vpr db:migrate
 cd ../../templates/tasks
 ```
 
@@ -165,15 +165,15 @@ directly. A row needs every column (no SQL defaults besides `attempts`).
 
 #### Postgres (Node runtime)
 
-| Case                  | Commands                                                                                                                                      | Expected                                                                        |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| P1. Run jobs          | `DATABASE_DIALECT=postgres vp run dev`, then (2nd terminal) `DATABASE_DIALECT=postgres vp run enqueue ping '{"message":"hello"}' 3`, `pgjobs` | `Started 2 worker(s)…`, `Enqueued 3 ping job(s)`, `ping: hello` ×3, `succeeded` |
-| P2. Concurrency       | `DATABASE_DIALECT=postgres TASKS_CONCURRENCY=ping=4 vp run dev`                                                                               | `Started 4 worker(s)…`; an unknown function name stops the start                |
-| P3. Delayed job       | P1's `vp run dev`, then the delayed insert below                                                                                              | `pending` until `run_at`, then `ping: later`                                    |
-| P4. Invalid payload   | P1's `vp run dev`, then the invalid insert below                                                                                              | `Job attempt failed` (`retryable: false`), row `dead`, `Invalid payload: …`     |
-| P5. Retention purge   | `DATABASE_DIALECT=postgres JOB_RETENTION_SUCCEEDED_MS=1000 JOB_RETENTION_DEAD_MS=1000 JOB_PURGE_INTERVAL_MS=15000 vp run dev`                 | Sweeps on start and every 15 s: `Purged N succeeded and M dead job(s)`          |
-| P6. Graceful shutdown | Ctrl+C in the `vp run dev` terminal                                                                                                           | `Received SIGTERM; stopping (in-flight jobs get the shutdown grace)`            |
-| P7. Built output      | `vp run build && DATABASE_DIALECT=postgres vp run start`                                                                                      | Same as P1, from `dist/index.mjs`                                               |
+| Case                  | Commands                                                                                                                                | Expected                                                                        |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| P1. Run jobs          | `DATABASE_DIALECT=postgres vpr dev`, then (2nd terminal) `DATABASE_DIALECT=postgres vpr enqueue ping '{"message":"hello"}' 3`, `pgjobs` | `Started 2 worker(s)…`, `Enqueued 3 ping job(s)`, `ping: hello` ×3, `succeeded` |
+| P2. Concurrency       | `DATABASE_DIALECT=postgres TASKS_CONCURRENCY=ping=4 vpr dev`                                                                            | `Started 4 worker(s)…`; an unknown function name stops the start                |
+| P3. Delayed job       | P1's `vpr dev`, then the delayed insert below                                                                                           | `pending` until `run_at`, then `ping: later`                                    |
+| P4. Invalid payload   | P1's `vpr dev`, then the invalid insert below                                                                                           | `Job attempt failed` (`retryable: false`), row `dead`, `Invalid payload: …`     |
+| P5. Retention purge   | `DATABASE_DIALECT=postgres JOB_RETENTION_SUCCEEDED_MS=1000 JOB_RETENTION_DEAD_MS=1000 JOB_PURGE_INTERVAL_MS=15000 vpr dev`              | Sweeps on start and every 15 s: `Purged N succeeded and M dead job(s)`          |
+| P6. Graceful shutdown | Ctrl+C in the `vpr dev` terminal                                                                                                        | `Received SIGTERM; stopping (in-flight jobs get the shutdown grace)`            |
+| P7. Built output      | `vpr build && DATABASE_DIALECT=postgres vpr start`                                                                                      | Same as P1, from `dist/index.mjs`                                               |
 
 ```sh
 # P3: delayed job (runs in 20 s)
@@ -199,17 +199,17 @@ docker stop -t 30 tasks   # graceful stop within the 30 s budget
 
 #### D1 (Cloudflare runtime)
 
-Extra flags after `vp run wrangler:dev` reach `wrangler dev`, and `--var KEY:value` overrides
+Extra flags after `vpr wrangler:dev` reach `wrangler dev`, and `--var KEY:value` overrides
 `.env`, so `.env` can stay on `postgres`. Fire the watchdog cron once after every start; it starts
 one `WorkerLoop` per worker. Stop with Ctrl+C (wrangler respawns a killed `workerd`).
 
-| Case                | Commands                                                                                                                                                                | Expected                                                                    |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| D1. Run jobs        | `vp run wrangler:dev --var DATABASE_DIALECT:d1`, then (2nd terminal) `curl "http://localhost:2002/__scheduled?cron=*+*+*+*+*"`, the bulk insert below, `d1jobs`         | `Cron * * * * *: 2 worker loop(s) running`, `ping: hello` ×5, `succeeded`   |
-| D2. Concurrency     | `vp run wrangler:dev --var DATABASE_DIALECT:d1 --var TASKS_CONCURRENCY:ping=3`, then the curl                                                                           | `3 worker loop(s) running`; loops above a lowered count stop                |
-| D3. Delayed job     | D1's server + curl, then the delayed insert below                                                                                                                       | `pending` until `run_at`, then `ping: later`                                |
-| D4. Invalid payload | D1's server + curl, then the invalid insert below                                                                                                                       | `Job attempt failed`, row `dead`, `Invalid payload: …`                      |
-| D5. Retention purge | `vp run wrangler:dev --var DATABASE_DIALECT:d1 --var JOB_RETENTION_SUCCEEDED_MS:1000 --var JOB_RETENTION_DEAD_MS:1000 --var JOB_PURGE_INTERVAL_MS:60000`, then the curl | Every tick sweeps (interval = tick): `Purged N succeeded and M dead job(s)` |
+| Case                | Commands                                                                                                                                                             | Expected                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| D1. Run jobs        | `vpr wrangler:dev --var DATABASE_DIALECT:d1`, then (2nd terminal) `curl "http://localhost:2002/__scheduled?cron=*+*+*+*+*"`, the bulk insert below, `d1jobs`         | `Cron * * * * *: 2 worker loop(s) running`, `ping: hello` ×5, `succeeded`   |
+| D2. Concurrency     | `vpr wrangler:dev --var DATABASE_DIALECT:d1 --var TASKS_CONCURRENCY:ping=3`, then the curl                                                                           | `3 worker loop(s) running`; loops above a lowered count stop                |
+| D3. Delayed job     | D1's server + curl, then the delayed insert below                                                                                                                    | `pending` until `run_at`, then `ping: later`                                |
+| D4. Invalid payload | D1's server + curl, then the invalid insert below                                                                                                                    | `Job attempt failed`, row `dead`, `Invalid payload: …`                      |
+| D5. Retention purge | `vpr wrangler:dev --var DATABASE_DIALECT:d1 --var JOB_RETENTION_SUCCEEDED_MS:1000 --var JOB_RETENTION_DEAD_MS:1000 --var JOB_PURGE_INTERVAL_MS:60000`, then the curl | Every tick sweeps (interval = tick): `Purged N succeeded and M dead job(s)` |
 
 ```sh
 # D1: enqueue 5 jobs
@@ -259,7 +259,7 @@ The `tasks` deploy runs after `datastore` (it needs its migrations) and does two
 
 ```sh
 # Worker, per env (credentials from the environment or the root .env)
-CLOUDFLARE_ENV=develop vp run wrangler:deploy
+CLOUDFLARE_ENV=develop vpr wrangler:deploy
 
 # Node, via the published image (any container runtime)
 docker run --rm --stop-timeout 30 -e JOB_STORE=database -e DATABASE_DIALECT=postgres \

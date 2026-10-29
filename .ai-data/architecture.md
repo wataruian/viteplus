@@ -64,7 +64,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
   `finishedJobsPredicate`, used as `sql.raw` by the schema and the queries, since SQLite only uses
   a partial index whose predicate the query repeats). `render-d1-queries.test.ts` fails if a
   committed D1 copy differs from its rendered, `vp fmt`-formatted source.
-- **Schema rendering**: `vp run db:generate [name]` (`src/scripts/generate.ts` → `src/scripts/render-d1-schema.ts`, then `src/scripts/migrations.ts`) reads the
+- **Schema rendering**: `vpr db:generate [name]` (`src/scripts/generate.ts` → `src/scripts/render-d1-schema.ts`, then `src/scripts/migrations.ts`) reads the
   exported Postgres tables at runtime (`getTableConfig`) and writes `src/d1/schema.ts` with the
   same column names and TypeScript types (`uuid`→`text`, `jsonb`→JSON `text` reusing the Postgres
   column's `$type`, `timestamptz`→integer epoch ms, `boolean`→integer boolean), keeps
@@ -120,13 +120,13 @@ The repository is structured as a **Vite+-powered Monorepo**.
   level, for all tables at once) the inferred row types; `migrations-drift` runs
   `drizzle-kit generate` on a scratch copy of the migrations and requires "No schema changes".
   `tests/shared/database-contract.ts` runs the same behavior checks on a real local D1 (unit) and
-  a real Postgres (`vp run test:integration`).
+  a real Postgres (`vpr test:integration`).
 - **Ids and timestamps are set by the app** (`$defaultFn`/`$onUpdateFn`), never DB defaults, so
   both dialects produce identical values.
-- **Migrations**: `vp run db:generate` writes `migrations/{postgres,d1}/<timestamp>_<name>/`
+- **Migrations**: `vpr db:generate` writes `migrations/{postgres,d1}/<timestamp>_<name>/`
   (Drizzle 1.0 folder format — not the flat files `wrangler d1 migrations` reads, so D1 is
   migrated by Drizzle's migrator too, tracked in `__drizzle_migrations` on both). Apply:
-  `vp run db:migrate`, which picks the migrator from `DATABASE_DIALECT`: `postgres` →
+  `vpr db:migrate`, which picks the migrator from `DATABASE_DIALECT`: `postgres` →
   drizzle-orm's postgres-js migrator (`DATASTORE_POSTGRES_URL` or the `POSTGRES_*` parts); `d1` → local D1
   (shared state), or with `CLOUDFLARE_ENV=<develop|staging|production>` the remote D1
   (`src/scripts/migrate-d1-remote.ts`: Drizzle's sqlite-proxy migrator over Cloudflare's D1 `/raw`
@@ -139,7 +139,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
   behind when files are deleted), which break every migrate run the same way.
 - **One database for all apps**, one migration history: apps bind the same D1 (`database_id`
   from `templates/datastore/wrangler.toml` locally, `lightproject-datastore-local`) and run `wrangler dev`
-  with `--persist-to ../../.wrangler/state`, the folder `DATABASE_DIALECT=d1 vp run db:migrate` migrates. Apps never keep
+  with `--persist-to ../../.wrangler/state`, the folder `DATABASE_DIALECT=d1 vpr db:migrate` migrates. Apps never keep
   their own tables or migrations.
 - **Lint note**: `sort-keys` orders column objects alphabetically, so generated tables list
   columns alphabetically (cosmetic).
@@ -249,7 +249,7 @@ Every edit is in `templates/datastore`, on the Postgres or dialect-neutral side;
    render for D1:
 
    ```sh
-   vp run db:generate add_orders
+   vpr db:generate add_orders
    ```
 
    ```text
@@ -319,15 +319,15 @@ Every edit is in `templates/datastore`, on the Postgres or dialect-neutral side;
    });
    ```
 
-   Then `vp run ready`. Drift tests fail if step 7 was skipped or a generated file was edited.
+   Then `vpr ready`. Drift tests fail if step 7 was skipped or a generated file was edited.
 
 9. **Apply** the migrations (CI applies them on deploy when `DATABASE_MIGRATION_ENABLED` is
    `true`):
 
    ```sh
-   vp run build
-   DATABASE_DIALECT=postgres vp run db:migrate
-   DATABASE_DIALECT=d1 vp run db:migrate
+   vpr build
+   DATABASE_DIALECT=postgres vpr db:migrate
+   DATABASE_DIALECT=d1 vpr db:migrate
    ```
 
 Apps then use it through the same entry point as every table, on either dialect:
@@ -432,7 +432,7 @@ methods change).
   `WorkerLoop.fetch` stores its slot only when none is stored (a Durable Object's name fixes its
   slot), so the minutely watchdog costs no storage writes.
 - **Runtimes** (thin adapters in `src/runtimes/`, like the backend):
-  - `node.ts` (entry `src/index.ts`; local `vp run dev`, and the published container image
+  - `node.ts` (entry `src/index.ts`; local `vpr dev`, and the published container image
     `node dist/index.mjs`): one worker thread per worker (`worker_threads`), so a CPU-bound or
     crashing job only affects its own thread; on timeout the thread gets a grace period, then is
     terminated and replaced; the attempt is reported aborted only after the handler settled or the
@@ -613,7 +613,7 @@ written, linted, tested and run on Node before being documented).
    });
    ```
 
-   Then `vp run ready`.
+   Then `vpr ready`.
 
 5. **Concurrency per environment** (optional): `TASKS_CONCURRENCY` overrides the function's
    `concurrency`, e.g. `TASKS_CONCURRENCY="ping=2,send-welcome-email=4"` in `.env`, the
@@ -639,10 +639,10 @@ written, linted, tested and run on Node before being documented).
    Or from the CLI (Postgres, with the mise env loaded):
 
    ```sh
-   vp run enqueue send-welcome-email '{"email":"ada@example.com","userId":"<uuid>"}'
+   vpr enqueue send-welcome-email '{"email":"ada@example.com","userId":"<uuid>"}'
    ```
 
-7. **Run it**: nothing to wire. Node (`vp run dev`) starts `concurrency` worker threads for it; on
+7. **Run it**: nothing to wire. Node (`vpr dev`) starts `concurrency` worker threads for it; on
    Cloudflare the next cron tick starts one `WorkerLoop` per slot (`send-welcome-email#1`, `#2`),
    and loops above a lowered concurrency stop on their own.
 
@@ -867,13 +867,13 @@ against D1 before being documented; the outputs below are from those runs).
    vp check --fix . && vp test   # build templates/datastore first (Vitest loads its dist/)
    ```
 
-5. **Run it on Node** (needs the migrated database; `vp run start …` is the same from `dist/`):
+5. **Run it on Node** (needs the migrated database; `vpr start …` is the same from `dist/`):
 
    ```sh
-   vp run script --list
-   vp run script check-admin --input '{"email":"ada@example.com"}'
-   vp run script check-admin --scheduled
-   vp run script check-admin --input '{"email":"nope"}'; echo $?
+   vpr script --list
+   vpr script check-admin --input '{"email":"ada@example.com"}'
+   vpr script check-admin --scheduled
+   vpr script check-admin --input '{"email":"nope"}'; echo $?
    ```
 
    ```text
@@ -889,7 +889,7 @@ against D1 before being documented; the outputs below are from those runs).
 6. **Run it on the local Worker**:
 
    ```sh
-   vp run wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
+   vpr wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:abcdefghijklmnopqrstuvwxyz0123456789
    # another terminal
    curl "http://localhost:2003/__scheduled?cron=0+*+*+*+*"
    curl -X POST -H "Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123456789" \

@@ -206,8 +206,7 @@ describe('wrangler', () => {
       /^\d{4}-\d{2}-\d{2}T/u,
     );
     expect(container.capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
+      'vpr',
       '--filter',
       '@lightproject/backend',
       'wrangler:deploy',
@@ -228,8 +227,7 @@ describe('wrangler', () => {
     );
 
     expect(getLastContainer().capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
+      'vpr',
       '--filter',
       '@lightproject/backend',
       'wrangler:deploy',

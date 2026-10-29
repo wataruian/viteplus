@@ -26,7 +26,7 @@ describe('committed migrations match the schema', () => {
   test.each([
     ['postgresql', './src/postgres/schema.ts', 'migrations/postgres'],
     ['sqlite', './src/d1/schema.ts', 'migrations/d1'],
-  ])('%s: no pending schema changes (run `vp run db:generate` if this fails)', (...args) => {
+  ])('%s: no pending schema changes (run `vpr db:generate` if this fails)', (...args) => {
     expect(generateAgainstCopy(...args)).toContain('No schema changes');
   });
 });

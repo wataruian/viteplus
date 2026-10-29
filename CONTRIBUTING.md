@@ -17,7 +17,7 @@ package management, and frontend tooling behind a single `vp` CLI. See
 2. Validate your environment:
 
    ```sh
-   vp run ready
+   vpr ready
    ```
 
 ## Development Workflow
@@ -40,7 +40,7 @@ package management, and frontend tooling behind a single `vp` CLI. See
 ## Commit Messages
 
 This repository uses [Conventional Commits](https://www.conventionalcommits.org/)
-(enforced via `commitlint`). You can use `vp run` or `git commit` normally, or
+(enforced via `commitlint`). You can use `vpr` or `git commit` normally, or
 run the interactive prompt via `commitizen`:
 
 ```sh
@@ -50,7 +50,7 @@ npx cz
 ## Pull Requests
 
 - Keep changes scoped and include tests for behavior changes.
-- Ensure `vp run ready` passes before requesting review.
+- Ensure `vpr ready` passes before requesting review.
 - Fill out the pull request template — it mirrors the review checklist in
   [AGENTS.md](./AGENTS.md).
 

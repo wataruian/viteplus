@@ -11,13 +11,13 @@ beforeEach(() => {
 });
 
 describe('build', () => {
-  test('runs vp run -r build on the mounted workspace', async () => {
+  test('runs vpr -r build on the mounted workspace', async () => {
     seedMountFiles();
 
     const container = await createMonorepo().build('@lightproject/backend');
 
     expect(container).toBeDefined();
-    expect(getLastContainer().capturedExecCalls).toContainEqual(['vp', 'run', '-r', 'build']);
+    expect(getLastContainer().capturedExecCalls).toContainEqual(['vpr', '-r', 'build']);
   });
 
   test('applies buildEnv for a frontend workspace', async () => {
@@ -100,7 +100,7 @@ describe('testUnit', () => {
     );
   });
 
-  test('runs vp run -r dagger:test:unit and reads coverage from dagger for the dagger workspace', async () => {
+  test('runs vpr -r dagger:test:unit and reads coverage from dagger for the dagger workspace', async () => {
     world.execStdout = 'all dagger tests passed';
     world.execExitCode = 0;
     world.dirs.set('/app/dagger/coverage', ['coverage-summary.json']);
@@ -118,12 +118,7 @@ describe('testUnit', () => {
 
     const result = await createMonorepo().testUnit('dagger');
 
-    expect(getLastContainer().capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
-      '-r',
-      'dagger:test:unit',
-    ]);
+    expect(getLastContainer().capturedExecCalls).toContainEqual(['vpr', '-r', 'dagger:test:unit']);
     await expect(result.file('test-unit.exit-code').contents()).resolves.toBe('0');
     await expect(result.file('test-unit.output').contents()).resolves.toBe(
       'all dagger tests passed',
@@ -158,8 +153,7 @@ describe('testEndToEnd', () => {
     const container = getLastContainer();
     expect(container.capturedUsers).toStrictEqual(['root', 'vp']);
     expect(container.capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
+      'vpr',
       '--filter',
       '@lightproject/frontend',
       'test:e2e',
@@ -218,8 +212,7 @@ describe('testIntegration', () => {
     );
     expect(container.capturedEnvVariables.has('TASKS_POSTGRES_URL')).toBe(false);
     expect(container.capturedExecCalls).toContainEqual([
-      'vp',
-      'run',
+      'vpr',
       '--filter',
       '@lightproject/datastore',
       'test:integration',
