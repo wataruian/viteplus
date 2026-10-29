@@ -51,17 +51,6 @@ function installMise() {
   echo "or simply open a new terminal."
 }
 
-function installVp() {
-  export VP_HOME="${tmpLocalBinDir}/vp"
-  export VP_VERSION="1.4.0"
-
-  curl -fsSL "https://vite.plus" | bash
-
-  updatePath
-
-  vp --version
-}
-
 function installAntigravity() {
   local AGY_VERSION="1.1.8"
   local AGY_TAR_FILE="${tmpLocalBinDir}/agy.tar.gz"
@@ -88,8 +77,8 @@ function installAntigravity() {
 
 binary="${1:-"all"}"
 
-if [[ "${binary}" != "mise" && "${binary}" != "vp" && "${binary}" != "agy" && "${binary}" != "all" ]]; then
-  echo "Usage: ./install.sh [mise|vp|agy|all]"
+if [[ "${binary}" != "mise" && "${binary}" != "agy" && "${binary}" != "all" ]]; then
+  echo "Usage: ./install.sh [mise|agy|all]"
   exit 1
 fi
 
@@ -99,13 +88,10 @@ export PATH="${tmpLocalBinDir}:${PATH}"
 
 if [[ "${binary}" == "mise" ]]; then
   installMise
-elif [[ "${binary}" == "vp" ]]; then
-  installVp
 elif [[ "${binary}" == "agy" ]]; then
   installAntigravity
 elif [[ "${binary}" == "all" ]]; then
   installMise
-  installVp
   installAntigravity
 fi
 

@@ -21,6 +21,15 @@ jq = "1.7.1"
 cloudflared = "2026.9.1"
 # viteplus = "1.4.0"
 
+# remove this workaround when https://github.com/voidzero-dev/vite-plus/issues/943 is fixed
+[tools."github:voidzero-dev/vite-plus"]
+version = "1.4.0"
+postinstall = '''
+cd "$MISE_TOOL_INSTALL_PATH"
+ln -sf vp vpr
+ln -sf vp vpx
+'''
+
 [env]
 _.file = ".env"
 

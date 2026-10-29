@@ -87,7 +87,7 @@ entry `src/runtimes/edge.ts` may export only the default handler and `WorkerLoop
 | ----------------------------------- | ---------------------------------------------------------------------------------------- |
 | `vpr dev`                           | Node workers under `vpx --watch` (not plain `vp dev`)                                    |
 | `vpr build`                         | Builds `dist/` (`dist/index.mjs`, the client entry)                                      |
-| `vpr start`                         | Runs the built `node dist/index.mjs` (what the container image runs)                     |
+| `vpr start`                         | Runs the built `dist/index.mjs` via `vpx` (the container image uses `node`)              |
 | `vpr enqueue <fn> '<json>' [count]` | Enqueues `count` (default 1) jobs into the `JOB_STORE=database` store (refuses `memory`) |
 | `vpr wrangler:dev`                  | Local Worker on `TASKS_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled`          |
 | `vpr wrangler:deploy`               | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                            |

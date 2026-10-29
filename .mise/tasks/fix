@@ -18,7 +18,7 @@ while [[ "${#}" -gt 0 ]]; do
   esac
 done
 
-node scripts/code-actions.ts "${codeActionArgs[@]}"
+vpx scripts/code-actions.ts "${codeActionArgs[@]}"
 
 lintSuccess="true"
 vp lint --fix || lintSuccess="false"

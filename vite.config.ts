@@ -204,7 +204,7 @@ const getPackageViteConfig = ({
   buildType = 'pack',
   devCommand = 'vpx --watch --conditions=typescript src/index.ts',
   buildCommand = '',
-  startCommand = 'node dist/index.mjs',
+  startCommand = 'vpx dist/index.mjs',
   excludeDevCommand = true,
   excludeStartCommand = true,
 }: {

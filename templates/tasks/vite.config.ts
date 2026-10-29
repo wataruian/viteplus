@@ -33,7 +33,7 @@ export default defineConfig(({ mode }): UserConfig => {
       excludeDevCommand: false,
       excludeStartCommand: false,
       mode,
-      startCommand: 'node dist/index.mjs',
+      startCommand: 'vpx dist/index.mjs',
     }),
     {
       pack: {

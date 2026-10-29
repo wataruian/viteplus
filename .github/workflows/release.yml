@@ -37,8 +37,6 @@ jobs:
 
       - name: Set up toolchain
         uses: ./.github/actions/setup-toolchain
-        with:
-          setup-mise: 'false'
 
       - name: Configure git identity
         run: |
@@ -88,7 +86,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="v$(node -p "require('./package.json').version")"
+          tag="v$(jq -r .version package.json)"
           gh release create "${tag}" --generate-notes
 
           {

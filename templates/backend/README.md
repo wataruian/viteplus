@@ -98,7 +98,7 @@ Use `vpr dev`, not `vp dev`: the built-in `vp dev` starts a Vite dev server, nev
 | `vpr dev`             | `vpx --watch` on `src/index.ts` (Node, `@hono/node-server`) at `http://localhost:2000`               |
 | `vpr wrangler:dev`    | The Worker runtime locally (`wrangler dev`) on `BACKEND_PORT`, inspector on `BACKEND_INSPECTOR_PORT` |
 | `vpr build`           | `vp pack`: ESM + CJS into `dist/` (`dist/index.mjs` is the Node entry, `dist/client.*` the library)  |
-| `vpr start`           | `node dist/index.mjs`; build first with `vpr -t build` (also builds `@lightproject/common`)          |
+| `vpr start`           | `vpx dist/index.mjs`; build first with `vpr -t build` (also builds `@lightproject/common`)           |
 | `vpr check`           | `vp check` (format, lint, type check)                                                                |
 | `vpr type-check`      | `tsgo`                                                                                               |
 | `vpr wrangler:deploy` | `wrangler deploy`; set `CLOUDFLARE_ENV` to pick the `[env.*]` Worker (see Deployment)                |

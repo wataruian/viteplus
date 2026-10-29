@@ -31,7 +31,7 @@ export default defineConfig(({ mode }): UserConfig => {
       dir,
       excludeStartCommand: false,
       mode,
-      startCommand: 'node dist/index.mjs',
+      startCommand: 'vpx dist/index.mjs',
     }),
     {
       run: {

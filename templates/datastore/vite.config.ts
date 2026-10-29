@@ -34,7 +34,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'db:migrate': {
             cache: false,
-            command: 'node dist/scripts/migrate.mjs',
+            command: 'vpx dist/scripts/migrate.mjs',
           },
           'db:studio': {
             cache: false,

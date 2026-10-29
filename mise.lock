@@ -124,6 +124,52 @@ url = "https://github.com/cli/cli/releases/download/v2.100.0/gh_2.100.0_windows_
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/542974322"
 provenance = "github-attestations"
 
+[[tools."github:voidzero-dev/vite-plus"]]
+version = "1.4.0"
+backend = "github:voidzero-dev/vite-plus"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.linux-arm64"]
+checksum = "sha256:8eee2d3e9a5bf8654f5150048f5a82b86d4f546c34c530f052545f5058db60de"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875784"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.linux-arm64-musl"]
+checksum = "sha256:70fe5a318a227f90638b55b003722f435672a90d2a80aeef3d5ca4773373273e"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875779"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.linux-x64"]
+checksum = "sha256:992558abc9621384434a22d80e06e117615680f14a3e17a58eb287fd30a07694"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875783"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.linux-x64-musl"]
+checksum = "sha256:7015e93aa97fcd9dd4dd800064f41e46ca821179ef8921b57aabf7857c021553"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875778"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.macos-arm64"]
+checksum = "sha256:d54d258ce67d43c0deffb09329825241db197c2f20e72871121227f03fb40312"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875781"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.macos-x64"]
+checksum = "sha256:10cdffc49c20dea7ef5bd69f74e8a52f6553076e551326d4efd1013b2efdd9fa"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875785"
+provenance = "github-attestations"
+
+[tools."github:voidzero-dev/vite-plus"."platforms.windows-x64"]
+checksum = "sha256:2ae7e34869e15658bc713ed0b19f975bdd7edae846b1024b118b75ea3fbdbcae"
+url = "https://github.com/voidzero-dev/vite-plus/releases/download/v1.4.0/vp-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/voidzero-dev/vite-plus/releases/assets/667875776"
+provenance = "github-attestations"
+
 [[tools.jq]]
 version = "1.7.1"
 backend = "aqua:jqlang/jq"
