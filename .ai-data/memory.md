@@ -1742,3 +1742,26 @@ AGENTS.md reflect the current state.
   cache on, vite-plus-core 1.4.0's `prepareStackTrace` crashes on a cached module's `Uint8Array`
   code while wrangler loads in the `globalSetup` ("code.charCodeAt is not a function", "No test
   files found"). Tracked in `TODO.md`.
+
+## 2026-10-29: mise Is the Only `vp` Installer
+
+- `vp` comes only from mise: `[tools."github:voidzero-dev/vite-plus"]` in `mise.toml` (locked in
+  `mise.lock`). Its `postinstall` links `vpr`/`vpx` to `vp`, a workaround until
+  voidzero-dev/vite-plus#943 is fixed.
+- Removed the other installers: `install.sh`'s `installVp` (`./install.sh vp`), and the
+  `voidzero-dev/setup-vp` step plus its `setup-vp`/`vp-version`/`setup-mise` inputs in
+  `.github/actions/setup-toolchain`. The action now always runs `jdx/mise-action`, then `vp install`
+  unless `run-install: 'false'` (passed by the Dagger-only jobs that used to pass `setup-vp: 'false'`).
+- The Dagger pipeline still runs inside the pinned `VITE_PLUS_IMAGE`; it is a container image, not
+  an installer, so it stays.
+- vp (not mise) manages Node.js and pnpm, and only vp commands use them: no plain `node`/`pnpm` on
+  PATH. Use `vpx <file>`, `vp exec <bin>` or `jq` (e.g. `release.yml` reads the version with `jq`).
+  Don't pin node/pnpm in mise here, and delete the `# Vite+ bin` profile line vp's first run adds.
+- Never put vp's bin dir (`~/.local/share/vite-plus/bin`) on PATH, e.g. via mise's `_.path`: it also
+  holds vp's own copy of `vp`/`vpr`/`vpx`, which shadows mise's, so a version bump in `mise.toml`
+  would not take effect (and `vp` keeps working after `mise uninstall`).
+- Git hooks: vp's generated runner (`.vite-hooks/_/h`) prepends `node_modules/.bin`, whose `vp` is a
+  `node` wrapper, which fails with no plain `node`. `.vite-hooks/pre-commit` and `commit-msg` strip
+  that entry first (`PATH="${PATH#*/node_modules/.bin:}"`), so they run mise's native `vp`.
+- Local task commands run built output with `vpx` (`startCommand`, datastore `db:migrate`); the
+  container images keep `node`.

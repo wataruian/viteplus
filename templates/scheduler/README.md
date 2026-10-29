@@ -82,7 +82,7 @@ export only the default handler.
 | `vpr script <name> [--input '<json>']` | Runs a script once from source (`vpx`); `--scheduled` runs it as its cron would     |
 | `vpr script --list`                    | Lists the scripts and their schedules                                               |
 | `vpr build`                            | Builds `dist/` (`dist/index.mjs`, the client entry)                                 |
-| `vpr start <name> …`                   | Same as `script`, from the built `node dist/index.mjs` (what the image runs)        |
+| `vpr start <name> …`                   | Same as `script`, from the built `dist/index.mjs` via `vpx` (the image uses `node`) |
 | `vpr wrangler:dev`                     | Local Worker on `SCHEDULER_PORT`, D1 in `../../.wrangler/state`, `--test-scheduled` |
 | `vpr wrangler:deploy`                  | `wrangler deploy` (CI uses `dagger wrangler`; see Deployment)                       |
 | `vpr wrangler:delete`                  | `wrangler delete`                                                                   |
@@ -226,7 +226,7 @@ abort), then logs `ping: <message>`. Postgres runs on Node, the local D1 on the 
 (`wrangler dev`): Node has no D1 binding.
 
 **Environment**: the commands need the root `.env` in the shell (mise does this when activated).
-`vpr` passes the exit code through, but not signals: signal cases use `node dist/index.mjs`.
+`vpr` passes the exit code through, but not signals: signal cases use `vpx dist/index.mjs`.
 
 **Prerequisites** (once):
 
@@ -262,9 +262,9 @@ d1() { vp exec wrangler d1 execute DB --local --persist-to ../../.wrangler/state
 
 ```sh
 # P6: a second run while the first is still running
-node dist/index.mjs ping --input '{"delayMs":8000,"message":"first"}' & sleep 2
-node dist/index.mjs ping --input '{"message":"second"}'; echo "second: $?"   # skipped, 3
-wait; node dist/index.mjs ping --input '{"message":"third"}'                  # succeeded
+vpx dist/index.mjs ping --input '{"delayMs":8000,"message":"first"}' & sleep 2
+vpx dist/index.mjs ping --input '{"message":"second"}'; echo "second: $?"   # skipped, 3
+wait; vpx dist/index.mjs ping --input '{"message":"third"}'                  # succeeded
 
 # P7: hold ping's lock by hand for 10 minutes, then release it
 pgq "INSERT INTO script_locks VALUES (now() + interval '10 minutes', '@lightproject/scheduler/ping', 'by-hand', now(), now());"
@@ -273,18 +273,18 @@ pgq "DELETE FROM script_locks;"
 vpr script ping                   # succeeded
 
 # P8: stop a run in the middle
-node dist/index.mjs ping --input '{"delayMs":60000}' & sleep 2
+vpx dist/index.mjs ping --input '{"delayMs":60000}' & sleep 2
 pgq "SELECT name, owner FROM script_locks;"   # held by a random owner id
 kill -TERM $!; wait $!; echo $?               # aborted, 1
 pgq "SELECT count(*) FROM script_locks;"      # 0
 
 # P11: a run killed without cleanup frees its lock within one lease (60 s, renewed while running)
-node dist/index.mjs ping --input '{"delayMs":25000}' & P=$!
+vpx dist/index.mjs ping --input '{"delayMs":25000}' & P=$!
 until [ "$(docker exec postgres psql -U lightproject -d lightproject_datastore -tAc 'SELECT count(*) FROM script_locks')" = 1 ]; do sleep 0.5; done
 kill -9 $P   # once the run holds its lock
 pgq "SELECT round(extract(epoch from expires_at - now())) FROM script_locks;"   # ~58
-node dist/index.mjs ping; echo $?                                                # skipped, 3
-sleep 60; node dist/index.mjs ping; echo $?                                      # succeeded, 0
+vpx dist/index.mjs ping; echo $?                                                # skipped, 3
+sleep 60; vpx dist/index.mjs ping; echo $?                                      # succeeded, 0
 ```
 
 #### D1 (Cloudflare runtime)

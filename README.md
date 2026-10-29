@@ -146,12 +146,12 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 
 ### Prerequisites
 
-| Tool    | Version   | Notes                         |
-| :------ | :-------- | :---------------------------- |
-| Node.js | `24.15.0` | Defined in `.tool-versions`   |
-| mise    | `latest`  | Task runner and env manager   |
-| Vite+   | `latest`  | Global CLI for all operations |
-| pnpm    | `latest`  | Managed automatically by `vp` |
+| Tool    | Version   | Notes                           |
+| :------ | :-------- | :------------------------------ |
+| Node.js | `24.15.0` | Defined in `.tool-versions`     |
+| mise    | `latest`  | Task runner and env manager     |
+| Vite+   | `1.4.0`   | Installed by mise (`mise.toml`) |
+| pnpm    | `latest`  | Managed automatically by `vp`   |
 
 > [!NOTE]
 > You do not need to install `pnpm` manually; `vp` wraps it and ensures the correct version is used based on `package.json`.
@@ -159,8 +159,8 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 ### Quick Start Checklist
 
 1.  **Node.js**: Ensure you are using `v24.15.0` (check `.tool-versions`).
-2.  **Mise**: Install globally for task execution.
-3.  **Vite+ CLI**: Install globally: `npm i -g vite-plus`.
+2.  **Mise**: Install it (`./install.sh mise`), then run `mise install`.
+3.  **Vite+ CLI**: Installed by `mise install` from `mise.toml`; do not install it globally.
 4.  **Install dependencies**: Run `vp install`, then `docker compose up -d postgres` (integration tests use it). On a Postgres volume created before `configs/postgres/create-databases.sh` existed, run it once: `docker compose exec postgres sh /docker-entrypoint-initdb.d/create-databases.sh` (creates every `*_POSTGRES_DB`, skips existing ones).
 5.  **Initialize**: Run `mise run init` to build, format, and test everything.
 6.  **Develop**: Run `mise run start dev` to start every app, or follow a workspace's README to run one.
