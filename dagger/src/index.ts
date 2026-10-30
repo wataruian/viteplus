@@ -106,7 +106,11 @@ export class Monorepo {
 
   @func()
   public async ready(): Promise<Directory> {
-    const container = withPostgres(withInstalledRootSource(this.rootSource), WORKSPACE_NAMES);
+    const container = withPostgres(
+      withInstalledRootSource(this.rootSource),
+      WORKSPACE_NAMES,
+      await this.rootSource.digest(),
+    );
 
     const stdout = await container.withExec(['vpr', 'ready']).stdout();
 
@@ -246,7 +250,11 @@ export class Monorepo {
       throw new Error(`Workspace ${workspace} has no integration tests (tests/integration)`);
     }
 
-    const container = withPostgres(await this.build(workspace), [workspace]);
+    const container = withPostgres(
+      await this.build(workspace),
+      [workspace],
+      await this.source.digest(),
+    );
     const testContainer = container.withExec(['vpr', '--filter', workspace, 'test:integration'], {
       expect: ReturnType.Any,
     });

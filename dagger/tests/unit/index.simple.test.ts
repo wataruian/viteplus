@@ -43,8 +43,10 @@ describe('ready', () => {
 
     const container = getLastContainer();
     expect(container.capturedExecCalls).toContainEqual(['vpr', 'ready']);
-    expect(container.capturedServiceBindings.get('postgres')?.capturedImage).toBe(
-      'postgres:17.6-alpine',
+    const postgres = container.capturedServiceBindings.get('postgres');
+    expect(postgres?.capturedImage).toBe('postgres:17.6-alpine');
+    expect(postgres?.capturedEnvVariables.get('SERVICE_KEY')).toMatch(
+      /^@lightproject\/backend,.*@xxh3:fake\/$/u,
     );
     for (const variable of ['DATASTORE_POSTGRES_URL', 'TASKS_POSTGRES_URL']) {
       expect(container.capturedEnvVariables.get(variable)).toBe(

@@ -145,10 +145,15 @@ const withoutProxy = (container: Container): Container =>
     .withEnvVariable('http_proxy', '')
     .withEnvVariable('https_proxy', '');
 
-const withPostgres = (container: Container, workspaceNames: readonly string[]): Container => {
+const withPostgres = (
+  container: Container,
+  workspaceNames: readonly string[],
+  sourceDigest: string,
+): Container => {
   const postgres = dag
     .container()
     .from(POSTGRES_IMAGE)
+    .withEnvVariable('SERVICE_KEY', `${workspaceNames.join(',')}@${sourceDigest}`)
     .withEnvVariable('POSTGRES_USER', POSTGRES_SERVICE_CREDENTIAL)
     .withEnvVariable('POSTGRES_PASSWORD', POSTGRES_SERVICE_CREDENTIAL)
     .withEnvVariable('POSTGRES_DB', POSTGRES_SERVICE_CREDENTIAL)
