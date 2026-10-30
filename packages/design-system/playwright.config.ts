@@ -23,15 +23,15 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `storybook dev -p ${storybookPort} --ci --no-open`,
+      command: `storybook build --quiet && vp preview --outDir storybook-static --port ${storybookPort} --strictPort`,
       reuseExistingServer: false,
-      timeout: 180_000,
+      timeout: 300_000,
       url: `http://localhost:${storybookPort}/index.json`,
     },
     {
-      command: `vp dev --port ${previewAppPort} --strictPort`,
+      command: `vp build && vp preview --port ${previewAppPort} --strictPort`,
       reuseExistingServer: false,
-      timeout: 180_000,
+      timeout: 300_000,
       url: previewAppUrl,
     },
   ],

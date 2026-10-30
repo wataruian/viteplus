@@ -24,9 +24,9 @@ export default defineConfig({
     video: 'on',
   },
   webServer: {
-    command: `vp dev --port ${port} --strictPort`,
+    command: `vp build && vp preview --port ${port} --strictPort`,
     reuseExistingServer: false,
-    timeout: 180_000,
+    timeout: 300_000,
     url: `http://localhost:${port}/preview`,
   },
   workers: 1,

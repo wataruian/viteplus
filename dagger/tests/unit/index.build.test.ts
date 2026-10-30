@@ -207,6 +207,9 @@ describe('testIntegration', () => {
     const postgres = container.capturedServiceBindings.get('postgres');
     expect(postgres?.capturedImage).toBe('postgres:17.6-alpine');
     expect(postgres?.capturedEnvVariables.get('POSTGRES_DB')).toBe('lightproject');
+    expect(postgres?.capturedEnvVariables.get('SERVICE_KEY')).toBe(
+      '@lightproject/datastore@xxh3:fake/',
+    );
     expect(container.capturedEnvVariables.get('DATASTORE_POSTGRES_URL')).toBe(
       'postgres://lightproject:lightproject@postgres:5432/lightproject',
     );

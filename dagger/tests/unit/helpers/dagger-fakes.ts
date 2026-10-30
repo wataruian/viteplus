@@ -104,6 +104,11 @@ class FakeDirectory extends Directory {
     return new FakeDirectory(this.world, joinPath(this.path, name));
   };
 
+  public override digest = async (): Promise<string> => {
+    await tick();
+    return `xxh3:fake/${this.path}`;
+  };
+
   public override entries = async (
     _opts?: DaggerModule.DirectoryEntriesOpts,
   ): Promise<string[]> => {
