@@ -99,8 +99,8 @@ const makeRepo = (): string => {
       'name = "lightproject-datastore"',
       'database_id = "lightproject-datastore-local"',
       '[[env.develop.d1_databases]]',
-      'database_name = "lightproject-database-dev"',
-      'database_id = "9f1bf2ea-f0d4-4a0a-941d-7020ee0557a0"',
+      'database_name = "lightproject-datastore-dev"',
+      'database_id = "00000000-0000-0000-0000-000000000000"',
       '',
     ].join('\n'),
   );
@@ -252,7 +252,7 @@ describe('resetRemoteD1s', () => {
   test('blanks the ids and renames the databases only under [env.*]', () => {
     expect(
       resetRemoteD1s(
-        'database_id = "local"\n[[env.develop.d1_databases]]\ndatabase_name = "lightproject-database-dev"\ndatabase_id = "abc"\n',
+        'database_id = "local"\n[[env.develop.d1_databases]]\ndatabase_name = "lightproject-datastore-dev"\ndatabase_id = "abc"\n',
         toNames('ledger'),
       ),
     ).toBe(

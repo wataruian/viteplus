@@ -76,8 +76,7 @@ mise (`.env.example` lists the ports and `STYLE_COMPILE_DEBUG`). Components read
 | `VITEST`                       | `src/configs/unocss.ts`               | Set by Vitest; `true` turns off the web-font provider so tests never fetch fonts                      |
 
 `compile.ts` loads the root `.env` itself when run directly. Every key in the root `.env` is part
-of the task cache key, so changing any of them reruns cached tasks. In CI the deploy also passes
-`VITE_ENV` and `VITE_BACKEND_URL` as build env (see Deployment); this package's code reads neither.
+of the task cache key, so changing any of them reruns cached tasks.
 
 ## Development
 
@@ -245,9 +244,8 @@ URLs are `https://<worker>.wataru.workers.dev`.
 
 ### CI
 
-`deploy.yml` deploys this package (independently of the apps) with `--build-env=VITE_ENV=<env>`
-and `--build-env=VITE_BACKEND_URL=https://lightproject-backend-<dev|staging|production>.wataru.workers.dev`.
-It publishes the nginx image `<REGISTRY_ADDRESS>/design-system` via Dagger `publish` (`nginx.conf`:
+`deploy.yml` deploys this package independently of the apps (no build env). It publishes the
+nginx image `<REGISTRY_ADDRESS>/design-system` via Dagger `publish` (`nginx.conf`:
 the preview app from `out/` on port 80, Storybook from `storybook-static/` on port 81), deploys both
 Workers via Dagger `wrangler` (`vpr wrangler:deploy` with `CLOUDFLARE_ENV` and the
 `CLOUDFLARE_*` secrets), and smoke-tests both Worker URLs for HTTP 200. Promotion to

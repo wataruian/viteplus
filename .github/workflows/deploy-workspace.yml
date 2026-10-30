@@ -99,7 +99,7 @@ jobs:
 
           args=()
           case "${WORKSPACE}" in
-            design-system|frontend)
+            frontend)
               args+=(
                 "--build-env=VITE_ENV=${ENVIRONMENT}"
                 "--build-env=VITE_BACKEND_URL=${BACKEND_URL}"
@@ -182,7 +182,7 @@ jobs:
 
           args=()
           case "${WORKSPACE}" in
-            design-system|frontend)
+            frontend)
               args+=(
                 "--build-env=VITE_ENV=${ENVIRONMENT}"
                 "--build-env=VITE_BACKEND_URL=${BACKEND_URL}"

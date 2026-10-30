@@ -150,7 +150,7 @@ When first entering the repository or a new package:
   - All UI components, styles, and decorative elements (beams, noise, etc.) must reside in `packages/design-system`.
   - **Tokens First**: Favor semantic tokens (`adaptive`, `inverse`, `primary`) over hard-coded hex or Tailwind colors.
   - **Themes**: An app that sets no themes gets the design system's defaults (`defaultThemes`: `default`, `emerald`, `ocean`, `sunset`). The one thing an app may define itself is its theme **color seeds** (`src/themes.ts`, `satisfies Themes`), passed both to its own `uno.config.ts` (`createUnoConfig({ themes })`, imported from `@lightproject/design-system/uno.config`, the one export that points at source so it loads unbuilt) and to `<ThemeProvider themes={themes}>`; they replace the defaults. Pick the start theme with `defaultTheme` in **both** places (it is also put on `:root`); never rely on key order, since the lint fix sorts keys alphabetically. Steps: `packages/design-system/README.md` → "Custom themes".
-  - **Shortcuts**: Use standardized UnoCSS shortcuts for common elements (e.g., `btn-primary`, `btn-ghost`, `glass-nav`).
+  - **Component variants**: Style common elements through the design-system components and their `cva` variants (e.g. `<Button intent='ghost'>`). `src/utils/shortcuts.ts` defines no UnoCSS shortcuts yet; add one there before using it.
   - **Header Safety**: When using the sticky `Header`, always add a `pt-20` (80px) buffer to the main content area in the app to prevent overlapping.
 - **Documentation**: Keep `README.md` and `AGENTS.md` updated with any architectural changes.
   - The root `README.md` is generic to the monorepo; app/package specifics go in that workspace's own README.

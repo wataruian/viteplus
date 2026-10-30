@@ -1765,3 +1765,13 @@ AGENTS.md reflect the current state.
   that entry first (`PATH="${PATH#*/node_modules/.bin:}"`), so they run mise's native `vp`.
 - Local task commands run built output with `vpx` (`startCommand`, datastore `db:migrate`); the
   container images keep `node`.
+
+## 2026-10-30: Fresh Cloudflare Account State for Deploys
+
+- Deleted every Worker (incl. the leftover `lightproject-backend-dev`, `-design-system-dev`,
+  `-storybook-dev`) and the old `lightproject-database-<env>` D1s; the next deploy of each workspace
+  recreates its `lightproject-<app>-<dev|staging|production>` Worker.
+- Created `lightproject-datastore-dev` (`ee37efb4-…`), `-staging` (`c80ecad8-…`) and `-production`
+  (`ef7a2585-…`), bound as `DB` in `[env.*]` of the backend, datastore, tasks and scheduler
+  `wrangler.toml`. They are migrated by CI (`DATABASE_MIGRATION_ENABLED=true`, `DATABASE_DIALECT=d1`).
+  `lightproject-database-<env>` stays free for the real `packages/database`.

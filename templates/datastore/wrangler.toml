@@ -8,15 +8,15 @@ database_id = "lightproject-datastore-local"
 
 [[env.develop.d1_databases]]
 binding = "DB"
-database_name = "lightproject-database-dev"
-database_id = "9f1bf2ea-f0d4-4a0a-941d-7020ee0557a0"
+database_name = "lightproject-datastore-dev"
+database_id = "ee37efb4-d241-4ca8-bbdc-4cbdca1195d0"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "lightproject-database-staging"
-database_id = "9aec85c6-8fdb-4d4e-8398-8fd6100ce5e6"
+database_name = "lightproject-datastore-staging"
+database_id = "c80ecad8-ef68-461a-aabb-f37bd13c77ee"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "lightproject-database-production"
-database_id = "09adc8ae-43b3-4bd1-a517-7292fd83bb96"
+database_name = "lightproject-datastore-production"
+database_id = "ef7a2585-f036-4fc3-b53c-ca8135ad728c"
