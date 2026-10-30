@@ -79,13 +79,16 @@ describe('defineFunction', () => {
   });
 });
 
-const stubRandom = (value: number) =>
-  vi.spyOn(globalThis.crypto, 'getRandomValues').mockImplementation((array) => {
+const stubRandom = (...values: number[]) => {
+  let call = 0;
+  return vi.spyOn(globalThis.crypto, 'getRandomValues').mockImplementation((array) => {
     if (array instanceof Uint32Array) {
-      array.fill(value);
+      array.fill(values[Math.min(call, values.length - 1)] ?? 0);
+      call += 1;
     }
     return array;
   });
+};
 
 describe('exponentialBackoff', () => {
   test('doubles per attempt with equal jitter and caps at maxMs', () => {
@@ -95,8 +98,22 @@ describe('exponentialBackoff', () => {
       50, 100, 200, 400, 500,
     ]);
 
-    stubRandom(2 ** 32 - 1);
-    expect([0, 1, 2, 5].map((attempt) => backoff(attempt))).toStrictEqual([100, 100, 200, 1000]);
+    const upperBounds = [
+      [1, 50, 100],
+      [2, 100, 200],
+      [5, 500, 1000],
+    ] as const;
+    for (const [attempt, jitter, delay] of upperBounds) {
+      stubRandom(jitter);
+      expect(backoff(attempt)).toBe(delay);
+    }
+  });
+
+  test('redraws a value above the range instead of folding it in', () => {
+    const backoff = exponentialBackoff({ baseMs: 100, maxMs: 1000 });
+    const spy = stubRandom(63, 2 ** 32 - 1, 7);
+    expect(backoff(1)).toBe(57);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 });
 
