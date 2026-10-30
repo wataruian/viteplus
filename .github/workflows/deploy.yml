@@ -38,22 +38,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'datastore design-system frontend backend tasks scheduler'
-
-  design-system:
-    needs: setup
-    if: >-
-      !cancelled() &&
-      needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
-    permissions:
-      contents: read
-    uses: ./.github/workflows/deploy-workspace.yml
-    secrets: inherit
-    with:
-      workspace: design-system
-      environment: ${{ inputs.environment }}
-      ref: ${{ inputs.ref }}
+          all-workspaces: 'datastore design-system scheduler tasks backend frontend'
 
   datastore:
     needs: setup
@@ -70,37 +55,18 @@ jobs:
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
-  backend:
-    needs: [setup, datastore]
+  design-system:
+    needs: setup
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
-      needs.datastore.result != 'failure' &&
-      needs.datastore.result != 'cancelled'
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
     permissions:
       contents: read
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
-      workspace: backend
-      environment: ${{ inputs.environment }}
-      ref: ${{ inputs.ref }}
-
-  tasks:
-    needs: [setup, datastore]
-    if: >-
-      !cancelled() &&
-      needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'tasks') &&
-      needs.datastore.result != 'failure' &&
-      needs.datastore.result != 'cancelled'
-    permissions:
-      contents: read
-    uses: ./.github/workflows/deploy-workspace.yml
-    secrets: inherit
-    with:
-      workspace: tasks
+      workspace: design-system
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
@@ -121,8 +87,44 @@ jobs:
       environment: ${{ inputs.environment }}
       ref: ${{ inputs.ref }}
 
+  tasks:
+    needs: [setup, datastore]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'tasks') &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: tasks
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
+
+  backend:
+    needs: [setup, datastore, tasks]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled' &&
+      needs.tasks.result != 'failure' &&
+      needs.tasks.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/deploy-workspace.yml
+    secrets: inherit
+    with:
+      workspace: backend
+      environment: ${{ inputs.environment }}
+      ref: ${{ inputs.ref }}
+
   frontend:
-    needs: [setup, datastore, design-system, backend]
+    needs: [setup, datastore, design-system, tasks, backend]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
@@ -131,6 +133,8 @@ jobs:
       needs.datastore.result != 'cancelled' &&
       needs.design-system.result != 'failure' &&
       needs.design-system.result != 'cancelled' &&
+      needs.tasks.result != 'failure' &&
+      needs.tasks.result != 'cancelled' &&
       needs.backend.result != 'failure' &&
       needs.backend.result != 'cancelled'
     permissions:

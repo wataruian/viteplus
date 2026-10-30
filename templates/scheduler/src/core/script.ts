@@ -117,7 +117,7 @@ const scriptsFor = (scripts: readonly Script[], cron: string) =>
 const schedulesOf = (scripts: readonly Script[]) =>
   [
     ...new Set(scripts.flatMap(({ schedule }) => (schedule === undefined ? [] : [schedule]))),
-  ].toSorted();
+  ].toSorted((left, right) => left.localeCompare(right));
 
 export {
   defaultTimeoutMs,

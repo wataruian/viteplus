@@ -29,7 +29,9 @@ describe('wrangler.toml cron triggers', () => {
         environment === '(top level)' ? wrangler.triggers : wrangler.env[environment]?.triggers;
       const crons = (own ?? wrangler.triggers)?.crons ?? [];
 
-      expect(crons.toSorted()).toStrictEqual(schedulesOf(scripts));
+      expect(crons.toSorted((left, right) => left.localeCompare(right))).toStrictEqual(
+        schedulesOf(scripts),
+      );
     },
   );
 

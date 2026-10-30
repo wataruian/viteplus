@@ -7,7 +7,7 @@ const renames: readonly (readonly [RegExp, string])[] = [
   [/\bPgTable\b/gu, 'SQLiteTable'],
   [/'drizzle-orm\/pg-core'/gu, "'drizzle-orm/sqlite-core'"],
   [/\bcreatePostgres(?=[A-Z])/gu, 'createD1'],
-  [/\s*\.for\('update', \{ skipLocked: true \}\)/gu, ''],
+  [/(?<call>\S)\s*\.for\('update', \{ skipLocked: true \}\)/gu, '$<call>'],
 ];
 
 const postgresOnly = /\b[Pp]g[A-Z]\w*|\b(?:Any)?Postgres[A-Z]\w*|postgres-js|\.for\(/u;

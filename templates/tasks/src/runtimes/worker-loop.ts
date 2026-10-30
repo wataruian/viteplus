@@ -100,10 +100,13 @@ class WorkerLoop {
           this.backoff.reset();
         }
         const finishedAt = Date.now();
-        nextAlarmAt =
-          finishedAt >= deadline
-            ? finishedAt
-            : finishedAt + (produced ? config.pollIntervalMs : this.backoff.next());
+        if (finishedAt >= deadline) {
+          nextAlarmAt = finishedAt;
+        } else if (produced) {
+          nextAlarmAt = finishedAt + config.pollIntervalMs;
+        } else {
+          nextAlarmAt = finishedAt + this.backoff.next();
+        }
       } finally {
         await store.close();
       }

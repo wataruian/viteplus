@@ -32,7 +32,7 @@ function updatePath() {
 
 function installMise() {
   export MISE_INSTALL_PATH="${tmpLocalBinDir}/mise"
-  export MISE_VERSION="v2026.7.3"
+  export MISE_VERSION="v2026.10.23"
 
   curl "https://mise.run" | sh
 
