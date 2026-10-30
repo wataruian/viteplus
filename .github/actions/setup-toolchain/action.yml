@@ -5,7 +5,7 @@ inputs:
   mise-version:
     description: 'Mise version'
     required: false
-    default: '2026.7.3'
+    default: '2026.10.23'
   run-install:
     description: 'Run vp install after setup'
     required: false

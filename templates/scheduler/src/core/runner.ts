@@ -1,6 +1,7 @@
 import { bindLogger } from '@lightproject/common/logger';
 import {
   type Context,
+  type Span,
   SpanStatusCode,
   context,
   describeError,
@@ -364,6 +365,56 @@ const checkLease = ({ leaseMs, renewEveryMs }: Lease, abortGraceMs: number) =>
     ? undefined
     : `lease of ${leaseMs}ms cannot be renewed every ${renewEveryMs}ms with a ${abortGraceMs}ms abort grace`;
 
+const cleanUpRun = async (
+  {
+    database,
+    pendingCleanups,
+  }: { database: repositories.Database | undefined; pendingCleanups: Promise<void>[] },
+  waitMs: number,
+  scriptLogger: ScriptLogger,
+) => {
+  if (pendingCleanups.length > 0 && !(await settleWithin(Promise.all(pendingCleanups), waitMs))) {
+    scriptLogger.warn(
+      'Abandoned setup work (opening the database or taking the lock) is still pending; a lock it takes frees itself when its lease ends',
+    );
+  }
+  if (database !== undefined) {
+    try {
+      await database.close();
+    } catch (error) {
+      scriptLogger.warn('Closing the database failed', { error });
+    }
+  }
+};
+
+const reportRun = (
+  name: string,
+  trigger: Trigger,
+  result: RunResult,
+  span: Span,
+  scriptLogger: ScriptLogger,
+) => {
+  const attributes = { outcome: result.outcome, script: name, trigger };
+  const { runDuration, runs } = getRunMetrics();
+  runs.add(1, attributes);
+  runDuration.record(result.durationMs / 1000, attributes);
+  span.setAttribute('script.outcome', result.outcome);
+  const details = { durationMs: result.durationMs, trigger };
+  if (result.error === undefined) {
+    span.setStatus({ code: SpanStatusCode.OK });
+    if (result.outcome === 'skipped') {
+      scriptLogger.warn(`Script ${name} skipped: a previous run still holds its lock`, details);
+    } else {
+      scriptLogger.info(`Script ${name} succeeded`, details);
+    }
+  } else {
+    span.recordException(result.error);
+    span.setStatus({ code: SpanStatusCode.ERROR });
+    scriptLogger.error(`Script ${name} ${result.outcome}`, { ...details, error: result.error });
+  }
+  span.end();
+};
+
 const runScript = async (script: Script, options: RunOptions): Promise<RunResult> => {
   const startedAt = globalThis.performance.now();
   const {
@@ -458,48 +509,14 @@ const runScript = async (script: Script, options: RunOptions): Promise<RunResult
   } finally {
     globalThis.clearTimeout(timer);
   }
-  if (
-    pendingCleanups.length > 0 &&
-    !(await settleWithin(Promise.all(pendingCleanups), abortGraceMs + releaseTimeoutMs))
-  ) {
-    scriptLogger.warn(
-      'Abandoned setup work (opening the database or taking the lock) is still pending; a lock it takes frees itself when its lease ends',
-    );
-  }
-  if (database !== undefined && settled) {
-    try {
-      await database.close();
-    } catch (error) {
-      scriptLogger.warn('Closing the database failed', { error });
-    }
-  }
+  await cleanUpRun(
+    { database: settled ? database : undefined, pendingCleanups },
+    abortGraceMs + releaseTimeoutMs,
+    scriptLogger,
+  );
 
   result.durationMs = globalThis.performance.now() - startedAt;
-  const attributes = { outcome: result.outcome, script: script.name, trigger };
-  const { runDuration, runs } = getRunMetrics();
-  runs.add(1, attributes);
-  runDuration.record(result.durationMs / 1000, attributes);
-  span.setAttribute('script.outcome', result.outcome);
-  const details = { durationMs: result.durationMs, trigger };
-  if (result.error === undefined) {
-    span.setStatus({ code: SpanStatusCode.OK });
-    if (result.outcome === 'skipped') {
-      scriptLogger.warn(
-        `Script ${script.name} skipped: a previous run still holds its lock`,
-        details,
-      );
-    } else {
-      scriptLogger.info(`Script ${script.name} succeeded`, details);
-    }
-  } else {
-    span.recordException(result.error);
-    span.setStatus({ code: SpanStatusCode.ERROR });
-    scriptLogger.error(`Script ${script.name} ${result.outcome}`, {
-      ...details,
-      error: result.error,
-    });
-  }
-  span.end();
+  reportRun(script.name, trigger, result, span, scriptLogger);
   return result;
 };
 
@@ -509,6 +526,7 @@ export {
   attempt,
   attemptLocked,
   checkLease,
+  cleanUpRun,
   createRunMetrics,
   defaultAbortGraceMs,
   defaultLease,
@@ -520,6 +538,7 @@ export {
   releaseLock,
   releaseRetryMs,
   renewAfterSlowAcquire,
+  reportRun,
   reserveFor,
   runScript,
   stoppedBy,

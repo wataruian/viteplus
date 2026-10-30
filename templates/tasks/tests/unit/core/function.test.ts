@@ -79,15 +79,23 @@ describe('defineFunction', () => {
   });
 });
 
+const stubRandom = (value: number) =>
+  vi.spyOn(globalThis.crypto, 'getRandomValues').mockImplementation((array) => {
+    if (array instanceof Uint32Array) {
+      array.fill(value);
+    }
+    return array;
+  });
+
 describe('exponentialBackoff', () => {
   test('doubles per attempt with equal jitter and caps at maxMs', () => {
     const backoff = exponentialBackoff({ baseMs: 100, maxMs: 1000 });
-    vi.spyOn(Math, 'random').mockReturnValue(0);
+    stubRandom(0);
     expect([1, 2, 3, 4, 5].map((attempt) => backoff(attempt))).toStrictEqual([
       50, 100, 200, 400, 500,
     ]);
 
-    vi.spyOn(Math, 'random').mockReturnValue(1);
+    stubRandom(2 ** 32 - 1);
     expect([0, 1, 2, 5].map((attempt) => backoff(attempt))).toStrictEqual([100, 100, 200, 1000]);
   });
 });

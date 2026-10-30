@@ -52,11 +52,16 @@ class UnrecoverableJobError extends Error {
 const defaultMaxAttempts = 5;
 const defaultTimeoutMs = 60_000;
 
+const randomFraction = () => {
+  const [value] = globalThis.crypto.getRandomValues(new Uint32Array(1));
+  return value / 2 ** 32;
+};
+
 const exponentialBackoff =
   ({ baseMs = 1000, maxMs = 300_000 }: { baseMs?: number; maxMs?: number } = {}): Backoff =>
   (attempt) => {
     const delay = Math.min(maxMs, baseMs * 2 ** Math.max(0, attempt - 1));
-    return Math.round(delay / 2 + Math.random() * (delay / 2));
+    return Math.round(delay / 2 + randomFraction() * (delay / 2));
   };
 
 const assertPositiveInteger = (name: string, key: string, value: number) => {
@@ -121,6 +126,7 @@ export {
   defaultTimeoutMs,
   defineFunction,
   exponentialBackoff,
+  randomFraction,
   UnrecoverableJobError,
 };
 export type { Backoff, FunctionOptions, JobContext, JobFunction, JobLogger, TypedJobFunction };

@@ -43,7 +43,7 @@ export default defineConfig(({ mode }): UserConfig => {
         tasks: {
           enqueue: {
             cache: false,
-            command: 'vpx --conditions=typescript scripts/enqueue.ts',
+            command: 'vpx --conditions=typescript src/scripts/enqueue.ts',
           },
           'test:integration': {
             cache: {

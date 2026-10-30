@@ -1,10 +1,10 @@
 import { logger } from '@lightproject/common/logger';
 import { z } from 'zod';
 
-import { config } from '../src/config';
-import { createJobClient, jsonText } from '../src/core/client';
-import { functions } from '../src/functions';
-import { createJobStore } from '../src/stores';
+import { config } from '../config';
+import { createJobClient, jsonText } from '../core/client';
+import { functions } from '../functions';
+import { createJobStore } from '../stores';
 
 const main = async () => {
   const [name = '', payloadText = '{}', countText = '1'] = globalThis.process.argv.slice(2);
@@ -31,11 +31,13 @@ const main = async () => {
   }
 };
 
-try {
-  await main();
-} catch (error) {
+const fail = (error: unknown) => {
   logger.error('Enqueue failed', { error });
-  globalThis.process.exit(1);
-}
+  globalThis.process.exitCode = 1;
+};
 
-export { main };
+globalThis.queueMicrotask(() => {
+  main().catch(fail);
+});
+
+export { fail, main };

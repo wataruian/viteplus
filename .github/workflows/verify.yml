@@ -36,7 +36,7 @@ jobs:
         uses: ./.github/actions/resolve-workspaces
         with:
           workspace-input: ${{ inputs.workspace }}
-          all-workspaces: 'design-system frontend backend common datastore library tasks scheduler'
+          all-workspaces: 'common datastore design-system library scheduler tasks backend frontend'
 
       - name: Resolve workspaces with e2e tests
         id: e2e
@@ -52,72 +52,43 @@ jobs:
           done
           echo "workspace_list=${list[*]}" >> "${GITHUB_OUTPUT}"
 
-  # dagger:
-  #   needs: setup
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     needs.setup.outputs.run-dagger-verify == 'true'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: dagger
-  #     workspace-id: dagger
-
-  # library:
-  #   needs: [setup, dagger]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'library') &&
-  #     needs.dagger.result != 'failure' &&
-  #     needs.dagger.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: library
-
-  # common:
-  #   needs: [setup, dagger]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'common') &&
-  #     needs.dagger.result != 'failure' &&
-  #     needs.dagger.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: common
-
-  # design-system:
-  #   needs: [setup, dagger]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'design-system') &&
-  #     needs.dagger.result != 'failure' &&
-  #     needs.dagger.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: design-system
-
-  datastore:
-    # needs: [setup, dagger]
-    needs: [setup]
+  dagger:
+    needs: setup
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'datastore')
+      needs.setup.outputs.run-dagger-verify == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: dagger
+      workspace-id: dagger
+
+  common:
+    needs: [setup, dagger]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'common') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: common
+
+  datastore:
+    needs: [setup, dagger]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'datastore') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
@@ -125,73 +96,48 @@ jobs:
     with:
       workspace: datastore
 
-  # backend:
-  #   needs: [setup, dagger, common, datastore]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
-  #     needs.dagger.result != 'failure' &&
-  #     needs.dagger.result != 'cancelled' &&
-  #     needs.common.result != 'failure' &&
-  #     needs.common.result != 'cancelled' &&
-  #     needs.datastore.result != 'failure' &&
-  #     needs.datastore.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: backend
-
-  # frontend:
-  #   needs: [setup, dagger, common, datastore, design-system, backend]
-  #   if: >-
-  #     !cancelled() &&
-  #     needs.setup.result == 'success' &&
-  #     contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
-  #     needs.dagger.result != 'failure' &&
-  #     needs.dagger.result != 'cancelled' &&
-  #     needs.common.result != 'failure' &&
-  #     needs.common.result != 'cancelled' &&
-  #     needs.datastore.result != 'failure' &&
-  #     needs.datastore.result != 'cancelled' &&
-  #     needs.design-system.result != 'failure' &&
-  #     needs.design-system.result != 'cancelled' &&
-  #     needs.backend.result != 'failure' &&
-  #     needs.backend.result != 'cancelled'
-  #   permissions:
-  #     contents: read
-  #   uses: ./.github/workflows/verify-workspace.yml
-  #   secrets: inherit
-  #   with:
-  #     workspace: frontend
-
-  tasks:
-    # needs: [setup, dagger, datastore]
-    needs: [setup, datastore]
+  design-system:
+    needs: [setup, dagger]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
-      needs.datastore.result != 'failure' &&
-      needs.datastore.result != 'cancelled' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'tasks')
+      contains(fromJson(needs.setup.outputs.workspaces), 'design-system') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
     secrets: inherit
     with:
-      workspace: tasks
+      workspace: design-system
 
-  scheduler:
-    # needs: [setup, dagger, datastore]
-    needs: [setup, datastore]
+  library:
+    needs: [setup, dagger]
     if: >-
       !cancelled() &&
       needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'library') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: library
+
+  scheduler:
+    needs: [setup, dagger, common, datastore]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'scheduler') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled' &&
       needs.datastore.result != 'failure' &&
-      needs.datastore.result != 'cancelled' &&
-      contains(fromJson(needs.setup.outputs.workspaces), 'scheduler')
+      needs.datastore.result != 'cancelled'
     permissions:
       contents: read
     uses: ./.github/workflows/verify-workspace.yml
@@ -199,10 +145,86 @@ jobs:
     with:
       workspace: scheduler
 
+  tasks:
+    needs: [setup, dagger, common, datastore]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'tasks') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled' &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: tasks
+
+  backend:
+    needs: [setup, dagger, common, datastore, tasks]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'backend') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled' &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled' &&
+      needs.tasks.result != 'failure' &&
+      needs.tasks.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: backend
+
+  frontend:
+    needs: [setup, dagger, common, datastore, design-system, tasks, backend]
+    if: >-
+      !cancelled() &&
+      needs.setup.result == 'success' &&
+      contains(fromJson(needs.setup.outputs.workspaces), 'frontend') &&
+      needs.dagger.result != 'failure' &&
+      needs.dagger.result != 'cancelled' &&
+      needs.common.result != 'failure' &&
+      needs.common.result != 'cancelled' &&
+      needs.datastore.result != 'failure' &&
+      needs.datastore.result != 'cancelled' &&
+      needs.design-system.result != 'failure' &&
+      needs.design-system.result != 'cancelled' &&
+      needs.tasks.result != 'failure' &&
+      needs.tasks.result != 'cancelled' &&
+      needs.backend.result != 'failure' &&
+      needs.backend.result != 'cancelled'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/verify-workspace.yml
+    secrets: inherit
+    with:
+      workspace: frontend
+
   artifacts:
     name: Publish artifacts
-    # needs: [setup, common, datastore, design-system, library, backend, frontend, dagger, tasks, scheduler]
-    needs: [setup, datastore, tasks, scheduler]
+    needs:
+      [
+        setup,
+        dagger,
+        common,
+        datastore,
+        design-system,
+        library,
+        scheduler,
+        tasks,
+        backend,
+        frontend,
+      ]
     if: >-
       !cancelled() &&
       inputs.environment == 'pr' &&
