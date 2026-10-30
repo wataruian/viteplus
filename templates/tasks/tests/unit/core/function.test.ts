@@ -111,9 +111,9 @@ describe('exponentialBackoff', () => {
 
   test('redraws a value above the range instead of folding it in', () => {
     const backoff = exponentialBackoff({ baseMs: 100, maxMs: 1000 });
-    const spy = stubRandom(63, 2 ** 32 - 1, 7);
-    expect(backoff(1)).toBe(57);
-    expect(spy).toHaveBeenCalledTimes(3);
+    const spy = stubRandom(2 ** 32 - 1, 2 ** 32 - 2, 7);
+    expect(backoff(1)).toBe(50 + ((2 ** 32 - 2) % 51));
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
 

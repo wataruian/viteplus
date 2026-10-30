@@ -53,10 +53,10 @@ const defaultMaxAttempts = 5;
 const defaultTimeoutMs = 60_000;
 
 const randomInteger = (max: number): number => {
-  const range = 2 ** Math.ceil(Math.log2(max + 1));
+  const range = max + 1;
+  const limit = 2 ** 32 - (2 ** 32 % range);
   const [value] = globalThis.crypto.getRandomValues(new Uint32Array(1));
-  const candidate = value % range;
-  return candidate > max ? randomInteger(max) : candidate;
+  return value < limit ? value % range : randomInteger(max);
 };
 
 const exponentialBackoff =
