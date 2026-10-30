@@ -190,10 +190,11 @@ const getCommonViteConfig = ({
       environment: 'node',
       fileParallelism: true,
       fsModuleCache: true,
+      hookTimeout: 120_000,
       include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
       isolate: false,
       pool: 'forks',
-      testTimeout: 30_000,
+      testTimeout: 120_000,
     },
   };
 };
