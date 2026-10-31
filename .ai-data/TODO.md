@@ -30,6 +30,17 @@
   so `vp test` aborts with "Startup Error: code.charCodeAt is not a function" (and "No test files
   found"). Only main-process modules (`globalSetup`) hit it; test-file failures print fine.
   Still reproduces on 2026-10-30.
+- **Dagger caches the Sonar scan** (found 2026-10-31): the scanner step in
+  `dagger/src/helpers/sonar.ts` (local orchestrator and `remoteSonarRunner`, the latter with
+  `expect: ReturnType.Any`) always exits 0 and writes the real code to `sonar.exit-code`, so Dagger
+  caches it like any successful op. Until a scanned file changes, `dagger call sonar` replays the
+  old output without contacting the server: a transient failure (e.g. "The bridge server is
+  unresponsive" from a memory-starved JS/TS analysis) repeats on every re-run, and a replayed pass
+  uploads nothing, so a project deleted on the server stays missing while CI still shows the gate as
+  passed. Seen with `scheduler` (failure replayed) and `common`/`datastore` (absent from the Sonar
+  UI); clearing the Dagger cache was the workaround. Fix: bust the cache on the scanner exec (e.g. a
+  per-call `withEnvVariable` value), since the result also depends on server state, not only the
+  source; add a unit test and confirm with a real `dagger call` run twice.
 - **`ALLOW_ALL_IPS = "true"` in every backend environment** (hardcoded in `templates/backend/wrangler.toml`)
   makes the API public; revisit (per-environment `ALLOWED_IPS`, or auth) before it serves real data.
   `DISABLE_TEST_ROUTES` is unset there too (user decision, 2026-10-27), so every deployed backend

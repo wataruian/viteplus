@@ -77,7 +77,7 @@ The repository is structured as a **Vite+-powered Monorepo**.
 - **Apps query through one import**: `db.createDatabase(env)` (`import { db } from
   '@lightproject/datastore'`; namespaced like the other packages' roots) picks the
   dialect from `env.DATABASE_DIALECT` (else `process.env`) and returns repositories
-  (`db.users.findById/findByEmail/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries, `db.scriptLocks.acquire/renew/release/findByName` for `templates/scheduler`) with the
+  (`db.users.findById/findByEmail/list/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries, `db.scriptLocks.acquire/renew/release/findByName` for `templates/scheduler`) with the
   same row types on both. D1 needs the binding as `env.DB`; Postgres uses
   `env.HYPERDRIVE.connectionString`, then `env.DATASTORE_POSTGRES_URL`, then the `POSTGRES_*` env. Each
   dialect is loaded with a dynamic `import()`, so the root entry imports neither driver.
@@ -745,8 +745,10 @@ written, linted, tested and run on Node before being documented).
   `durationMs` is coarse (the clock only advances on I/O).
 - **CI/CD**: verified on PRs like `tasks`; deployed after `datastore` (needs its migrations):
   `dagger publish` (Node image, default command `node dist/index.mjs`, so a CronJob passes the
-  whole command) + `dagger wrangler` (Worker with the crons, `OTLP_ENDPOINT` as a worker var); the
-  same `DATABASE_DIALECT` deploy check as `tasks`. No smoke test (nothing is served without a
+  whole command) + `dagger wrangler` (Worker with the crons, `OTLP_ENDPOINT` as a worker var, and
+  the GitHub Environment secret `SCHEDULER_RUN_TOKEN`, when set, as a Worker secret via
+  `--worker-secrets`/`wrangler deploy --secrets-file`; additive, so unset keeps the current one,
+  under 32 characters fails the deploy); the same `DATABASE_DIALECT` deploy check as `tasks`. No smoke test (nothing is served without a
   token).
 
 ### Adding a script

@@ -33,6 +33,7 @@ import {
   SOURCE_IGNORE,
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_USER,
+  WORKER_SECRETS_PATH,
   WORKSPACE_GROUPS,
   WORKSPACE_NAMES,
 } from './helpers/constants';
@@ -650,10 +651,14 @@ export class Monorepo {
     cloudflareAccountId: Secret,
     buildEnv?: string[],
     workerVar?: string[],
+    workerSecrets?: Secret,
   ): Promise<string> {
     assertDeployEnvironment(environment);
 
     const varArgs = workerVarArgs(workspace, workerVar);
+    if (workerSecrets !== undefined && isFrontend(workspace)) {
+      throw new Error(`workerSecrets is only supported for backend workspaces, got '${workspace}'`);
+    }
 
     const container = await this.build(workspace, buildEnv);
 
@@ -666,8 +671,16 @@ export class Monorepo {
       .withEnvVariable('CLOUDFLARE_ENV', environment)
       .withEnvVariable('DEPLOY_REQUESTED_AT', new Date().toISOString());
 
-    return withBuildEnv(deployContainer, workspace, buildEnv)
-      .withExec(['vpr', '--filter', workspace, 'wrangler:deploy', ...varArgs])
+    const withSecrets =
+      workerSecrets === undefined
+        ? deployContainer
+        : deployContainer.withMountedSecret(WORKER_SECRETS_PATH, workerSecrets, {
+            owner: VITE_PLUS_USER,
+          });
+    const secretArgs = workerSecrets === undefined ? [] : ['--secrets-file', WORKER_SECRETS_PATH];
+
+    return withBuildEnv(withSecrets, workspace, buildEnv)
+      .withExec(['vpr', '--filter', workspace, 'wrangler:deploy', ...varArgs, ...secretArgs])
       .stdout();
   }
 

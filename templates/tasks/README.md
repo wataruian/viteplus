@@ -250,7 +250,8 @@ The `tasks` deploy runs after `datastore` (it needs its migrations) and does two
   `[env.<env>.vars]` names the same dialect, so the Worker never reads a database CI did not
   migrate. Changing the dialect means changing that block and its binding (`DB` or
   `HYPERDRIVE`/`DATASTORE_POSTGRES_URL`).
-- No smoke test: the Worker has no HTTP endpoint.
+- No smoke test: the Worker has no HTTP endpoint, so `wrangler.toml` turns off its
+  `workers.dev` and Preview URLs (`workers_dev`/`preview_urls = false`).
 - Node: on SIGTERM a stop takes up to `WORKER_SHUTDOWN_GRACE_MS` + 13 s (about 28 s by default),
   so keep the orchestrator's stop timeout at 30 s or more (`docker stop -t 30`, compose
   `stop_grace_period: 30s`; Kubernetes' default fits).

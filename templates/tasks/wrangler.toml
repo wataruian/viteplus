@@ -3,6 +3,9 @@ main = "src/runtimes/edge.ts"
 
 compatibility_date = "2026-08-26"
 
+workers_dev = false
+preview_urls = false
+
 [triggers]
 crons = ["* * * * *"]
 

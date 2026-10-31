@@ -23,16 +23,16 @@ const envExample = [
   'ENV="local"',
   '',
   'FRONTEND_PORT="2001"',
-  `VITE_FRONTEND_PORT="\${FRONTEND_PORT}"`,
   'FRONTEND_INSPECTOR_PORT="8231"',
   'FRONTEND_E2E_PORT="2111"',
   `FRONTEND_URL="http://localhost:\${FRONTEND_PORT}"`,
+  `VITE_FRONTEND_URL="\${FRONTEND_URL}"`,
   '',
   'ADMIN_PORT="3001"',
-  `VITE_ADMIN_PORT="\${ADMIN_PORT}"`,
   'ADMIN_INSPECTOR_PORT="9231"',
   'ADMIN_E2E_PORT="3111"',
   `ADMIN_URL="http://localhost:\${ADMIN_PORT}"`,
+  `VITE_ADMIN_URL="\${ADMIN_URL}"`,
   '',
   'API_PORT="3000"',
   'API_INSPECTOR_PORT="9230"',
@@ -142,7 +142,7 @@ describe('toNames', () => {
 });
 
 describe('assertName', () => {
-  test.each(['Website3', '3site', 'my_site', 'site-', ''])('rejects %j', (name) => {
+  test.each(['Website', '3site', 'my_site', 'site-', ''])('rejects %j', (name) => {
     expect(() => {
       assertName(name);
     }).toThrow('Invalid name');
@@ -156,14 +156,14 @@ describe('assertName', () => {
 
   test('accepts kebab-case names', () => {
     expect(() => {
-      assertName('website3');
+      assertName('website');
     }).not.toThrow();
   });
 });
 
 describe('allocatePorts', () => {
   test('takes the next free port of each range for a new name', () => {
-    expect(allocatePorts(frontendPorts, toNames('website3'), envExample)).toStrictEqual(
+    expect(allocatePorts(frontendPorts, toNames('website'), envExample)).toStrictEqual(
       new Map([
         [2111, 3112],
         [8231, 9232],
@@ -185,7 +185,7 @@ describe('allocatePorts', () => {
 
 describe('renameText', () => {
   const from = toNames('frontend');
-  const to = toNames('website3');
+  const to = toNames('website');
   const ports = new Map([[2001, 3004]]);
 
   test("renames only the template's own names and ports", () => {
@@ -198,13 +198,13 @@ describe('renameText', () => {
       'localhost:2001 20011 2001.5 2000',
     ].join('\n');
 
-    expect(renameText(text, from, to, ports, 'apps/website3')).toBe(
+    expect(renameText(text, from, to, ports, 'apps/website')).toBe(
       [
-        '@lightproject/website3 @lightproject/frontend-kit @lightproject/backend',
-        'apps/website3 templates/frontends templates/backend',
-        'lightproject-website3-dev lightproject-frontends lightproject_website3',
-        'VITE_WEBSITE3_URL WEBSITE3_PORT BACKEND_URL MYFRONTEND_X',
-        'website3Port backendBaseUrl defaultFrontendPort frontend',
+        '@lightproject/website @lightproject/frontend-kit @lightproject/backend',
+        'apps/website templates/frontends templates/backend',
+        'lightproject-website-dev lightproject-frontends lightproject_website',
+        'VITE_WEBSITE_URL WEBSITE_PORT BACKEND_URL MYFRONTEND_X',
+        'websitePort backendBaseUrl defaultFrontendPort frontend',
         'localhost:3004 20011 2001.5 2000',
       ].join('\n'),
     );
@@ -218,11 +218,11 @@ describe('renameText', () => {
       'the frontend: a template; backend:latest; my-frontend:latest; <REGISTRY_ADDRESS>/backend:<tag>',
     ].join('\n');
 
-    expect(renameText(text, from, to, ports, 'apps/website3')).toBe(
+    expect(renameText(text, from, to, ports, 'apps/website')).toBe(
       [
-        'image: <REGISTRY_ADDRESS>/website3:<tag>',
-        'docker run --rm website3:latest node dist/index.mjs',
-        'docker run --rm --name frontend website3:latest',
+        'image: <REGISTRY_ADDRESS>/website:<tag>',
+        'docker run --rm website:latest node dist/index.mjs',
+        'docker run --rm --name frontend website:latest',
         'the frontend: a template; backend:latest; my-frontend:latest; <REGISTRY_ADDRESS>/backend:<tag>',
       ].join('\n'),
     );
@@ -277,39 +277,48 @@ describe('assertFreePrefix', () => {
     },
   );
 
-  test.each(['website3', 'admin', 'workers'])('accepts %j (new or reserved)', (name) => {
+  test.each(['website', 'admin', 'workers'])('accepts %j (new or reserved)', (name) => {
     expect(() => {
       assertFreePrefix(`${envExample}POSTGRES_PORT="5432"\n`, toNames(name));
+    }).not.toThrow();
+  });
+
+  test('ignores comment lines, even ones that look like a key', () => {
+    expect(() => {
+      assertFreePrefix(
+        '# WEBSITE_URL="http://localhost:3002" goes here\nENV="local"\n',
+        toNames('website'),
+      );
     }).not.toThrow();
   });
 });
 
 describe('addEnvExampleKeys', () => {
   test('adds a renamed paragraph after the template block', () => {
-    const ports = allocatePorts(frontendPorts, toNames('website3'), envExample);
+    const ports = allocatePorts(frontendPorts, toNames('website'), envExample);
     const { added, text } = addEnvExampleKeys(
       envExample,
       toNames('frontend'),
-      toNames('website3'),
+      toNames('website'),
       ports,
     );
 
     expect(added).toStrictEqual([
-      'WEBSITE3_PORT',
-      'VITE_WEBSITE3_PORT',
-      'WEBSITE3_INSPECTOR_PORT',
-      'WEBSITE3_E2E_PORT',
-      'WEBSITE3_URL',
+      'WEBSITE_PORT',
+      'WEBSITE_INSPECTOR_PORT',
+      'WEBSITE_E2E_PORT',
+      'WEBSITE_URL',
+      'VITE_WEBSITE_URL',
     ]);
     expect(text).toContain(
       [
-        `FRONTEND_URL="http://localhost:\${FRONTEND_PORT}"`,
+        `VITE_FRONTEND_URL="\${FRONTEND_URL}"`,
         '',
-        'WEBSITE3_PORT="3002"',
-        `VITE_WEBSITE3_PORT="\${WEBSITE3_PORT}"`,
-        'WEBSITE3_INSPECTOR_PORT="9232"',
-        'WEBSITE3_E2E_PORT="3112"',
-        `WEBSITE3_URL="http://localhost:\${WEBSITE3_PORT}"`,
+        'WEBSITE_PORT="3002"',
+        'WEBSITE_INSPECTOR_PORT="9232"',
+        'WEBSITE_E2E_PORT="3112"',
+        `WEBSITE_URL="http://localhost:\${WEBSITE_PORT}"`,
+        `VITE_WEBSITE_URL="\${WEBSITE_URL}"`,
         '',
         'ADMIN_PORT="3001"',
       ].join('\n'),
@@ -331,6 +340,36 @@ describe('addEnvExampleKeys', () => {
         'LEDGER_POSTGRES_DB="lightproject_ledger"',
         `LEDGER_POSTGRES_URL="postgres://\${POSTGRES_HOST}/\${LEDGER_POSTGRES_DB}"`,
         'DATABASE_POSTGRES_DB="lightproject"',
+      ].join('\n'),
+    );
+  });
+
+  test('adds a paragraph after a template block headed by a comment', () => {
+    const { added, text } = addEnvExampleKeys(
+      [
+        'ENV="local"',
+        '',
+        '# Tasks app (example: TASKS_PORT="1")',
+        'TASKS_PORT="2002"',
+        '',
+        'X="1"',
+      ].join('\n'),
+      toNames('tasks'),
+      toNames('jobs'),
+      new Map([[2002, 3005]]),
+    );
+
+    expect(added).toStrictEqual(['JOBS_PORT']);
+    expect(text).toBe(
+      [
+        'ENV="local"',
+        '',
+        '# Tasks app (example: TASKS_PORT="1")',
+        'TASKS_PORT="2002"',
+        '',
+        'JOBS_PORT="3005"',
+        '',
+        'X="1"',
       ].join('\n'),
     );
   });
@@ -388,7 +427,7 @@ describe('scaffold', () => {
     const output: string[] = [];
 
     scaffold({
-      name: 'website3',
+      name: 'website',
       rootDir: root,
       type: 'frontend',
       write: (text) => {
@@ -396,30 +435,30 @@ describe('scaffold', () => {
       },
     });
 
-    const read = (file: string) => fs.readFileSync(path.join(root, 'apps/website3', file), 'utf8');
+    const read = (file: string) => fs.readFileSync(path.join(root, 'apps/website', file), 'utf8');
     expect(JSON.parse(read('package.json'))).toStrictEqual({
       dependencies: { '@lightproject/backend': 'workspace:*' },
-      name: '@lightproject/website3',
+      name: '@lightproject/website',
     });
     expect(read('src/config.ts')).toBe(
-      "export const website3Port = Number(process.env.WEBSITE3_PORT ?? '3002'); // backend on 2000\n",
+      "export const websitePort = Number(process.env.WEBSITE_PORT ?? '3002'); // backend on 2000\n",
     );
-    expect(read('wrangler.toml')).toBe('name = "lightproject-website3-dev"\n');
-    expect(read('README.md')).toBe('# @lightproject/website3\n\nRun `apps/website3`.\n');
-    expect([
-      ...fs.readFileSync(path.join(root, 'apps/website3/public/og-image.png')),
-    ]).toStrictEqual([0x89, 0x50, 0x00, 0x47]);
+    expect(read('wrangler.toml')).toBe('name = "lightproject-website-dev"\n');
+    expect(read('README.md')).toBe('# @lightproject/website\n\nRun `apps/website`.\n');
+    expect([...fs.readFileSync(path.join(root, 'apps/website/public/og-image.png'))]).toStrictEqual(
+      [0x89, 0x50, 0x00, 0x47],
+    );
     for (const excluded of ['node_modules', '.env', 'linked.env']) {
-      expect(fs.existsSync(path.join(root, 'apps/website3', excluded))).toBe(false);
+      expect(fs.existsSync(path.join(root, 'apps/website', excluded))).toBe(false);
     }
     expect(fs.readFileSync(path.join(root, '.env.example'), 'utf8')).toContain(
-      'WEBSITE3_E2E_PORT="3112"',
+      'WEBSITE_E2E_PORT="3112"',
     );
     const log = output.join('');
-    expect(log).toContain('Scaffolding frontend as apps/website3');
-    expect(log).toContain('.env.example: added WEBSITE3_PORT');
-    expect(log).toContain("add '@lightproject/website3' to WORKSPACES (path 'apps/website3')");
-    expect(log).toContain('Workers `lightproject-website3-<env>`');
+    expect(log).toContain('Scaffolding frontend as apps/website');
+    expect(log).toContain('.env.example: added WEBSITE_PORT');
+    expect(log).toContain("add '@lightproject/website' to WORKSPACES (path 'apps/website')");
+    expect(log).toContain('Workers `lightproject-website-<env>`');
   });
 
   test('copies a datastore with its own database, compose entry and blank remote D1 ids', () => {
@@ -515,12 +554,12 @@ describe('scaffold', () => {
     const root = makeRepo();
     const stdout = vi.spyOn(globalThis.process.stdout, 'write').mockReturnValue(true);
 
-    scaffold({ name: 'website3', rootDir: root, type: 'frontend' });
+    scaffold({ name: 'website', rootDir: root, type: 'frontend' });
 
     expect(stdout).toHaveBeenCalled();
     expect(() => {
-      scaffold({ name: 'website3', rootDir: root, type: 'frontend' });
-    }).toThrow('apps/website3 already exists');
+      scaffold({ name: 'website', rootDir: root, type: 'frontend' });
+    }).toThrow('apps/website already exists');
   });
 });
 

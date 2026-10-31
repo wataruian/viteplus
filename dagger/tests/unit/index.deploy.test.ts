@@ -236,6 +236,59 @@ describe('wrangler', () => {
     ]);
   });
 
+  test('mounts worker secrets for the vp user and uploads them with --secrets-file', async () => {
+    seedMountFiles();
+    world.execStdout = 'Deployed to Cloudflare';
+
+    await createMonorepo().wrangler(
+      '@lightproject/scheduler',
+      'develop',
+      fakeSecret,
+      fakeSecret,
+      undefined,
+      undefined,
+      fakeSecret,
+    );
+
+    const container = getLastContainer();
+    expect(container.capturedMountedSecrets).toStrictEqual(
+      new Map([['/run/secrets/worker-secrets.env', 'vp']]),
+    );
+    expect(container.capturedExecCalls).toContainEqual([
+      'vpr',
+      '--filter',
+      '@lightproject/scheduler',
+      'wrangler:deploy',
+      '--secrets-file',
+      '/run/secrets/worker-secrets.env',
+    ]);
+  });
+
+  test('mounts no secrets file when there are no worker secrets', async () => {
+    seedMountFiles();
+
+    await createMonorepo().wrangler('@lightproject/backend', 'develop', fakeSecret, fakeSecret);
+
+    expect(getLastContainer().capturedMountedSecrets.size).toBe(0);
+  });
+
+  test('rejects worker secrets for a frontend workspace before building', async () => {
+    await expect(
+      createMonorepo().wrangler(
+        '@lightproject/frontend',
+        'develop',
+        fakeSecret,
+        fakeSecret,
+        undefined,
+        undefined,
+        fakeSecret,
+      ),
+    ).rejects.toThrow(
+      "workerSecrets is only supported for backend workspaces, got '@lightproject/frontend'",
+    );
+    expect(() => getLastContainer()).toThrow('no fake container has been created yet');
+  });
+
   test('rejects worker vars for a frontend workspace before building', async () => {
     await expect(
       createMonorepo().wrangler(

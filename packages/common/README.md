@@ -69,7 +69,22 @@ source maps; unit tests run with `LOG_LEVEL=silent`.
 
 Each app adds its own keys in `src/env.ts` with `createEnv`, spreading `serverEnvOptions`
 (backend, workers) or `appEnvOptions` (frontend) and building `runtimeEnv` with
-`readRuntimeEnv(...)`; app envs hold only app keys and read shared ones from here.
+`readRuntimeEnv(...)`; app envs hold only app keys and read shared ones from here. Steps for the
+frontend: `templates/frontend/README.md` → "Adding a variable".
+
+### Adding a shared variable
+
+For a key that more than one workspace reads:
+
+1. Add it to `sharedShape` in `src/environment/schema.ts` (a zod schema; `flag` for booleans,
+   `.optional()` or `.default(...)` for values that may be unset).
+2. Add a named getter (or `is*` helper) in `src/environment/variables.ts` and export it. Callers
+   use the getter, never `commonEnv.X` or `getEnv('X')` scattered around.
+3. Add it to the root `.env.example`. Add a `VITE_X="${X}"` mirror only if browser code reads it,
+   and never for a secret or a key that can be empty.
+4. Test the getter (stub, then re-import; clear the `VITE_` form for the unset case) and add a row
+   to the table above.
+5. Rebuild common (`vpr --filter @lightproject/common build`) before the apps can see it.
 
 ## Development
 

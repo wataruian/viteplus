@@ -1775,3 +1775,35 @@ AGENTS.md reflect the current state.
   (`ef7a2585-…`), bound as `DB` in `[env.*]` of the backend, datastore, tasks and scheduler
   `wrangler.toml`. They are migrated by CI (`DATABASE_MIGRATION_ENABLED=true`, `DATABASE_DIALECT=d1`).
   `lightproject-database-<env>` stays free for the real `packages/database`.
+
+## 2026-10-31: Scheduler Run Token From CI
+
+- The `scheduler` deploy uploads the GitHub Environment secret `SCHEDULER_RUN_TOKEN` as a Worker
+  secret: Dagger `wrangler --worker-secrets` mounts a `.env`-format Secret (owned by `vp`) and
+  passes `wrangler deploy --secrets-file`, so no separate `wrangler secret put` step or second
+  Worker version. Additive by design: an unset GitHub secret keeps the Worker's current token; a
+  value under 32 characters fails the deploy instead of leaving a Worker that refuses every run.
+- The tasks Worker has no HTTP surface, so its `wrangler.toml` sets `workers_dev`/`preview_urls =
+  false` (stray browser hits logged "Handler does not export a fetch() function").
+
+## 2026-10-31: `VITE_` Port Mirrors Removed
+
+- Dropped `VITE_FRONTEND_PORT`, `VITE_ADMIN_PORT` and `VITE_SITE_PORT` from `.env.example`, and the
+  frontend's `config.frontendPort` and the `FRONTEND_PORT` key of `src/env.ts` (read only by its
+  own tests; the dev/preview port comes from `process.env.FRONTEND_PORT` in `vite.config.ts`, in
+  Node). `src/env.ts` itself stays, with empty `client`/`shared` (user decision), as the place for
+  future app keys; `tests/unit/env.test.ts` keeps it covered. `@t3-oss/env-core` and `zod` stay
+  in the frontend's `dependencies`; steps in `templates/frontend/README.md` →
+  "Adding a variable" (app keys) and `packages/common/README.md` → "Adding a shared variable".
+- Backend tests keep stubbing `VITE_BACKEND_PORT` although `.env.example` has no such key: Vitest
+  copies `VITE_*` from a developer's `.env` into `process.env`, and older `.env` files still carry
+  it.
+- Kept the `VITE_*_URL` mirrors although no browser code reads `frontendUrl`: CI passes
+  `VITE_FRONTEND_URL` as a Dagger `--build-env`, and with no `.env` in the container the build's
+  task-cache env is only the `VITE_*` keys, so a plain `FRONTEND_URL` would not bust the cache
+  between environments. `VITE_ENV`, the OTel endpoints and `VITE_BACKEND_URL` are read in the
+  browser through `getEnv`'s `VITE_X` fallback, so grepping for the literal name finds only tests.
+- `.env.example` and `.env` may carry comments: `scripts/remove-comments.ts` excludes both from
+  `mise run fix --remove-comments`, and the scaffold ignores `#` lines (a comment line counts as a
+  paragraph start when adding a new app's keys). Comments stay full-line only, since an inline
+  `# …` after a value is not parsed the same way by every reader (mise, compose, Dagger).

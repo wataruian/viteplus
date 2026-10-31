@@ -8,7 +8,7 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 
 ## Built-in Commands vs Scripts
 
-`vp <name>` runs a built-in command. `vpr <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vpr dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vpr <name>` when the project defines a script or task with that name.
+`vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
 
 ## Running Scripts
 
@@ -25,7 +25,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 - [ ] Run `vp install` after pulling remote changes and before getting started.
 - [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
-- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vpr <script>`.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
 - [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
 
 <!--VITE PLUS END-->
@@ -102,7 +102,7 @@ When first entering the repository or a new package:
 ## Environment Management
 
 - **Typed Env (`@t3-oss/env-core`)**: `packages/common/src/environment/schema.ts` defines `commonEnv`, the zod schema for variables both runtimes read (`ENV`, `LOG_LEVEL`, URLs, OTel settings, …). It is validated **once, at module load**, and fails fast with a list of invalid keys (values are never echoed). Each app adds its own keys in `src/env.ts` via `createEnv`: the backend uses `{ ...serverEnvOptions, isServer: true, server, runtimeEnv: readRuntimeEnv(server) }` (no `client` section; env-core rejects `clientPrefix` without one), the frontend `{ ...appEnvOptions, client, shared, runtimeEnv: readRuntimeEnv({ ...client, ...shared }) }`. `runtimeEnv` must cover every declared key, or the missing ones read as unset. `server` keys throw if read in the browser. App envs hold only app keys — read shared keys from `commonEnv` or its getters (env-core's `extends` treats inherited keys as server-only in the browser).
-- **Isomorphic Access**: Use the named getters and boolean helpers from `@lightproject/common/environment` (`variables.ts`, backed by `commonEnv`). `getEnv('X')` is the low-level reader: it reads `X`, then falls back to `VITE_X` (every `VITE_X` mirrors `X`, see `.env.example`), and feeds `readRuntimeEnv`. Add new shared variables to `commonEnv` + a getter instead of calling `getEnv` in several places.
+- **Isomorphic Access**: Use the named getters and boolean helpers from `@lightproject/common/environment` (`variables.ts`, backed by `commonEnv`). `getEnv('X')` is the low-level reader: it reads `X`, then falls back to `VITE_X` (`.env.example` mirrors only the keys browser code reads as `VITE_X="${X}"`: `ENV`, the OTel endpoints, and the app URLs; server-only keys and secrets get no mirror, and a mirror must never reference a variable that can be empty, since Dagger's `.env` loading rejects it), and feeds `readRuntimeEnv`. Add new shared variables to `commonEnv` + a getter instead of calling `getEnv` in several places.
 - **Testing Env**: Because values are read once, tests stub first and then re-import (`vi.resetModules()` + `await import(...)`); stubbing after import has no effect. When asserting an unset variable, also clear its `VITE_` mirror (Vitest copies `VITE_*` from `.env` into `process.env`).
 - **Config Files Exception**: `vite.config.ts` / `playwright.config.ts` read `process.env` directly — they load before `@lightproject/common` is built, and its `dist/` would not resolve.
 - **Boolean Helpers**: Favor semantic helpers like `isLocal()`, `isProduction()`, `isCi()`, and `isDebug()` over manual string comparisons.

@@ -17,13 +17,14 @@ const markupExtensions = new Set(['.html', '.svg', '.xml']);
 const shellDirectories = ['.mise/tasks/', '.vite-hooks/'];
 const hashLineFiles = new Set([
   '.editorconfig',
-  '.env.example',
   '.gitattributes',
   '.gitignore',
   '.npmrc',
   'CODEOWNERS',
 ]);
 const excludedFiles = new Set([
+  '.env',
+  '.env.example',
   '.github/workflows/scan.yml',
   '.gitignore',
   '.vscode/extensions.json',

@@ -5,6 +5,7 @@ const VITE_PLUS_JS_RUNTIME_PATH = '/home/vp/.vite-plus/js_runtime';
 const PLAYWRIGHT_BROWSERS_PATH = '/home/vp/.cache/ms-playwright';
 const PNPM_STORE_PATH = '/home/vp/.local/share/pnpm/store';
 const TASK_CACHE_PATH = '/app/node_modules/.vite/task-cache';
+const WORKER_SECRETS_PATH = '/run/secrets/worker-secrets.env';
 
 const NGINX_IMAGE = 'nginx:1.27.0-alpine';
 const DOCKER_CLI_IMAGE = 'docker:27.5.1-cli';
@@ -190,6 +191,7 @@ export {
   VITE_PLUS_JS_RUNTIME_PATH,
   VITE_PLUS_PACKAGE_MANAGER_PATH,
   VITE_PLUS_USER,
+  WORKER_SECRETS_PATH,
   WORKSPACE_GROUPS,
   WORKSPACE_NAMES,
   WORKSPACES,

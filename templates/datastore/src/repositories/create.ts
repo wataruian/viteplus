@@ -39,6 +39,7 @@ const createRepositories = ({
     findByEmail: async (email) => await users.findBy('email', email),
     findById: async (id) => await users.findBy('id', id),
     insert: async (user) => await users.insert(stamped(user)),
+    list: async ({ limit }) => await users.list(['createdAt', 'id'], limit),
     remove: async (id) => await users.remove('id', id),
     update: async (id, changes) => await users.update('id', id, changes),
   },

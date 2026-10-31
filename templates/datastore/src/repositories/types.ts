@@ -9,12 +9,17 @@ interface Tables {
   workerJobs: TableRepository<WorkerJob, NewWorkerJob>;
 }
 
+interface ListUsers {
+  limit: number;
+}
+
 type UserChanges = Partial<Omit<NewUser, 'createdAt' | 'id' | 'updatedAt'>>;
 
 interface UsersRepository {
   findByEmail: (email: string) => Promise<User | undefined>;
   findById: (id: string) => Promise<User | undefined>;
   insert: (user: NewUser) => Promise<User>;
+  list: (options: ListUsers) => Promise<User[]>;
   remove: (id: string) => Promise<boolean>;
   update: (id: string, changes: UserChanges) => Promise<User | undefined>;
 }
@@ -110,6 +115,7 @@ export type {
   FinishedJobStatus,
   HeldScriptLock,
   HeldWorkerJob,
+  ListUsers,
   PurgeWorkerJobs,
   RenewScriptLock,
   RenewWorkerJob,

@@ -85,6 +85,20 @@ const describeDatabase = (name: string, open: () => Promise<ContractTarget>) => 
       await expect(users.update(user.id, { name: 'Gone' })).resolves.toBeUndefined();
     });
 
+    targetTest('lists users oldest first (ties by id), up to the limit', async (target) => {
+      const { users } = target.database;
+      const oldest = -Date.now();
+      const later = await users.insert({ ...newUser(), createdAt: new Date(oldest + 1) });
+      const tied = await Promise.all([
+        users.insert({ ...newUser(), createdAt: new Date(oldest) }),
+        users.insert({ ...newUser(), createdAt: new Date(oldest) }),
+      ]);
+      const byId = tied.toSorted((left, right) => (left.id < right.id ? -1 : 1));
+
+      await expect(users.list({ limit: 3 })).resolves.toStrictEqual([...byId, later]);
+      await expect(users.list({ limit: 1 })).resolves.toStrictEqual([byId[0]]);
+    });
+
     targetTest('rejects a duplicate email', async (target) => {
       const user = newUser();
       await target.database.users.insert(user);

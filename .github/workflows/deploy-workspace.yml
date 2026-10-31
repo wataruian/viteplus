@@ -174,6 +174,7 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SCHEDULER_RUN_TOKEN: ${{ secrets.SCHEDULER_RUN_TOKEN }}
         run: |
           echo "Deploying: ${WORKSPACE} (${ENVIRONMENT})"
 
@@ -204,6 +205,18 @@ jobs:
 
           if [[ ("${WORKSPACE}" == "backend" || "${WORKSPACE}" == "tasks" || "${WORKSPACE}" == "scheduler") && -n "${OTLP_ENDPOINT}" ]]; then
             args+=("--worker-var=OTLP_ENDPOINT=${OTLP_ENDPOINT}")
+          fi
+
+          if [[ "${WORKSPACE}" == "scheduler" ]]; then
+            if [[ -z "${SCHEDULER_RUN_TOKEN}" ]]; then
+              echo "::notice::SCHEDULER_RUN_TOKEN is not set for ${ENVIRONMENT}; the Worker keeps its current run token (none: POST /run/<script> answers 404)."
+            elif (( ${#SCHEDULER_RUN_TOKEN} < 32 )); then
+              echo "::error::SCHEDULER_RUN_TOKEN for ${ENVIRONMENT} is shorter than 32 characters; the Worker would refuse every run. Generate one with: openssl rand -hex 32"
+              exit 1
+            else
+              export WORKER_SECRETS="SCHEDULER_RUN_TOKEN=${SCHEDULER_RUN_TOKEN}"
+              args+=("--worker-secrets=env:WORKER_SECRETS")
+            fi
           fi
 
           mise run dagger wrangler \

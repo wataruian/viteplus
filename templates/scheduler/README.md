@@ -49,12 +49,12 @@ Commands run from `templates/scheduler` unless noted.
 binding, read per request. On Cloudflare the values come from `wrangler.toml`'s `[vars]` /
 `[env.<env>.vars]` and secrets.
 
-| Variable                   | Purpose                                                                                                                          |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `SCHEDULER_RUN_TOKEN`      | Cloudflare: bearer token of `POST /run/<script>` (a `wrangler secret`, 32+ characters). Unset: the endpoint does not exist (404) |
-| `SKIP_OPENTELEMETRY`       | `true` skips the OTel SDK (context propagation only); `true`/`false` only (default `false`)                                      |
-| `SCHEDULER_PORT`           | `vite.config.ts`: `wrangler dev` port (default `2003`)                                                                           |
-| `SCHEDULER_INSPECTOR_PORT` | `vite.config.ts`: `wrangler dev` inspector port (default `8233`)                                                                 |
+| Variable                   | Purpose                                                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SCHEDULER_RUN_TOKEN`      | Cloudflare: bearer token of `POST /run/<script>` (a Worker secret, 32+ characters; `openssl rand -hex 32`). Unset: the endpoint does not exist (404) |
+| `SKIP_OPENTELEMETRY`       | `true` skips the OTel SDK (context propagation only); `true`/`false` only (default `false`)                                                          |
+| `SCHEDULER_PORT`           | `vite.config.ts`: `wrangler dev` port (default `2003`)                                                                                               |
+| `SCHEDULER_INSPECTOR_PORT` | `vite.config.ts`: `wrangler dev` inspector port (default `8233`)                                                                                     |
 
 Shared variables, defined in `packages/common/README.md` and `templates/datastore/README.md`:
 
@@ -76,6 +76,40 @@ Add scripts in `src/scripts/` and register them in `src/scripts/index.ts`; give 
 cron to `[triggers] crons` in `wrangler.toml` too (`wrangler-crons.test.ts` fails until both
 match). Node APIs only in `src/runtimes/node.ts`; the Worker entry `src/runtimes/edge.ts` may
 export only the default handler.
+
+| Script       | Schedule      | Input                                 | Logs                                                        |
+| ------------ | ------------- | ------------------------------------- | ----------------------------------------------------------- |
+| `ping`       | `*/5 * * * *` | `{"message"?: string, "delayMs"?: n}` | `ping: <message>` (sample)                                  |
+| `list-users` | `*/5 * * * *` | `{"limit"?: 1–1000}` (default 100)    | `list-users` with `{ count, users: [{ id, name, email }] }` |
+
+`list-users` reads the oldest users first (`db.users.list`) and logs their emails as they are.
+
+### Run a script manually
+
+Any script runs once outside its schedule. On a Worker that is `POST /run/<script>` with the
+`SCHEDULER_RUN_TOKEN` secret as a bearer token; the body is the script's JSON input (empty or `{}`
+uses its defaults):
+
+```sh
+# Deployed Worker (the token CI uploads, see Deployment → "Run token")
+curl -X POST -H "Authorization: Bearer $SCHEDULER_RUN_TOKEN" -d '{"limit":500}' \
+  https://lightproject-scheduler-dev.<subdomain>.workers.dev/run/list-users
+
+# Local Worker (vpr wrangler:dev --var DATABASE_DIALECT:d1 --var SCHEDULER_RUN_TOKEN:<token>)
+curl -X POST -H "Authorization: Bearer <token>" -d '{}' http://localhost:2003/run/list-users
+
+# Node, no HTTP
+vpr script list-users --input '{"limit":500}'
+```
+
+Input goes only in the POST body: query strings are ignored, and a browser visit (GET) answers 405.
+`Content-Type` is optional (the body is always read as JSON); in Postman and the like, use POST,
+Bearer auth and a raw JSON body.
+
+It answers `{"durationMs":…,"outcome":"succeeded","script":"list-users"}` (200); the users are in
+the Worker logs (Cloudflare dashboard → Workers → `lightproject-scheduler-<env>` → Logs), not the
+response. 400 invalid input, 401 bad token, 404 unknown script or no token set, 409 already
+running (see "Run on Cloudflare (local)" for the full list).
 
 | Task                                   | What it does                                                                        |
 | -------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -252,7 +286,7 @@ d1() { vp exec wrangler d1 execute DB --local --persist-to ../../.wrangler/state
 | P2. As its cron would        | `vpr script ping --scheduled`                          | `INFO : ping: pong` (default input, `trigger: schedule`), succeeded                                                            |
 | P3. Invalid input            | `vpr script ping --input '{"message":5}'; echo $?`     | `ERROR: Script ping invalid-input` (`expected string, received number → at message`), exit 2                                   |
 | P4. Unknown script           | `vpr script nope; echo $?`                             | `ERROR: Unknown script "nope" (--list shows the registered ones)`, exit 2                                                      |
-| P5. List                     | `vpr script --list`                                    | `ping	*/5 * * * *`                                                                                                            |
+| P5. List                     | `vpr script --list`                                    | `ping	*/5 * * * *`, `list-users	*/5 * * * *`                                                                                 |
 | P6. **Overlap** (real runs)  | the P6 block below                                     | 2nd run: `WARN : Script ping skipped: a previous run still holds its lock`, exit 3; 1st: `ping: first`, exit 0; 3rd: succeeded |
 | P7. Lock held by hand        | the P7 block below                                     | `WARN : Script ping skipped: …`, exit 3; after the `DELETE` the next run succeeds                                              |
 | P8. SIGTERM mid-run          | the P8 block below                                     | `Received SIGTERM; aborting the script`, `ERROR: Script ping aborted`, exit 1, no lock row left                                |
@@ -300,7 +334,7 @@ U=http://localhost:2003; H="Authorization: Bearer abcdefghijklmnopqrstuvwxyz0123
 
 | Case                    | Commands                                                                                | Expected                                                                                              |
 | ----------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| D1. Cron                | `curl "$U/__scheduled?cron=*/5+*+*+*+*"`                                                | Worker log `INFO : ping: pong`, `Script ping succeeded`                                               |
+| D1. Cron                | `curl "$U/__scheduled?cron=*/5+*+*+*+*"`                                                | Worker log `INFO : ping: pong`, `Script ping succeeded` (and the same for `list-users`)               |
 | D2. Cron with no script | `curl "$U/__scheduled?cron=0+0+*+*+*"`                                                  | `WARN : Cron 0 0 * * * matches no script; check wrangler.toml [triggers]`                             |
 | D3. One-off             | `curl -X POST -H "$H" -d '{"message":"edge"}' $U/run/ping`                              | `{"durationMs":5,"outcome":"succeeded","script":"ping"}` (200)                                        |
 | D4. Empty body          | `curl -X POST -H "$H" $U/run/ping`                                                      | 200, `ping: pong`                                                                                     |
@@ -353,13 +387,13 @@ DB=postgres://lightproject:lightproject@host.docker.internal:5432/lightproject_d
 
 The `scheduler` deploy runs after `datastore` (it needs its migrations) and does two things:
 
-| Step              | Result                                                                                              |
-| ----------------- | --------------------------------------------------------------------------------------------------- |
-| `dagger publish`  | Node image `<REGISTRY_ADDRESS>/scheduler:<tag>` (default command `node dist/index.mjs`)             |
-| `dagger wrangler` | Worker `lightproject-scheduler-<dev\|staging\|production>` with the crons, `OTLP_ENDPOINT` as a var |
+| Step              | Result                                                                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `dagger publish`  | Node image `<REGISTRY_ADDRESS>/scheduler:<tag>` (default command `node dist/index.mjs`)                                                |
+| `dagger wrangler` | Worker `lightproject-scheduler-<dev\|staging\|production>` with the crons, `OTLP_ENDPOINT` as a var, `SCHEDULER_RUN_TOKEN` as a secret |
 
 - **Cloudflare**: `[triggers] crons` (inherited by every `[env.*]`) fires the scheduled scripts.
-  One-off runs need the token: `vp exec wrangler secret put SCHEDULER_RUN_TOKEN --env <env>`.
+  One-off runs need the token (see "Run token" below).
   A cron invocation may run at most 15 minutes, so on the Worker cron runs stop after 14 minutes
   whatever their `timeoutMs` (the Worker warns at startup for scripts it shortens) and release
   their lock cleanly. CPU time is limited separately (30 s for crons under an hour on Paid, 15
@@ -391,6 +425,27 @@ The `scheduler` deploy runs after `datastore` (it needs its migrations) and does
   `[env.<env>.vars]` names the same dialect, as for `tasks`.
 - No smoke test: without a token the Worker serves nothing.
 
+### Run token
+
+`SCHEDULER_RUN_TOKEN` guards `POST /run/<script>`. Use one token per environment, at least 32
+characters, kept somewhere you can read it back (a password manager) since curl needs it:
+
+```sh
+openssl rand -hex 32   # 64 hex characters
+```
+
+**Through CI (recommended)**: add it as a GitHub **Environment** secret named
+`SCHEDULER_RUN_TOKEN` in each of `develop`, `staging` and `production` (Settings → Environments →
+<env> → Environment secrets, or `gh secret set SCHEDULER_RUN_TOKEN --env develop`). The next
+`scheduler` deploy uploads it with the Worker (Dagger `wrangler --worker-secrets`, i.e. `wrangler
+deploy --secrets-file`); a value under 32 characters fails the deploy. Secrets are additive: with
+the GitHub secret unset the deploy leaves the Worker's current token as it is, and deleting the
+GitHub secret does not remove it from the Worker (`vp exec wrangler secret delete
+SCHEDULER_RUN_TOKEN --env <env>` does). To rotate, change the GitHub secret and redeploy.
+
+**By hand** (takes effect at once, no deploy; the next CI deploy overwrites it if the GitHub
+secret is set): `vp exec wrangler secret put SCHEDULER_RUN_TOKEN --env <env>` and paste the value.
+
 ### Manually
 
 ```sh
@@ -400,6 +455,8 @@ CLOUDFLARE_ENV=develop vpr wrangler:deploy
 # A one-off run on a deployed Worker
 curl -X POST -H "Authorization: Bearer $SCHEDULER_RUN_TOKEN" -d '{}' \
   https://lightproject-scheduler-dev.<subdomain>.workers.dev/run/ping
+curl -X POST -H "Authorization: Bearer $SCHEDULER_RUN_TOKEN" -d '{"limit":500}' \
+  https://lightproject-scheduler-dev.<subdomain>.workers.dev/run/list-users
 
 # Node, via the published image (any container runtime)
 docker run --rm -e DATABASE_DIALECT=postgres -e DATASTORE_POSTGRES_URL="postgres://…" \

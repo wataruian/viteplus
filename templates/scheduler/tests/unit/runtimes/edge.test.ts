@@ -104,7 +104,7 @@ describe('Worker entry (src/runtimes/edge.ts)', () => {
         { DATABASE_DIALECT: 'd1', SCHEDULER_RUN_TOKEN: token },
         context,
       ),
-    ).rejects.toThrow('Cron */5 * * * *: ping failed');
+    ).rejects.toThrow('Cron */5 * * * *: ping, list-users failed');
     await Promise.all(pending);
 
     expect(controller.noRetry).toHaveBeenCalledOnce();

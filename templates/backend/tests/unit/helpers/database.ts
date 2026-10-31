@@ -48,6 +48,7 @@ const createFakeDatabase = (): repositories.Database => ({
     findByEmail: vi.fn(),
     findById: vi.fn(),
     insert: vi.fn(insertUser),
+    list: vi.fn(),
     remove: vi.fn(),
     update: vi.fn(),
   },

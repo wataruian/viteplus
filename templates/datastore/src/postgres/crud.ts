@@ -1,4 +1,4 @@
-import { eq, getColumns } from 'drizzle-orm';
+import { asc, eq, getColumns } from 'drizzle-orm';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod';
 import type { z } from 'zod';
@@ -23,6 +23,14 @@ const createPostgresCrud =
       insert: async (row) => {
         const rows = await db.insert(base).values(insert.parse(row)).returning();
         return select.parse(rows[0]);
+      },
+      list: async (orderBy, limit) => {
+        const rows = await db
+          .select()
+          .from(base)
+          .orderBy(...orderBy.map((column) => asc(columns[column])))
+          .limit(limit);
+        return rows.map((row) => select.parse(row));
       },
       remove: async (column, value) => {
         const rows = await db.delete(base).where(eq(columns[column], value)).returning().execute();

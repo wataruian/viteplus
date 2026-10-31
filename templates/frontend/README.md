@@ -47,14 +47,15 @@ exposes `VITE_*` to the browser and inlines them at build time, so in the bundle
 is build-time**: set the `VITE_` form (each mirrors its plain one in `.env.example`) before
 `vp build`; changing it later needs a rebuild. Empty strings count as unset.
 
-App-specific (`src/env.ts`, `vite.config.ts`, `playwright.config.ts`):
+App-specific (`vite.config.ts`, `playwright.config.ts`; `src/env.ts` declares none yet, see "Adding a
+variable"):
 
-| Variable                  | Read by                        | Purpose                                                                                                                     |
-| ------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `FRONTEND_PORT`           | `vite.config.ts`, `src/env.ts` | Port of `vp dev`, `vp preview` and `wrangler:dev` (default `2001`)                                                          |
-| `FRONTEND_INSPECTOR_PORT` | `vite.config.ts`               | Inspector port of `wrangler:dev` (default `8231`)                                                                           |
-| `FRONTEND_URL`            | `vite.config.ts` (build)       | Public URL; enables the absolute share tags (see "Share tags"). `VITE_FRONTEND_URL` is used when it is empty. Default unset |
-| `FRONTEND_E2E_PORT`       | `playwright.config.ts`         | Port of the dev server Playwright starts (default `2111`)                                                                   |
+| Variable                  | Read by                  | Purpose                                                                                                                     |
+| ------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `FRONTEND_PORT`           | `vite.config.ts`         | Port of `vp dev`, `vp preview` and `wrangler:dev` (default `2001`)                                                          |
+| `FRONTEND_INSPECTOR_PORT` | `vite.config.ts`         | Inspector port of `wrangler:dev` (default `8231`)                                                                           |
+| `FRONTEND_URL`            | `vite.config.ts` (build) | Public URL; enables the absolute share tags (see "Share tags"). `VITE_FRONTEND_URL` is used when it is empty. Default unset |
+| `FRONTEND_E2E_PORT`       | `playwright.config.ts`   | Port of the dev server Playwright starts (default `2111`)                                                                   |
 
 Shared, from `commonEnv` (full list in `packages/common/README.md`). The ones the frontend uses:
 
@@ -70,6 +71,53 @@ Shared, from `commonEnv` (full list in `packages/common/README.md`). The ones th
 `commonEnv` validates all its keys once at module load and throws on invalid ones (e.g. a
 `BACKEND_URL` that is not a URL). The RUM service name and version come from `package.json`, not
 `SERVICE_NAME`/`SERVICE_VERSION`. Unit tests force `SKIP_OPENTELEMETRY=true` and `LOG_LEVEL=silent`.
+
+### Adding a variable
+
+A key only this app reads goes in the app's own typed env. A key other workspaces read too goes in
+`commonEnv` instead (`packages/common/README.md` → "Adding a shared variable").
+
+1. **Name it.** Prefix it with the app's name (`FRONTEND_*`) only if it would clash with another
+   app's value when both run side by side (ports, URLs); otherwise leave it unprefixed.
+2. **Declare it** in `src/env.ts` (kept with empty `client`/`shared` until a key is added), under
+   `shared` with its plain name, so it is readable in both the browser and `vite.config.ts`:
+
+   ```ts
+   import { appEnvOptions, readRuntimeEnv } from '@lightproject/common/environment';
+   import { createEnv } from '@t3-oss/env-core';
+   import { z } from 'zod';
+
+   const shared = {
+     FRONTEND_GREETING: z.string().default('hello'),
+   };
+
+   const client = {};
+
+   const env = createEnv({
+     ...appEnvOptions,
+     client,
+     runtimeEnv: readRuntimeEnv({ ...client, ...shared }),
+     shared,
+   });
+
+   export { client, env, shared };
+   ```
+
+   `readRuntimeEnv` reads each key with `getEnv`, so `FRONTEND_GREETING` falls back to
+   `VITE_FRONTEND_GREETING`. The browser only sees the `VITE_` form. Keep `client` empty:
+   env-core requires `VITE_`-prefixed names there.
+
+3. **Read it** through a getter on `config` in `src/config.ts` (`env.FRONTEND_GREETING`), never
+   with `getEnv` or `import.meta.env` directly.
+4. **Add it to the root `.env.example`**: the plain key, plus `VITE_FRONTEND_GREETING="${FRONTEND_GREETING}"`
+   if the browser reads it. Never mirror a secret (it would be inlined into the bundle) or a key
+   that can be empty (Dagger's `.env` loading rejects the reference).
+5. **CI**: add `--build-env=VITE_FRONTEND_GREETING=…` for each environment in
+   `.github/workflows/deploy-workspace.yml`. The values are baked in at build time, and the build
+   cache keys on `VITE_*` only.
+6. **Test it**: stub first, then re-import (`vi.stubEnv` + `vi.resetModules()` + `await import`),
+   and clear the `VITE_` form as well when testing the unset case (see `tests/unit/config.test.ts`).
+7. **Document it** in the table above.
 
 ## Development
 

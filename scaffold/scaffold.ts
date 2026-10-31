@@ -124,7 +124,7 @@ const toNames = (kebab: string): Names => ({
 
 const assertName = (name: string) => {
   if (!/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(name)) {
-    throw new Error(`Invalid name "${name}": use kebab-case, e.g. website3 or admin-portal`);
+    throw new Error(`Invalid name "${name}": use kebab-case, e.g. website or admin-portal`);
   }
   if (reservedNames.has(name)) {
     throw new Error(`"${name}" is an existing workspace or template name`);
@@ -132,6 +132,11 @@ const assertName = (name: string) => {
 };
 
 const keyOf = (line: string) => line.slice(0, line.indexOf('='));
+
+const isEnvKeyLine = (line: string) => !line.trimStart().startsWith('#') && line.includes('=');
+
+const isParagraphStart = (line: string | undefined) =>
+  line === undefined || line === '' || line.trimStart().startsWith('#');
 
 const escapeRegExp = (text: string) => text.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
 
@@ -232,7 +237,7 @@ const assertFreePrefix = (envExample: string, names: Names) => {
   }
   const taken = envExample
     .split('\n')
-    .filter((line) => line.includes('='))
+    .filter((line) => isEnvKeyLine(line))
     .map((line) => keyOf(line))
     .filter((key) => key.startsWith(`${names.upper}_`) || key.startsWith(`VITE_${names.upper}_`));
   if (taken.length > 0) {
@@ -251,7 +256,7 @@ const addEnvExampleKeys = (
   const lines = envExample.split('\n');
   const isTemplateLine = (line: string) =>
     new RegExp(`^(?:VITE_)?${from.upper}_[A-Z0-9_]*=`, 'u').test(line);
-  const existing = new Set(lines.filter((line) => line.includes('=')).map((line) => keyOf(line)));
+  const existing = new Set(lines.filter((line) => isEnvKeyLine(line)).map((line) => keyOf(line)));
   const added: string[] = [];
   const output: string[] = [];
 
@@ -267,7 +272,7 @@ const addEnvExampleKeys = (
         .map((line) => renameText(line, from, to, ports))
         .filter((line) => !existing.has(keyOf(line)));
       if (block.length > 0) {
-        const isParagraph = (lines[start - 1] ?? '') === '' && (lines[index + 1] ?? '') === '';
+        const isParagraph = isParagraphStart(lines[start - 1]) && (lines[index + 1] ?? '') === '';
         output.push(...(isParagraph ? ['', ...block] : block));
         added.push(...block.map((line) => keyOf(line)));
       }
@@ -392,6 +397,8 @@ export {
   deployChecklist,
   escapeRegExp,
   excludedNames,
+  isEnvKeyLine,
+  isParagraphStart,
   isText,
   keyOf,
   portRangeStart,

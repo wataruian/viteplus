@@ -145,6 +145,7 @@ class FakeContainer extends Container {
   public readonly capturedEnvVariables = new Map<string, string>();
 
   public readonly capturedSecretVariables: string[] = [];
+  public readonly capturedMountedSecrets = new Map<string, string | undefined>();
   public readonly capturedCachePaths: string[] = [];
   public readonly capturedDirectoryPaths: string[] = [];
   public readonly capturedFilePaths: string[] = [];
@@ -230,6 +231,15 @@ class FakeContainer extends Container {
     _opts?: DaggerModule.ContainerWithEnvVariableOpts,
   ): this => {
     this.capturedEnvVariables.set(name, value);
+    return this;
+  };
+
+  public override withMountedSecret = (
+    path: string,
+    _source: DaggerModule.Secret,
+    opts?: DaggerModule.ContainerWithMountedSecretOpts,
+  ): this => {
+    this.capturedMountedSecrets.set(path, opts?.owner);
     return this;
   };
 
