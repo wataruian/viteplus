@@ -1,6 +1,6 @@
 {
   "name": "@lightproject/monorepo",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "description": "A Vite+-powered monorepo starter with a Hono/Fetch-API backend, a React frontend, and a shared design system.",
   "homepage": "https://github.com/wataruian/viteplus#readme",
