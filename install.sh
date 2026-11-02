@@ -42,7 +42,7 @@ function installMise() {
 
   mise install
 
-  mise bootstrap mise-shell-activate apply
+  mise bootstrap mise-shell-activate apply ${MISE_YES:+--yes}
   mise bootstrap mise-shell-activate status
 
   echo "PATH updated. Run one of the following to reload your shell:"
