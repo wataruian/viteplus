@@ -35,6 +35,8 @@ else
   touch "${stamp}"
 fi
 
+setsid nohup bash .devcontainer/stop-when-idle.sh >/dev/null 2>&1 9>&- &
+
 bash .devcontainer/install-extensions.sh
 
 echo ""
