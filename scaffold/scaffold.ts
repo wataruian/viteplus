@@ -131,6 +131,39 @@ const assertName = (name: string) => {
   }
 };
 
+const workspaceGroups = ['apps', 'packages', 'templates'] as const;
+
+const readPackageName = (packageJsonPath: string): string | undefined => {
+  if (!fs.existsSync(packageJsonPath)) {
+    return undefined;
+  }
+  const parsed: unknown = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return typeof parsed === 'object' &&
+    parsed !== null &&
+    'name' in parsed &&
+    typeof parsed.name === 'string'
+    ? parsed.name
+    : undefined;
+};
+
+const assertFreeWorkspace = (rootDir: string, name: string) => {
+  const packageName = `@lightproject/${name}`;
+  for (const group of workspaceGroups) {
+    const groupDir = path.join(rootDir, group);
+    if (fs.existsSync(path.join(groupDir, name))) {
+      throw new Error(`${group}/${name} already exists`);
+    }
+    const workspaces = fs.existsSync(groupDir)
+      ? fs.readdirSync(groupDir, { withFileTypes: true }).filter((entry) => entry.isDirectory())
+      : [];
+    for (const workspace of workspaces) {
+      if (readPackageName(path.join(groupDir, workspace.name, 'package.json')) === packageName) {
+        throw new Error(`${group}/${workspace.name} is already named ${packageName}`);
+      }
+    }
+  }
+};
+
 const keyOf = (line: string) => line.slice(0, line.indexOf('='));
 
 const isEnvKeyLine = (line: string) => !line.trimStart().startsWith('#') && line.includes('=');
@@ -330,10 +363,8 @@ const scaffold = ({
   const from = toNames(type);
   const to = toNames(name);
   const sourceDir = path.join(rootDir, 'templates', type);
+  assertFreeWorkspace(rootDir, name);
   const targetDir = path.join(rootDir, spec.group, name);
-  if (fs.existsSync(targetDir)) {
-    throw new Error(`${path.relative(rootDir, targetDir)} already exists`);
-  }
 
   const envExamplePath = path.join(rootDir, '.env.example');
   const envExample = fs.readFileSync(envExamplePath, 'utf8');
@@ -392,6 +423,7 @@ export {
   addEnvExampleKeys,
   allocatePorts,
   assertFreePrefix,
+  assertFreeWorkspace,
   assertName,
   copyTemplate,
   deployChecklist,
@@ -402,6 +434,7 @@ export {
   isText,
   keyOf,
   portRangeStart,
+  readPackageName,
   renameText,
   reservedAppNames,
   reservedNames,
@@ -412,5 +445,6 @@ export {
   templates,
   toNames,
   usedPorts,
+  workspaceGroups,
 };
 export type { Names, ScaffoldOptions, TemplateSpec, TemplateType };

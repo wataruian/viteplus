@@ -11,6 +11,7 @@ import {
   allocatePorts,
   assertFreePrefix,
   assertName,
+  readPackageName,
   renameText,
   resetRemoteD1s,
   runCli,
@@ -560,6 +561,47 @@ describe('scaffold', () => {
     expect(() => {
       scaffold({ name: 'website', rootDir: root, type: 'frontend' });
     }).toThrow('apps/website already exists');
+  });
+
+  test('refuses a name already used in another workspace group', () => {
+    const root = makeRepo();
+    fs.mkdirSync(path.join(root, 'packages/website'), { recursive: true });
+
+    expect(() => {
+      scaffold({ name: 'website', rootDir: root, type: 'frontend', write: () => undefined });
+    }).toThrow('packages/website already exists');
+    expect(fs.existsSync(path.join(root, 'apps/website'))).toBe(false);
+  });
+
+  test('refuses a name another workspace already has as its package name', () => {
+    const root = makeRepo();
+    fs.mkdirSync(path.join(root, 'packages/web'), { recursive: true });
+    fs.writeFileSync(
+      path.join(root, 'packages/web/package.json'),
+      '{ "name": "@lightproject/website" }\n',
+    );
+
+    expect(() => {
+      scaffold({ name: 'website', rootDir: root, type: 'library', write: () => undefined });
+    }).toThrow('packages/web is already named @lightproject/website');
+    expect(fs.existsSync(path.join(root, 'packages/website'))).toBe(false);
+  });
+});
+
+describe('readPackageName', () => {
+  test('reads the name, and gives undefined for a missing file or a file without one', () => {
+    const root = makeRepo();
+    fs.writeFileSync(path.join(root, 'nameless.json'), '{ "private": true }\n');
+    fs.writeFileSync(path.join(root, 'array.json'), '[]\n');
+    fs.writeFileSync(path.join(root, 'null.json'), 'null\n');
+
+    expect(readPackageName(path.join(root, 'templates/datastore/package.json'))).toBe(
+      '@lightproject/datastore',
+    );
+    expect(readPackageName(path.join(root, 'missing.json'))).toBeUndefined();
+    expect(readPackageName(path.join(root, 'nameless.json'))).toBeUndefined();
+    expect(readPackageName(path.join(root, 'array.json'))).toBeUndefined();
+    expect(readPackageName(path.join(root, 'null.json'))).toBeUndefined();
   });
 });
 
