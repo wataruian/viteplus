@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import unoCss from 'unocss/vite';
 import { type UserConfig, defineConfig, loadEnv, mergeConfig } from 'vite-plus';
 
-import { getCommonTaskProps, getPackageViteConfig } from '../../vite.config.ts';
+import { getCommonTaskProps, getPackageViteConfig, wranglerIpFlag } from '../../vite.config.ts';
 import { socialMeta } from './social-meta.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['FRONTEND_PORT'] ?? '2001'));
@@ -80,7 +80,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'wrangler:dev': {
             cache: false,
-            command: `wrangler dev --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
+            command: `wrangler dev --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false${wranglerIpFlag}`,
           },
         },
       },

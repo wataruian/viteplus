@@ -32,6 +32,10 @@ const devServerWatchIgnored = [
   '**/.wrangler/**',
 ];
 
+const listenHost = globalThis.process.env['LISTEN_HOST']?.trim() ?? '';
+const listenHostOptions: { host?: string } = listenHost === '' ? {} : { host: listenHost };
+const wranglerIpFlag = listenHost === '' ? '' : ` --ip ${listenHost}`;
+
 const getDotenvKeys = (rootDir: string): string[] => {
   const filePath = path.resolve(rootDir, '.env');
   const keys = new Set<string>();
@@ -160,10 +164,12 @@ const getCommonViteConfig = ({
       treeshake: true,
       unbundle: isLocal,
     },
+    preview: listenHostOptions,
     resolve: {
       conditions: ['typescript'],
     },
     server: {
+      ...listenHostOptions,
       watch: {
         ignored: devServerWatchIgnored,
       },
@@ -546,6 +552,9 @@ export {
   getRootViteConfig,
   getTaskCache,
   ignorePatterns,
+  listenHost,
+  listenHostOptions,
+  wranglerIpFlag,
 };
 export type { CommonTaskProps, RunTasks, TaskCache, TaskCacheConfig };
 

@@ -17,6 +17,9 @@ const designSystemInspectorPort = Math.trunc(
   Number(globalThis.process.env['DESIGN_SYSTEM_INSPECTOR_PORT'] ?? '6233'),
 );
 
+const listenHost = globalThis.process.env['LISTEN_HOST']?.trim() ?? '';
+const wranglerIpArgs = listenHost === '' ? [] : ['--ip', listenHost];
+
 const viteCommand = isProd ? 'preview' : 'dev';
 
 globalThis.console.log(
@@ -41,6 +44,7 @@ const designSystemCommand = isWrangler
       '--persist-to',
       '.wrangler/state/design-system',
       '--show-interactive-dev-session=false',
+      ...wranglerIpArgs,
     ]
   : [viteCommand];
 
@@ -64,6 +68,7 @@ const resolveStorybookCommand = (): string[] => {
       '--persist-to',
       '.wrangler/state/storybook',
       '--show-interactive-dev-session=false',
+      ...wranglerIpArgs,
     ];
   }
 
@@ -172,6 +177,7 @@ export {
   isPidAlive,
   isProd,
   isWrangler,
+  listenHost,
   resolveStorybookCommand,
   signals,
   storybook,
@@ -181,4 +187,5 @@ export {
   vite,
   viteCommand,
   vpBin,
+  wranglerIpArgs,
 };

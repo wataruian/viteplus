@@ -1,4 +1,5 @@
 {
+  "appPort": [2000, 2001, 2002, 2003, 3000, 3001, 3002, 3003, 3004, 6006, 6007],
   "containerEnv": {
     "INSTALL_BIN_DIR": "/home/vscode/.local/bin",
     "MISE_ENV": "devcontainer",
@@ -34,6 +35,17 @@
     "source=viteplus-pnpm-store,target=/home/vscode/.local/share/pnpm,type=volume"
   ],
   "name": "viteplus",
+  "portsAttributes": {
+    "2000-2003": {
+      "onAutoForward": "ignore"
+    },
+    "3000-3004": {
+      "onAutoForward": "ignore"
+    },
+    "6006-6007": {
+      "onAutoForward": "ignore"
+    }
+  },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "remoteUser": "vscode",
   "runArgs": ["--add-host=host.docker.internal:host-gateway", "--workdir=${localWorkspaceFolder}"],

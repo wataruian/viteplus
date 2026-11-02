@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { type UserConfig, defineConfig, mergeConfig } from 'vite-plus';
 
-import { getPackageViteConfig } from '../../vite.config.ts';
+import { getPackageViteConfig, wranglerIpFlag } from '../../vite.config.ts';
 
 const port = Math.trunc(Number(globalThis.process.env['BACKEND_PORT'] ?? '2000'));
 const inspectorPort = Math.trunc(
@@ -47,7 +47,7 @@ export default defineConfig(({ mode }): UserConfig => {
           },
           'wrangler:dev': {
             cache: false,
-            command: `wrangler dev --persist-to ../../.wrangler/state --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false`,
+            command: `wrangler dev --persist-to ../../.wrangler/state --port ${port} --inspector-port ${inspectorPort} --show-interactive-dev-session=false${wranglerIpFlag}`,
           },
         },
       },
