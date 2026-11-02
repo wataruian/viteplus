@@ -1816,5 +1816,8 @@ AGENTS.md reflect the current state.
   `--registry-username`/`--registry-password` (`withRegistryAuth` on the address's host), so every
   caller in the chain (`on-push-main`, `release`, `trigger` → `deploy` → `deploy-workspace`) grants
   `packages: write`; a reusable workflow cannot get more than its caller.
+- The compose `registry-cache` proxy (which `dagger-engine` uses for `ghcr.io`) blocks POST/PUT/DELETE
+  unless `ALLOW_PUSH=true`, so the first ghcr push failed with nginx's `405 Not Allowed` on
+  `/blobs/uploads/`. With it set, pushes pass through and only GETs are cached.
 - New packages start private and linked to the repo; pulling them elsewhere needs a token with
   `read:packages` (or make the package public in its settings).
