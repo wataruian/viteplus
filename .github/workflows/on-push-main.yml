@@ -21,6 +21,7 @@ jobs:
       cancel-in-progress: true
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:

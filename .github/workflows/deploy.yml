@@ -48,6 +48,7 @@ jobs:
       contains(fromJson(needs.setup.outputs.workspaces), 'datastore')
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
@@ -63,6 +64,7 @@ jobs:
       contains(fromJson(needs.setup.outputs.workspaces), 'design-system')
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
@@ -80,6 +82,7 @@ jobs:
       needs.datastore.result != 'cancelled'
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
@@ -97,6 +100,7 @@ jobs:
       needs.datastore.result != 'cancelled'
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
@@ -116,6 +120,7 @@ jobs:
       needs.tasks.result != 'cancelled'
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:
@@ -139,6 +144,7 @@ jobs:
       needs.backend.result != 'cancelled'
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy-workspace.yml
     secrets: inherit
     with:

@@ -79,6 +79,7 @@ jobs:
       cancel-in-progress: ${{ inputs.environment != 'production' }}
     permissions:
       contents: read
+      packages: write
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     with:

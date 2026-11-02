@@ -24,6 +24,7 @@ jobs:
     environment: ${{ inputs.environment }}
     permissions:
       contents: read
+      packages: write
     env:
       _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-container://dagger-engine
       WORKERS_SUBDOMAIN: wataru.workers.dev
@@ -90,6 +91,7 @@ jobs:
         shell: bash
         env:
           REGISTRY_ADDRESS: ${{ vars.REGISTRY_ADDRESS }}
+          GITHUB_TOKEN: ${{ github.token }}
           VERSION_REF: ${{ inputs.ref }}
         run: |
           tag="${VERSION_REF:-$(git rev-parse --short=7 HEAD)}"
@@ -116,6 +118,14 @@ jobs:
           fi
           if [[ "${WORKSPACE}" == "frontend" && -n "${FARO_ENDPOINT}" ]]; then
             args+=("--build-env=VITE_FARO_ENDPOINT=${FARO_ENDPOINT}")
+          fi
+
+          if [[ -z "${REGISTRY_ADDRESS}" ]]; then
+            REGISTRY_ADDRESS="ghcr.io/${GITHUB_REPOSITORY,,}"
+            args+=(
+              "--registry-username=${GITHUB_ACTOR}"
+              "--registry-password=env:GITHUB_TOKEN"
+            )
           fi
 
           mise run dagger publish \

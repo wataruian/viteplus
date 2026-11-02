@@ -152,6 +152,7 @@ class FakeContainer extends Container {
   public readonly capturedRemovedMounts: string[] = [];
   public readonly capturedExecCalls: string[][] = [];
   public readonly capturedPublishedRefs: string[] = [];
+  public readonly capturedRegistryAuths: { address: string; username: string }[] = [];
   public readonly capturedUsers: string[] = [];
   public readonly capturedNewFiles = new Map<string, string>();
   public capturedWorkdir: string | undefined = undefined;
@@ -240,6 +241,15 @@ class FakeContainer extends Container {
     opts?: DaggerModule.ContainerWithMountedSecretOpts,
   ): this => {
     this.capturedMountedSecrets.set(path, opts?.owner);
+    return this;
+  };
+
+  public override withRegistryAuth = (
+    address: string,
+    username: string,
+    _secret: DaggerModule.Secret,
+  ): this => {
+    this.capturedRegistryAuths.push({ address, username });
     return this;
   };
 

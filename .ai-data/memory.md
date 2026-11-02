@@ -1807,3 +1807,14 @@ AGENTS.md reflect the current state.
   `mise run fix --remove-comments`, and the scaffold ignores `#` lines (a comment line counts as a
   paragraph start when adding a new app's keys). Comments stay full-line only, since an inline
   `# …` after a value is not parsed the same way by every reader (mise, compose, Dagger).
+
+## 2026-11-02: GitHub Packages Is the Default Image Registry
+
+- The deploy's "Build and publish" step pushes to `ghcr.io/<owner>/<repo>/<workspace>` (lowercased)
+  when the GitHub variable `REGISTRY_ADDRESS` is unset or empty; a non-empty value still wins (e.g.
+  `ttl.sh/<name>`). It logs in with the job's `GITHUB_TOKEN` through Dagger `publish`'s new
+  `--registry-username`/`--registry-password` (`withRegistryAuth` on the address's host), so every
+  caller in the chain (`on-push-main`, `release`, `trigger` → `deploy` → `deploy-workspace`) grants
+  `packages: write`; a reusable workflow cannot get more than its caller.
+- New packages start private and linked to the repo; pulling them elsewhere needs a token with
+  `read:packages` (or make the package public in its settings).

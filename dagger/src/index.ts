@@ -628,10 +628,21 @@ export class Monorepo {
     address: string,
     tag?: string,
     buildEnv?: string[],
+    registryUsername?: string,
+    registryPassword?: Secret,
   ): Promise<string> {
-    const container = isFrontend(workspace)
+    if ((registryUsername === undefined) !== (registryPassword === undefined)) {
+      throw new Error('registryUsername and registryPassword must be passed together');
+    }
+
+    const built = isFrontend(workspace)
       ? await this.nginx(workspace, buildEnv)
       : await this.vp(workspace, buildEnv);
+
+    const container =
+      registryUsername === undefined || registryPassword === undefined
+        ? built
+        : built.withRegistryAuth(address.split('/')[0], registryUsername, registryPassword);
 
     const refs = [`${address}:latest`];
     if (tag !== undefined && tag !== '') {

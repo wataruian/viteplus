@@ -184,6 +184,44 @@ describe('publish', () => {
     );
 
     expect(message).toBe('Published registry.example.com/backend:latest@sha256:fakedigest');
+    expect(getLastContainer().capturedRegistryAuths).toStrictEqual([]);
+  });
+
+  test('logs in to the address’s registry host when credentials are given', async () => {
+    seedMountFiles();
+    world.dirs.set('/app', []);
+
+    const message = await createMonorepo().publish(
+      '@lightproject/backend',
+      'ghcr.io/owner/repo/backend',
+      'abc1234',
+      undefined,
+      'octocat',
+      fakeSecret,
+    );
+
+    expect(message).toBe(
+      'Published ghcr.io/owner/repo/backend:latest@sha256:fakedigest, ghcr.io/owner/repo/backend:abc1234@sha256:fakedigest',
+    );
+    expect(getLastContainer().capturedRegistryAuths).toStrictEqual([
+      { address: 'ghcr.io', username: 'octocat' },
+    ]);
+  });
+
+  test.each([
+    ['only a username', 'octocat', undefined],
+    ['only a password', undefined, fakeSecret],
+  ])('rejects %s', async (_name, username, password) => {
+    await expect(
+      createMonorepo().publish(
+        '@lightproject/backend',
+        'ghcr.io/owner/repo/backend',
+        undefined,
+        undefined,
+        username,
+        password,
+      ),
+    ).rejects.toThrow('registryUsername and registryPassword must be passed together');
   });
 });
 
