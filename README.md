@@ -161,9 +161,58 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 1.  **Node.js**: Ensure you are using `v24.15.0` (check `.tool-versions`).
 2.  **Mise**: Install it (`./install.sh mise`), then run `mise install`.
 3.  **Vite+ CLI**: Installed by `mise install` from `mise.toml`; do not install it globally.
+    - _Optional_: to get bare `node`/`pnpm` on your PATH (Vite+ shims resolving the versions pinned in `package.json`, as in the dev container), source its env from your shell's rc file. Without it, use `vp`/`vpx`/`vpr`.
+
+      ```sh
+      # zsh
+      echo '. "$HOME/.config/vite-plus/env"' >> ~/.zshrc
+      # bash
+      echo '. "$HOME/.config/vite-plus/env"' >> ~/.bashrc
+      # fish
+      echo 'source "$HOME/.config/vite-plus/env.fish"' >> ~/.config/fish/config.fish
+      # nushell (in config.nu)
+      source ~/.config/vite-plus/env.nu
+      # PowerShell (in $PROFILE)
+      . "$HOME/.config/vite-plus/env.ps1"
+      ```
 4.  **Install dependencies**: Run `vp install`, then `docker compose up -d postgres` (integration tests use it). On a Postgres volume created before `configs/postgres/create-databases.sh` existed, run it once: `docker compose exec postgres sh /docker-entrypoint-initdb.d/create-databases.sh` (creates every `*_POSTGRES_DB`, skips existing ones).
 5.  **Initialize**: Run `mise run init` to build, format, and test everything.
 6.  **Develop**: Run `mise run start dev` to start every app, or follow a workspace's README to run one.
+
+### Dev Container (optional)
+
+`.devcontainer/` runs the same toolchain in a Linux container (VS Code, Antigravity, or `vpr devcontainer:up`). It holds only the toolchain: start `docker compose` on the host first, and the container reaches it through `host.docker.internal` and the host's Docker socket (`dagger` uses the host's `dagger-engine`).
+
+From the repo root, without an IDE. The `devcontainer:*` tasks are in the root `vite.config.ts` (`cache: false`: package.json scripts are cached, which would skip a start), and the `devcontainer` CLI is the root devDependency `@devcontainers/cli`, installed by `vp install`:
+
+```sh
+# Create and start it (first run, or after removing the container/volumes; runs post-create.sh)
+vpr devcontainer:up
+# Stop it (kept, not removed: the next devcontainer:up restarts it without post-create.sh)
+vpr devcontainer:down
+# Recreate it after changing .devcontainer/ (named volumes are kept; reruns post-create.sh).
+# devcontainer:up is never a rebuild: it reuses the existing container, running or stopped
+# (also after devcontainer:down), and ignores config changes. post-create.sh and mise.devcontainer.toml are read from the mounted repo,
+# so edits there need no rebuild: rerun the script in the container / open a new shell.
+vpr devcontainer:rebuild
+# Open an interactive bash in it (as vscode, in the repo root; its rc file runs
+# `mise activate` and the Vite+ env). zsh, the image's default, works the same:
+vpr devcontainer:shell
+vp exec devcontainer exec --workspace-folder . zsh
+# or with plain docker
+docker exec -it "$(docker ps -q --filter label=devcontainer.local_folder="$PWD")" bash
+# A one-off command gets no rc file, so no .env values: wrap it in `mise exec --`
+vp exec devcontainer exec --workspace-folder . mise exec -- vpr test:unit
+# Remove it and its volumes
+docker rm -f "$(docker ps -aq --filter label=devcontainer.local_folder="$PWD")"
+docker volume rm viteplus-node-modules viteplus-mise-data viteplus-pnpm-store
+```
+
+- **Setup** (`.devcontainer/post-create.sh`, once): `INSTALL_BIN_DIR=~/.local/bin ./install.sh mise` (keeps the Linux mise out of the repo's `tmp/.local/bin`, which holds the host's), then `mise install`, `vp install --frozen-lockfile` and Playwright's Chromium with its system libraries (`vp exec playwright install-deps chromium` / `install chromium`, from the root devDependency `@playwright/test`), so `vpr test:e2e` runs in the container. The browser lives in `~/.cache/ms-playwright`, not a volume, so a rebuild downloads it again.
+- **Env**: the container sets `MISE_ENV=devcontainer`, so mise layers `mise.devcontainer.toml` over `mise.toml`. It overrides only `POSTGRES_HOST`, `OTLP_ENDPOINT` and the `*_POSTGRES_URL`s to point at `host.docker.internal`; everything else (tools, `.env`, tasks) still comes from `mise.toml`. `VITE_*` mirrors stay on `localhost`, since the browser runs on the host.
+- **Shared repo**: the repo is mounted at the host's own path, while the root `node_modules` (platform-specific native bindings), mise data and the pnpm store live in named volumes, so container and host installs never overwrite each other.
+- **Shells**: the env is applied by `mise activate` in interactive shells (the IDE terminal). A non-interactive `bash -lc` only gets mise's shims, not the `.env` values; run commands there through `mise exec -- <cmd>`.
+- **Linux hosts**: compose publishes its ports on `COMPOSE_BIND_ADDRESS` (`127.0.0.1` by default), which `host.docker.internal` reaches on Docker Desktop but not on a Linux Docker engine.
 
 > [!TIP]
 > Use `vpr <command>` at the root to execute tasks recursively. For example, `vpr test:unit` runs unit tests for all packages and apps (the root's own files have `vpr root:check` and `vpr root:test:unit`) (`vpr test:e2e` runs the Playwright browser tests).
@@ -174,15 +223,15 @@ Keep Tempo at 2.9 or later. Tempo 2.8's ingester cut every live trace on each 10
 
 We use `mise` as the primary task runner for high-level repository automation. Tasks are defined in `.mise/tasks/`.
 
-| Command                                    | Description                                                                                                                             |
-| :----------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| `mise run check`                           | Run type checking, formatting, linting, building, and tests                                                                             |
-| `mise run clean`                           | Clean up build artifacts, tools, and AI caches                                                                                          |
-| `mise run fix`                             | Export all top-level declarations, then apply the editor's on-save code actions to all files (`--remove-comments` also strips comments) |
-| `mise run create`                          | Create an app or package from a template (see above)                                                                                    |
-| `mise run init`                            | Initialize the workspace                                                                                                                |
-| `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action                                                                                     |
-| `mise run start`                           | Start the dev or prod server                                                                                                            |
+| Command                                    | Description                                                                                                                                                                |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mise run check`                           | Run type checking, formatting, linting, building, and tests                                                                                                                |
+| `mise run clean`                           | Clean up build artifacts, tools, and AI caches                                                                                                                             |
+| `mise run fix`                             | Export all top-level declarations, then apply the editor's on-save code actions to all files (`--staged`: only the staged files; `--remove-comments` also strips comments) |
+| `mise run create`                          | Create an app or package from a template (see above)                                                                                                                       |
+| `mise run init`                            | Initialize the workspace                                                                                                                                                   |
+| `mise run pin-action <owner>/<repo>@<tag>` | Print a SHA-pinned `uses:` line for a GitHub Action                                                                                                                        |
+| `mise run start`                           | Start the dev or prod server                                                                                                                                               |
 
 ### The `vp` Command Reference
 

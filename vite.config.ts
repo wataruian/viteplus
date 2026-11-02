@@ -19,6 +19,7 @@ const ignorePatterns = [
   '.wrangler',
   'dagger/sdk',
   '.pruned',
+  '.devcontainer/devcontainer-lock.json',
 ];
 
 const devServerWatchIgnored = [
@@ -473,6 +474,23 @@ const getRootViteConfig = (): UserConfig => {
         'dagger:type-check': {
           ...commonTaskProps,
           command: 'cd dagger && tsgo',
+        },
+        'devcontainer:down': {
+          cache: false,
+          command:
+            'docker ps -q --filter "label=devcontainer.local_folder=$PWD" | xargs -r docker stop',
+        },
+        'devcontainer:rebuild': {
+          cache: false,
+          command: 'devcontainer up --workspace-folder . --remove-existing-container',
+        },
+        'devcontainer:shell': {
+          cache: false,
+          command: 'devcontainer exec --workspace-folder . bash',
+        },
+        'devcontainer:up': {
+          cache: false,
+          command: 'devcontainer up --workspace-folder .',
         },
         madge: {
           ...commonTaskProps,

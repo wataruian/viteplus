@@ -54,8 +54,11 @@ const isIgnored = (file: string): boolean =>
       file.endsWith(`/${pattern}`),
   );
 
-const listFiles = (): string[] =>
-  execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
+const listAllFilesArgs = ['ls-files', '-z', '--cached', '--others', '--exclude-standard'];
+const listStagedFilesArgs = ['diff', '--cached', '--name-only', '-z', '--diff-filter=ACMR'];
+
+const listFiles = (staged = false): string[] =>
+  execFileSync('git', staged ? listStagedFilesArgs : listAllFilesArgs, {
     cwd: rootDir,
     encoding: 'utf8',
   })
@@ -439,7 +442,7 @@ const report = (action: string, changed: string[]): void => {
   process.stdout.write(`✅ ${action}: ${changed.length} file(s) touched\n`);
 };
 
-const files = listFiles();
+const files = listFiles(process.argv.includes('--staged'));
 
 if (process.argv.includes('--remove-comments')) {
   report('source.removeComments', removeComments(rootDir, files));
@@ -498,7 +501,9 @@ export {
   isIgnored,
   isLocalExportList,
   isMutableCollection,
+  listAllFilesArgs,
   listFiles,
+  listStagedFilesArgs,
   noopEvent,
   organizeImports,
   organizeLinkDefinitions,

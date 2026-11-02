@@ -6,7 +6,7 @@ executingDir=$(pwd)
 currentDir=$(cd -P -- "$(dirname -- "${0}")" && pwd -P)
 scriptDir=$(cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 
-tmpLocalBinDir="${scriptDir}/tmp/.local/bin"
+tmpLocalBinDir="${INSTALL_BIN_DIR:-"${scriptDir}/tmp/.local/bin"}"
 
 pathString="export PATH=\"${tmpLocalBinDir}:\${PATH}\""
 

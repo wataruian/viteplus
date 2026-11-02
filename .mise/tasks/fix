@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-#MISE description="Export all top-level declarations, then apply the editor's on-save code actions (fixAll.oxc, organize/sort imports, organize link definitions, sort JSON) to all files; --remove-comments also strips comments"
+#MISE description="Export all top-level declarations, then apply the editor's on-save code actions (fixAll.oxc, organize/sort imports, organize link definitions, sort JSON) to all files; --staged limits it to staged files, --remove-comments also strips comments"
 
 set -o errexit
 
 codeActionArgs=()
+staged="false"
 
 while [[ "${#}" -gt 0 ]]; do
   case "${1}" in
@@ -11,17 +12,36 @@ while [[ "${#}" -gt 0 ]]; do
       codeActionArgs+=("--remove-comments")
       shift
       ;;
+    --staged)
+      staged="true"
+      codeActionArgs+=("--staged")
+      shift
+      ;;
     *)
-      echo "Usage: mise run fix [--remove-comments]"
+      echo "Usage: mise run fix [--staged] [--remove-comments]"
       exit 1
       ;;
   esac
 done
 
+targets=()
+if [[ "${staged}" == "true" ]]; then
+  while IFS= read -r -d '' file; do
+    targets+=("${file}")
+  done < <(git diff --cached --name-only -z --diff-filter=ACMR)
+
+  if [[ "${#targets[@]}" -eq 0 ]]; then
+    echo "No staged files to fix"
+    exit 0
+  fi
+
+  targets=(--no-error-on-unmatched-pattern "${targets[@]}")
+fi
+
 vpx scripts/code-actions.ts "${codeActionArgs[@]}"
 
 lintSuccess="true"
-vp lint --fix || lintSuccess="false"
+vp lint --fix "${targets[@]}" || lintSuccess="false"
 
 echo ""
 if [[ "${lintSuccess}" == "false" ]]; then
@@ -30,7 +50,7 @@ if [[ "${lintSuccess}" == "false" ]]; then
 fi
 
 formatSuccess="true"
-vp format --write || formatSuccess="false"
+vp format --write "${targets[@]}" || formatSuccess="false"
 
 echo ""
 if [[ "${formatSuccess}" == "false" ]]; then
@@ -38,4 +58,8 @@ if [[ "${formatSuccess}" == "false" ]]; then
   exit 1
 fi
 
-echo "✅ Code actions applied to all files"
+if [[ "${staged}" == "true" ]]; then
+  echo "✅ Code actions applied to the staged files (re-stage them to commit the fixes)"
+else
+  echo "✅ Code actions applied to all files"
+fi

@@ -1,0 +1,7 @@
+#:tombi schema.strict = false
+
+[env]
+POSTGRES_HOST = "host.docker.internal"
+OTLP_ENDPOINT = "http://host.docker.internal:4318"
+DATASTORE_POSTGRES_URL = "postgres://{{ env.POSTGRES_USER }}:{{ env.POSTGRES_PASSWORD }}@host.docker.internal:{{ env.POSTGRES_PORT }}/{{ env.DATASTORE_POSTGRES_DB }}"
+DATABASE_POSTGRES_URL = "postgres://{{ env.POSTGRES_USER }}:{{ env.POSTGRES_PASSWORD }}@host.docker.internal:{{ env.POSTGRES_PORT }}/{{ env.DATABASE_POSTGRES_DB }}"

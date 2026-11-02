@@ -1821,3 +1821,10 @@ AGENTS.md reflect the current state.
   `/blobs/uploads/`. With it set, pushes pass through and only GETs are cached.
 - New packages start private and linked to the repo; pulling them elsewhere needs a token with
   `read:packages` (or make the package public in its settings).
+
+## 2026-11-02: Dev Container (Toolchain Only)
+
+- `.devcontainer/` holds only the toolchain; compose services stay on the host (`host.docker.internal`, host Docker socket for `docker`/`dagger`), so `docker-compose.yml` is unchanged.
+- All tools come from mise: `install.sh` gained `INSTALL_BIN_DIR` so the container installs its Linux mise outside the repo's `tmp/.local/bin` (the host's macOS one is bind-mounted there).
+- `mise.devcontainer.toml` (via `MISE_ENV=devcontainer`) overrides only the server-side host-service keys; `VITE_*` stay on `localhost` (browser on the host).
+- Verified with `@devcontainers/cli`: `vp check` and the datastore integration tests pass in the container, and the host's `vp install`/unit tests are unaffected. Antigravity's own dev-container support is reported as unreliable upstream; VS Code or the CLI use the same config.

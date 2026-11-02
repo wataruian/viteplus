@@ -1,0 +1,42 @@
+{
+  "containerEnv": {
+    "INSTALL_BIN_DIR": "/home/vscode/.local/bin",
+    "MISE_ENV": "devcontainer",
+    "MISE_TRUSTED_CONFIG_PATHS": "${localWorkspaceFolder}",
+    "MISE_YES": "1",
+    "PATH": "/home/vscode/.local/bin:/home/vscode/.local/share/mise/shims:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  },
+  "containerUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oxc.oxc-vscode",
+        "antfu.unocss",
+        "VoidZero.vite-plus-extension-pack",
+        "void-zero.vite-plus-extension-pack",
+        "tombi-toml.tombi",
+        "Anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "GitHub.vscode-github-actions"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    }
+  },
+  "image": "mcr.microsoft.com/devcontainers/base:2.2.5-bookworm@sha256:99f5250dd2d5f8b11046d5662dd94c1e3c1dae56b560c7caad5ceb7edf349046",
+  "mounts": [
+    "source=viteplus-node-modules,target=${localWorkspaceFolder}/node_modules,type=volume",
+    "source=viteplus-mise-data,target=/home/vscode/.local/share/mise,type=volume",
+    "source=viteplus-pnpm-store,target=/home/vscode/.local/share/pnpm,type=volume"
+  ],
+  "name": "viteplus",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+  "runArgs": ["--add-host=host.docker.internal:host-gateway", "--workdir=${localWorkspaceFolder}"],
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind,consistency=cached"
+}
