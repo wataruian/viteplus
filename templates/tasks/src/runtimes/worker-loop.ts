@@ -5,10 +5,11 @@ import type {
 import { logger } from '@lightproject/common/logger';
 import { flushTelemetry } from '@lightproject/common/server';
 import { getServiceInstanceId } from '@lightproject/common/utils';
-import type { db } from '@lightproject/datastore';
+import { db } from '@lightproject/datastore';
 import { z } from 'zod';
 
 import { config } from '../config';
+import { createLazyDatabase } from '../core/database';
 import type { JobFunction } from '../core/function';
 import { createIdleBackoff } from '../core/loop';
 import { workerIdFor } from '../core/pool';
@@ -85,12 +86,13 @@ class WorkerLoop {
     try {
       await startTelemetry();
       const store = await openSharedStore(this.env);
+      const database = createLazyDatabase(async () => await db.createDatabase(this.env));
       try {
         const deadline = Date.now() + alarmBudgetMs;
         const processed = await drain({
           deadline,
           definition,
-          execute: createInProcessExecutor(functions),
+          execute: createInProcessExecutor(functions, { getDatabase: database.getDatabase }),
           leaseMs: config.leaseMs,
           store,
           workerId: workerIdFor(definition, slot.data.index, getServiceInstanceId()),
@@ -108,7 +110,7 @@ class WorkerLoop {
           nextAlarmAt = finishedAt + this.backoff.next();
         }
       } finally {
-        await store.close();
+        await Promise.all([database.close(), store.close()]);
       }
     } catch (error) {
       produced = true;

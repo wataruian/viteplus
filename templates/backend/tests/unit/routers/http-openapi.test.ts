@@ -180,6 +180,18 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
         httpEnvelope(TestService.hello.schema.response).parse(data);
       },
     },
+    'POST /api/test/list-users': {
+      init: {
+        body: JSON.stringify({ limit: 10 }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      },
+      url: '/api/test/list-users',
+      usesDatabase: true,
+      validate: (data) => {
+        httpEnvelope(TestService.enqueueListUsers.schema.response).parse(data);
+      },
+    },
     'POST /api/test/ping': {
       init: {
         body: JSON.stringify({ message: 'Sample' }),

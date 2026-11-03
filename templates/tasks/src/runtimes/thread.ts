@@ -2,7 +2,11 @@ import { describeError } from '@lightproject/common/utils';
 import { z } from 'zod';
 
 import { type JobFunction, UnrecoverableJobError } from '../core/function';
-import { JobAbortedError, createInProcessExecutor } from '../core/runner';
+import {
+  type InProcessExecutorOptions,
+  JobAbortedError,
+  createInProcessExecutor,
+} from '../core/runner';
 import { type ThreadReady, type ThreadResponse, threadRequestSchema } from './thread-protocol';
 
 const invalidRunSchema = z.object({ job: z.object({ id: z.string() }), type: z.literal('run') });
@@ -16,8 +20,9 @@ const serveThread = (
   port: MessagePortLike,
   functions: readonly JobFunction[],
   onShutdown: () => void,
+  options: InProcessExecutorOptions = {},
 ) => {
-  const execute = createInProcessExecutor(functions);
+  const execute = createInProcessExecutor(functions, options);
   const running = new Map<string, AbortController>();
 
   port.addEventListener('message', (event) => {

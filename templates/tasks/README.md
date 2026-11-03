@@ -25,7 +25,10 @@ await client.enqueue(ping, { message: 'hello' }, { delayMs: 5000 });
 
 An app that already has a `@lightproject/datastore` database open passes it to
 `createDatabaseStore(database)` instead, so the job client shares its connection (as
-`templates/backend`'s `TestService.enqueuePing` does).
+`templates/backend`'s `TestService.enqueuePing` and `enqueueListUsers` do).
+
+Two sample functions ship: `ping` (logs its message) and `list-users` (logs up to `limit` users,
+default 100, through the handler's `getDatabase()`, the datastore database opened on first use).
 
 Commands run from `templates/tasks` unless noted.
 
@@ -102,7 +105,8 @@ vpr enqueue ping '{"message":"hello"}' 3
 ```
 
 Expected: the dev process logs `ping: hello` three times. `enqueue` writes through `.env`'s
-`DATABASE_DIALECT` (the Postgres path by default).
+`DATABASE_DIALECT` (the Postgres path by default). `vpr enqueue list-users '{"limit":5}'` logs
+`list-users` with the `count` and the users (it needs the migrated database).
 
 ### Run on Cloudflare (local)
 
@@ -192,9 +196,9 @@ Container image (what CI publishes; from the repo root):
 
 ```sh
 dagger call load --workspace=@lightproject/tasks --docker-socket=/var/run/docker.sock
-docker run --rm --name tasks -e JOB_STORE=database -e DATABASE_DIALECT=postgres \
+docker run --rm --name lightproject-tasks -e JOB_STORE=database -e DATABASE_DIALECT=postgres \
   -e DATASTORE_POSTGRES_URL=postgres://lightproject:lightproject@host.docker.internal:5432/lightproject_datastore tasks:latest
-docker stop -t 30 tasks   # graceful stop within the 30 s budget
+docker stop -t 30 lightproject-tasks   # graceful stop within the 30 s budget
 ```
 
 #### D1 (Cloudflare runtime)
@@ -239,7 +243,7 @@ Tempo for `{resource.service.name="@lightproject/tasks" && name="job.handler"}` 
 
 ## Deployment
 
-The `tasks` deploy runs after `datastore` (it needs its migrations) and does two things:
+The deploy of this workspace (`@lightproject/tasks`) runs after `@lightproject/datastore`'s (it needs its migrations) and does two things:
 
 | Step              | Result                                                                                              |
 | ----------------- | --------------------------------------------------------------------------------------------------- |

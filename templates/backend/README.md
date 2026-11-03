@@ -127,12 +127,13 @@ Locally, an HTTP route without OpenAPI docs throws at start (`assertHttpRoutesDo
 `src/services/test.ts` is a sample, served at `/api/test/*` and `test.*` in tRPC unless
 `DISABLE_TEST_ROUTES=true`:
 
-| HTTP                     | tRPC                      | What it does                                                                     |
-| ------------------------ | ------------------------- | -------------------------------------------------------------------------------- |
-| `GET /api/test/hello`    | `test.hello` (query)      | Echoes a greeting                                                                |
-| `POST /api/test/profile` | `test.profile` (mutation) | Builds a profile from the input                                                  |
-| `POST /api/test/ping`    | `test.enqueuePing`        | Enqueues a `ping` job (`@lightproject/tasks`); the tasks worker logs its message |
-| `POST /api/test/users`   | `test.createUser`         | Inserts a user with a random name into `users` (`@lightproject/datastore`)       |
+| HTTP                        | tRPC                      | What it does                                                                                         |
+| --------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `GET /api/test/hello`       | `test.hello` (query)      | Echoes a greeting                                                                                    |
+| `POST /api/test/profile`    | `test.profile` (mutation) | Builds a profile from the input                                                                      |
+| `POST /api/test/ping`       | `test.enqueuePing`        | Enqueues a `ping` job (`@lightproject/tasks`); the tasks worker logs its message                     |
+| `POST /api/test/users`      | `test.createUser`         | Inserts a user with a random name into `users` (`@lightproject/datastore`)                           |
+| `POST /api/test/list-users` | `test.enqueueListUsers`   | Enqueues a `list-users` job (optional `limit`, 1–1000, default 100); the tasks worker logs the users |
 
 The `AppRouter` type keeps the `test` procedures either way, so clients still compile; turning
 them off only makes the server answer 404.
@@ -170,7 +171,7 @@ are not inherited by `[env.*]` blocks, so each lists its own `ENV`, `ALLOW_ALL_I
 
 ### CI
 
-`.github/workflows/deploy-workspace.yml` runs, for `backend`: build and publish the image (tag =
+`.github/workflows/deploy-workspace.yml` runs, for this workspace (`@lightproject/backend`): build and publish the image (tag =
 the version ref, else the short SHA), deploy the Worker, then smoke-test
 `https://lightproject-backend-<dev|staging|production>.wataru.workers.dev` for HTTP 200. When the
 GitHub variable `OTLP_ENDPOINT` is set it is passed to the Worker as

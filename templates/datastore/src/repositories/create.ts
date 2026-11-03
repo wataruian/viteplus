@@ -1,6 +1,8 @@
 import type { DatabaseDialect } from '../environment/dialect';
 import { now } from '../shared';
-import type { Database, ScriptLockStore, Tables, WorkerJobQueue } from './types';
+import type { User } from '../types';
+import type { Page } from './table';
+import type { Database, ListUsers, ScriptLockStore, Tables, WorkerJobQueue } from './types';
 
 interface Timestamped {
   createdAt?: Date | undefined;
@@ -13,6 +15,15 @@ const stamped = <Row extends Timestamped>(
   const at = now();
   return { ...row, createdAt: row.createdAt ?? at, updatedAt: row.updatedAt ?? at };
 };
+
+const userPage = ({ limit, offset, order = 'asc' }: ListUsers): Page<User> => ({
+  limit,
+  offset,
+  orderBy: [
+    { column: 'createdAt', direction: order },
+    { column: 'id', direction: order },
+  ],
+});
 
 interface RepositoriesOptions {
   close: () => Promise<void>;
@@ -36,12 +47,23 @@ const createRepositories = ({
     findByName: async (name) => await scriptLocks.findBy('name', name),
   },
   users: {
+    count: async ({ where } = {}) => await users.count(where),
     findByEmail: async (email) => await users.findBy('email', email),
     findById: async (id) => await users.findBy('id', id),
+    findMany: async ({ where, ...page }) => await users.findMany(where, userPage(page)),
     insert: async (user) => await users.insert(stamped(user)),
-    list: async ({ limit }) => await users.list(['createdAt', 'id'], limit),
-    remove: async (id) => await users.remove('id', id),
-    update: async (id, changes) => await users.update('id', id, changes),
+    insertMany: async (rows) => await users.insertMany(rows.map((user) => stamped(user))),
+    list: async (page) => await users.list(userPage(page)),
+    remove: async (id) => (await users.removeBy('id', id)) !== undefined,
+    removeMany: async ({ where }) => await users.removeMany(where),
+    search: async ({ where, ...page }) => await users.search(where, userPage(page)),
+    update: async (id, changes) => await users.updateBy('id', id, changes),
+    updateMany: async ({ changes, where }) => await users.updateMany(where, changes),
+    upsert: async (user) =>
+      await users.upsert(stamped(user), {
+        set: { name: user.name, updatedAt: now() },
+        target: 'email',
+      }),
   },
   workerJobs: {
     ...workerJobQueue,
@@ -50,5 +72,5 @@ const createRepositories = ({
   },
 });
 
-export { createRepositories, stamped };
+export { createRepositories, stamped, userPage };
 export type { RepositoriesOptions, Timestamped };

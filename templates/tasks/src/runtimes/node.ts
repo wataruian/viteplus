@@ -9,8 +9,10 @@ import {
 import { logger } from '@lightproject/common/logger';
 import { shutdownTelemetry } from '@lightproject/common/server';
 import { getServiceInstanceId, settleWithin } from '@lightproject/common/utils';
+import { db } from '@lightproject/datastore';
 
 import { config } from '../config';
+import { createLazyDatabase } from '../core/database';
 import { UnrecoverableJobError } from '../core/function';
 import { startPool } from '../core/pool';
 import { startPurger } from '../core/retention';
@@ -310,9 +312,15 @@ const exitThread = () => {
 
 const serveWorkerThread = async (port: MessagePort) => {
   await startTelemetry();
-  serveThread(port, functions, () => {
-    shutdownTelemetry().then(exitThread, exitThread);
-  });
+  const database = createLazyDatabase(async () => await db.createDatabase());
+  serveThread(
+    port,
+    functions,
+    () => {
+      database.close().then(shutdownTelemetry).then(exitThread, exitThread);
+    },
+    { getDatabase: database.getDatabase },
+  );
 };
 
 const bootstrap = (entry: string) => {

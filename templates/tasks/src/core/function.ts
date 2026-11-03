@@ -1,4 +1,5 @@
 import type { LevelLogger } from '@lightproject/common/logger';
+import type { repositories } from '@lightproject/datastore';
 import type { z } from 'zod';
 
 import type { Job, JsonValue } from './job';
@@ -8,6 +9,7 @@ type JobLogger = LevelLogger;
 
 interface JobContext {
   attempt: number;
+  getDatabase: () => Promise<repositories.Database>;
   idempotencyKey: string;
   job: Job;
   logger: JobLogger;

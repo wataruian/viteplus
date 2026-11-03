@@ -11,6 +11,6 @@ export type {
 } from './core/function';
 export type { Job, JobStatus, JsonValue } from './core/job';
 export type { JobStore } from './core/store';
-export { functions, ping } from './functions';
+export { functions, listUsers, ping } from './functions';
 export { createDatabaseStore, createJobStore } from './stores';
 export type { JobStoreKind } from './stores';

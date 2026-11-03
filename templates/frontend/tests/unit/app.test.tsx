@@ -350,6 +350,9 @@ const renderAppWithMocks = async (options: {
     trpcClient: {
       test: {
         createUser: { mutate: (input: unknown) => mutate('test.createUser', input) },
+        enqueueListUsers: {
+          mutate: (input: unknown) => mutate('test.enqueueListUsers', input),
+        },
         enqueuePing: { mutate: (input: unknown) => mutate('test.enqueuePing', input) },
         hello: {
           query: options.trpcQuery,
@@ -654,6 +657,14 @@ describe.each([
     method: 'test.createUser',
     pendingLabel: 'Adding user…',
     resultMessage: 'Created a random user',
+  },
+  {
+    id: 'trpc-enqueue-list-users',
+    input: { limit: 10 },
+    label: 'Enqueue list-users job',
+    method: 'test.enqueueListUsers',
+    pendingLabel: 'Enqueuing list-users…',
+    resultMessage: 'Enqueued a list-users job',
   },
   {
     id: 'trpc-enqueue-ping',

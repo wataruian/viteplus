@@ -27,6 +27,11 @@ const trpcCalls = {
     method: 'test.createUser',
     resultMessage: 'Created a random user',
   },
+  enqueueListUsers: {
+    call: async () => await trpcClient.test.enqueueListUsers.mutate({ limit: 10 }),
+    method: 'test.enqueueListUsers',
+    resultMessage: 'Enqueued a list-users job',
+  },
   enqueuePing: {
     call: async () =>
       await trpcClient.test.enqueuePing.mutate({ message: 'Hello from the frontend' }),
@@ -124,6 +129,9 @@ const App = () => {
   const [isEnqueuePingPending, handleEnqueuePingClick] = usePendingAction(async () => {
     await runTrpcCall('trpc.enqueue_ping', trpcCalls.enqueuePing);
   });
+  const [isEnqueueListUsersPending, handleEnqueueListUsersClick] = usePendingAction(async () => {
+    await runTrpcCall('trpc.enqueue_list_users', trpcCalls.enqueueListUsers);
+  });
   const [isCreateUserPending, handleCreateUserClick] = usePendingAction(async () => {
     await runTrpcCall('trpc.create_user', trpcCalls.createUser);
   });
@@ -207,6 +215,15 @@ const App = () => {
           onClick={handleEnqueuePingClick}
         >
           {isEnqueuePingPending ? 'Enqueuing ping…' : 'Enqueue ping job'}
+        </button>
+        <button
+          id='trpc-enqueue-list-users'
+          type='button'
+          className='counter'
+          disabled={isEnqueueListUsersPending}
+          onClick={handleEnqueueListUsersClick}
+        >
+          {isEnqueueListUsersPending ? 'Enqueuing list-users…' : 'Enqueue list-users job'}
         </button>
         <button
           id='trpc-create-user'

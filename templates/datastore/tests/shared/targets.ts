@@ -2,7 +2,9 @@ import { sql } from 'drizzle-orm';
 import type { PgAsyncDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core';
 
 import { createD1Repositories } from '../../src/d1/repositories';
+import { createD1Tables } from '../../src/d1/tables';
 import { createPostgresRepositories } from '../../src/postgres/repositories';
+import { createPostgresTables } from '../../src/postgres/tables';
 import type { ContractTarget } from './database-contract';
 import type { LocalD1 } from './local-d1';
 
@@ -18,6 +20,7 @@ const createPostgresTarget = ({ close, db }: PostgresConnection): ContractTarget
       INSERT INTO worker_jobs (id, function_name, payload, status, max_attempts, run_at, created_at, updated_at)
       VALUES (${job.id}, ${job.functionName}, '{}'::jsonb, ${status}, 1, now(), now(), now())`);
   },
+  tables: createPostgresTables(db),
 });
 
 const createD1Target = ({ binding, db, dispose }: LocalD1): ContractTarget => ({
@@ -27,6 +30,7 @@ const createD1Target = ({ binding, db, dispose }: LocalD1): ContractTarget => ({
       INSERT INTO worker_jobs (id, function_name, payload, status, max_attempts, run_at, created_at, updated_at)
       VALUES (${job.id}, ${job.functionName}, '{}', ${status}, 1, 0, 0, 0)`);
   },
+  tables: createD1Tables(db),
 });
 
 export { createD1Target, createPostgresTarget };

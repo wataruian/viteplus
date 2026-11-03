@@ -46,7 +46,7 @@ test('the tRPC sample button re-runs the call and becomes clickable again', asyn
   expect(pageErrors).toStrictEqual([]);
 });
 
-for (const name of ['Enqueue ping job', 'Add random user']) {
+for (const name of ['Enqueue ping job', 'Enqueue list-users job', 'Add random user']) {
   test(`the "${name}" button sends its call and becomes clickable again`, async ({ page }) => {
     const pageErrors = collectPageErrors(page);
 

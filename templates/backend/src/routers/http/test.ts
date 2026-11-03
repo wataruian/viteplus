@@ -13,6 +13,11 @@ const testRouter = createHttpRouter([
     path: '/test/ping',
   }),
   defineHttpRoute({
+    handlerFn: TestService.enqueueListUsers,
+    method: 'post',
+    path: '/test/list-users',
+  }),
+  defineHttpRoute({
     handlerFn: TestService.hello,
     method: 'get',
     path: '/test/hello',

@@ -28,10 +28,11 @@ Commands run from `templates/frontend` unless noted.
    docker compose up -d   # Grafana LGTM + OTel collector; without it telemetry exports just fail
    ```
 
-   The home page has three tRPC buttons, all calling the backend's sample `test` procedures:
-   "Call tRPC sample" (`test.hello`), "Enqueue ping job" (`test.enqueuePing`, which needs the
-   tasks worker, `vpr --filter @lightproject/tasks dev`, to run the job) and "Add random user"
-   (`test.createUser`). The last two need the migrated database (`templates/backend/README.md` →
+   The home page has four tRPC buttons, all calling the backend's sample `test` procedures:
+   "Call tRPC sample" (`test.hello`), "Enqueue ping job" (`test.enqueuePing`), "Enqueue
+   list-users job" (`test.enqueueListUsers` with `limit: 10`; both enqueue buttons need the tasks
+   worker, `vpr --filter @lightproject/tasks dev`, to run the job) and "Add random user"
+   (`test.createUser`). The last three need the migrated database (`templates/backend/README.md` →
    Setup). Each logs its result, or `Failed to call tRPC server` with the method.
 
 3. Start the frontend:
@@ -172,7 +173,7 @@ vpr test:e2e    # Playwright, Chromium, its own dev server on FRONTEND_E2E_PORT 
 Before finishing, run `vpr ready` from the repo root. To reproduce CI (from the repo root):
 `dagger call test-unit --workspace=@lightproject/frontend` and
 `dagger call test-end-to-end --workspace=@lightproject/frontend`; `verify-workspace.yml` uploads
-the e2e output as the `e2e-frontend` artifact.
+the e2e output as the `e2e-<workspace>` artifact.
 
 ## Deployment
 
@@ -198,7 +199,7 @@ frontend-type workspaces):
 | `VITE_OTLP_ENDPOINT` | GitHub variable `OTLP_ENDPOINT`, only when set                               |
 | `VITE_FARO_ENDPOINT` | GitHub variable `FARO_ENDPOINT`, only when set                               |
 
-It then publishes the nginx image `<REGISTRY_ADDRESS>/frontend` (`nginx.conf`, `dist/` in
+It then publishes the nginx image `<REGISTRY_ADDRESS>/frontend:<tag>` (`nginx.conf`, `dist/` in
 `/usr/share/nginx/html/vite`, port 80) via Dagger `publish`, deploys the Worker via Dagger
 `wrangler` (`vpr wrangler:deploy` with `CLOUDFLARE_ENV` and the `CLOUDFLARE_*` secrets), and
 smoke-tests the Worker URL for HTTP 200. Promotion to `staging`/`production` and the workflow

@@ -41,6 +41,7 @@ const openApiDocShape = z.object({
 const trpcSampleInputs: Record<string, unknown> = {
   '/default.root': undefined,
   '/test.createUser': {},
+  '/test.enqueueListUsers': { limit: 10 },
   '/test.enqueuePing': { message: 'Sample' },
   '/test.hello': { name: 'Sample' },
   '/test.profile': {
@@ -51,7 +52,11 @@ const trpcSampleInputs: Record<string, unknown> = {
   },
 };
 
-const databaseProcedures: ReadonlySet<string> = new Set(['/test.createUser', '/test.enqueuePing']);
+const databaseProcedures: ReadonlySet<string> = new Set([
+  '/test.createUser',
+  '/test.enqueueListUsers',
+  '/test.enqueuePing',
+]);
 
 const successCode = 200;
 
@@ -160,6 +165,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
     for (const path of [
       '/default.root',
       '/test.createUser',
+      '/test.enqueueListUsers',
       '/test.enqueuePing',
       '/test.hello',
       '/test.profile',
@@ -171,6 +177,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
     expect(Object.keys(doc.paths['/test.profile'] ?? {})).toContain('post');
     expect(Object.keys(doc.paths['/test.createUser'] ?? {})).toContain('post');
     expect(Object.keys(doc.paths['/test.enqueuePing'] ?? {})).toContain('post');
+    expect(Object.keys(doc.paths['/test.enqueueListUsers'] ?? {})).toContain('post');
 
     const schemaNames = Object.keys(doc.components.schemas);
     for (const name of [
@@ -178,6 +185,7 @@ describe.each(runtimes)('on $name', ({ cleanup, importApp, name: runtime }) => {
       'HelloResponse',
       'CreateProfileResponse',
       'EnqueuePingResponse',
+      'EnqueueListUsersResponse',
       'CreateUserResponse',
     ]) {
       expect(schemaNames).toContain(name);

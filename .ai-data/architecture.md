@@ -77,14 +77,26 @@ The repository is structured as a **Vite+-powered Monorepo**.
 - **Apps query through one import**: `db.createDatabase(env)` (`import { db } from
   '@lightproject/datastore'`; namespaced like the other packages' roots) picks the
   dialect from `env.DATABASE_DIALECT` (else `process.env`) and returns repositories
-  (`db.users.findById/findByEmail/list/insert/update/remove`, `db.workerJobs.findById/insert` plus the job-queue queries, `db.scriptLocks.acquire/renew/release/findByName` for `templates/scheduler`) with the
+  (`db.users.findById/findByEmail/findMany/search/list/count/insert/insertMany/upsert/update/updateMany/remove/removeMany`, `db.workerJobs.findById/insert` plus the job-queue queries, `db.scriptLocks.acquire/renew/release/findByName` for `templates/scheduler`) with the
   same row types on both. D1 needs the binding as `env.DB`; Postgres uses
   `env.HYPERDRIVE.connectionString`, then `env.DATASTORE_POSTGRES_URL`, then the `POSTGRES_*` env. Each
   dialect is loaded with a dynamic `import()`, so the root entry imports neither driver.
 - **Repository layering (no casts)**: Drizzle's builders can't be typed over a generic table, so
-  each dialect has one table-generic `crud.ts` (`findBy`/`insert`/`update`/`remove`) that widens
-  the table to `PgTable`/`SQLiteTable` and parses rows with the `drizzle-orm/zod` schemas
-  generated from it (a zod parse per row). Domain repositories are written once in
+  each dialect has one table-generic `crud.ts` (`TableRepository` in `src/repositories/table.ts`)
+  that widens the table to `PgTable`/`SQLiteTable` and parses rows with the `drizzle-orm/zod`
+  schemas generated from it (a zod parse per row). It offers: reads `findBy` (first match),
+  `findMany(where, page)` (column equality, AND; `null` = `IS NULL`, `undefined` is skipped),
+  `search(filters, page)` (per-column `eq/ne/gt/gte/lt/lte/in/notIn/isNull/like`, AND; `like` is
+  case-insensitive on both dialects via `lower()`, ASCII-only on D1), `list(page)` and
+  `count(filters?)`, where `page` is `{ orderBy, limit, offset? }` and an `orderBy` entry is a
+  column (ascending) or `{ column, direction: 'desc' }`; writes `insert`, `insertMany` (chunked to
+  D1's 100 bound values per query, so a large batch is several statements and not atomic),
+  `upsert(row, { target, set })` (`set` is explicit, so a conflict never rewrites `createdAt` or the
+  id), `updateBy`/`removeBy` (only the first match by primary key, via `pk IN (SELECT … LIMIT 1)`
+  since neither dialect has `UPDATE/DELETE … LIMIT`) and `updateMany`/`removeMany` (every match;
+  they throw on an empty `where` so a missing filter never touches the whole table). Tables need
+  exactly one primary-key column. The condition builders are dialect-neutral, in
+  `src/shared/where.ts`. Domain repositories are written once in
   `src/repositories/create.ts` on top of it; a new table is one `crud(table)` line in
   `src/postgres/tables.ts` (the D1 copy is generated; see "Adding a table"). Custom queries (joins, job claiming) go in the
   `Database` interface with a per-dialect implementation, e.g. the job queue
@@ -229,7 +241,7 @@ Every edit is in `templates/datastore`, on the Postgres or dialect-neutral side;
      orders: {
        findById: async (id) => await orders.findBy('id', id),
        insert: async (order) => await orders.insert(stamped(order)),
-       remove: async (id) => await orders.remove('id', id),
+       remove: async (id) => (await orders.removeBy('id', id)) !== undefined,
      },
      users: { … },
      workerJobs: { … },
@@ -550,6 +562,11 @@ written, linted, tested and run on Node before being documented).
      retrying when the job no longer applies.
    - **`logger`** writes under the job's `job.handler` span; **`withTrace(fn)`** makes a call
      started in `fn` (e.g. `fetch`) a child span. Use `fetch`, never `XMLHttpRequest`.
+   - **`getDatabase()`** returns the `@lightproject/datastore` database (`db.users`, …; dialect
+     from `DATABASE_DIALECT`, also with `JOB_STORE=memory`). It is opened on first use, so
+     functions that never call it open nothing: one per worker thread on Node (closed on
+     shutdown; each thread has its own connection pool), one per alarm run on the edge (closed
+     after it). `src/functions/list-users.ts` is the sample.
    - The payload is validated by `schema` at enqueue and again before every attempt (a payload
      that no longer matches marks the job `dead`); it must survive JSON (no `z.date()` or
      `.transform()`).
@@ -560,7 +577,8 @@ written, linted, tested and run on Node before being documented).
    import { ping } from './ping';
    import { sendWelcomeEmail } from './send-welcome-email';
 
-   const functions: readonly JobFunction[] = [ping, sendWelcomeEmail];
+   const functions: readonly JobFunction[] = [listUsers, ping, sendWelcomeEmail];
+   export { listUsers } from './list-users';
    export { ping } from './ping';
    export { sendWelcomeEmail } from './send-welcome-email';
    ```
@@ -568,7 +586,7 @@ written, linted, tested and run on Node before being documented).
 3. **Export it to other apps** (only if they enqueue it) in `src/client.ts`:
 
    ```ts
-   export { functions, ping, sendWelcomeEmail } from './functions';
+   export { functions, listUsers, ping, sendWelcomeEmail } from './functions';
    ```
 
 4. **Test** in `tests/unit/functions/send-welcome-email.test.ts`, calling `execute` with a job from
@@ -581,6 +599,7 @@ written, linted, tested and run on Node before being documented).
      const skip = vi.fn<(reason: string) => void>();
      await sendWelcomeEmail.execute(job.payload, {
        attempt: 1,
+       getDatabase: noDatabase, // from src/core/database; a fake for functions that query
        idempotencyKey: job.id,
        job,
        logger,

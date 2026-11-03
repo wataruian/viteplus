@@ -1,6 +1,7 @@
 import { logger } from '@lightproject/common/logger';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
+import { noDatabase } from '../../../src/core/database';
 import { functions, ping } from '../../../src/functions';
 import { setup } from '../helpers/jobs';
 
@@ -30,6 +31,7 @@ describe('functions', () => {
 
     await ping.execute(job.payload, {
       attempt: 1,
+      getDatabase: noDatabase,
       idempotencyKey: job.id,
       job,
       logger,

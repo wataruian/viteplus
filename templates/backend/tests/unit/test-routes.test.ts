@@ -17,7 +17,9 @@ describe.each(runtimes)('on $name with DISABLE_TEST_ROUTES=true', ({ cleanup, im
     const ping = await app.request('/api/test/ping', { ...postJson, method: 'POST' });
     expect(root.status).toBe(successCode);
     expect(hello.status).toBe(notFoundCode);
+    const listUsers = await app.request('/api/test/list-users', { ...postJson, method: 'POST' });
     expect(ping.status).toBe(notFoundCode);
+    expect(listUsers.status).toBe(notFoundCode);
   });
 
   test('the tRPC test procedures are not served, the default ones still are', async () => {

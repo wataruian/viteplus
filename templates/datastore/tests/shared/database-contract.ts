@@ -5,6 +5,7 @@ import type { repositories, types } from '../../src';
 interface ContractTarget {
   database: repositories.Database;
   insertJobWithRawStatus: (job: types.NewWorkerJob, status: string) => Promise<void>;
+  tables: repositories.Tables;
 }
 
 const newUser = (): types.NewUser => ({
@@ -29,6 +30,22 @@ const pause = async (ms: number) => {
 };
 
 const newLockName = () => `script-${globalThis.crypto.randomUUID()}`;
+
+const seed = async (target: ContractTarget, names: readonly string[]) => {
+  const tag = globalThis.crypto.randomUUID();
+  const base = -Date.now();
+  const rows: types.User[] = [];
+  for (const [index, first] of names.entries()) {
+    rows.push(
+      await target.database.users.insert({
+        createdAt: new Date(base + index),
+        email: `${tag}-${index}@example.com`,
+        name: `${first} ${tag}`,
+      }),
+    );
+  }
+  return { rows, tag };
+};
 
 const describeDatabase = (name: string, open: () => Promise<ContractTarget>) => {
   describe(`${name} database contract`, () => {
@@ -97,6 +114,281 @@ const describeDatabase = (name: string, open: () => Promise<ContractTarget>) => 
 
       await expect(users.list({ limit: 3 })).resolves.toStrictEqual([...byId, later]);
       await expect(users.list({ limit: 1 })).resolves.toStrictEqual([byId[0]]);
+    });
+
+    describe('table queries', () => {
+      const order = ['createdAt', 'id'] as const;
+      const page = (limit: number) => ({ limit, orderBy: order });
+      const byId = { limit: 10, orderBy: ['id'] } as const;
+
+      targetTest(
+        'findMany matches every given column, ordered, up to the limit',
+        async (target) => {
+          const { rows, tag } = await seed(target, ['Ada', 'Ada', 'Grace']);
+          const { users } = target.tables;
+
+          await expect(users.findMany({ name: `Ada ${tag}` }, page(10))).resolves.toStrictEqual(
+            rows.slice(0, 2),
+          );
+          await expect(users.findMany({ name: `Ada ${tag}` }, page(1))).resolves.toStrictEqual([
+            rows[0],
+          ]);
+          await expect(
+            users.findMany({ email: rows[1].email, name: `Ada ${tag}` }, page(10)),
+          ).resolves.toStrictEqual([rows[1]]);
+          await expect(
+            users.findMany({ email: rows[2].email, name: `Ada ${tag}` }, page(10)),
+          ).resolves.toStrictEqual([]);
+        },
+      );
+
+      targetTest('findMany treats null as IS NULL and skips undefined', async (target) => {
+        const { workerJobs } = target.tables;
+        const job = await target.database.workerJobs.insert(newJob());
+
+        await expect(
+          workerJobs.findMany(
+            { dedupeKey: null, functionName: job.functionName, leaseOwner: undefined },
+            byId,
+          ),
+        ).resolves.toStrictEqual([job]);
+      });
+
+      targetTest('search combines operators per column', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Grace', 'Linus']);
+        const { users } = target.tables;
+        const ofTag = { like: `%${tag}` };
+
+        await expect(
+          users.search({ createdAt: { gte: rows[1].createdAt }, name: ofTag }, page(10)),
+        ).resolves.toStrictEqual(rows.slice(1));
+        await expect(
+          users.search(
+            { createdAt: { gt: rows[0].createdAt, lt: rows[2].createdAt }, name: ofTag },
+            page(10),
+          ),
+        ).resolves.toStrictEqual([rows[1]]);
+        await expect(
+          users.search({ createdAt: { lte: rows[0].createdAt }, name: ofTag }, page(10)),
+        ).resolves.toStrictEqual([rows[0]]);
+        await expect(
+          users.search({ id: { in: [rows[0].id, rows[2].id] } }, page(10)),
+        ).resolves.toStrictEqual([rows[0], rows[2]]);
+        await expect(
+          users.search({ id: { notIn: [rows[0].id] }, name: ofTag }, page(10)),
+        ).resolves.toStrictEqual(rows.slice(1));
+        await expect(
+          users.search({ id: { ne: rows[0].id }, name: { eq: rows[1].name } }, page(10)),
+        ).resolves.toStrictEqual([rows[1]]);
+        await expect(users.search({ id: { in: [] } }, page(10))).resolves.toStrictEqual([]);
+        await expect(
+          users.search({ email: undefined, id: { eq: rows[0].id, gt: undefined } }, page(10)),
+        ).resolves.toStrictEqual([rows[0]]);
+      });
+
+      targetTest('search like is case-insensitive on every dialect', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Grace']);
+
+        await expect(
+          target.tables.users.search({ name: { like: `ADA ${tag.toUpperCase()}` } }, page(10)),
+        ).resolves.toStrictEqual([rows[0]]);
+      });
+
+      targetTest('search isNull picks null or non-null values', async (target) => {
+        const { workerJobs } = target.tables;
+        const free = await target.database.workerJobs.insert(newJob());
+        const deduped = await target.database.workerJobs.insert(
+          newJob({ dedupeKey: globalThis.crypto.randomUUID(), functionName: free.functionName }),
+        );
+        const sameFunction = { functionName: { eq: free.functionName } };
+
+        await expect(
+          workerJobs.search({ ...sameFunction, dedupeKey: { isNull: true } }, byId),
+        ).resolves.toStrictEqual([free]);
+        await expect(
+          workerJobs.search({ ...sameFunction, dedupeKey: { isNull: false } }, byId),
+        ).resolves.toStrictEqual([deduped]);
+      });
+
+      targetTest(
+        'updateBy and removeBy touch only the first match by primary key',
+        async (target) => {
+          const { rows, tag } = await seed(target, ['Ada', 'Ada']);
+          const { users } = target.tables;
+          const [firstId, secondId] = [rows[0].id, rows[1].id].toSorted();
+          const adaName = `Ada ${tag}`;
+
+          const updated = await users.updateBy('name', adaName, { name: `Renamed ${tag}` });
+          expect(updated?.id).toBe(firstId);
+          await expect(users.findMany({ name: adaName }, page(10))).resolves.toMatchObject([
+            { id: secondId },
+          ]);
+
+          const removed = await users.removeBy('name', adaName);
+          expect(removed?.id).toBe(secondId);
+          await expect(users.removeBy('name', adaName)).resolves.toBeUndefined();
+          await expect(users.updateBy('name', adaName, { name: 'x' })).resolves.toBeUndefined();
+        },
+      );
+
+      targetTest('updateMany and removeMany act on every match and report it', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Ada', 'Grace']);
+        const { users } = target.tables;
+        const adaName = `Ada ${tag}`;
+
+        const updated = await users.updateMany({ name: adaName }, { name: `Renamed ${tag}` });
+        expect(updated.map(({ id }) => id).toSorted()).toStrictEqual(
+          [rows[0].id, rows[1].id].toSorted(),
+        );
+        await expect(users.removeMany({ name: `Renamed ${tag}` })).resolves.toBe(2);
+        await expect(users.removeMany({ name: `Renamed ${tag}` })).resolves.toBe(0);
+        await expect(target.database.users.findById(rows[2].id)).resolves.toStrictEqual(rows[2]);
+      });
+
+      targetTest('updateMany and removeMany refuse an empty where', async (target) => {
+        const { users } = target.tables;
+
+        await expect(users.removeMany({})).rejects.toThrow('removeMany needs at least one where');
+        await expect(users.updateMany({ email: undefined }, { name: 'x' })).rejects.toThrow(
+          'updateMany needs at least one where',
+        );
+      });
+
+      targetTest('pages descending with an offset', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Grace', 'Linus']);
+        const { users } = target.tables;
+        const ofTag = { name: { like: `%${tag}` } };
+        const newest = { column: 'createdAt', direction: 'desc' } as const;
+
+        await expect(users.search(ofTag, { limit: 2, orderBy: [newest] })).resolves.toStrictEqual([
+          rows[2],
+          rows[1],
+        ]);
+        await expect(
+          users.search(ofTag, { limit: 2, offset: 2, orderBy: [newest] }),
+        ).resolves.toStrictEqual([rows[0]]);
+        await expect(
+          users.findMany({ email: rows[1].email }, { limit: 1, offset: 1, orderBy: order }),
+        ).resolves.toStrictEqual([]);
+        await expect(
+          users.list({ limit: 1, orderBy: [{ column: 'createdAt', direction: 'asc' }] }),
+        ).resolves.toHaveLength(1);
+      });
+
+      targetTest('counts matching rows, or all of them', async (target) => {
+        const { tag } = await seed(target, ['Ada', 'Ada', 'Grace']);
+        const { users } = target.tables;
+
+        await expect(users.count({ name: { like: `%${tag}` } })).resolves.toBe(3);
+        await expect(users.count({ name: { eq: `Ada ${tag}` } })).resolves.toBe(2);
+        await expect(users.count({ name: { eq: `Nobody ${tag}` } })).resolves.toBe(0);
+        await expect(users.count()).resolves.toBeGreaterThanOrEqual(3);
+      });
+
+      targetTest('insertMany inserts every row, across bound-parameter chunks', async (target) => {
+        const tag = globalThis.crypto.randomUUID();
+        const { users } = target.tables;
+        const at = new Date(-Date.now());
+        const many = Array.from({ length: 45 }, (_, index) => ({
+          createdAt: at,
+          email: `${tag}-${index}@example.com`,
+          name: `Bulk ${tag}`,
+          updatedAt: at,
+        }));
+
+        const inserted = await users.insertMany(many);
+
+        expect(inserted.map(({ email }) => email)).toStrictEqual(many.map(({ email }) => email));
+        await expect(users.count({ name: { eq: `Bulk ${tag}` } })).resolves.toBe(45);
+        await expect(users.insertMany([])).resolves.toStrictEqual([]);
+      });
+
+      targetTest('upsert inserts, then updates only the given columns', async (target) => {
+        const { users } = target.tables;
+        const at = new Date(-Date.now());
+        const row = { createdAt: at, ...newUser(), updatedAt: at };
+
+        const inserted = await users.upsert(row, { set: { name: 'Grace' }, target: 'email' });
+        expect(inserted).toMatchObject({ email: row.email, name: 'Ada' });
+
+        const upserted = await users.upsert(
+          { ...row, createdAt: new Date(0), name: 'Ignored' },
+          { set: { name: 'Grace' }, target: 'email' },
+        );
+        expect(upserted).toMatchObject({ createdAt: at, id: inserted.id, name: 'Grace' });
+        await expect(users.count({ email: { eq: row.email } })).resolves.toBe(1);
+      });
+
+      targetTest('users repository pages, counts, bulk-inserts and upserts', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Grace', 'Linus']);
+        const { users } = target.database;
+        const where = { name: { like: `%${tag}` } };
+
+        await expect(users.search({ limit: 2, order: 'desc', where })).resolves.toStrictEqual([
+          rows[2],
+          rows[1],
+        ]);
+        await expect(users.search({ limit: 2, offset: 1, where })).resolves.toStrictEqual(
+          rows.slice(1),
+        );
+        await expect(users.count({ where })).resolves.toBe(3);
+        await expect(users.count()).resolves.toBeGreaterThanOrEqual(3);
+
+        const [bulk] = await users.insertMany([{ email: `${tag}@bulk.example`, name: 'Bulk' }]);
+        expect(bulk.createdAt).toBeInstanceOf(Date);
+
+        const [before] = rows;
+        await new Promise((resolve) => {
+          globalThis.setTimeout(resolve, 5);
+        });
+        const renamed = await users.upsert({ email: before.email, name: 'Renamed' });
+        expect(renamed).toMatchObject({
+          createdAt: before.createdAt,
+          id: before.id,
+          name: 'Renamed',
+        });
+        expect(renamed.updatedAt.getTime()).toBeGreaterThan(before.updatedAt.getTime());
+      });
+
+      targetTest('users.updateMany and users.removeMany act on every match', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Ada', 'Grace']);
+        const { users } = target.database;
+        await new Promise((resolve) => {
+          globalThis.setTimeout(resolve, 5);
+        });
+
+        const renamed = await users.updateMany({
+          changes: { name: `Renamed ${tag}` },
+          where: { name: `Ada ${tag}` },
+        });
+        expect(renamed.map(({ id }) => id).toSorted()).toStrictEqual(
+          [rows[0].id, rows[1].id].toSorted(),
+        );
+        for (const user of renamed) {
+          expect(user.updatedAt.getTime()).toBeGreaterThan(rows[0].updatedAt.getTime());
+        }
+
+        await expect(users.removeMany({ where: { name: `Renamed ${tag}` } })).resolves.toBe(2);
+        await expect(users.findById(rows[2].id)).resolves.toStrictEqual(rows[2]);
+        await expect(users.removeMany({ where: {} })).rejects.toThrow(
+          'removeMany needs at least one where',
+        );
+        await expect(users.updateMany({ changes: { name: 'x' }, where: {} })).rejects.toThrow(
+          'updateMany needs at least one where',
+        );
+      });
+
+      targetTest('users.findMany and users.search order like list', async (target) => {
+        const { rows, tag } = await seed(target, ['Ada', 'Grace']);
+        const { users } = target.database;
+
+        await expect(
+          users.findMany({ limit: 10, where: { name: `Grace ${tag}` } }),
+        ).resolves.toStrictEqual([rows[1]]);
+        await expect(
+          users.search({ limit: 10, where: { name: { like: `%${tag}` } } }),
+        ).resolves.toStrictEqual(rows);
+      });
     });
 
     targetTest('rejects a duplicate email', async (target) => {

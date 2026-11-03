@@ -54,7 +54,7 @@ describe('enqueue script', () => {
     const run = await runEnqueue([]);
 
     expect(run.error).toHaveBeenCalledWith('Enqueue failed', {
-      error: new Error('Unknown function "". Known: ping'),
+      error: new Error('Unknown function "". Known: list-users, ping'),
     });
     expect(run.createJobStore).not.toHaveBeenCalled();
     expect(globalThis.process.exitCode).toBe(1);

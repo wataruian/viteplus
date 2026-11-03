@@ -9,6 +9,13 @@ const testRouter = t.router({
       path: '/test.createUser',
     }),
   ),
+  enqueueListUsers: createMutation(
+    defineTrpcRoute({
+      handlerFn: TestService.enqueueListUsers,
+      method: 'post',
+      path: '/test.enqueueListUsers',
+    }),
+  ),
   enqueuePing: createMutation(
     defineTrpcRoute({
       handlerFn: TestService.enqueuePing,

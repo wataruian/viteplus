@@ -15,7 +15,8 @@ import {
   withRetry,
 } from '@lightproject/common/utils';
 
-import { type JobFunction, UnrecoverableJobError } from './function';
+import { noDatabase } from './database';
+import { type JobContext, type JobFunction, UnrecoverableJobError } from './function';
 import type { Job } from './job';
 import { createIdleBackoff, startLoop } from './loop';
 import type { Clock, JobStore } from './store';
@@ -69,6 +70,7 @@ interface RunningWorker {
 
 interface InProcessExecutorOptions {
   abortGraceMs?: number;
+  getDatabase?: JobContext['getDatabase'];
 }
 
 const createJobMetrics = () => {
@@ -134,7 +136,7 @@ const endWithOutcome = (span: Span, handling: Promise<void>) => {
 const createInProcessExecutor =
   (
     functions: readonly JobFunction[],
-    { abortGraceMs = defaultAbortGraceMs }: InProcessExecutorOptions = {},
+    { abortGraceMs = defaultAbortGraceMs, getDatabase = noDatabase }: InProcessExecutorOptions = {},
   ): Executor =>
   async (job, signal, traceContext = {}) => {
     const definition = functions.find(({ name }) => name === job.functionName);
@@ -157,6 +159,7 @@ const createInProcessExecutor =
     const result: ExecutionResult = { skipReason: undefined };
     const handling = definition.execute(job.payload, {
       attempt: job.attempts,
+      getDatabase,
       idempotencyKey: job.id,
       job,
       logger: bindLogger(active),

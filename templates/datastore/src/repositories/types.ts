@@ -1,7 +1,7 @@
 import type { DatabaseDialect } from '../environment/dialect';
 import type { JobStatus } from '../shared';
 import type { NewScriptLock, NewUser, NewWorkerJob, ScriptLock, User, WorkerJob } from '../types';
-import type { TableRepository } from './table';
+import type { Direction, Filters, TableRepository, Where } from './table';
 
 interface Tables {
   scriptLocks: TableRepository<ScriptLock, NewScriptLock>;
@@ -11,17 +11,46 @@ interface Tables {
 
 interface ListUsers {
   limit: number;
+  offset?: number | undefined;
+  order?: Direction | undefined;
+}
+
+interface FindUsers extends ListUsers {
+  where: Where<User>;
+}
+
+interface SearchUsers extends ListUsers {
+  where: Filters<User>;
+}
+
+interface CountUsers {
+  where?: Filters<User> | undefined;
 }
 
 type UserChanges = Partial<Omit<NewUser, 'createdAt' | 'id' | 'updatedAt'>>;
 
+interface RemoveUsers {
+  where: Where<User>;
+}
+
+interface UpdateUsers extends RemoveUsers {
+  changes: UserChanges;
+}
+
 interface UsersRepository {
+  count: (options?: CountUsers) => Promise<number>;
   findByEmail: (email: string) => Promise<User | undefined>;
   findById: (id: string) => Promise<User | undefined>;
+  findMany: (options: FindUsers) => Promise<User[]>;
   insert: (user: NewUser) => Promise<User>;
+  insertMany: (users: readonly NewUser[]) => Promise<User[]>;
   list: (options: ListUsers) => Promise<User[]>;
   remove: (id: string) => Promise<boolean>;
+  removeMany: (options: RemoveUsers) => Promise<number>;
+  search: (options: SearchUsers) => Promise<User[]>;
   update: (id: string, changes: UserChanges) => Promise<User | undefined>;
+  updateMany: (options: UpdateUsers) => Promise<User[]>;
+  upsert: (user: NewUser) => Promise<User>;
 }
 
 type FinishedJobStatus = Extract<JobStatus, 'dead' | 'succeeded'>;
@@ -105,23 +134,37 @@ interface Database {
   workerJobs: WorkerJobsRepository;
 }
 
-export type { TableRepository } from './table';
+export type {
+  Direction,
+  Filters,
+  Operators,
+  OrderBy,
+  Page,
+  TableRepository,
+  Upsert,
+  Where,
+} from './table';
 
 export type {
   AcquireScriptLock,
   ClaimWorkerJob,
+  CountUsers,
   Database,
   FailWorkerJob,
+  FindUsers,
   FinishedJobStatus,
   HeldScriptLock,
   HeldWorkerJob,
   ListUsers,
   PurgeWorkerJobs,
+  RemoveUsers,
   RenewScriptLock,
   RenewWorkerJob,
   ScriptLocksRepository,
   ScriptLockStore,
+  SearchUsers,
   Tables,
+  UpdateUsers,
   UserChanges,
   UsersRepository,
   WorkerJobQueue,

@@ -6,17 +6,20 @@ import path from 'node:path';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import {
+  type TemplateType,
   addComposeDatabase,
   addEnvExampleKeys,
   allocatePorts,
   assertFreePrefix,
   assertName,
+  excludedNames,
   readPackageName,
   renameText,
   resetRemoteD1s,
   runCli,
   scaffold,
   stripTemplateOnly,
+  templates,
   toNames,
 } from '../../scaffold/scaffold';
 
@@ -620,5 +623,67 @@ describe('runCli', () => {
     expect(() => {
       runCli('frontend');
     }).toThrow('Invalid name ""');
+  });
+});
+
+const repoRoot = path.resolve(import.meta.dirname, '../..');
+
+const templateTypes = [
+  'backend',
+  'datastore',
+  'frontend',
+  'library',
+  'scheduler',
+  'tasks',
+] as const satisfies readonly TemplateType[];
+
+const markdownOf = (dir: string): string[] =>
+  fs
+    .readdirSync(dir, { recursive: true, withFileTypes: true })
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        entry.name.endsWith('.md') &&
+        !path
+          .relative(dir, entry.parentPath)
+          .split(path.sep)
+          .some((segment) => excludedNames.has(segment)),
+    )
+    .map((entry) => path.relative(dir, path.join(entry.parentPath, entry.name)));
+
+const leftoverPattern = (name: string) =>
+  new RegExp(`(?<=[\`/-])${name}(?![\\w-])|(?<![\\w-])${name}(?=[\`/])`, 'u');
+
+describe('template docs', () => {
+  test('cover every template', () => {
+    expect(templateTypes.toSorted()).toStrictEqual(Object.keys(templates).toSorted());
+  });
+
+  test.each(templateTypes)('a copy of %s names no template identifier in its Markdown', (type) => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'scaffold-docs-'));
+    scratchDirs.push(root);
+    for (const file of ['.env.example', 'docker-compose.yml']) {
+      fs.copyFileSync(path.join(repoRoot, file), path.join(root, file));
+    }
+    const source = path.join(repoRoot, 'templates', type);
+    const docs = markdownOf(source);
+    expect(docs).toContain('README.md');
+    for (const doc of docs) {
+      fs.mkdirSync(path.dirname(path.join(root, 'templates', type, doc)), { recursive: true });
+      fs.copyFileSync(path.join(source, doc), path.join(root, 'templates', type, doc));
+    }
+
+    scaffold({ name: 'zeta', rootDir: root, type, write: () => {} });
+
+    const copyDir = path.join(root, templates[type].group, 'zeta');
+    const leftovers = docs.flatMap((doc) =>
+      fs
+        .readFileSync(path.join(copyDir, doc), 'utf8')
+        .split('\n')
+        .flatMap((line, index) =>
+          leftoverPattern(type).test(line) ? [`${doc}:${index + 1}: ${line.trim()}`] : [],
+        ),
+    );
+    expect(leftovers).toStrictEqual([]);
   });
 });

@@ -30,12 +30,19 @@ Commands run from `templates/library` unless noted.
    vp test
    ```
 
+<!-- template-only -->
+
 ### Using it as a template
 
 `mise run create --type=library --name=<name>` (from the repo root) copies this package to
 `packages/<name>` without its build output, renames `@lightproject/library` and the other
-`library` names, runs `vp install` and `vp check --fix`, and prints the CI wiring still to add
-(root README → "Creating an App or Package from a Template"). Then:
+template names, runs `vp install` and `vp check --fix`, and prints the CI wiring still to add
+(root README → "Creating an App or Package from a Template"). Then follow "Starting from the
+sample" below.
+
+<!-- /template-only -->
+
+### Starting from the sample
 
 1. Replace `src/samples/` and `tests/unit/` with real code and tests. `exports` needs no change for
    folders: `./*` maps `@lightproject/<name>/<folder>` to `src/<folder>/index.ts` (and its `dist/`
@@ -76,8 +83,14 @@ vp test   # unit (Node), tests/unit/**/*.test.ts, 100% coverage of src/ (index.t
 ```
 
 Before finishing, run `vpr ready` from the repo root. To reproduce CI (from the repo root):
-`dagger call test-unit --workspace=@lightproject/library`. The `library` job in `verify.yml` is
-currently commented out, so pull requests do not verify this package in CI.
+`dagger call test-unit --workspace=@lightproject/library`.
+
+<!-- template-only -->
+
+This template's job in `verify.yml` is commented out, so pull requests do not verify it in CI; a
+package created from it gets its own job (the `mise run create` checklist).
+
+<!-- /template-only -->
 
 ## Deployment
 

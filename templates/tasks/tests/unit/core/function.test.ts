@@ -2,6 +2,7 @@ import { logger } from '@lightproject/common/logger';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import { z } from 'zod';
 
+import { noDatabase } from '../../../src/core/database';
 import {
   UnrecoverableJobError,
   assertUniqueNames,
@@ -58,6 +59,7 @@ describe('defineFunction', () => {
     const job = await client.enqueue(base, { value: 1 });
     const context = {
       attempt: 1,
+      getDatabase: noDatabase,
       idempotencyKey: job.id,
       job,
       logger,

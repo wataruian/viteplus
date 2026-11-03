@@ -170,6 +170,30 @@ describe('TestService.enqueuePing', () => {
   });
 });
 
+describe('TestService.enqueueListUsers', () => {
+  test('enqueues a list-users job through the tasks job client', async () => {
+    const database = createFakeDatabase();
+    const result = await TestService.enqueueListUsers(
+      { limit: 5 },
+      createFakeServiceContext(database),
+    );
+
+    expect(result).toMatchObject({ functionName: 'list-users', status: 'pending' });
+    expect(database.workerJobs.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ functionName: 'list-users', id: result.id, payload: { limit: 5 } }),
+    );
+  });
+
+  test('uses the job default limit when none is given', async () => {
+    const database = createFakeDatabase();
+    await TestService.enqueueListUsers({}, createFakeServiceContext(database));
+
+    expect(database.workerJobs.enqueue).toHaveBeenCalledWith(
+      expect.objectContaining({ payload: { limit: 100 } }),
+    );
+  });
+});
+
 describe('TestService.createUser', () => {
   test('inserts a user with a random name and a matching unique email', async () => {
     const database = createFakeDatabase();

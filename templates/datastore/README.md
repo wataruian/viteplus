@@ -190,8 +190,8 @@ Before finishing, run `vpr ready` from the repo root. To reproduce CI:
 
 ### CI
 
-On deploy, the `datastore` job runs before `backend` and always publishes the migrator image
-`<REGISTRY_ADDRESS>/datastore` (command `node dist/scripts/migrate.mjs`). CI applies migrations
+On deploy, this package's job (`@lightproject/datastore`) runs before the apps that use its database
+and always publishes the migrator image `<REGISTRY_ADDRESS>/datastore:<tag>` (command `node dist/scripts/migrate.mjs`). CI applies migrations
 only when the GitHub variable `DATABASE_MIGRATION_ENABLED` is `true` (default off), using the
 `DATABASE_DIALECT` variable and the `CLOUDFLARE_*` / `DATASTORE_POSTGRES_URL` secrets; enabled with no
 dialect fails the job. The `backend`, `tasks` and `scheduler` deploys fail if `DATABASE_DIALECT`

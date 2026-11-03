@@ -1828,3 +1828,18 @@ AGENTS.md reflect the current state.
 - All tools come from mise: `install.sh` gained `INSTALL_BIN_DIR` so the container installs its Linux mise outside the repo's `tmp/.local/bin` (the host's macOS one is bind-mounted there).
 - `mise.devcontainer.toml` (via `MISE_ENV=devcontainer`) overrides only the server-side host-service keys; `VITE_*` stay on `localhost` (browser on the host).
 - Verified with `@devcontainers/cli`: `vp check` and the datastore integration tests pass in the container, and the host's `vp install`/unit tests are unaffected. Antigravity's own dev-container support is reported as unreliable upstream; VS Code or the CLI use the same config.
+
+## 2026-11-03: Generic CRUD Covers Search, Bulk, Upsert and Paging
+
+- `TableRepository` (`templates/datastore/src/repositories/table.ts`) gained `findMany` (equality,
+  AND), `search` (operators), `count`, `insertMany`, `upsert`, `updateBy`/`removeBy` (first match by
+  primary key) and `updateMany`/`removeMany`; reads take `{ orderBy, limit, offset? }` with
+  ascending or `desc` columns. The old `update`/`remove(column, value)` were dropped (user decision):
+  they acted on every match, duplicating the `*Many` pair, and their only callers went by primary key,
+  so `db.users.update/remove` now call `updateBy`/`removeBy` with unchanged behavior.
+- `like` uses `lower()` on both dialects because `LIKE` is case-sensitive on Postgres and not on
+  SQLite (D1's `lower()` folds ASCII only). `updateMany`/`removeMany` refuse an empty `where`.
+- `insertMany` chunks to D1's 100 bound values per query (`floor(100 / columns)` rows), which also
+  applies on Postgres for one code path; chunks are separate statements (not atomic). Offset paging
+  only; for deep pages, keyset paging is `search` with `gt` on the ordered column.
+- Transactions are out of scope: D1 has no interactive transactions (only `batch`).

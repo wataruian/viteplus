@@ -8,6 +8,7 @@ import {
   trace,
   tracer,
 } from '@lightproject/common/utils';
+import type { repositories } from '@lightproject/datastore';
 import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { type JobContext, UnrecoverableJobError } from '../../../src/core/function';
@@ -21,6 +22,7 @@ import {
   runJob,
   startWorker,
 } from '../../../src/core/runner';
+import { createFakeDatabase } from '../helpers/database';
 import { claimFor, setup } from '../helpers/jobs';
 
 afterEach(() => {
@@ -91,11 +93,32 @@ describe('createInProcessExecutor', () => {
       skipReason: undefined,
     });
 
-    const [{ logger: jobLogger, skip, withTrace, ...rest }] = received;
+    const [{ getDatabase, logger: jobLogger, skip, withTrace, ...rest }] = received;
     expect(rest).toStrictEqual({ attempt: 0, idempotencyKey: job.id, job, signal });
     expect(Object.keys(jobLogger).toSorted()).toStrictEqual(['debug', 'error', 'info', 'warn']);
     expect(skip).toBeTypeOf('function');
     expect(withTrace(() => 7)).toBe(7);
+    await expect(getDatabase()).rejects.toThrow('No database is available to this job executor');
+  });
+
+  test('hands the handler the database it was given', async () => {
+    const database = createFakeDatabase();
+    const getDatabase = vi.fn<JobContext['getDatabase']>().mockResolvedValue(database);
+    const received: repositories.Database[] = [];
+    const context = setup({
+      handler: async (_payload, jobContext) => {
+        received.push(await jobContext.getDatabase());
+      },
+    });
+    const job = await context.client.enqueue(context.definition, { value: 1 });
+
+    await createInProcessExecutor([context.definition], { getDatabase })(
+      job,
+      new globalThis.AbortController().signal,
+    );
+
+    expect(received).toStrictEqual([database]);
+    expect(getDatabase).toHaveBeenCalledTimes(1);
   });
 
   test('binds the job logger and withTrace to the handler span, even after an await', async () => {
